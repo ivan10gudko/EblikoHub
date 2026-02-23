@@ -4,21 +4,24 @@ import Button from "../Button";
 
 import SocialMediaBlock from "./SocialMediaBlock";
 import Separator from "./Separator";
+import { useNavigate } from "react-router";
 
 interface Props{
     setSignup: ()=>void;
 }
-interface FormData {
+export interface LoginFormData {
     email: string;
     password: string;
 }
 
-type FormErrors = Partial<FormData>;
-type TouchedState = Partial<Record<keyof FormData, boolean>>;
+type FormErrors = Partial<LoginFormData>;
+type TouchedState = Partial<Record<keyof LoginFormData, boolean>>;
 
 const LoginForm : React.FC<Props> = ({setSignup})=> {
 
-    const [formData, setFormData] = useState<FormData>({
+    const navigate = useNavigate();
+
+    const [formData, setLoginFormData] = useState<LoginFormData>({
         email: "",
         password: ""
     });
@@ -28,7 +31,7 @@ const LoginForm : React.FC<Props> = ({setSignup})=> {
 
     const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
 
-    const validateField = (name: keyof FormData, value: string): string | undefined => {
+    const validateField = (name: keyof LoginFormData, value: string): string | undefined => {
         let error: string | undefined;
 
         switch (name) {
@@ -50,15 +53,15 @@ const LoginForm : React.FC<Props> = ({setSignup})=> {
         return error;
     };
 
-    const handleBlur = (name: keyof FormData) => {
+    const handleBlur = (name: keyof LoginFormData) => {
         setTouched(prev => ({ ...prev, [name]: true }));
         
         const error = validateField(name, formData[name]);
         setErrors(prev => ({ ...prev, [name]: error }));
     };
 
-    const handleChange = (name: keyof FormData, value: string) => {
-        setFormData(prev => ({ ...prev, [name]: value }));
+    const handleChange = (name: keyof LoginFormData, value: string) => {
+        setLoginFormData(prev => ({ ...prev, [name]: value }));
 
         if (touched[name] || errors[name]) {
             const error = validateField(name, value);
@@ -66,8 +69,9 @@ const LoginForm : React.FC<Props> = ({setSignup})=> {
         }
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+
 
         const emailError = validateField("email", formData.email);
         const passwordError = validateField("password", formData.password);
@@ -76,14 +80,14 @@ const LoginForm : React.FC<Props> = ({setSignup})=> {
         setTouched({ email: true, password: true });
 
         if (!emailError && !passwordError) {
-            console.log("Form Data:", formData);
+            
         }
     };
 
     const getFieldStatus = (fieldName: keyof FormErrors): "valid" | "invalid" | "neutral" => {
         const hasError = !!errors[fieldName];
         const isTouched = !!touched[fieldName as keyof TouchedState];
-        const value = formData[fieldName as keyof FormData];
+        const value = formData[fieldName as keyof LoginFormData];
 
         if (isTouched && hasError) return "invalid";
 
