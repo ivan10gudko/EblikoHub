@@ -11,4 +11,5 @@ public interface  JwtService {
     boolean validateToken(String token);
     String extractUsername(String token);
     Key getSigningKey(String token);
+    String extractRole(String token);
 }

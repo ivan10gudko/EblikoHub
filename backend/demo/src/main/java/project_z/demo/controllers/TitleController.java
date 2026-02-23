@@ -66,7 +66,7 @@ public List<TitleDto> getTitleListByUserId(@PathVariable("userId") UUID userId){
     .collect(Collectors.toList());
     
 }
-
+    
 @GetMapping(path = "/{userId}/WATCHED")
 public ResponseEntity<List<TitleDto>> getWatchedListByUserId(@PathVariable("userId") UUID userId){
         

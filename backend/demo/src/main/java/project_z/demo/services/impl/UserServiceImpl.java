@@ -113,6 +113,7 @@ public String uploadAvatar(UserEntity userEntity, MultipartFile file){
         }
     return ProjectURL + bucket + "/" + fileName;
 }
+
     @Override
     public List<UserEntity> findByName(String name){
         return userRepository.findByNameIgnoreCase(name);
