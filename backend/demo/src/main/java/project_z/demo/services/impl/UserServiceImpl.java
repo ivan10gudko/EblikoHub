@@ -115,6 +115,6 @@ public String uploadAvatar(UserEntity userEntity, MultipartFile file){
 }
     @Override
     public List<UserEntity> findByName(String name){
-        return userRepository.findByName(name);
+        return userRepository.findByNameIgnoreCase(name);
     }
 }

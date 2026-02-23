@@ -56,9 +56,11 @@ public ResponseEntity<List<TitleDto>> CreateTitle (
 
 @GetMapping("/{userId}")
 public List<TitleDto> getTitleListByUserId(@PathVariable("userId") UUID userId){
+    System.out.println("Searching for UUID: " + userId);
     UserEntity userEntity = userService.findOne(userId).orElseThrow(
     ()-> new RuntimeException("user not found"));
     List<TitleEntity> titles = userEntity.getTitleList();
+    
     return titles.stream()
     .map(titleMapper::mapTo)
     .collect(Collectors.toList());
@@ -105,7 +107,7 @@ public ResponseEntity<TitleDto> fullUpdateTitle (
 }
 @PatchMapping(path = "/{titleId}")
     public ResponseEntity<TitleDto> partialUpdate (
-        @PathVariable("titleId") int titleId,@RequestBody TitleDto titleDto
+        @PathVariable("titleId") Long titleId,@RequestBody TitleDto titleDto
         ){
              if(!titleService.isExists(titleId)){
             return  new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -116,7 +118,7 @@ public ResponseEntity<TitleDto> fullUpdateTitle (
     }
 @DeleteMapping(path = "/{titleId}")
     public ResponseEntity<Void> deleteTitleById(
-        @PathVariable("titleId") Integer titleId
+        @PathVariable("titleId") Long titleId
     ){
          if(!titleService.isExists(titleId)){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);

@@ -13,5 +13,5 @@ import project_z.demo.entity.UserEntity;
 public interface UserRepository extends CrudRepository<UserEntity, UUID> {
     Optional<UserEntity> findByNameTag(String nameTag);
     boolean existsByNameTag(String nameTag);
-    List<UserEntity> findByName(String name);
+    List<UserEntity> findByNameIgnoreCase(String name);
 }
