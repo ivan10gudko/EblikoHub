@@ -1,6 +1,4 @@
 package project_z.demo.controllers;
-
-
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -116,6 +114,7 @@ public class UserController {
         UserEntity updatedUserEntity  = userService.partialUpdate(id, userEntity);
         return new ResponseEntity<>(userMapper.mapTo(updatedUserEntity), HttpStatus.OK);
     }
+
     @PutMapping(path = "/avatar/{id}")
     public ResponseEntity<String> changeUserImg(
         @PathVariable("id") UUID id,
@@ -127,8 +126,8 @@ public class UserController {
         userEntity.setImg(response);
         userRepository.save(userEntity);
         return new ResponseEntity<>(response, HttpStatus.OK);
-        
     }
+
     @DeleteMapping(path = "/{id}")
     public ResponseEntity<Void> deleteUserById(
         @PathVariable("id") UUID id

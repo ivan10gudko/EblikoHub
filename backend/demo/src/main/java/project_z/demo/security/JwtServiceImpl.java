@@ -54,6 +54,15 @@ public String extractUsername(String token) {
 
     return claims.getSubject();
 }
+@Override
+public String extractRole(String token){
+    Claims claims = Jwts.parserBuilder()
+            .setSigningKey(supabaseJwkProvider.fetchPublicKeyForToken(token))
+            .build()
+            .parseClaimsJws(token)
+            .getBody();
+        return claims.get("role", String.class);
+}
 
 
     @Override

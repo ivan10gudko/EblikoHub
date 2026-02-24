@@ -73,7 +73,6 @@ public class RoomController {
         RoomEntity savedRoom = roomService.save(roomEntity);
         RoomDto savedRoomDto = roomMapper.mapTo(savedRoom);
         return new ResponseEntity<>(savedRoomDto, HttpStatus.CREATED);
-        
     }
     @PutMapping(path = "/{id}")
     public ResponseEntity<RoomDto> roomFullUpdate(@PathVariable("id") Long id, @RequestBody RoomDto roomDto) {

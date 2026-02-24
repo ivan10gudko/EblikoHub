@@ -1,5 +1,4 @@
 package project_z.demo.entity;
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +27,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import project_z.demo.enums.UserRole;
 @EntityListeners(AuditingEntityListener.class)
 @Data
 @AllArgsConstructor
@@ -42,6 +42,8 @@ public class UserEntity {
     private String name;
     @Column(unique= true, nullable= false)
     private String nameTag;
+    @Builder.Default
+    private UserRole role = UserRole.USER;
     private String description;
     private String img;
     @ManyToMany(mappedBy = "members")
