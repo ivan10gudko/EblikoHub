@@ -24,10 +24,6 @@ import project_z.demo.entity.SeasonEntity;
 import project_z.demo.entity.TitleEntity;
 import project_z.demo.services.SeasonService;
 import project_z.demo.services.TitleService;
-
-
-
-
 @RestController
 @RequestMapping("/api/v1/seasons")
 public class SeasonController {
@@ -91,4 +87,5 @@ public ResponseEntity<Void> deleteSeason(@PathVariable long seasonId){
     seasonService.deleteById(seasonId);
     return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 }
+
 }

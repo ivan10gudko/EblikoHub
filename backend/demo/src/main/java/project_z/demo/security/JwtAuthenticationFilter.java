@@ -15,7 +15,6 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-
 @Component
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
@@ -40,9 +39,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         
         if (isValid) {
             String userId = jwtService.extractUsername(jwt);
-            
+            String roleFromToken = jwtService.extractRole(jwt);
+
             List<GrantedAuthority> authorities = List.of(
-                new SimpleGrantedAuthority("ROLE_AUTHENTICATED")
+                new SimpleGrantedAuthority("ROLE_" + roleFromToken)
             );
             
             UsernamePasswordAuthenticationToken auth = 

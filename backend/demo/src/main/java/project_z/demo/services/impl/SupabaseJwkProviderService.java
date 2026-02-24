@@ -12,19 +12,20 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.RequiredArgsConstructor;
+import project_z.demo.config.MyConfig;
 
 @Service
 @RequiredArgsConstructor
 public class SupabaseJwkProviderService {
 
-     private final KeyDecodeService keyDecode;
+    private final KeyDecodeService keyDecode;
+    private final MyConfig myConfig;
     private final Map<String, PublicKey> cachedKeys = new HashMap<>();
-
-    private static final String JWK_URL = System.getenv("SUPABASE_JWK_URL");
 
     private JsonNode fetchJwksJson() {
         try {
-            URL url = new URL(JWK_URL);
+            String jwkUrl = myConfig.getJwkUrl();
+            URL url = new URL(jwkUrl);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("GET");
 
@@ -73,7 +74,6 @@ public class SupabaseJwkProviderService {
                     return pubKey;
                 }
             }
-            System.out.println("[JWK] Fetching public key for kid: " + kid);
             throw new RuntimeException("No matching JWK found for kid: " + kid);
 
         } catch (Exception e) {

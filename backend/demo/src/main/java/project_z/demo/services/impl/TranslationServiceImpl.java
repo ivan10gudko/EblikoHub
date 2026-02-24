@@ -11,15 +11,18 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import lombok.RequiredArgsConstructor;
+import project_z.demo.config.MyConfig;
 import project_z.demo.services.TranslationService;
 
 @Service
+@RequiredArgsConstructor
 public class TranslationServiceImpl implements TranslationService {
     private static final String huggingFaceApiUrl =  "https://router.huggingface.co/v1/chat/completions";
     private final RestTemplate restTemplate = new RestTemplate();
-    private static String huggingFaceApiAccesToken =System.getenv("HUGFACE_TOKEN");
+    private final MyConfig myConfig;
+   
     @Override
-    
     public String translateToEnglish(String text){
         
          String systemPrompt = """
@@ -37,6 +40,7 @@ Input: "ВанПіс"
 
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.APPLICATION_JSON);
+    String huggingFaceApiAccesToken = myConfig.getHugfaceToken();
     headers.setBearerAuth(huggingFaceApiAccesToken);
 
     Map<String, Object> body = Map.of(
