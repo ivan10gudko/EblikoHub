@@ -1,14 +1,11 @@
-import Input from "./Input";
+import Input from "../components/AuthPage/Input";
 import { useState } from "react";
-import Button from "../Button";
+import Button from "../components/Button";
 
-import SocialMediaBlock from "./SocialMediaBlock";
-import Separator from "./Separator";
+import SocialMediaBlock from "../components/AuthPage/SocialMediaBlock";
+import Separator from "../components/AuthPage/Separator";
 import { useNavigate } from "react-router";
 
-interface Props{
-    setSignup: ()=>void;
-}
 export interface LoginFormData {
     email: string;
     password: string;
@@ -17,7 +14,7 @@ export interface LoginFormData {
 type FormErrors = Partial<LoginFormData>;
 type TouchedState = Partial<Record<keyof LoginFormData, boolean>>;
 
-const LoginForm : React.FC<Props> = ({setSignup})=> {
+const LoginForm = ()=> {
 
     const navigate = useNavigate();
 
@@ -130,7 +127,7 @@ const LoginForm : React.FC<Props> = ({setSignup})=> {
         <button
             type="button"
             className="cursor-pointer text-amber-300 hover:text-amber-200 font-medium bg-transparent border-none p-0 underline-offset-2 hover:underline"
-            onClick={setSignup}
+            onClick={()=>navigate("/auth/signup")}
         >
             Sign Up
         </button>

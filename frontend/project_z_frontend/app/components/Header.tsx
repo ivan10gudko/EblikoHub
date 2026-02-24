@@ -5,8 +5,11 @@ import MenuIcon from "@mui/icons-material/Menu";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { useMemo, useState } from "react";
 import BurgerIcon from "./BurgerIcon";
-
-function Header() {
+import type { Session } from "@supabase/supabase-js";
+interface HeaderProps{
+    session : Session | null
+}
+const Header = ({session}:HeaderProps)=> {
     const [isLogged, setIsLogged] = useState<boolean>(false);
     const [burgerMenuOpen,setBurgerMenuOpen] = useState<boolean>(false);
 
@@ -32,12 +35,12 @@ function Header() {
             ""
 )} >Rooms</NavLink>
                 <NavLink to={"/profile"}>Watchlist</NavLink>
-                {isLogged ? (
+                {session ? (
                     <NavLink to="profile/123">
                         <AccountCircleIcon fontSize="large" />
                     </NavLink>
                 ) : (
-                    <NavLink to="auth" className="bg-amber-400 py-2 px-3 rounded-lg">Sign in</NavLink>
+                    <NavLink to="auth/signup" className="bg-amber-400 py-2 px-3 rounded-lg">Sign up</NavLink>
                 )}
             </div>
             

@@ -1,13 +1,11 @@
 import React, { useState } from "react";
-import Input from "./Input";
-import Separator from "./Separator";
-import SocialMediaBlock from "./SocialMediaBlock";
-import Button from "../Button";
+import Input from "../components/AuthPage/Input";
+import Separator from "../components/AuthPage/Separator";
+import SocialMediaBlock from "../components/AuthPage/SocialMediaBlock";
+import Button from "../components/Button";
 import { checkFieldAvailability} from "~/services/API";
+import { useNavigate } from "react-router";
 
-interface Props {
-    setLogin: () => void;
-}
 
 interface FormData {
     name: string;
@@ -20,7 +18,10 @@ interface FormData {
 type FormErrors = Partial<FormData>;
 type TouchedState = Partial<Record<keyof FormData, boolean>>;
 
-const SignupForm: React.FC<Props> = ({ setLogin }) => {
+const SignupForm = () => {
+
+    const navigate = useNavigate();
+
     const [formData, setFormData] = useState<FormData>({
         name: "",
         username: "",
@@ -239,7 +240,7 @@ const SignupForm: React.FC<Props> = ({ setLogin }) => {
         <button
             type="button"
             className="cursor-pointer text-amber-300 hover:text-amber-200 font-medium bg-transparent border-none p-0 underline-offset-2 hover:underline"
-            onClick={setLogin}
+            onClick={()=>navigate("/auth/login")}
         >
             Log in
         </button>
