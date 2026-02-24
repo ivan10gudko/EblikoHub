@@ -7,6 +7,7 @@ import useWindowDimensions from "~/utils/useWindowDimensions";
 import { useCollapsibleList } from "~/hooks/useCallableList";
 import CollapsibleSection from "./ColapsableSection";
 import LocalFireDepartmentRoundedIcon from '@mui/icons-material/LocalFireDepartmentRounded';
+
 const TopAnimeList: React.FC<{}> = ({})=>{
     return <CollapsibleSection<AnimeCardType, number>
         title={<><LocalFireDepartmentRoundedIcon /> Top Rated</>}

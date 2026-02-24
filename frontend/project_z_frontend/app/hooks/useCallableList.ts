@@ -8,7 +8,6 @@ type UseCollapsibleListProps<T> = {
     queryFn: QueryFunction<T[]>;
 };
 
-// Цей хук не змінився
 export function useCollapsibleList<T>({ queryKey, queryFn }: UseCollapsibleListProps<T>) {
     const [isOpen, setIsOpen] = useState<boolean>(false);
     const windowSize = useWindowDimensions();
