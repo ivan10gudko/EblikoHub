@@ -5,11 +5,9 @@ import Button from "../components/Button";
 import SocialMediaBlock from "../components/AuthPage/SocialMediaBlock";
 import Separator from "../components/AuthPage/Separator";
 import { useNavigate } from "react-router";
+import type { LoginData } from "~/types/auth.types";
 
-export interface LoginFormData {
-    email: string;
-    password: string;
-}
+type LoginFormData =  LoginData;
 
 type FormErrors = Partial<LoginFormData>;
 type TouchedState = Partial<Record<keyof LoginFormData, boolean>>;

@@ -5,24 +5,19 @@ import SocialMediaBlock from "../components/AuthPage/SocialMediaBlock";
 import Button from "../components/Button";
 import { checkFieldAvailability} from "~/services/API";
 import { useNavigate } from "react-router";
+import type { RegisterData } from "~/types/auth.types";
 
-
-interface FormData {
-    name: string;
-    username: string;
-    email: string;
-    password: string;
+interface RegisterFormData extends RegisterData {
     confirmPassword: string;
 }
-
-type FormErrors = Partial<FormData>;
-type TouchedState = Partial<Record<keyof FormData, boolean>>;
+type FormErrors = Partial<RegisterFormData>;
+type TouchedState = Partial<Record<keyof RegisterFormData, boolean>>;
 
 const SignupForm = () => {
 
     const navigate = useNavigate();
 
-    const [formData, setFormData] = useState<FormData>({
+    const [formData, setFormData] = useState<RegisterFormData>({
         name: "",
         username: "",
         email: "",
@@ -36,7 +31,7 @@ const SignupForm = () => {
     const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
 
 
-    const validateField = (name: keyof FormData, value: string, currentFormData: FormData): string | undefined => {
+    const validateField = (name: keyof RegisterFormData, value: string, currentFormData: RegisterFormData): string | undefined => {
         let error: string | undefined;
 
         switch (name) {
@@ -77,7 +72,7 @@ const SignupForm = () => {
         return error;
     };
 
-    const handleBlur = (name: keyof FormData) => {
+    const handleBlur = (name: keyof RegisterFormData) => {
         setTouched((prev) => ({ ...prev, [name]: true }));
         const error = validateField(name, formData[name], formData);
         setErrors((prev) => ({ ...prev, [name]: error }));
@@ -101,7 +96,7 @@ const SignupForm = () => {
         }
     };
 
-    const handleChange = (name: keyof FormData, value: string) => {
+    const handleChange = (name: keyof RegisterFormData, value: string) => {
         const updatedFormData = { ...formData, [name]: value };
         setFormData(updatedFormData);
 
@@ -123,7 +118,7 @@ const SignupForm = () => {
         const newErrors: FormErrors = {};
         let hasError = false;
 
-        (Object.keys(formData) as Array<keyof FormData>).forEach((key) => {
+        (Object.keys(formData) as Array<keyof RegisterFormData>).forEach((key) => {
             const error = validateField(key, formData[key], formData);
             
             if (error) {
@@ -148,7 +143,7 @@ const SignupForm = () => {
         }
     };
 
-    const getFieldStatus = (fieldName: keyof FormData): "valid" | "invalid" | "neutral" => {
+    const getFieldStatus = (fieldName: keyof RegisterFormData): "valid" | "invalid" | "neutral" => {
         const hasError = !!errors[fieldName];
         const isTouched = !!touched[fieldName];
         const value = formData[fieldName];

@@ -26,7 +26,8 @@ export default [
     ]),
 
     route("auth", "./layout/AuthLayout.tsx",[
-        route("login", "./pages/login.tsx"),
-        route("signup", "./pages/signup.tsx"),
+        route("login", "./pages/Login.tsx"),
+        route("signup", "./pages/Signup.tsx"),
+        route("callback", "./pages/AuthCallback.tsx"),
     ]),
 ] satisfies RouteConfig;
