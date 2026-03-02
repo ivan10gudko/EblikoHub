@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import project_z.demo.Mappers.Mapper;
-import project_z.demo.dto.TitleDto;
+import project_z.demo.dto.TitleDtos.TitleDto;
 import project_z.demo.entity.TitleEntity;
 import project_z.demo.entity.UserEntity;
 import project_z.demo.services.TitleService;
@@ -91,6 +91,7 @@ public ResponseEntity<List<TitleDto>> getWatchListByUserId(@PathVariable("userId
         
         return new ResponseEntity<>(response, HttpStatus.OK);
 }
+
 
 @PreAuthorize("hasRole('ADMIN') || @securityService.isTitleOwner(#titleId, #token)")
 @PutMapping(path = "/{titleId}")

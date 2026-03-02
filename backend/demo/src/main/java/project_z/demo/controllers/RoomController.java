@@ -20,9 +20,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import project_z.demo.Mappers.Mapper;
-import project_z.demo.dto.RoomDto;
-import project_z.demo.dto.UserDto;
-import project_z.demo.dto.createDto.RoomCreateDto;
+import project_z.demo.dto.RoomDtos.RoomCreateDto;
+import project_z.demo.dto.RoomDtos.RoomDto;
+import project_z.demo.dto.UserDtos.UserDto;
 import project_z.demo.entity.RoomEntity;
 import project_z.demo.entity.UserEntity;
 import project_z.demo.services.RoomService;

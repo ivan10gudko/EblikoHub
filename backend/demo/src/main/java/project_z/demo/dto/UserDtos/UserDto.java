@@ -1,4 +1,4 @@
-package project_z.demo.dto;
+package project_z.demo.dto.UserDtos;
 
 
 import java.time.LocalDateTime;
@@ -9,13 +9,14 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 
 @Data
-
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Setter
 public class UserDto {
     private UUID userId;
     private String name;

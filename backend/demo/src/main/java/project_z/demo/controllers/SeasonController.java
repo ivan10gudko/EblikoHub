@@ -18,8 +18,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import project_z.demo.Mappers.Mapper;
-import project_z.demo.dto.SeasonDto;
-import project_z.demo.dto.TitleDto;
+import project_z.demo.dto.SeasonDtos.SeasonDto;
+import project_z.demo.dto.TitleDtos.TitleDto;
 import project_z.demo.entity.SeasonEntity;
 import project_z.demo.entity.TitleEntity;
 import project_z.demo.services.SeasonService;

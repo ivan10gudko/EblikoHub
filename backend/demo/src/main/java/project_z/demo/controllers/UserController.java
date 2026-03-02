@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import project_z.demo.Mappers.Mapper;
-import project_z.demo.dto.UserDto;
+import project_z.demo.dto.UserDtos.UserDto;
 import project_z.demo.entity.UserEntity;
 import project_z.demo.repositories.UserRepository;
 import project_z.demo.services.UserService;
