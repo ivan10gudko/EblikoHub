@@ -29,6 +29,8 @@ import project_z.demo.services.UserService;
 
 
 
+
+
 @RestController
 @RequestMapping("/api/v1/titles")
 public class TitleController {
@@ -57,7 +59,6 @@ public ResponseEntity<List<TitleDto>> CreateTitle (
 
 @GetMapping("/{userId}")
 public List<TitleDto> getTitleListByUserId(@PathVariable("userId") UUID userId){
-    System.out.println("Searching for UUID: " + userId);
     UserEntity userEntity = userService.findOne(userId).orElseThrow(
     ()-> new RuntimeException("user not found"));
     List<TitleEntity> titles = userEntity.getTitleList();
@@ -67,7 +68,20 @@ public List<TitleDto> getTitleListByUserId(@PathVariable("userId") UUID userId){
     .collect(Collectors.toList());
     
 }
-    
+
+@GetMapping(path = "/mal/{titleMalId}")
+public ResponseEntity<TitleDto> getUserTitleByMalId(@PathVariable("titleMalId") Long titleMalId,
+    @RequestHeader("Authorization") String token) {
+    TitleEntity title = titleService.findUserTitleByMalId(titleMalId, token);
+    return new ResponseEntity<>(titleMapper.mapTo(title), HttpStatus.OK);
+}
+@GetMapping(path = "/mal/{titleMalId}/room")
+public List<TitleDto>getUsersTitlesByMalId(@PathVariable("titleMalId") Long titleMalId,
+    @RequestHeader("Authorization") String token) {
+    return titleService.findAllByMalIdInUserRooms(titleMalId, token)
+        .stream().map(titleMapper::mapTo).collect(Collectors.toList());
+}
+
 @GetMapping(path = "/{userId}/WATCHED")
 public ResponseEntity<List<TitleDto>> getWatchedListByUserId(@PathVariable("userId") UUID userId){
         

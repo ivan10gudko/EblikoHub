@@ -10,11 +10,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import project_z.demo.JavaUtil.BeanUtilsHelper;
+import project_z.demo.common.Exceptions.ResourceNotFoundException;
 import project_z.demo.entity.SeasonEntity;
 import project_z.demo.entity.TitleEntity;
 import project_z.demo.entity.UserEntity;
 import project_z.demo.repositories.TitleRepository;
 import project_z.demo.repositories.UserRepository;
+import project_z.demo.security.JwtService;
 import project_z.demo.services.SeasonService;
 import project_z.demo.services.TitleService;
 
@@ -28,7 +30,8 @@ public class TitleServiceImpl implements TitleService {
     private TitleRepository titleRepository;
     @Autowired
     private UserRepository userRepository;
-
+    @Autowired
+    private JwtService jwtService;
     TitleServiceImpl(SeasonService seasonService) {
         this.seasonService = seasonService;
     }
@@ -94,5 +97,18 @@ public TitleEntity addSeason(SeasonEntity seasonEntity, TitleEntity titleEntity)
     seasonEntity.setTitle(titleEntity);
     seasonService.save(seasonEntity);
     return titleEntity;
+}
+@Override
+public TitleEntity findUserTitleByMalId(Long titleMalId, String token){
+    UUID userId = UUID.fromString(jwtService.extractUsername(token));
+    TitleEntity response = titleRepository.findByTitleMalIdAndUserId(titleMalId,userId).orElseThrow(
+    () -> new ResourceNotFoundException("Title not found")
+    );
+    return response;
+}
+@Override
+public List<TitleEntity> findAllByMalIdInUserRooms(Long titleMalId, String token){
+    UUID userId = UUID.fromString(jwtService.extractUsername(token));
+    return titleRepository.findAllByMalIdInUserRooms(titleMalId,userId);
 }
 }

@@ -7,7 +7,7 @@ import java.util.UUID;
 import project_z.demo.entity.SeasonEntity;
 import project_z.demo.entity.TitleEntity;
 
-public interface  TitleService {
+public interface TitleService {
     TitleEntity createTitle(TitleEntity title );
     List<TitleEntity> findAll();
     Optional<TitleEntity> findOne(Long titleId);
@@ -18,4 +18,7 @@ public interface  TitleService {
     List<TitleEntity> getWatchedList(UUID userid);
     List<TitleEntity> getWatchList(UUID userid);
     TitleEntity addSeason(SeasonEntity seasonEntity, TitleEntity titleEntity);
+    TitleEntity findUserTitleByMalId(Long titleMalId, String token);
+    List<TitleEntity> findAllByMalIdInUserRooms(Long titleMalId, String token);
+    
 }
