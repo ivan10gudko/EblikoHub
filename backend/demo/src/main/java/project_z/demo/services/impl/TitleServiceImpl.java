@@ -7,21 +7,29 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import project_z.demo.JavaUtil.BeanUtilsHelper;
+import project_z.demo.JavaUtil.PagingHelper;
 import project_z.demo.common.Exceptions.ResourceNotFoundException;
+import project_z.demo.common.QueryParameters.TitleQueryParameters;
 import project_z.demo.entity.SeasonEntity;
 import project_z.demo.entity.TitleEntity;
 import project_z.demo.entity.UserEntity;
 import project_z.demo.repositories.TitleRepository;
 import project_z.demo.repositories.UserRepository;
+import project_z.demo.repositories.Specifications.TitleSpecifications;
 import project_z.demo.security.JwtService;
 import project_z.demo.services.SeasonService;
 import project_z.demo.services.TitleService;
 
 @Service
 public class TitleServiceImpl implements TitleService {
+
+    private final TitleSeachServiceImpl titleSeachServiceImpl;
 
     private final SeasonService seasonService;
     @Autowired
@@ -32,8 +40,9 @@ public class TitleServiceImpl implements TitleService {
     private UserRepository userRepository;
     @Autowired
     private JwtService jwtService;
-    TitleServiceImpl(SeasonService seasonService) {
+    TitleServiceImpl(SeasonService seasonService, TitleSeachServiceImpl titleSeachServiceImpl) {
         this.seasonService = seasonService;
+        this.titleSeachServiceImpl = titleSeachServiceImpl;
     }
 @Override
 public TitleEntity createTitle(TitleEntity title){
@@ -49,6 +58,17 @@ public List<TitleEntity> findAll(){
 @Override
 public Optional<TitleEntity> findOne(Long titleId){
     return titleRepository.findById(titleId);
+}
+
+@Override
+public Page<TitleEntity> findAllByUserId(TitleQueryParameters params, UUID userId){
+   Specification<TitleEntity> spec = Specification
+            .where(TitleSpecifications.belongsToUser(userId))
+            .and(TitleSpecifications.hasStatus(params.getStatus()));
+
+    Pageable pageable = PagingHelper.toPageable(params);
+
+    return titleRepository.findAll(spec,pageable);
 }
 
 @Override
@@ -69,7 +89,8 @@ public void deleteById(Long Id){
     titleRepository.deleteById(Id);
 }
 @Override
-public List<TitleEntity> addTitle(TitleEntity titleEntity, UUID userId){
+public List<TitleEntity> addTitle(TitleEntity titleEntity, String token){
+    UUID userId = UUID.fromString(jwtService.extractUsername(token));
     UserEntity userEntity = userRepository.findById(userId).orElseThrow(
         () -> new RuntimeException("user not found"));
         titleEntity.setUser(userEntity);

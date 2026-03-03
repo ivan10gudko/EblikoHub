@@ -4,6 +4,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.springframework.data.domain.Page;
+
+import project_z.demo.common.QueryParameters.TitleQueryParameters;
 import project_z.demo.entity.SeasonEntity;
 import project_z.demo.entity.TitleEntity;
 
@@ -14,11 +17,11 @@ public interface TitleService {
     boolean isExists (Long titleId);
     TitleEntity partialUpdate(Long titleId, TitleEntity titleEntity);
     void deleteById(Long id);
-    List<TitleEntity> addTitle(TitleEntity titleEntity,  UUID userId);
+    List<TitleEntity> addTitle(TitleEntity titleEntity, String token);
     List<TitleEntity> getWatchedList(UUID userid);
     List<TitleEntity> getWatchList(UUID userid);
     TitleEntity addSeason(SeasonEntity seasonEntity, TitleEntity titleEntity);
     TitleEntity findUserTitleByMalId(Long titleMalId, String token);
     List<TitleEntity> findAllByMalIdInUserRooms(Long titleMalId, String token);
-    
+    Page<TitleEntity> findAllByUserId(TitleQueryParameters parameters, UUID userId);
 }

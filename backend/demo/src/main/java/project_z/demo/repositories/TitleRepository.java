@@ -4,14 +4,16 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 import project_z.demo.entity.TitleEntity;
 
 @Repository
-public interface  TitleRepository extends CrudRepository<TitleEntity, Long>{
+public interface  TitleRepository extends JpaRepository<TitleEntity, Long>, 
+                                         JpaSpecificationExecutor<TitleEntity>{
  // @Query("SELECT t FROM TitleEntity t WHERE t.user.id = :userId")
    // List<TitleEntity> findByUserId(@Param("userId") UUID userId); mal
    @Query("SELECT t FROM TitleEntity t WHERE t.apiTitleId = :apiTitleId AND t.user.userId = :userId")
