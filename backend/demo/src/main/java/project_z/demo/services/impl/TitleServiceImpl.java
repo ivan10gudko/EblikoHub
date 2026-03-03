@@ -101,7 +101,7 @@ public TitleEntity addSeason(SeasonEntity seasonEntity, TitleEntity titleEntity)
 @Override
 public TitleEntity findUserTitleByMalId(Long titleMalId, String token){
     UUID userId = UUID.fromString(jwtService.extractUsername(token));
-    TitleEntity response = titleRepository.findByTitleMalIdAndUserId(titleMalId,userId).orElseThrow(
+    TitleEntity response = titleRepository.findByApiTitleIdAndUserId(titleMalId,userId).orElseThrow(
     () -> new ResourceNotFoundException("Title not found")
     );
     return response;
@@ -109,6 +109,7 @@ public TitleEntity findUserTitleByMalId(Long titleMalId, String token){
 @Override
 public List<TitleEntity> findAllByMalIdInUserRooms(Long titleMalId, String token){
     UUID userId = UUID.fromString(jwtService.extractUsername(token));
-    return titleRepository.findAllByMalIdInUserRooms(titleMalId,userId);
+    return titleRepository.findAllByApiTitleIdInUserRooms(titleMalId,userId);
 }
+
 }
