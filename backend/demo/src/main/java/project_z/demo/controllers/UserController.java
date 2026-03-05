@@ -21,8 +21,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import lombok.RequiredArgsConstructor;
 import project_z.demo.Mappers.Mapper;
 import project_z.demo.dto.UserDtos.UserDto;
+import project_z.demo.dto.UserDtos.UserPostDto;
 import project_z.demo.entity.UserEntity;
 import project_z.demo.repositories.UserRepository;
 import project_z.demo.services.UserService;
@@ -33,21 +35,18 @@ import project_z.demo.services.UserService;
     
 @RestController
 @RequestMapping("/api/v1/users")
+@RequiredArgsConstructor
 public class UserController {  
 
-    private UserService userService;
-    private Mapper<UserEntity, UserDto> userMapper;
-    @Autowired 
-    private UserRepository userRepository;
+    private final UserService userService;
+    private final Mapper<UserEntity, UserDto> userMapper;
+    private final Mapper<UserEntity, UserPostDto> userPostMapper;
+    private final UserRepository userRepository;
 
-    public UserController(UserService userService, Mapper<UserEntity, UserDto> userMapper){
-        this.userService = userService;
-        this.userMapper = userMapper;
-    }
     
     @PostMapping
-    public ResponseEntity <?> createUser(@RequestBody UserDto user) {
-        UserEntity userEntity = userMapper.mapFrom(user);
+    public ResponseEntity <?> createUser(@RequestBody UserPostDto user) {
+        UserEntity userEntity = userPostMapper.mapFrom(user);
         if(userRepository.existsByNameTag(userEntity.getNameTag())){
             return ResponseEntity.badRequest()
             .body("NameTag '" + userEntity.getNameTag() + "already exists");
