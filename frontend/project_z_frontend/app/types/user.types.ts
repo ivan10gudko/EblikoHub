@@ -1,9 +1,14 @@
-export interface BackendUserDto {
+export interface UserProfile{
     userId: string;
     name: string;
     nameTag: string;
     description?: string;
     img?: string;
     createdAt?: string;
-    watchList?: string[];
+}
+
+export interface CreateUserProfile{
+    userId: string;
+    name: string;
+    nameTag: string;
 }

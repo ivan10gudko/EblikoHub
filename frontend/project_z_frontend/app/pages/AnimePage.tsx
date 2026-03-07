@@ -4,7 +4,7 @@ import AnimePageSceleton from "~/components/AnimePage/AnimePageSceleton";
 import ErrorAnimePage from "~/components/AnimePage/ErrorAnimePage";
 import MainComponent from "~/components/AnimePage/MainCompotent";
 import Sidebar from "~/components/AnimePage/Sidebar";
-import { getAnimeById } from "~/services/MyAnimeList";
+import { getAnimeById } from "~/services/jikanApi";
 import type { Anime } from "~/types/MyAnimeList.types";
 
 const AnimePage : React.FC = () => {

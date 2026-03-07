@@ -1,24 +1,22 @@
 import type { AnimeCardType } from "~/components/Card/AnimeCard";
 import type { SeacrchResponse } from "../types/MyAnimeList.types";
 import axios from "axios";
+import { publicClient } from "./publicClient";
 
-export async function getAnimeSearch(q:string, page: number = 1):Promise<SeacrchResponse<AnimeCardType>>{
+export async function getAnimeSearch(q: string, page: number = 1): Promise<SeacrchResponse<AnimeCardType>> {
+    try {
+        const options = {
+            method: 'GET',
+            url: `/search`,
+            params: {
+                q: q,
+                page: page,
+            }
+        };
 
-const baseUrl = import.meta.env.VITE_API_URL || '/api/v1';
-    
-const options = {
-    method: 'GET',
-    url: `${baseUrl}/search`,
-    params: {
-        q: q,
-        page: page,
-    }
-};
+        const response = await publicClient.request(options);
 
-try {
-	const response = await axios.request(options);
-	
-    const data = response.data.data;
+        const data = response.data.data;
 
         const animeList: AnimeCardType[] = data.map((item: any) => ({
             id: item.mal_id,
@@ -31,11 +29,11 @@ try {
             airing: item.airing,
         }));
 
-        return {data:animeList,pagination:response.data.pagination}
-} catch (error) {
-	console.error(error);
+        return { data: animeList, pagination: response.data.pagination }
+    } catch (error) {
+        console.error(error);
 
-    return {
+        return {
             data: [],
             pagination: {
                 last_visible_page: 0,
@@ -48,9 +46,5 @@ try {
                 }
             }
         };
-}
+    }
 };
-
-export async function checkFieldAvailability(name: string, value: string): Promise<boolean>{
-    return false;
-}

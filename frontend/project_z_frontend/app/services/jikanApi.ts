@@ -1,13 +1,9 @@
-import axios from 'axios';
 import type { AnimeCardType } from '~/components/Card/AnimeCard';
-
-export const jikanApi = axios.create({
-    baseURL: 'https://api.jikan.moe/v4',
-});
+import { jikanClient } from './jikanClient';
 
 export async function getTopAnimeList(): Promise<AnimeCardType[]> {
     try {
-        const response = await jikanApi.get("/top/anime");
+        const response = await jikanClient.get("/top/anime");
         const data = response.data.data;
 
         const animeList: AnimeCardType[] = data.map((item: any) => ({
@@ -30,7 +26,7 @@ export async function getTopAnimeList(): Promise<AnimeCardType[]> {
 
 export async function getSeasonalAnimeList(): Promise<AnimeCardType[]> {
     try {
-        const response = await jikanApi.get("/seasons/now");
+        const response = await jikanClient.get("/seasons/now");
         const data = response.data.data;
 
         const animeList: AnimeCardType[] = data.map((item: any) => ({
@@ -60,7 +56,7 @@ export async function getTopAnime(){
     };
 
     try {
-	    const response = await jikanApi.request(options);
+	    const response = await jikanClient.request(options);
 	    return response.data.data[0];
     } catch (error) {
 	    console.error(error);
@@ -75,7 +71,7 @@ export async function getAnimeById(id:number){
     };
 
     try {
-	    const response = await jikanApi.request(options);
+	    const response = await jikanClient.request(options);
 	    return response.data.data;
     } catch (error) {
 	    console.error(error);
@@ -89,7 +85,7 @@ export async function getSeasonNow(){
     };
 
     try {
-	    const response = await jikanApi.request(options);
+	    const response = await jikanClient.request(options);
 	    return response.data.data;
     } catch (error) {
 	    console.error(error);
@@ -103,7 +99,7 @@ const options = {
 };
 
 try {
-	const response = await jikanApi.request(options);
+	const response = await jikanClient.request(options);
     console.log(response.data.data);
 	return response.data.data;
     

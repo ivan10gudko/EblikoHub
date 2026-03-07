@@ -1,9 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
-import { getTopAnimeList } from "~/services/MyAnimeList";
+import { getTopAnimeList } from "~/services/jikanApi";
 import AnimeCard, { type AnimeCardType } from "../Card/AnimeCard";
 import ArrowDropDownRoundedIcon from '@mui/icons-material/ArrowDropDownRounded';
 import { useState } from "react";
-import useWindowDimensions from "~/utils/useWindowDimensions";
+import useWindowDimensions from "~/hooks/useWindowDimensions";
 import { useCollapsibleList } from "~/hooks/useCallableList";
 import CollapsibleSection from "./ColapsableSection";
 import LocalFireDepartmentRoundedIcon from '@mui/icons-material/LocalFireDepartmentRounded';

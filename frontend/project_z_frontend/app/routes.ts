@@ -26,6 +26,7 @@ export default [
     ]),
 
     route("auth", "./layout/AuthLayout.tsx",[
+        index("./pages/AuthIndex.tsx"),
         route("login", "./pages/Login.tsx"),
         route("signup", "./pages/Signup.tsx"),
         route("callback", "./pages/AuthCallback.tsx"),

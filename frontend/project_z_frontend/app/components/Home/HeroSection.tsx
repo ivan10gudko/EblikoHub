@@ -1,5 +1,5 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { getTopAnime } from "~/services/MyAnimeList";
+import { getTopAnime } from "~/services/jikanApi";
 import Badge from "../Badge";
 import Rating from "../Rating";
 import Date from "../Date";

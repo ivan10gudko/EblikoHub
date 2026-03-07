@@ -25,12 +25,13 @@ const AuthCallback = () => {
         }
     };
 
-    handleAuthCallback();
     }, [navigate]);
 
     return (
         <div className="flex justify-center items-center h-screen">
-            <p>Finalizing login...</p>
+            <p className="bg-white text-4xl px-12 py-10 rounded-lg">
+                Finalizing login...
+            </p>
         </div>
     );
 }
