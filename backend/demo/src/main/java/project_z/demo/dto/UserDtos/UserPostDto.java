@@ -1,27 +1,21 @@
-package project_z.demo.dto;
+package project_z.demo.dto.UserDtos;
 
-
-import java.time.LocalDateTime;
-import java.util.List;
 import java.util.UUID;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 
 @Data
-
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class UserDto {
+@Setter
+public class UserPostDto {
     private UUID userId;
     private String name;
     private String nameTag;
-    private String description;
-    private String img;
-    private LocalDateTime createdAt;
-    private List<UserDto> watchList;
 }

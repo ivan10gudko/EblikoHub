@@ -1,4 +1,4 @@
-package project_z.demo.dto;
+package project_z.demo.dto.TitleDtos;
 
 import java.time.LocalDateTime;
 import java.util.Map;
@@ -15,7 +15,7 @@ import project_z.demo.entity.TitleEntity.titleStatus;
 @NoArgsConstructor
 @Builder
 public class TitleDto {
- @Id
+    @Id
     private Long titleId;
     private int apiTitleId;
     private String titleName;

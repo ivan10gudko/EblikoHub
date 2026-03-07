@@ -31,3 +31,8 @@ build/
 
 ### VS Code ###
 .vscode/
+
+
+task.txt
+util.txt
+backend/demo/src/main/task.txt

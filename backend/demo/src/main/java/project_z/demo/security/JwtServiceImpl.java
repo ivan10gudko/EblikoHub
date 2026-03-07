@@ -41,29 +41,25 @@ public boolean validateToken(String token) {
         return false;
     }
 }
-
+private Claims extractAllClaims(String token){
+    if (token.startsWith("Bearer ")) {
+        token = token.substring(7);
+    }
+    return Jwts.parserBuilder()
+            .setSigningKey(supabaseJwkProvider.fetchPublicKeyForToken(token))
+            .build()
+            .parseClaimsJws(token)
+            .getBody();
+}
 @Override
 public String extractUsername(String token) {
-    if (token.startsWith("Bearer ")) token = token.substring(7);
-
-    Claims claims = Jwts.parserBuilder()
-            .setSigningKey(supabaseJwkProvider.fetchPublicKeyForToken(token))
-            .build()
-            .parseClaimsJws(token)
-            .getBody();
-
-    return claims.getSubject();
+    return extractAllClaims(token).getSubject(); 
 }
+
 @Override
-public String extractRole(String token){
-    Claims claims = Jwts.parserBuilder()
-            .setSigningKey(supabaseJwkProvider.fetchPublicKeyForToken(token))
-            .build()
-            .parseClaimsJws(token)
-            .getBody();
-        return claims.get("role", String.class);
+public String extractRole(String token) {
+    return extractAllClaims(token).get("role", String.class);
 }
-
 
     @Override
     public Key getSigningKey(String token) {

@@ -35,7 +35,8 @@ The user will give you the title of an anime in any language, including Japanese
 Your task is to return ONLY the official English title used internationally.
 
 Example:
-Input: "ВанПіс"
+Input: "ВанПіс
+RESULT: One Piece"
     """;
 
     HttpHeaders headers = new HttpHeaders();
@@ -54,9 +55,8 @@ Input: "ВанПіс"
     HttpEntity<Map<String, Object>> request = new HttpEntity<>(body, headers);
 
     try {
-        ResponseEntity<Map> response =
-            restTemplate.postForEntity(huggingFaceApiUrl, request, Map.class);
-        System.out.println(response);
+        ResponseEntity<Map> response = restTemplate.postForEntity(huggingFaceApiUrl, request, Map.class);
+        
         if (response.getBody() != null) {
             List<?> choices = (List<?>) response.getBody().get("choices");
             if (choices != null && !choices.isEmpty()) {
@@ -64,15 +64,22 @@ Input: "ВанПіс"
                 Map<?, ?> message = (Map<?, ?>) firstChoice.get("message");
                 String content = message.get("content").toString();
 
-                Pattern p = Pattern.compile("RESULT:\\s*(.*)");
-                Matcher m = p.matcher(content);
+
+                String cleanContent = content.replaceAll("(?s)<think>.*?</think>", "").trim();
+                System.out.println(cleanContent);
+                Pattern p = Pattern.compile("RESULT:\\s*(.*)", Pattern.CASE_INSENSITIVE);
+                Matcher m = p.matcher(cleanContent);
+                
                 if (m.find()) {
-                    String animeTitle = m.group(1).trim(); 
-                    return animeTitle;
-}
+                    String animeTitle = m.group(1).trim();
+                    return animeTitle.replace("\"", "").replace("}", "");
+                }
+                
+                String res = cleanContent.replace("RESULT:", "").trim();
+                
+                return res;
             }
         }
-
     } catch (Exception e) {
         e.printStackTrace();
     }

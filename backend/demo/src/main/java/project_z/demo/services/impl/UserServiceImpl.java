@@ -42,7 +42,6 @@ public UserEntity save(UserEntity userEntity){
 }
 @Override 
 public Optional<UserEntity> findOne(UUID id){
-
 return  userRepository.findById(id);
 }
 @Override
