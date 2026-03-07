@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import project_z.demo.Mappers.Mapper;
-import project_z.demo.dto.SeasonDto;
+import project_z.demo.dto.SeasonDtos.SeasonDto;
 import project_z.demo.entity.SeasonEntity;
 @Component
 public class SeasonMapperImpl implements Mapper<SeasonEntity, SeasonDto> {

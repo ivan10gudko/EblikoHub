@@ -51,13 +51,14 @@ public class TitleEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long titleId;
-    private int apiTitleId;
+    private int apiTitleId; //optional
     private String titleName;
     @ElementCollection
     @CollectionTable(
     name = "title_ratings",
     joinColumns = @JoinColumn(name = "title_id")
     )
+    
     @MapKeyColumn(name = "name")
     @Column(name = "value")
     private Map<String, Float> rating;
