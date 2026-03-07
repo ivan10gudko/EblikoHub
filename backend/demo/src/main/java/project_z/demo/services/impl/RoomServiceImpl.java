@@ -1,5 +1,6 @@
 package project_z.demo.services.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -9,12 +10,17 @@ import java.util.stream.StreamSupport;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import project_z.demo.JavaUtil.BeanUtilsHelper;
+import project_z.demo.Mappers.Mapper;
+import project_z.demo.dto.RoomDtos.RoomCreateDto;
+import project_z.demo.dto.RoomDtos.RoomDto;
 import project_z.demo.entity.RoomEntity;
 import project_z.demo.entity.UserEntity;
 import project_z.demo.repositories.RoomRepository;
 import project_z.demo.repositories.UserRepository;
+import project_z.demo.security.JwtService;
 import project_z.demo.services.RoomService;
 
 @Service
@@ -26,8 +32,10 @@ public class RoomServiceImpl implements RoomService {
     private BeanUtilsHelper beanUtilsHelper;
     @Autowired
     private UserRepository userRepository;
-
-    
+    @Autowired
+    private JwtService jwtService;
+    @Autowired
+    private Mapper<RoomEntity,RoomDto> roomMapper;
     @Override
     public RoomEntity save(RoomEntity roomEntity){
         return roomRepository.save(roomEntity);
@@ -81,7 +89,6 @@ public class RoomServiceImpl implements RoomService {
     }
    
     @Override
-    
     public void deleteMembers(Long roomId, List<UUID> userIds){
         RoomEntity roomEntity = roomRepository.findById(roomId).orElseThrow(
             ()-> new RuntimeException("Room not found")
@@ -89,5 +96,27 @@ public class RoomServiceImpl implements RoomService {
         
         roomEntity.getMembers().removeIf(user -> userIds.contains(user.getUserId()));
         roomRepository.save(roomEntity);
+    }
+
+    @Override
+    public RoomDto createRoom(String token, RoomCreateDto dto){
+        UUID ownerId = UUID.fromString(jwtService.extractUsername(token));
+        UserEntity owner = userRepository.findById(ownerId)
+        .orElseThrow(() -> new EntityNotFoundException ("Owner not found"));
+        List<UserEntity> members = new ArrayList<>();
+    if (dto.getMembers() != null && !dto.getMembers().isEmpty()) {
+        Iterable<UserEntity> membersIterable = userRepository.findAllById(dto.getMembers());
+        members = StreamSupport.stream(membersIterable.spliterator(),false)
+                                                .collect(Collectors.toList());
+    }
+
+    RoomEntity roomEntity = RoomEntity.builder()
+            .roomName(dto.getRoomName())
+            .owner(owner)
+            .members(members)
+            .build();
+
+    RoomEntity savedRoom = roomRepository.save(roomEntity);
+    return roomMapper.mapTo(savedRoom);
     }
 }

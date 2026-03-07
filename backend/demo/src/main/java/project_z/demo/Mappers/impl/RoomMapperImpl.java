@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import project_z.demo.Mappers.Mapper;
-import project_z.demo.dto.RoomDto;
+import project_z.demo.dto.RoomDtos.RoomDto;
 import project_z.demo.entity.RoomEntity;
 
 @Component

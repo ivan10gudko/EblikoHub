@@ -1,13 +1,14 @@
 package project_z.demo.controllers;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -15,16 +16,17 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import project_z.demo.Mappers.Mapper;
-import project_z.demo.dto.TitleDto;
+import project_z.demo.common.QueryParameters.TitleQueryParameters;
+import project_z.demo.dto.TitleDtos.TitleDto;
 import project_z.demo.entity.TitleEntity;
-import project_z.demo.entity.UserEntity;
+import project_z.demo.security.SecurityService;
 import project_z.demo.services.TitleService;
 import project_z.demo.services.UserService;
-
 
 
 
@@ -40,12 +42,12 @@ private Mapper<TitleEntity, TitleDto> titleMapper;
 private TitleService titleService;
 @Autowired
 private UserService userService;
-@PostMapping("/{userId}")
+@PostMapping
 public ResponseEntity<List<TitleDto>> CreateTitle (
-    @PathVariable("userId") UUID userId,
+    @RequestHeader("Authorization") String token,
     @RequestBody TitleDto titleDto) {
         TitleEntity titleEntity = titleMapper.mapFrom(titleDto);
-        List<TitleEntity> titleEntitys = titleService.addTitle(titleEntity, userId);
+        List<TitleEntity> titleEntitys = titleService.addTitle(titleEntity, token);
         List<TitleDto> response = new ArrayList<>();
         for(TitleEntity entity : titleEntitys){
             response.add(titleMapper.mapTo(entity));
@@ -55,59 +57,74 @@ public ResponseEntity<List<TitleDto>> CreateTitle (
 
 
 @GetMapping("/{userId}")
-public List<TitleDto> getTitleListByUserId(@PathVariable("userId") UUID userId){
-    System.out.println("Searching for UUID: " + userId);
-    UserEntity userEntity = userService.findOne(userId).orElseThrow(
-    ()-> new RuntimeException("user not found"));
-    List<TitleEntity> titles = userEntity.getTitleList();
-    
-    return titles.stream()
-    .map(titleMapper::mapTo)
-    .collect(Collectors.toList());
-    
+public Page<TitleDto> getTitleListByUserId(@PathVariable("userId") UUID userId, TitleQueryParameters params){
+    Page<TitleEntity> entitiesPage = titleService.findAllByUserId(params, userId);
+    return entitiesPage.map(titleMapper::mapTo);
 }
-    
+
+@GetMapping(path = "/mal/{titleMalId}")
+public ResponseEntity<TitleDto> getUserTitleByMalId(@PathVariable("titleMalId") Long titleMalId,
+    @RequestHeader("Authorization") String token) {
+    TitleEntity title = titleService.findUserTitleByMalId(titleMalId, token);
+    return new ResponseEntity<>(titleMapper.mapTo(title), HttpStatus.OK);
+}
+@GetMapping(path = "/mal/{titleMalId}/room")
+public List<TitleDto>getUsersTitlesByMalId(@PathVariable("titleMalId") Long titleMalId,
+    @RequestHeader("Authorization") String token) {
+    return titleService.findAllByMalIdInUserRooms(titleMalId, token)
+        .stream().map(titleMapper::mapTo).collect(Collectors.toList());
+}
+
 @GetMapping(path = "/{userId}/WATCHED")
 public ResponseEntity<List<TitleDto>> getWatchedListByUserId(@PathVariable("userId") UUID userId){
         
         List<TitleEntity> titleEntitys = titleService.getWatchedList(userId);
-        List<TitleDto> response = new ArrayList<>();
-        for(TitleEntity titleEntity : titleEntitys){
-            response.add(titleMapper.mapTo(titleEntity));
-        }
         
+        List<TitleDto> response = titleEntitys.stream()
+        .map(titleMapper::mapTo)
+        .collect(Collectors.toList());
+
         return new ResponseEntity<>(response, HttpStatus.OK);
 }
+
+
 @GetMapping(path = "/{userId}/PLANNED")
 public ResponseEntity<List<TitleDto>> getWatchListByUserId(@PathVariable("userId") UUID userId){
         
         List<TitleEntity> titleEntitys = titleService.getWatchList(userId);
-        List<TitleDto> response = new ArrayList<>();
-        for(TitleEntity titleEntity : titleEntitys){
-            response.add(titleMapper.mapTo(titleEntity));
-        }
+        List<TitleDto> response = titleEntitys.stream()
+        .map(titleMapper::mapTo)
+        .collect(Collectors.toList());
         
         return new ResponseEntity<>(response, HttpStatus.OK);
 }
+
+
+@PreAuthorize("hasRole('ADMIN') || @securityService.isTitleOwner(#titleId, #token)")
 @PutMapping(path = "/{titleId}")
 public ResponseEntity<TitleDto> fullUpdateTitle (
-    @PathVariable("titleId") int titleId,
+    @PathVariable("titleId") Long titleId,
+    @RequestHeader("Authorization") String token, 
     @RequestBody TitleDto titleDto
     ) {
-    boolean bookExists = titleService.isExists(titleDto.getTitleId());
+    boolean bookExists = titleService.isExists(titleId);
      TitleEntity titleEntity = titleMapper.mapFrom(titleDto);
         TitleEntity savedTitle = titleService.createTitle(titleEntity);
         TitleDto savedTitleDto = titleMapper.mapTo(savedTitle);
         if(bookExists){
-            return new ResponseEntity<>(titleDto, HttpStatus.OK);
+            return new ResponseEntity<>(savedTitleDto, HttpStatus.OK);
         }
         else{
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 }
+
+@PreAuthorize("hasRole('ADMIN') || @securityService.isTitleOwner(#titleId, #token)")
 @PatchMapping(path = "/{titleId}")
     public ResponseEntity<TitleDto> partialUpdate (
-        @PathVariable("titleId") Long titleId,@RequestBody TitleDto titleDto
+        @PathVariable("titleId") Long titleId,
+        @RequestHeader("Authorization") String token,
+        @RequestBody TitleDto titleDto
         ){
              if(!titleService.isExists(titleId)){
             return  new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -116,9 +133,12 @@ public ResponseEntity<TitleDto> fullUpdateTitle (
         TitleEntity updatedTitleEntity  = titleService.partialUpdate(titleId, titleEntity);
         return new ResponseEntity<>(titleMapper.mapTo(updatedTitleEntity), HttpStatus.OK);
     }
+
+@PreAuthorize("hasRole('ADMIN') || @securityService.isTitleOwner(#titleId, #token)")
 @DeleteMapping(path = "/{titleId}")
     public ResponseEntity<Void> deleteTitleById(
-        @PathVariable("titleId") Long titleId
+        @PathVariable("titleId") Long titleId,
+        @RequestHeader("Authorization") String token
     ){
          if(!titleService.isExists(titleId)){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);

@@ -10,4 +10,5 @@ import project_z.demo.entity.RoomEntity;
 @Repository
 public interface  RoomRepository extends CrudRepository<RoomEntity, Long>{
  List<RoomEntity> findAllByMembers_UserId(UUID userId);
+ 
 }
