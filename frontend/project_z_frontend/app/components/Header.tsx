@@ -36,7 +36,7 @@ const Header = ({session}:HeaderProps)=> {
 )} >Rooms</NavLink>
                 <NavLink to={"/profile"}>Watchlist</NavLink>
                 {session ? (
-                    <NavLink to="profile/123">
+                    <NavLink to="/profile">
                         <AccountCircleIcon fontSize="large" />
                     </NavLink>
                 ) : (

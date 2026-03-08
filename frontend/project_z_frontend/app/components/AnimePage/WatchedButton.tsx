@@ -25,7 +25,7 @@ const WatchedButton: React.FC<Props>=({item})=>{
 
     return (
             <Button
-                type={title?"fill":"outline"}
+                variant={title?"fill":"outline"}
                 color="rgba(0,0,0,0.85)"
                 borderColor="rgba(14,14,14,0.2)"
                 bgColor="rgb(236, 238, 242)"

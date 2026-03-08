@@ -1,12 +1,3 @@
-import { Link } from "react-router";
-import Input from "./Input";
-import { useState } from "react";
-import Button from "../Button";
-
-import SocialMediaBlock from "./SocialMediaBlock";
-import Separator from "./Separator";
-
-
 const ConfirmEmail : React.FC = () => {
     
     return (

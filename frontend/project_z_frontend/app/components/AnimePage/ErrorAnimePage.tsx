@@ -27,7 +27,7 @@ const ErrorAnimePage : React.FC = ()=>{
               <Button
                 action={()=>navigate(-1)}
                 className="w-full"
-                type="fill"
+                variant="fill"
               >
                 <RefreshRoundedIcon className="mr-2 h-5 w-5" />
                 Get Back
@@ -37,7 +37,7 @@ const ErrorAnimePage : React.FC = ()=>{
               <Button
                 action={()=>navigate("/")}
                 className="w-full"
-                type="outline"
+                variant="outline"
               >
                 <HomeRoundedIcon className="mr-2 h-5 w-5" />
                 Home

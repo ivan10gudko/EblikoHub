@@ -1,6 +1,6 @@
-import React, { useId, useState } from 'react';
+import React, { useId, useState, type ComponentProps } from 'react';
 
-interface InputProps {
+interface InputProps extends Omit<ComponentProps<"input">, "onChange"|"onBlur">{
     children?: string;
     name: string;
     value: string | number;
@@ -21,7 +21,8 @@ const Input: React.FC<InputProps> = ({
     onChange,
     onBlur,
     error,
-    isValid="neutral"
+    isValid="neutral",
+    ...props
 }) => {
 
     const id = useId();
@@ -57,6 +58,7 @@ const Input: React.FC<InputProps> = ({
                 onBlur={(e) => {
                     if (onBlur) onBlur(e.target.value);
                 }}
+                {...props}
             />
             <label htmlFor={id} className={`block peer-placeholder-shown:hidden absolute text-xs -top-2 left-4 bg-white px-2 ${getLabelColor()}`}>{name}</label>
 

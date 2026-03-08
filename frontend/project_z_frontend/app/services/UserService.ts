@@ -2,21 +2,17 @@ import axios from "axios";
 import type { RegisterData } from "~/types/auth.types";
 import type { CreateUserProfile, UserProfile } from "~/types/user.types";
 import { publicClient } from "./publicClient";
+import { apiClient } from "./apiClient";
 
 export const userService = {
 
-    createUser: async (userData: RegisterData, supabaseId: string): Promise<UserProfile> => {
-        const payload : CreateUserProfile = {
-            userId: supabaseId,
-            name: userData.name,
-            nameTag: userData.username
-        }
-        const response = await publicClient.post<UserProfile>("/users", payload);
+    createUser: async (userData: CreateUserProfile): Promise<UserProfile> => {
+        const response = await publicClient.post<UserProfile>("/users", userData);
         return response.data;
     },
 
     getUser: async (supabaseId: string): Promise<UserProfile> => {
-        const response = await publicClient.get<UserProfile>(`/users/${supabaseId}`);
+        const response = await apiClient.get<UserProfile>(`/users/${supabaseId}`);
         return response.data;
     },
 

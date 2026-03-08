@@ -7,10 +7,13 @@ import { queryClient } from "~/lib/queryClient";
 import { supabase } from "~/lib/supabase";
 import type { Session } from "@supabase/supabase-js";
 import type { Route } from "./+types/MainLayout";
+import { useAuthStore } from "~/store/UserStore";
 
 
 export async function clientLoader() {
     const { data: { session } } = await supabase.auth.getSession();
+    
+    await useAuthStore.getState().restoreSession(session?.user?.id || null);
 
     return { session };
 }

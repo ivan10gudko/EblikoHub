@@ -12,7 +12,7 @@ export default [
         index("./pages/Home.tsx"),
     
         layout("./layout/ProtectedLayout.tsx",[
-            route("profile/:id", "./pages/Profile.tsx"),
+            route("profile", "./pages/Profile.tsx"),
 
             ...prefix("rooms", [
                 index("./pages/Rooms.tsx"),     // /rooms
