@@ -1,4 +1,4 @@
-import ButtonSkeleton from "../../../components/UI/ButtonSkeleton";
+import ButtonSkeleton from "../../../shared/ui/ButtonSkeleton";
 
 const MainComponentSkeleton : React.FC = () => {
     const baseClass = "animate-pulse bg-gray-300 cursor-default pointer-events-none rounded"

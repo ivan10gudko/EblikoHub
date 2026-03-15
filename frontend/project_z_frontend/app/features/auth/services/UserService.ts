@@ -1,8 +1,8 @@
 import axios from "axios";
 import type { RegisterData } from "~/features/auth/types/auth.types";
 import type { CreateUserProfile, UserProfile } from "~/features/auth/types/user.types";
-import { publicClient } from "../../../services/publicClient";
-import { apiClient } from "../../../services/apiClient";
+import { publicClient } from "../../../shared/api/publicClient";
+import { apiClient } from "../../../shared/api/apiClient";
 
 export const userService = {
 

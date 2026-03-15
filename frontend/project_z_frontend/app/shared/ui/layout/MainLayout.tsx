@@ -1,5 +1,5 @@
 import { Outlet } from "react-router";
-import Header from "./Header";
+import Header from "../../../widgets/Header/Header";
 import Footer from "./Footer";
 import type { Session } from "@supabase/supabase-js";
 

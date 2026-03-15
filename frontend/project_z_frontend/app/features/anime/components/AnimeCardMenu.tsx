@@ -1,4 +1,4 @@
-import useWatchlist, { type Title } from "~/store/watchlist.store";
+import useWatchlist, { type Title } from "~/legacy/store/watchlist.store";
 import { useEffect, useState, type Ref } from "react";
 
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';

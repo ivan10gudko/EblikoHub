@@ -1,6 +1,6 @@
-import { supabase } from "~/lib/supabase";
+import { supabase } from "~/shared/lib/supabase";
 import { useAuthStore } from "~/features/auth/store/auth.store";
-import MainLayout from "~/components/layout/MainLayout";
+import MainLayout from "~/shared/ui/layout/MainLayout";
 import Loader from "~/pages/home/components/Loader";
 import type { Route } from "./+types/_main";
 

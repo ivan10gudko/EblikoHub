@@ -1,4 +1,4 @@
-import { supabase } from "~/lib/supabase";
+import { supabase } from "~/shared/lib/supabase";
 import type { Providers } from "~/features/auth/types/auth.types";
 
 export const authService = {

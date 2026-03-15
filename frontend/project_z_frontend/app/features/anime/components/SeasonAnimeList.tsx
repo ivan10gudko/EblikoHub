@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { getSeasonalAnimeList, getSeasonNow, getTopAnimeList } from "~/features/anime/services/jikan.api";
 import AnimeCard, { type AnimeCardType } from "./AnimeCard";
-import CollapsibleSection from "../../../components/UI/Callapsible/ColapsableSection";
+import CollapsibleSection from "../../../widgets/Callapsible/ColapsableSection";
 import TrendingUpRoundedIcon from '@mui/icons-material/TrendingUpRounded';
 import AnimePageSceleton from "./AnimePageSceleton";
 

@@ -1,7 +1,7 @@
 
 import { useQuery, type QueryKey, type QueryFunction } from "@tanstack/react-query";
 import { useState } from "react";
-import useWindowDimensions from "~/hooks/useWindowDimensions";
+import useWindowDimensions from "~/shared/hooks/useWindowDimensions";
 interface UseCollapsibleListProps<T>{
     items: T[];
 }

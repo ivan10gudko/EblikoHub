@@ -1,5 +1,5 @@
 import { Link } from "react-router";
-import Logo from "../UI/Logo";
+import Logo from "~/shared/ui/Logo";
 
 const Footer : React.FC<{}> = ()=>{
     return (

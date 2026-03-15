@@ -1,9 +1,9 @@
 import { useNavigate, useNavigation } from "react-router";
 import { useEffect, useRef} from "react";
 
-import Badge from "../../../components/UI/Badge";
+import Badge from "../../../shared/ui/Badge";
 import CardDate from "./CardDate";
-import Rating from "../../../components/UI/Rating";
+import Rating from "../../../shared/ui/Rating";
 
 import AnimeCardMenu from "./AnimeCardMenu";
 

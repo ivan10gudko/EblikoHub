@@ -1,4 +1,4 @@
-import { queryClient } from "~/lib/queryClient";
+import { queryClient } from "~/shared/lib/queryClient";
 import { searchOptions } from "~/features/search/helpers/SearchOptions";
 import SearchPage from "~/pages/search/SearchPage";
 import type { Route } from "./+types/search";

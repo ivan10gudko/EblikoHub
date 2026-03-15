@@ -1,5 +1,5 @@
 import { getAnimeById } from "~/features/anime/services/jikan.api";
-import { queryClient } from "~/lib/queryClient";
+import { queryClient } from "~/shared/lib/queryClient";
 import AnimePage from "~/pages/animePage/AnimePage";
 import AnimePageSceleton from "~/features/anime/components/AnimePageSceleton";
 import type { Route } from "./+types/anime.$id";

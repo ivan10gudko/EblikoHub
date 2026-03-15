@@ -1,9 +1,9 @@
-import type { Title } from "~/store/watchlist.store";
-import useWatchlist from "~/store/watchlist.store";
+import type { Title } from "~/legacy/store/watchlist.store";
+import useWatchlist from "~/legacy/store/watchlist.store";
 
 import WatchLaterOutlinedIcon from '@mui/icons-material/WatchLaterOutlined';
 import WatchLaterIcon from '@mui/icons-material/WatchLater';
-import Button from "../../../components/UI/Button";
+import Button from "../../../shared/ui/Button";
 
 interface Props{
     item: Title,

@@ -1,6 +1,6 @@
 import ArrowDropDownRoundedIcon from '@mui/icons-material/ArrowDropDownRounded';
 import { type ReactNode } from "react";
-import { useCollapsibleList } from "~/components/UI/Callapsible/useCallapsibleList";
+import { useCollapsibleList } from "~/widgets/Callapsible/useCallapsibleList";
 import CollapsibleSectionSkeleton from "./ColapsableSectionSceleton";
 
 type CollapsibleSectionProps<T, K extends string | number> = {

@@ -1,4 +1,4 @@
-import ButtonSkeleton from "../../../components/UI/ButtonSkeleton";
+import ButtonSkeleton from "../../../shared/ui/ButtonSkeleton";
 
 const SidebarSkeleton : React.FC = () => {
 

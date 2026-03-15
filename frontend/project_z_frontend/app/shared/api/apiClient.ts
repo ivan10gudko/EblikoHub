@@ -1,5 +1,5 @@
 import axios, { AxiosError } from "axios";
-import { supabase } from "~/lib/supabase";
+import { supabase } from "~/shared/lib/supabase";
 
 export const apiClient = axios.create({
     baseURL: import.meta.env.VITE_API_URL || '/api/v1',

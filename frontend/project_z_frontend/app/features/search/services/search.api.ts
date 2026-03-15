@@ -1,6 +1,6 @@
 import type { AnimeCardType } from "~/features/anime/components/AnimeCard";
 import type { SeacrchResponse } from "../../anime/types/MyAnimeList.types";
-import { publicClient } from "../../../services/publicClient";
+import { publicClient } from "../../../shared/api/publicClient";
 
 export async function getAnimeSearch(q: string, page: number = 1): Promise<SeacrchResponse<AnimeCardType>> {
     try {

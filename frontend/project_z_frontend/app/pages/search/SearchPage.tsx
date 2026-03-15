@@ -1,14 +1,13 @@
 import { useEffect } from "react";
 import { useSearchParams, useNavigate } from "react-router";
 import { useQuery } from '@tanstack/react-query';
-import { queryClient } from "~/lib/queryClient";
+import { queryClient } from "~/shared/lib/queryClient";
 import { searchOptions } from "~/features/search/helpers/SearchOptions";
 
 import AnimeCard from "~/features/anime/components/AnimeCard";
 import SearchBar from "~/features/search/components/SearchBar";
 import SceletonCard from "~/features/anime/components/AnimeCardSceleton";
-import Pagination from "~/components/UI/Pagination";
-import type { Route } from "../+types/AnimePage";
+import Pagination from "~/shared/ui/Pagination";
 
 
 const SearchPage: React.FC = () => {

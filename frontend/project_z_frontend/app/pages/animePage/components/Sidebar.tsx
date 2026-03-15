@@ -1,13 +1,13 @@
 import type { Anime } from "~/features/anime/types/MyAnimeList.types";
 import type { AnimeCardType } from "../../../features/anime/components/AnimeCard";
-import Button from "../../../components/UI/Button";
+import Button from "../../../shared/ui/Button";
 import AddToWatchedCard from "../../../features/watchlist/components/AddToWathedCard";
 import WatchlistButton from "../../../features/watchlist/components/WatchlistButton";
-import type { Title } from "~/store/watchlist.store";
+import type { Title } from "~/legacy/store/watchlist.store";
 import WatchedButton from "../../../features/watchlist/components/WatchedButton";
 import RateCard from "./Rate";
 import Rate from "./Rate";
-import { ImageWithFallback } from "../../../components/UI/ImageWithFallback";
+import { ImageWithFallback } from "../../../shared/ui/ImageWithFallback";
 
 interface Props{
     data: Anime

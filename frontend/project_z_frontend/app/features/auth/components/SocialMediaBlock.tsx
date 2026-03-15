@@ -1,5 +1,5 @@
 import { authService } from "~/features/auth/services/AuthService";
-import Button from "../../../components/UI/Button"
+import Button from "../../../shared/ui/Button"
 
 import { FaDiscord } from "react-icons/fa";
 

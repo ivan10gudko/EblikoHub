@@ -1,5 +1,5 @@
-import type { Title } from "~/store/watchlist.store";
-import useWatchlist from "~/store/watchlist.store";
+import type { Title } from "~/legacy/store/watchlist.store";
+import useWatchlist from "~/legacy/store/watchlist.store";
 
 import WatchLaterOutlinedIcon from '@mui/icons-material/WatchLaterOutlined';
 import WatchLaterIcon from '@mui/icons-material/WatchLater';

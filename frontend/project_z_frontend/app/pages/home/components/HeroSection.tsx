@@ -1,11 +1,11 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { getTopAnime } from "~/features/anime/services/jikan.api";
-import Badge from "../../../components/UI/Badge";
-import Rating from "../../../components/UI/Rating";
-import Date from "../../../components/UI/Date";
+import Badge from "../../../shared/ui/Badge";
+import Rating from "../../../shared/ui/Rating";
+import Date from "../../../shared/ui/Date";
 import HeroDescription from "./HeroDescription";
 import { Link, Navigate } from "react-router";
-import Button from "../../../components/UI/Button";
+import Button from "../../../shared/ui/Button";
 import type { Anime } from "~/features/anime/types/MyAnimeList.types";
 
 const HeroSection: React.FC<{}> = () => {

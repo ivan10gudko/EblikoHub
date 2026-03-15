@@ -1,5 +1,5 @@
 import { Link, Outlet } from "react-router";
-import Logo from "~/components/UI/Logo";
+import Logo from "~/shared/ui/Logo";
 
 const AuthLayout : React.FC = ()=> {
     return (

@@ -1,13 +1,13 @@
-import Input from "../../components/UI/Input";
+import Input from "../../shared/ui/UI/Input";
 import { useState } from "react";
-import Button from "../../components/UI/Button";
+import Button from "../../shared/ui/UI/Button";
 
 import SocialMediaBlock from "../../features/auth/components/SocialMediaBlock";
 import Separator from "../../features/auth/components/Separator";
 import { useNavigate } from "react-router";
 import type { LoginData } from "~/features/auth/types/auth.types";
 import { useAuthStore } from "~/features/auth/store/auth.store";
-import { useForm } from "~/hooks/useForm";
+import { useForm } from "~/shared/hooks/useForm";
 import { validateEmail, validatePassword } from "~/features/auth/utils/validators";
 
 const LoginPage = () => {

@@ -1,6 +1,6 @@
 import type React from "react";
 import type { Genre } from "~/features/anime/types/MyAnimeList.types";
-import Badge from "../../../components/UI/Badge";
+import Badge from "../../../shared/ui/Badge";
 
 import SellOutlinedIcon from '@mui/icons-material/SellOutlined';
 

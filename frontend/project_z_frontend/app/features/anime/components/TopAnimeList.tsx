@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { getTopAnimeList } from "~/features/anime/services/jikan.api";
 import AnimeCard, { type AnimeCardType } from "./AnimeCard";
-import CollapsibleSection from "../../../components/UI/Callapsible/ColapsableSection";
+import CollapsibleSection from "../../../widgets/Callapsible/ColapsableSection";
 import LocalFireDepartmentRoundedIcon from '@mui/icons-material/LocalFireDepartmentRounded';
 import AnimePageSceleton from "./AnimePageSceleton";
 

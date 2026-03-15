@@ -1,7 +1,7 @@
-import type { Title } from "~/store/watchlist.store";
+import type { Title } from "~/legacy/store/watchlist.store";
 import LibraryAddCheckOutlinedIcon from '@mui/icons-material/LibraryAddCheckOutlined';
 import LibraryAddCheckIcon from '@mui/icons-material/LibraryAddCheck';
-import useWatched from "~/store/watched.store";
+import useWatched from "~/legacy/store/watched.store";
 
 interface Props{
     item: Title,

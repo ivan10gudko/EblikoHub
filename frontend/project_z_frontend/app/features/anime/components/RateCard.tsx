@@ -1,9 +1,9 @@
 import StarOutlineOutlinedIcon from '@mui/icons-material/StarOutlineOutlined';
 import StarOutlinedIcon from '@mui/icons-material/StarOutlined';
 import { useRef, useState, type ChangeEvent, type FormEvent, type MouseEvent } from 'react';
-import type { Title } from '~/store/watchlist.store';
+import type { Title } from '~/legacy/store/watchlist.store';
 import DoneOutlinedIcon from '@mui/icons-material/DoneOutlined';
-import useWatched from '~/store/watched.store';
+import useWatched from '~/legacy/store/watched.store';
 
 interface Props{
     item: Title,

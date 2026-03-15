@@ -21,37 +21,38 @@ export const useForm = <T extends Record<string, any>>({
         setErrors((prev) => ({ ...prev, [name]: error }));
     };
 
-    const handleChange = (name: keyof T) => ( value: string) => {
-        const updatedFormData = { ...formData, [name]: value };
-        setFormData(updatedFormData);
+    const handleChange = (name: keyof T) => (value: T[keyof T]) => {
+        setFormData((prevData) => {
+            const updatedFormData = { ...prevData, [name]: value };
+            
+            if (touched[name] || errors[name]) {
+                const error = validate(name, value, updatedFormData);
+                setErrors((prevErrors) => ({ ...prevErrors, [name]: error }));
+            }
 
-        if (touched[name] || errors[name]) {
-            const error = validate(name, value, updatedFormData);
-            setErrors((prev) => ({ ...prev, [name]: error }));
-        }
+            return updatedFormData;
+        });
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
         const newErrors: Partial<Record<keyof T, string>> = {};
-        let hasError = false;
+        let hasAnyError = false;
         const allTouched: Partial<Record<keyof T, boolean>> = {};
 
         (Object.keys(formData) as Array<keyof T>).forEach((key) => {
             const error = validate(key, formData[key], formData);
             if (error) {
                 newErrors[key] = error;
-                hasError = true;
+                hasAnyError = true;
+            } else {
+                newErrors[key] = undefined;
             }
             allTouched[key] = true;
         });
 
-        const mergedErrors = { ...errors, ...newErrors };
-        
-        const hasAnyError = Object.values(mergedErrors).some((err) => !!err);
-
-        setErrors(mergedErrors);
+        setErrors(newErrors);
         setTouched(allTouched);
 
         if (!hasAnyError) {
@@ -65,7 +66,8 @@ export const useForm = <T extends Record<string, any>>({
         const value = formData[fieldName];
 
         if (isTouched && hasError) return "invalid";
-        if (isTouched && !hasError && value) return "valid";
+
+        if (isTouched && !hasError && value !== "" && value !== undefined && value !== null) return "valid";
 
         return "neutral";
     };

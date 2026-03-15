@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router";
-import Button from "../../../components/UI/Button";
+import Button from "../../../shared/ui/Button";
 import RefreshRoundedIcon from '@mui/icons-material/RefreshRounded';
 import HomeRoundedIcon from '@mui/icons-material/HomeRounded';
 import ErrorOutlineRoundedIcon from '@mui/icons-material/ErrorOutlineRounded';
