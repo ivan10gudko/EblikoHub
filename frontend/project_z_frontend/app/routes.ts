@@ -7,28 +7,28 @@ import {
 } from "@react-router/dev/routes";
 
 export default [
-    layout("./layout/MainLayout.tsx",[
+    layout("./routes/_main.tsx",[
     
-        index("./pages/Home.tsx"),
+        index("./routes/home.tsx"),
     
-        layout("./layout/ProtectedLayout.tsx",[
-            route("profile", "./pages/Profile.tsx"),
+        layout("./routes/_protected.tsx",[
+            route("profile", "./routes/profile.tsx"),
 
             ...prefix("rooms", [
-                index("./pages/Rooms.tsx"),     // /rooms
-                route(":id", "./pages/Room.tsx"), // /rooms/:id
+                index("./routes/rooms._index.tsx"),     // /rooms
+                route(":id", "./routes/rooms.$id.tsx"), // /rooms/:id
             ]),
         ]),
 
-        route("search", "./pages/SearchPage.tsx"),
+        route("search", "./routes/search.tsx"),
 
-        route("anime/:id", "./pages/AnimePage.tsx"),
+        route("anime/:id", "./routes/anime.$id.tsx"),
     ]),
 
-    route("auth", "./layout/AuthLayout.tsx",[
-        index("./pages/AuthIndex.tsx"),
-        route("login", "./pages/Login.tsx"),
-        route("signup", "./pages/Signup.tsx"),
-        route("callback", "./pages/AuthCallback.tsx"),
+    route("auth", "./routes/_auth.tsx",[
+        index("./routes/auth._index.tsx"),
+        route("login", "./routes/auth.login.tsx"),
+        route("signup", "./routes/auth.signup.tsx"),
+        route("callback", "./routes/auth.callback.tsx"),
     ]),
 ] satisfies RouteConfig;
