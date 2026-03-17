@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 
 type Breakpoint = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'larger';
 
-function useWindowDimensions(): Breakpoint | null {
+export function useWindowDimensions(): Breakpoint | null {
   const [width, setWidth] = useState<number | null>(null);
 
   useEffect(() => {
@@ -35,5 +35,3 @@ function useWindowDimensions(): Breakpoint | null {
     return 'larger';
   }
 }
-
-export default useWindowDimensions;

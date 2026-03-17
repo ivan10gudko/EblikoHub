@@ -4,10 +4,10 @@ import { useQuery } from '@tanstack/react-query';
 import { queryClient } from "~/shared/lib/queryClient";
 import { searchOptions } from "~/features/search/helpers/SearchOptions";
 
-import AnimeCard from "~/features/anime/components/AnimeCard";
-import SearchBar from "~/features/search/components/SearchBar";
-import SceletonCard from "~/features/anime/components/AnimeCardSceleton";
-import Pagination from "~/shared/ui/Pagination";
+import AnimeCard from "~/entities/title/ui/AnimeCard";
+import SearchBar from "~/features/search/ui/SearchBar";
+import SceletonCard from "~/entities/title/ui/AnimeCardSkeleton";
+import Pagination from "~/shared/ui/Pagination/Pagination";
 
 
 const SearchPage: React.FC = () => {

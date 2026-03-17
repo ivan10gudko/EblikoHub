@@ -1,11 +1,11 @@
 import React, { useState } from "react";
-import Input from "../../shared/ui/Input";
-import Separator from "../../features/auth/components/Separator";
-import SocialMediaBlock from "../../features/auth/components/SocialMediaBlock";
-import Button from "../../shared/ui/Button";
+import Input from "../../shared/ui/Input/Input";
+import Separator from "../../features/auth/ui/Separator";
+import SocialMediaBlock from "../../features/auth/ui/SocialMediaBlock";
+import Button from "../../shared/ui/Button/Button";
 import { useNavigate } from "react-router";
-import type { RegisterData } from "~/features/auth/types/auth.types";
-import { userService } from "~/features/auth/services/UserService";
+import type { RegisterData } from "~/entities/session/model/session.types";
+import { userService } from "~/entities/user/api/UserService";
 import { useAuthStore } from "~/features/auth/store/auth.store";
 import { useForm } from "~/shared/hooks/useForm";
 import { validateEmail, validateName, validatePassword, validateUsername } from "~/features/auth/utils/validators";

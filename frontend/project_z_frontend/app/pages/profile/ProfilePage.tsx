@@ -1,6 +1,6 @@
 import { useAuthStore } from "~/features/auth/store/auth.store";
 import { useShallow } from "zustand/react/shallow";
-import Button from "~/shared/ui/Button";
+import Button from "~/shared/ui/Button/Button";
 import { useNavigate } from "react-router";
 
 const ProfilePage = () => {

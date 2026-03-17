@@ -1,6 +1,6 @@
 import { Outlet, redirect } from "react-router";
 import { supabase } from "~/shared/lib/supabase";
-import Loader from "~/pages/home/components/Loader";
+import Loader from "~/shared/ui/Loader/Loader";
 import type { Route } from "./+types/_protected";
 
 export async function clientLoader() {

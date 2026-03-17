@@ -1,0 +1,1 @@
+export {default as SeasonAnimeList} from "./SeasonAnimeList";

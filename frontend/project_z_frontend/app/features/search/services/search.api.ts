@@ -1,8 +1,9 @@
-import type { AnimeCardType } from "~/features/anime/components/AnimeCard";
-import type { SeacrchResponse } from "../../anime/types/MyAnimeList.types";
-import { publicClient } from "../../../shared/api/publicClient";
 
-export async function getAnimeSearch(q: string, page: number = 1): Promise<SeacrchResponse<AnimeCardType>> {
+import type { AnimeCardType } from "~/entities/title";
+import { publicClient } from "../../../shared/api/publicClient";
+import type { SearchResponse } from "../types/search";
+
+export async function getAnimeSearch(q: string, page: number = 1): Promise<SearchResponse<AnimeCardType>> {
     try {
         const options = {
             method: 'GET',

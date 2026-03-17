@@ -1,10 +1,10 @@
 import { NavLink, useNavigate } from "react-router";
-import SearchBar from "../../features/search/components/SearchBar";
-import Logo from "../../shared/ui/Logo";
+import SearchBar from "../../features/search/ui/SearchBar";
+import Logo from "../../shared/ui/Logo/Logo";
 import MenuIcon from "@mui/icons-material/Menu";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { useMemo, useState } from "react";
-import BurgerIcon from "../../shared/ui/BurgerIcon";
+import BurgerIcon from "../../shared/ui/Burger/BurgerIcon";
 import type { Session } from "@supabase/supabase-js";
 interface HeaderProps{
     session : Session | null

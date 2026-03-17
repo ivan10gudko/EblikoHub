@@ -1,11 +1,11 @@
-import Input from "../../shared/ui/UI/Input";
+import Input from "../../shared/ui/Input/Input";
 import { useState } from "react";
-import Button from "../../shared/ui/UI/Button";
+import Button from "../../shared/ui/Button/Button";
 
-import SocialMediaBlock from "../../features/auth/components/SocialMediaBlock";
-import Separator from "../../features/auth/components/Separator";
+import SocialMediaBlock from "../../features/auth/ui/SocialMediaBlock";
+import Separator from "../../features/auth/ui/Separator";
 import { useNavigate } from "react-router";
-import type { LoginData } from "~/features/auth/types/auth.types";
+import type { LoginData } from "~/entities/session/model/session.types";
 import { useAuthStore } from "~/features/auth/store/auth.store";
 import { useForm } from "~/shared/hooks/useForm";
 import { validateEmail, validatePassword } from "~/features/auth/utils/validators";

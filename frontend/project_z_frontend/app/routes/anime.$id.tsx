@@ -1,7 +1,7 @@
-import { getAnimeById } from "~/features/anime/services/jikan.api";
+import { getAnimeById } from "~/entities/title/api/jikan.api";
 import { queryClient } from "~/shared/lib/queryClient";
-import AnimePage from "~/pages/animePage/AnimePage";
-import AnimePageSceleton from "~/features/anime/components/AnimePageSceleton";
+import AnimePage from "~/pages/animePage/ui/AnimePage";
+import AnimePageSceleton from "~/pages/animePage/ui/AnimePageSkeleton";
 import type { Route } from "./+types/anime.$id";
 
 export async function clientLoader({ params }: Route.LoaderArgs) {

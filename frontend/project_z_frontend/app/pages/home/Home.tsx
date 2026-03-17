@@ -1,9 +1,9 @@
 import { Suspense, useEffect } from "react";
-import HeroSection from "~/pages/home/components/HeroSection";
-import HeroSkeleton from "~/pages/home/components/HeroSkeleton";
-import Loader from "~/pages/home/components/Loader";
-import SeasonAnimeList from "~/features/anime/components/SeasonAnimeList";
-import TopAnimeList from "~/features/anime/components/TopAnimeList";
+import HeroSection from "~/widgets/HeroSection/HeroSection";
+import HeroSkeleton from "~/widgets/HeroSection/HeroSkeleton";
+import Loader from "~/shared/ui/Loader/Loader";
+import SeasonAnimeList from "~/widgets/SeasonAnimeList/SeasonAnimeList";
+import TopAnimeList from "~/widgets/TopAnimeList/TopAnimeList";
 
 
 const HomePage : React.FC = ()=> {
