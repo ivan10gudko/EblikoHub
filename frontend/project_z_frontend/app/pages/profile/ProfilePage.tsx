@@ -1,7 +1,8 @@
-import { useAuthStore } from "~/features/auth/store/auth.store";
+
 import { useShallow } from "zustand/react/shallow";
-import Button from "~/shared/ui/Button/Button";
 import { useNavigate } from "react-router";
+import { useAuthStore } from "~/features/auth";
+import { Button } from "~/shared/ui/Button";
 
 const ProfilePage = () => {
     const { user, isLoading, error } = useAuthStore(

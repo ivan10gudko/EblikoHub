@@ -1,8 +1,8 @@
 import type React from "react";
-import type { Genre } from "~/entities/title/model/animeTitle.types";
-import Badge from "../../../shared/ui/Badge/Badge";
 
 import SellOutlinedIcon from '@mui/icons-material/SellOutlined';
+import type { Genre } from "../model/animeTitle.types";
+import { Badge } from "~/shared/ui/Badge";
 
 interface Props{
     genres: Genre[]

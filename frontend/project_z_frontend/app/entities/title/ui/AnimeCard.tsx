@@ -1,12 +1,10 @@
 import { useNavigate} from "react-router";
 import { useRef} from "react";
-
-import Badge from "../../../shared/ui/Badge/Badge";
-import CardDate from "./CardDate";
-import Rating from "../../../shared/ui/Rating/Rating";
-
 import type { AnimeCardType } from "../model/animeTitle.types";
-import { AnimeCardMenu } from "~/features/rating";
+import { AnimeCardMenu } from "~/features/rating";//це виправлю після рефакторингу
+import CardDate from "./CardDate";
+import { Badge } from "~/shared/ui/Badge";
+import { Rating } from "~/shared/ui/Rating";
 
 interface Props{
     data:AnimeCardType;

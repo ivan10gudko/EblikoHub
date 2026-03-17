@@ -5,7 +5,7 @@ import React from 'react';
  * Скелетон-заглушка для однієї картки.
  * Має анімований пульсуючий ефект.
  */
-const SkeletonCard: React.FC = () => {
+const AnimeSkeletonCard: React.FC = () => {
     return (
         <div className="w-full" aria-hidden="true">
             {/* Заглушка для зображення (постера) */}
@@ -20,4 +20,4 @@ const SkeletonCard: React.FC = () => {
     );
 };
 
-export default SkeletonCard;
+export default AnimeSkeletonCard;

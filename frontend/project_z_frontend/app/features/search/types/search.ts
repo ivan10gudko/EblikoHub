@@ -1,4 +1,5 @@
-import type { PaginationMeta } from "~/shared/types/api";
+import type { PaginationMeta } from "~/shared/types";
+
 
 export interface SearchResponse<T> {
     data: T[];

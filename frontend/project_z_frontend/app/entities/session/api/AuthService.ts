@@ -1,5 +1,6 @@
-import { supabase } from "~/shared/lib/supabase";
-import type { Providers } from "~/entities/session/model/session.types";
+import { supabase } from "~/shared/lib";
+import type { Providers } from "../model/session.types";
+
 
 export const authService = {
 

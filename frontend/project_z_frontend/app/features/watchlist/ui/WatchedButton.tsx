@@ -2,8 +2,8 @@ import type { Title } from "~/legacy/store/watchlist.store";
 
 import LibraryAddCheckOutlinedIcon from '@mui/icons-material/LibraryAddCheckOutlined';
 import LibraryAddCheckIcon from '@mui/icons-material/LibraryAddCheck';
-import Button from "../../../shared/ui/Button/Button";
 import useWatched from "~/legacy/store/watched.store";
+import { Button } from "~/shared/ui/Button";
 
 interface Props{
     item: Title,

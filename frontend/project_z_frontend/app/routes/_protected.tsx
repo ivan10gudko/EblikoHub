@@ -1,7 +1,7 @@
 import { Outlet, redirect } from "react-router";
-import { supabase } from "~/shared/lib/supabase";
-import Loader from "~/shared/ui/Loader/Loader";
 import type { Route } from "./+types/_protected";
+import { supabase } from "~/shared/lib";
+import { Loader } from "~/shared/ui/Loader";
 
 export async function clientLoader() {
     const { data: { session } } = await supabase.auth.getSession();

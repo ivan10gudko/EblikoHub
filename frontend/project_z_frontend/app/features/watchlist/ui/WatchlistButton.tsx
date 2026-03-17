@@ -3,7 +3,7 @@ import useWatchlist from "~/legacy/store/watchlist.store";
 
 import WatchLaterOutlinedIcon from '@mui/icons-material/WatchLaterOutlined';
 import WatchLaterIcon from '@mui/icons-material/WatchLater';
-import Button from "../../../shared/ui/Button/Button";
+import { Button } from "~/shared/ui/Button";
 
 interface Props{
     item: Title,

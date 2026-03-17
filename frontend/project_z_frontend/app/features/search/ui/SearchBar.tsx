@@ -1,9 +1,8 @@
 import { useState } from "react";
 import SearchIcon from "@mui/icons-material/Search";
-import clsx from "clsx"; // Опціонально: корисно для об'єднання класів, або використовуйте template strings
 
 interface SearchBarProps {
-    onSearch: (query: string) => void; // Головний колбек
+    onSearch: (query: string) => void;
     placeholder?: string;
     minLength?: number;
     className?: string;

@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
-import CollapsibleSection from "../../shared/ui/Callapsible/ui/CollapsableSection";
 import LocalFireDepartmentRoundedIcon from '@mui/icons-material/LocalFireDepartmentRounded';
 import { AnimeCard, AnimeCardSceleton, getTopAnimeList, type AnimeCardType } from "~/entities/title";
+import CollapsibleSection from "~/shared/ui/Callapsible/ui/CollapsableSection";
 
 const TopAnimeList: React.FC<{}> = ({})=>{
     

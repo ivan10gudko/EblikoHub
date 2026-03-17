@@ -1,4 +1,5 @@
-import SignupPage from "~/pages/auth/SignupPage";
+import { SignupPage } from "~/pages/auth";
+
 
 export default function SignUpRoute() {
     return <SignupPage />;

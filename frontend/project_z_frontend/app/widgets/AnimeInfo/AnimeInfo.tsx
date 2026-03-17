@@ -1,10 +1,4 @@
-import type { Anime } from "~/entities/title/model/animeTitle.types";
-import Title from "../../entities/title/ui/Title";
-import AnimeStat from "../../entities/title/ui/AnimeStat";
-import Genres from "../../entities/title/ui/Genres";
-import Description from "../../entities/title/ui/Synopsis";
-import Synopsis from "../../entities/title/ui/Synopsis";
-import Trailer from "../../entities/title/ui/Trailer";
+import { AnimeStat, Genres, Synopsis, Title, Trailer, type Anime } from "~/entities/title";
 
 //TODO можна додати компонент зі статистикою друзів( оцінки , хто дивився) пізніше
 interface Props{

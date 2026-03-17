@@ -1,7 +1,7 @@
 
 import type { AnimeCardType } from "~/entities/title";
-import { publicClient } from "../../../shared/api/publicClient";
 import type { SearchResponse } from "../types/search";
+import { publicClient } from "~/shared/api";
 
 export async function getAnimeSearch(q: string, page: number = 1): Promise<SearchResponse<AnimeCardType>> {
     try {

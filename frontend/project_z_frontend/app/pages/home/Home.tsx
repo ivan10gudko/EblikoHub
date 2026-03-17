@@ -1,9 +1,8 @@
-import { Suspense, useEffect } from "react";
-import HeroSection from "~/widgets/HeroSection/HeroSection";
+import { Suspense} from "react";
+import { HeroSection } from "~/widgets/HeroSection";
 import HeroSkeleton from "~/widgets/HeroSection/HeroSkeleton";
-import Loader from "~/shared/ui/Loader/Loader";
-import SeasonAnimeList from "~/widgets/SeasonAnimeList/SeasonAnimeList";
-import TopAnimeList from "~/widgets/TopAnimeList/TopAnimeList";
+import { SeasonAnimeList } from "~/widgets/SeasonAnimeList";
+import { TopAnimeList } from "~/widgets/TopAnimeList";
 
 
 const HomePage : React.FC = ()=> {

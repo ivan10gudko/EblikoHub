@@ -1,7 +1,7 @@
 import ArrowDropDownRoundedIcon from '@mui/icons-material/ArrowDropDownRounded';
 import { type ReactNode } from "react";
-import { useCollapsibleList } from "~/shared/ui/Callapsible/hooks/useCallapsibleList";
-import CollapsibleSectionSkeleton from "./CollapsableSectionSceleton";
+import { useCollapsibleList } from '../hooks/useCallapsibleList';
+import CollapsibleSectionSkeleton from './CollapsableSectionSceleton';
 
 type CollapsibleSectionProps<T, K extends string | number> = {
     title: string|React.ReactNode;

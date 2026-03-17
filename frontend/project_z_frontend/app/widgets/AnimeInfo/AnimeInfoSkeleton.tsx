@@ -1,4 +1,3 @@
-import ButtonSkeleton from "../../shared/ui/Button/ButtonSkeleton";
 
 const AnimeInfoSkeleton : React.FC = () => {
     const baseClass = "animate-pulse bg-gray-300 cursor-default pointer-events-none rounded"

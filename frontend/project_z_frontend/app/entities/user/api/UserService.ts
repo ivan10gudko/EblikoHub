@@ -1,8 +1,6 @@
-import axios from "axios";
-import type { RegisterData } from "~/entities/session/model/session.types";
-import type { CreateUserProfile, UserProfile } from "~/entities/user/model/user.types";
-import { publicClient } from "../../../shared/api/publicClient";
-import { apiClient } from "../../../shared/api/apiClient";
+import { apiClient, publicClient } from "~/shared/api";
+import type { CreateUserProfile, UserProfile } from "../model/user.types";
+
 
 export const userService = {
 

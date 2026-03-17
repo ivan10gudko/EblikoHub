@@ -1,7 +1,8 @@
-import { queryClient } from "~/shared/lib/queryClient";
-import { searchOptions } from "~/features/search/helpers/SearchOptions";
-import SearchPage from "~/pages/search/SearchPage";
+
+import { queryClient } from "~/shared/lib";
 import type { Route } from "./+types/search";
+import { searchOptions } from "~/features/search";
+import { SearchPage } from "~/pages/search";
 
 export async function clientLoader({ request }: Route.ClientLoaderArgs) {
     const url = new URL(request.url);

@@ -1,13 +1,10 @@
-import { useEffect } from "react";
+
 import { useSearchParams, useNavigate } from "react-router";
 import { useQuery } from '@tanstack/react-query';
-import { queryClient } from "~/shared/lib/queryClient";
-import { searchOptions } from "~/features/search/helpers/SearchOptions";
-
-import AnimeCard from "~/entities/title/ui/AnimeCard";
-import SearchBar from "~/features/search/ui/SearchBar";
-import SceletonCard from "~/entities/title/ui/AnimeCardSkeleton";
-import Pagination from "~/shared/ui/Pagination/Pagination";
+import { SearchBar, searchOptions } from "~/features/search";
+import { AnimeCard } from "~/entities/title";
+import { Pagination } from "~/shared/ui/Pagination";
+import AnimeSkeletonCard from "~/entities/title/ui/AnimeCardSkeleton";
 
 
 const SearchPage: React.FC = () => {
@@ -52,7 +49,7 @@ const SearchPage: React.FC = () => {
 
             {isLoading && (
                 <div className="card-container">
-                    {[0, 1, 2, 3, 4].map((v) => <SceletonCard key={v} />)}
+                    {[0, 1, 2, 3, 4].map((v) => <AnimeSkeletonCard key={v} />)}
                 </div>
             )}
 

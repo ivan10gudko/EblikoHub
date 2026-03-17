@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
-import CollapsibleSection from "../../shared/ui/Callapsible/ui/CollapsableSection";
 import TrendingUpRoundedIcon from '@mui/icons-material/TrendingUpRounded';
 import { AnimeCard, AnimeCardSceleton, getSeasonalAnimeList, type AnimeCardType } from "~/entities/title";
+import CollapsibleSection from "~/shared/ui/Callapsible/ui/CollapsableSection";
 
 const SeasonAnimeList: React.FC<{}> = ({})=>{
 

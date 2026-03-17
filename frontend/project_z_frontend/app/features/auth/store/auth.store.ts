@@ -1,8 +1,6 @@
 import { create } from 'zustand';
-import { authService } from '~/entities/session/api/AuthService';
-import { userService } from '~/entities/user/api/UserService';
-import type { RegisterData } from '~/entities/session/model/session.types';
-import type { CreateUserProfile, UserProfile} from "~/entities/user/model/user.types";
+import { authService, type RegisterData } from '~/entities/session';
+import { userService, type CreateUserProfile, type UserProfile } from '~/entities/user';
 
 interface AuthState {
     user: UserProfile | null;

@@ -1,12 +1,11 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { getTopAnime } from "~/entities/title/api/jikan.api";
-import Badge from "../../shared/ui/Badge/Badge";
-import Rating from "../../shared/ui/Rating/Rating";
-import Date from "../../shared/ui/Date/Date";
+
 import HeroDescription from "./HeroDescription";
-import { Link, Navigate } from "react-router";
-import Button from "../../shared/ui/Button/Button";
-import type { Anime } from "~/entities/title/model/animeTitle.types";
+import { Link} from "react-router";
+import { getTopAnime, type Anime } from "~/entities/title";
+import { Badge } from "~/shared/ui/Badge";
+import { Rating } from "~/shared/ui/Rating";
+import { Button } from "~/shared/ui/Button";
 
 const HeroSection: React.FC<{}> = () => {
     const { isPending, error, data } = useSuspenseQuery<Anime>({

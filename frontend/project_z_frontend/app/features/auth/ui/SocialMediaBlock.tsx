@@ -1,7 +1,6 @@
-import { authService } from "~/entities/session/api/AuthService";
-import Button from "../../../shared/ui/Button/Button"
-
 import { FaDiscord } from "react-icons/fa";
+import { authService } from "~/entities/session";
+import { Button } from "~/shared/ui/Button";
 
 const SocialMediaBlock: React.FC = ()=>{
     const handleDiscordLogin = async () => {

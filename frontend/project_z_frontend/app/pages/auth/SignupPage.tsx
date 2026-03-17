@@ -1,14 +1,11 @@
-import React, { useState } from "react";
-import Input from "../../shared/ui/Input/Input";
-import Separator from "../../features/auth/ui/Separator";
-import SocialMediaBlock from "../../features/auth/ui/SocialMediaBlock";
-import Button from "../../shared/ui/Button/Button";
+
 import { useNavigate } from "react-router";
-import type { RegisterData } from "~/entities/session/model/session.types";
-import { userService } from "~/entities/user/api/UserService";
-import { useAuthStore } from "~/features/auth/store/auth.store";
-import { useForm } from "~/shared/hooks/useForm";
-import { validateEmail, validateName, validatePassword, validateUsername } from "~/features/auth/utils/validators";
+import type { RegisterData } from "~/entities/session";
+import { userService } from "~/entities/user";
+import { Separator, SocialMediaBlock, useAuthStore, validateEmail, validateName, validatePassword, validateUsername } from "~/features/auth";
+import { useForm } from "~/shared/hooks";
+import { Button } from "~/shared/ui/Button";
+import { Input } from "~/shared/ui/Input";
 
 interface RegisterFormData extends RegisterData {
     confirmPassword: string;

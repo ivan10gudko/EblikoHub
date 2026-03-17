@@ -1,4 +1,5 @@
-import RoomPage from "~/pages/room/RoomPage";
+import { RoomPage } from "~/pages/room";
+
 
 
 export default function RoomRoute() {

@@ -1,11 +1,11 @@
-import useWatchlist, { type Title } from "~/legacy/store/watchlist.store";
-import { useEffect, useState, type Ref } from "react";
+
+import { useEffect, useState} from "react";
 
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import CloseIcon from '@mui/icons-material/Close';
-import RateCard from "../../../features/rating/ui/RateCard";
-import AddToWatchedCard from "../../watchlist/ui/AddToWatchedCard";
-import AddToWatchlistCard from "../../watchlist/ui/AddToWatchlistCard";
+import type { Title } from "~/legacy/store/watchlist.store";
+import { AddToWatchedCard, AddToWatchlistCard } from "~/features/watchlist";
+import RateCard from "./RateCard";
 
 
 

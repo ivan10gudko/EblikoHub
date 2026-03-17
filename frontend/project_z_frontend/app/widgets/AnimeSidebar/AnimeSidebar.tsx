@@ -1,10 +1,9 @@
-
 import type { Title } from "~/legacy/store/watchlist.store";
-import { ImageWithFallback } from "../../shared/ui/ImageWithFallback/ImageWithFallback";
 import type { Anime } from "~/entities/title";
+import { PageRate } from "~/features/rating";
+import { ImageWithFallback } from "~/shared/ui/ImageWithFallback";
 import WatchlistButton from "~/features/watchlist/ui/WatchlistButton";
 import WatchedButton from "~/features/watchlist/ui/WatchedButton";
-import { PageRate } from "~/features/rating";
 
 interface Props{
     data: Anime;

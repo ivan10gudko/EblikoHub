@@ -1,4 +1,4 @@
-import type { ComponentProps, ReactElement } from "react";
+import type { ComponentProps } from "react";
 
 interface ButtonProps extends ComponentProps<"button">{
     children:React.ReactNode| string,

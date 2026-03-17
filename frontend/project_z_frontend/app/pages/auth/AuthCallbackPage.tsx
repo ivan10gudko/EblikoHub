@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import { useNavigate } from "react-router";
-import { supabase } from "~/shared/lib/supabase";
-import { useAuthStore } from "~/features/auth/store/auth.store";
+import { useAuthStore } from "~/features/auth";
+import { supabase } from "~/shared/lib";
 
 const AuthCallbackPage = () => {
     const navigate = useNavigate();

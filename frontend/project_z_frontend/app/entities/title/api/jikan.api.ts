@@ -1,5 +1,6 @@
-import { jikanClient } from '../../../shared/api/jikanClient';
-import type { AnimeCardType } from '../model/animeTitle.types';
+import { jikanClient } from "~/shared/api";
+import type { AnimeCardType } from "../model/animeTitle.types";
+
 
 export async function getTopAnimeList(): Promise<AnimeCardType[]> {
     try {
