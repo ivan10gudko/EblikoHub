@@ -7,19 +7,28 @@ import {
 } from "@react-router/dev/routes";
 
 export default [
-    layout("./pages/MainLayout.tsx",[
-    index("./pages/Home.tsx"),
+    layout("./routes/_main.tsx",[
+    
+        index("./routes/home.tsx"),
+    
+        layout("./routes/_protected.tsx",[
+            route("profile", "./routes/profile.tsx"),
 
-    route("profile/:id", "./pages/Profile.tsx"),
+            ...prefix("rooms", [
+                index("./routes/rooms._index.tsx"),     // /rooms
+                route(":id", "./routes/rooms.$id.tsx"), // /rooms/:id
+            ]),
+        ]),
 
-    ...prefix("rooms", [
-    index("./pages/Rooms.tsx"),     // /rooms
-    route(":id", "./pages/Room.tsx"), // /rooms/:id
+        route("search", "./routes/search.tsx"),
+
+        route("anime/:id", "./routes/anime.$id.tsx"),
     ]),
 
-    route("search", "./pages/SearchPage.tsx"),
-
-    route("anime/:id", "./pages/AnimePage.tsx"),
+    route("auth", "./routes/_auth.tsx",[
+        index("./routes/auth._index.tsx"),
+        route("login", "./routes/auth.login.tsx"),
+        route("signup", "./routes/auth.signup.tsx"),
+        route("callback", "./routes/auth.callback.tsx"),
     ]),
-    route("auth", "./pages/Auth.tsx"),
 ] satisfies RouteConfig;

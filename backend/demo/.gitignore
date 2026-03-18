@@ -33,6 +33,7 @@ build/
 .vscode/
 
 
+.env
 task.txt
 util.txt
 backend/demo/src/main/task.txt
