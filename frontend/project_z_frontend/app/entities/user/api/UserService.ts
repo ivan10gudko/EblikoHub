@@ -16,5 +16,11 @@ export const userService = {
 
     isNameTagAvailable : async (nameTag: string): Promise<boolean> => {
         return (await publicClient.get<boolean>(`/users/${nameTag}/checkNameTag`)).data;
+    },
+
+    changeUser: async(userData : UserProfile) : Promise<UserProfile> => {
+        return (await apiClient.put<UserProfile>(`users/${userData.userId}`, userData)).data;
     }
+    
+    
 };
