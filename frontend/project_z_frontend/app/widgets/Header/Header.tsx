@@ -57,7 +57,7 @@ const Header = ({session}:HeaderProps)=> {
                 ) : (
                     <NavLink to="auth" className="bg-amber-400 py-2 px-2 md:px-3 rounded-lg">Sign in</NavLink>
                 )}
-                <BurgerIcon action={()=>setBurgerMenuOpen(v=>!v)} isOpen={burgerMenuOpen}/>
+                <BurgerIcon onClick={()=>setBurgerMenuOpen(v=>!v)} isOpen={burgerMenuOpen}/>
                 
             </div>
             <div className={burgerMenuStyles} onClick={()=>setBurgerMenuOpen(false)}>

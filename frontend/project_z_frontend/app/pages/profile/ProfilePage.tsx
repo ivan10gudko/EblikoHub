@@ -35,7 +35,7 @@ const ProfilePage = () => {
         <>
             <h1>name: {user.name}</h1>
             <h2>#{user.nameTag}</h2>
-            <Button action={()=>handleLogOut()}>Log Out</Button>
+            <Button onClick={()=>handleLogOut()}>Log Out</Button>
         </>
     );
 };

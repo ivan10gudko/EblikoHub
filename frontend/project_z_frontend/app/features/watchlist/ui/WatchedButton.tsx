@@ -30,7 +30,7 @@ const WatchedButton: React.FC<Props>=({item})=>{
                 borderColor="rgba(14,14,14,0.2)"
                 bgColor="rgb(236, 238, 242)"
                 className={title?"border-0 gap-3":"border-[1px] gap-3"}
-                action={handleWatched}
+                onClick={handleWatched}
             >
                 {title?
                     <>

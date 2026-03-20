@@ -8,7 +8,7 @@ interface Props{
     item: Title,
 }
 
-const AddToWatchlistCard: React.FC<Props>=({item})=>{
+const AddToWatchlistCardAction: React.FC<Props>=({item})=>{
 
         const {watchlist,addTitle,removeTitle} = useWatchlist();
         const isInWatchlist = watchlist.some(title=>title.id===item.id);
@@ -39,4 +39,4 @@ const AddToWatchlistCard: React.FC<Props>=({item})=>{
     );
 };
 
-export default AddToWatchlistCard;
+export default AddToWatchlistCardAction;

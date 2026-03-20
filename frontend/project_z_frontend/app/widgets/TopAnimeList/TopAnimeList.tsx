@@ -2,6 +2,8 @@ import { useQuery } from "@tanstack/react-query";
 import LocalFireDepartmentRoundedIcon from '@mui/icons-material/LocalFireDepartmentRounded';
 import { AnimeCard, AnimeCardSceleton, getTopAnimeList, type AnimeCardType } from "~/entities/title";
 import CollapsibleSection from "~/shared/ui/Callapsible/ui/CollapsableSection";
+import { AddToWatchedCardAction, AddToWatchlistCardAction } from "~/features/watchlist";
+import { RateCardAction } from "~/features/rating";
 
 const TopAnimeList: React.FC<{}> = ({})=>{
     
@@ -17,7 +19,20 @@ const TopAnimeList: React.FC<{}> = ({})=>{
         error={error}
         getItemKey={(anime) => anime.id}
         renderSceletonItem={(key) => <AnimeCardSceleton key={key} />}
-        renderItem={(anime) => <AnimeCard data={anime} />}
+        renderItem={(anime) =>(
+                <AnimeCard
+                    key={anime.id}
+                    data={anime}
+                    
+                    menuActions={
+                        <>
+                            <AddToWatchedCardAction item={anime} />
+                            <AddToWatchlistCardAction item={anime} />
+                            <RateCardAction item={anime} />
+                        </>
+                    }
+                />
+            )}
     />
 };
 
