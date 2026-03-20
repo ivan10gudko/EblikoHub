@@ -26,6 +26,7 @@ import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import project_z.demo.enums.UserRole;
 @EntityListeners(AuditingEntityListener.class)
@@ -36,6 +37,7 @@ import project_z.demo.enums.UserRole;
 @Entity
 @Table(name = "users")
 @JsonIgnoreProperties(ignoreUnknown=true)
+@Getter
 public class UserEntity {
     @Id
     private UUID userId;

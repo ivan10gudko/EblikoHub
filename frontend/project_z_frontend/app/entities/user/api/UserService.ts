@@ -1,5 +1,5 @@
 import { apiClient, publicClient } from "~/shared/api";
-import type { CreateUserProfile, UserProfile } from "../model/user.types";
+import type { CreateUserProfile, UpdateUserProfile, UserProfile } from "../model/user.types";
 
 
 export const userService = {
@@ -18,9 +18,18 @@ export const userService = {
         return (await publicClient.get<boolean>(`/users/${nameTag}/checkNameTag`)).data;
     },
 
-    changeUser: async(userData : UserProfile) : Promise<UserProfile> => {
-        return (await apiClient.put<UserProfile>(`users/${userData.userId}`, userData)).data;
-    }
-    
-    
+    updateUser: async( userId:string,userData : UpdateUserProfile) : Promise<UpdateUserProfile> => {
+        return (await apiClient.put<UserProfile>(`users/${userId}`, userData)).data;
+    },
+
+    uploadAvatar:async(userId:string, avatarFile:File): Promise<void> => {
+        const formData = new FormData();
+        formData.append('file', avatarFile);
+        await apiClient.put(`/users/avatar/${userId}`, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+            });
+        
+    },
 };

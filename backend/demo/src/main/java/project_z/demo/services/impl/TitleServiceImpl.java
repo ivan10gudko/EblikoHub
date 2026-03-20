@@ -90,7 +90,7 @@ public void deleteById(Long Id){
 }
 @Override
 public List<TitleEntity> addTitle(TitleEntity titleEntity, String token){
-    UUID userId = UUID.fromString(jwtService.extractUsername(token));
+    UUID userId = jwtService.extractUsername(token);
     UserEntity userEntity = userRepository.findById(userId).orElseThrow(
         () -> new RuntimeException("user not found"));
         titleEntity.setUser(userEntity);
@@ -121,7 +121,7 @@ public TitleEntity addSeason(SeasonEntity seasonEntity, TitleEntity titleEntity)
 }
 @Override
 public TitleEntity findUserTitleByMalId(Long titleMalId, String token){
-    UUID userId = UUID.fromString(jwtService.extractUsername(token));
+    UUID userId = jwtService.extractUsername(token);
     TitleEntity response = titleRepository.findByApiTitleIdAndUserId(titleMalId,userId).orElseThrow(
     () -> new ResourceNotFoundException("Title not found")
     );
@@ -129,7 +129,7 @@ public TitleEntity findUserTitleByMalId(Long titleMalId, String token){
 }
 @Override
 public List<TitleEntity> findAllByMalIdInUserRooms(Long titleMalId, String token){
-    UUID userId = UUID.fromString(jwtService.extractUsername(token));
+    UUID userId = jwtService.extractUsername(token);
     return titleRepository.findAllByApiTitleIdInUserRooms(titleMalId,userId);
 }
 

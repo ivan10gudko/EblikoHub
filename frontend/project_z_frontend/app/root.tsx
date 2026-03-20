@@ -12,6 +12,7 @@ import "./app.css";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "./shared/lib/queryClient";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { Toaster } from 'react-hot-toast';
 
 export const links: Route.LinksFunction = () => [
     { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -39,11 +40,13 @@ export function Layout({ children }: { children: React.ReactNode }) {
                 <Links />
             </head>
             <body>
+                <Toaster position="top-center" reverseOrder={false} />
                 <QueryClientProvider client={queryClient}>
                     {children}
                     <ReactQueryDevtools initialIsOpen={false} />
                 </QueryClientProvider>
                 <ScrollRestoration />
+                
                 <Scripts />
             </body>
         </html>

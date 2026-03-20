@@ -2,9 +2,9 @@ package project_z.demo.security;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -26,31 +26,25 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                   HttpServletResponse response,
                                   FilterChain filterChain) throws ServletException, IOException {
         
-        String authHeader = request.getHeader("Authorization");
-        
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            filterChain.doFilter(request, response);
-            return;
-        }
-        
-        String jwt = authHeader.substring(7);
-        
-        boolean isValid = jwtService.validateToken(jwt);
-        
-        if (isValid) {
-            String userId = jwtService.extractUsername(jwt);
-            String roleFromToken = jwtService.extractRole(jwt);
+    String authHeader = request.getHeader("Authorization");
 
-            List<GrantedAuthority> authorities = List.of(
-                new SimpleGrantedAuthority("ROLE_" + roleFromToken)
-            );
-            
-            UsernamePasswordAuthenticationToken auth = 
-                new UsernamePasswordAuthenticationToken(userId, null, authorities);
-            SecurityContextHolder.getContext().setAuthentication(auth);
-        } else {
-        }
-        
+    if (authHeader == null || !authHeader.startsWith("Bearer ")) {
         filterChain.doFilter(request, response);
+        return;
+    }
+
+
+    if (jwtService.validateToken(authHeader)) {
+        UUID userId = jwtService.extractUsername(authHeader); 
+        String roleFromToken = jwtService.extractRole(userId);
+
+        UsernamePasswordAuthenticationToken auth = 
+            new UsernamePasswordAuthenticationToken(userId, null, 
+                List.of(new SimpleGrantedAuthority("ROLE_" + roleFromToken)));
+            
+        SecurityContextHolder.getContext().setAuthentication(auth);
+    }
+
+    filterChain.doFilter(request, response);
     }
 }

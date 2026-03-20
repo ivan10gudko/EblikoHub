@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
+import jakarta.transaction.Transactional;
 import project_z.demo.JavaUtil.BeanUtilsHelper;
 import project_z.demo.entity.RoomEntity;
 import project_z.demo.entity.UserEntity;
@@ -41,8 +42,10 @@ public UserEntity save(UserEntity userEntity){
     
 }
 @Override 
-public Optional<UserEntity> findOne(UUID id){
-return  userRepository.findById(id);
+public UserEntity findOne(UUID id){
+return  userRepository.findById(id).orElseThrow(
+    () -> new RuntimeException("user not found")
+);
 }
 @Override
 public boolean isExists(UUID id) {
@@ -72,7 +75,8 @@ public void deleteById(UUID id){
 public Optional<UserEntity> findByNameTag(String nameTag){
     return userRepository.findByNameTag(nameTag);
 }
-@Override 
+@Override
+@Transactional
 public String uploadAvatar(UserEntity userEntity, MultipartFile file){
         List<String> allowedContentTypes = List.of(
         "image/jpeg",
