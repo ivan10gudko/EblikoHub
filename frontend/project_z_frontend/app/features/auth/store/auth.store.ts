@@ -3,7 +3,8 @@ import { authService, type RegisterData } from '~/entities/session';
 import { userService, type CreateUserProfile, type UserProfile } from '~/entities/user';
 
 interface AuthState {
-    user: UserProfile | null;
+    userId: string | null;
+    isAuth : boolean;
     isLoading: boolean;
     error: string | null;
 
@@ -19,7 +20,8 @@ interface AuthState {
 }
 
 export const useAuthStore = create<AuthState>()((set) => ({
-    user: null,
+    userId: null,
+    isAuth:false,
     isLoading: false,
     error: null,
 
@@ -33,9 +35,9 @@ export const useAuthStore = create<AuthState>()((set) => ({
 
             const userProfile = await userService.getUser(supabaseUser.id);
             
-            set({ user: userProfile, isLoading: false });
+            set({ userId: userProfile.userId, isAuth:true, isLoading: false });
         } catch (error: any) {
-            set({ error: error.message || "Login error", isLoading: false });
+            set({ error: error.message || "Login error", isLoading: false});
             throw error;
         }
     },
@@ -55,7 +57,7 @@ export const useAuthStore = create<AuthState>()((set) => ({
 
             const userProfile = await userService.createUser(payload);
             
-            set({ user: userProfile, isLoading: false });
+            set({ userId: userProfile.userId, isAuth:true, isLoading: false });
         } catch (error: any) {
             set({ error: error.message || "Sign Up error", isLoading: false });
             throw error;
@@ -66,8 +68,8 @@ export const useAuthStore = create<AuthState>()((set) => ({
         set({ isLoading: true, error: null });
         try {
             const userProfile = await userService.getUser(supabaseId);
-            set({ user: userProfile, isLoading: false });
             
+            set({ userId: userProfile.userId, isAuth:true, isLoading: false });
         } catch (error: any) {
             if (error.response?.status === 404 && fallbackData) {
                 try {
@@ -79,13 +81,13 @@ export const useAuthStore = create<AuthState>()((set) => ({
                     };
 
                     const newUserProfile = await userService.createUser(newUserData);
-                    set({ user: newUserProfile, isLoading: false });
+                    set({ userId: newUserProfile.userId, isAuth:true, isLoading: false });
                 } catch (createError: any) {
                     set({ error: "OAuth auth error", isLoading: false });
                     throw createError;
                 }
             } else {
-                set({ error: "OAuth sync error", isLoading: false });
+                set({ error: "OAuth sync error", isLoading: false});
                 throw error;
             }
         }
@@ -95,24 +97,24 @@ export const useAuthStore = create<AuthState>()((set) => ({
         set({ isLoading: true });
         try {
             await authService.logout();
-            set({ user: null, error: null, isLoading: false });
+            set({ userId: null, isAuth:false,error: null, isLoading: false });
         } catch (error) {
             set({ isLoading: false });
         }
     },
     restoreSession: async (supabaseId) => {
         if (!supabaseId) {
-            set({ user: null, isLoading: false });
+            set({ userId: null,isAuth:false ,isLoading: false });
             return;
         }
 
         set({ isLoading: true, error: null });
         try {
             const userProfile = await userService.getUser(supabaseId);
-            set({ user: userProfile, isLoading: false });
+            set({ userId: userProfile.userId, isLoading: false });
         } catch (error: any) {
             console.error("Failed to restore user profile:", error);
-            set({ user: null, error: "Session restore failed", isLoading: false });
+            set({ userId: null, error: "Session restore failed", isLoading: false });
         }
     },
 

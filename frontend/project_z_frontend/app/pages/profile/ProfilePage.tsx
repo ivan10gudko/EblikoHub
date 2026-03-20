@@ -5,9 +5,9 @@ import { useAuthStore } from "~/features/auth";
 import { Button } from "~/shared/ui/Button";
 
 const ProfilePage = () => {
-    const { user, isLoading, error } = useAuthStore(
+    const { userId, isLoading, error } = useAuthStore(
         useShallow((state) => ({
-            user: state.user,
+            userId: state.userId,
             isLoading: state.isLoading,
             error: state.error,
         })),
@@ -26,15 +26,14 @@ const ProfilePage = () => {
         return <p>Loading...</p>;
     }
 
-    if (error || !user) {
+    if (error || !userId) {
         console.error(error);
-        console.log(user)
+        console.log(userId)
         return <p>Error</p>;
     }
     return (
         <>
-            <h1>name: {user.name}</h1>
-            <h2>#{user.nameTag}</h2>
+            <h1>{userId}</h1>
             <Button onClick={()=>handleLogOut()}>Log Out</Button>
         </>
     );
