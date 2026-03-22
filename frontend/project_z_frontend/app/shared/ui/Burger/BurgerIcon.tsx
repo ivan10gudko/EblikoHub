@@ -1,12 +1,12 @@
 interface Props{
-    action:()=>void;
+    onClick:()=>void;
     isOpen:boolean;
 }
 
-const BurgerIcon: React.FC<Props> = ({action,isOpen})=> {
+const BurgerIcon: React.FC<Props> = ({onClick,isOpen})=> {
     
     return (
-        <div className={`burger ${isOpen?"active":""}`} onClick={action}>
+        <div className={`burger ${isOpen?"active":""}`} onClick={onClick}>
 			<span></span>
 			<span></span>
 			<span></span>

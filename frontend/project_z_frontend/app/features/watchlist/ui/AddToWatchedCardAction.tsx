@@ -7,7 +7,7 @@ interface Props{
     item: Title,
 }
 
-const AddToWatchedCard: React.FC<Props>=({item})=>{
+const AddToWatchedCardAction: React.FC<Props>=({item})=>{
 
     const title = useWatched(state => state.getTitleById(item.id));
     const {addTitle,removeTitle} = useWatched();
@@ -39,4 +39,4 @@ const AddToWatchedCard: React.FC<Props>=({item})=>{
     );
 };
 
-export default AddToWatchedCard;
+export default AddToWatchedCardAction;
