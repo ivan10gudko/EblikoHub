@@ -1,16 +1,16 @@
 version: '3.8'
 services:
-  backend:
-    build: ./
-    container_name: spring_backend
-    ports:
-      - "8080:8080"
-    env_file: .env
+  postgres:
+    image: postgres:15
+    container_name: my_postgres
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://host.docker.internal:5432/${DATABASE_NAME}
-      SPRING_DATASOURCE_USERNAME: ${DATABASE_USERNAME}
-      SPRING_DATASOURCE_PASSWORD: ${DATABASE_PASSWORD}
-      SECURITY_API_KEY_ENABLED: ${SECURITY_API_KEY_ENABLED}
-      SECURITY_API_KEY_VALUE: ${SECURITY_API_KEY_VALUE}
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
+      POSTGRES_USER: myuser
+      POSTGRES_PASSWORD: mypassword
+      POSTGRES_DB: mydb
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:

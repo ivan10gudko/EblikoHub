@@ -12,8 +12,3 @@ export interface CreateUserProfile{
     name: string;
     nameTag: string;
 }
-
-export interface UpdateUserProfile{
-    name: string;
-    description?: string;
-}

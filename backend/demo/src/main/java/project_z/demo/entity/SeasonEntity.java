@@ -26,6 +26,7 @@ import project_z.demo.entity.TitleEntity.titleStatus;
 @NoArgsConstructor
 @Builder
 @Entity
+
 @Table(name="seasons")
 @JsonIgnoreProperties(ignoreUnknown=true)
 
