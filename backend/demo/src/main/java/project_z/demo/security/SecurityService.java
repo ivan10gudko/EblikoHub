@@ -19,32 +19,32 @@ public class SecurityService {
     private final JwtService jwtService;
 
     public boolean isTitleOwner(Long titleId, String token) {
-        String currentUserId = jwtService.extractUsername(token).toString();
+        String currentUserId = jwtService.extractUsername(token);
 
         return titleRepository.findById(titleId)
                 .map(title -> title.getUser().getUserId().toString().equals(currentUserId))
                 .orElse(false);
     }
     public boolean isRoomOwner(Long roomId, String token) {
-        String currentUserId = jwtService.extractUsername(token).toString();
+        String currentUserId = jwtService.extractUsername(token);
 
         return roomRepository.findById(roomId)
                 .map(room ->room.getOwner().getUserId().toString().equals(currentUserId))
                 .orElse(false);
     }
     public boolean isSeasonOwner(Long seasonId, String token){
-        String currentUserId = jwtService.extractUsername(token).toString();
+        String currentUserId = jwtService.extractUsername(token);
 
         return seasonRepository.findById(seasonId)
                 .map(season -> season.getTitle().getUser().getUserId().toString().equals(currentUserId))
                 .orElse(false);
     }
     public boolean isUserOwner(UUID userId, String token) {
-        String currentUserId = jwtService.extractUsername(token).toString();
+        String currentUserId = jwtService.extractUsername(token);
         return userId.toString().equals(currentUserId);
     }
-    public boolean hasRole(UUID userId, String role) {
-        String userRole = jwtService.extractRole(userId);
+    public boolean hasRole(String token, String role) {
+        String userRole = jwtService.extractRole(token);
         return userRole != null && userRole.equalsIgnoreCase(role);
     }
 }

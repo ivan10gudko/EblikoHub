@@ -14,9 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
-import jakarta.transaction.Transactional;
 import project_z.demo.JavaUtil.BeanUtilsHelper;
-import project_z.demo.config.MyConfig;
 import project_z.demo.entity.RoomEntity;
 import project_z.demo.entity.UserEntity;
 import project_z.demo.repositories.RoomRepository;
@@ -33,11 +31,9 @@ public class UserServiceImpl implements UserService {
     private UserRepository userRepository;
     @Autowired
     private RoomRepository roomRepository;
-    private MyConfig myConfig;
-    public UserServiceImpl(UserRepository userRepository, TitleRepository titleRepository, MyConfig myConfig){
+    public UserServiceImpl(UserRepository userRepository, TitleRepository titleRepository){
         this.userRepository = userRepository;
         this.titleRepository = titleRepository;
-        this.myConfig = myConfig;
     }
 @Override
 public UserEntity save(UserEntity userEntity){
@@ -45,10 +41,8 @@ public UserEntity save(UserEntity userEntity){
     
 }
 @Override 
-public UserEntity findOne(UUID id){
-return  userRepository.findById(id).orElseThrow(
-    () -> new RuntimeException("user not found")
-);
+public Optional<UserEntity> findOne(UUID id){
+return  userRepository.findById(id);
 }
 @Override
 public boolean isExists(UUID id) {
@@ -78,8 +72,7 @@ public void deleteById(UUID id){
 public Optional<UserEntity> findByNameTag(String nameTag){
     return userRepository.findByNameTag(nameTag);
 }
-@Override
-@Transactional
+@Override 
 public String uploadAvatar(UserEntity userEntity, MultipartFile file){
         List<String> allowedContentTypes = List.of(
         "image/jpeg",
@@ -87,7 +80,7 @@ public String uploadAvatar(UserEntity userEntity, MultipartFile file){
         "image/gif"
     );
     RestTemplate  restTemplate = new RestTemplate();
-    String serviceRoleKey = myConfig.getSupabaseServiceRole();
+    String serviceRoleKey = System.getenv("SUPABASE_SERVICE_ROLE");
     String contentType = file.getContentType();
     if (!allowedContentTypes.contains(contentType)) {
         return "Error: Unsupported file type. Only JPEG, PNG, and GIF are allowed.";

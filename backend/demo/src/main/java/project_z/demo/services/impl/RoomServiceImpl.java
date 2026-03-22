@@ -100,7 +100,7 @@ public class RoomServiceImpl implements RoomService {
 
     @Override
     public RoomDto createRoom(String token, RoomCreateDto dto){
-        UUID ownerId = jwtService.extractUsername(token);
+        UUID ownerId = UUID.fromString(jwtService.extractUsername(token));
         UserEntity owner = userRepository.findById(ownerId)
         .orElseThrow(() -> new EntityNotFoundException ("Owner not found"));
         List<UserEntity> members = new ArrayList<>();

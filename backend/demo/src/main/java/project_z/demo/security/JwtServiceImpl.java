@@ -1,7 +1,6 @@
 package project_z.demo.security;
 
 import java.security.Key;
-import java.util.UUID;
 
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -9,8 +8,6 @@ import org.springframework.stereotype.Service;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import lombok.RequiredArgsConstructor;
-import project_z.demo.entity.UserEntity;
-import project_z.demo.services.UserService;
 import project_z.demo.services.impl.KeyDecodeService;
 import project_z.demo.services.impl.SupabaseJwkProviderService;
 
@@ -21,7 +18,7 @@ public class JwtServiceImpl implements JwtService {
 
     private final KeyDecodeService keyDecode;
     private final SupabaseJwkProviderService supabaseJwkProvider;
-    private final UserService userService;
+
 
     @Override
     public String generateToken(UserDetails user) {
@@ -55,17 +52,13 @@ private Claims extractAllClaims(String token){
             .getBody();
 }
 @Override
-public UUID extractUsername(String token) {
-    String pureJwt = (token.startsWith("Bearer ")) ? token.substring(7) : token;
-    
-    String subject = extractAllClaims(pureJwt).getSubject();
-    return UUID.fromString(subject); 
+public String extractUsername(String token) {
+    return extractAllClaims(token).getSubject(); 
 }
 
 @Override
-public String extractRole(UUID userId) {
-    UserEntity userEnity = userService.findOne(userId);
-    return userEnity.getRole().toString();
+public String extractRole(String token) {
+    return extractAllClaims(token).get("role", String.class);
 }
 
     @Override
