@@ -14,4 +14,8 @@ public class MyConfig {
     private String hugfaceToken;
     @Value("${app.api.supabase-service-role}")
     private String supabaseServiceRole;
+    @Value("${app.security.api-key.enabled}")
+    private boolean isApiKeyEnabled;
+    @Value("${app.security.api-key.value}")
+    private String apiKeyValue;
 }
