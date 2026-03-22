@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.data.annotation.CreatedDate;
@@ -35,6 +36,7 @@ import project_z.demo.enums.UserRole;
 @NoArgsConstructor
 @Builder
 @Entity
+@DynamicUpdate
 @Table(name = "users")
 @JsonIgnoreProperties(ignoreUnknown=true)
 @Getter
