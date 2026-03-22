@@ -1,18 +1,18 @@
 import { create } from 'zustand'
 
 export type Title = {
-    id:number,
-    img:string,
-    title:string,
-    rating:number|null,
+    id: number,
+    img: string,
+    title: string,
+    rating: number | null,
 }
 
 type Watchedlist = {
     watched: Title[],
-    addTitle: (item:Title)=>void,
-    removeTitle: (item:Title)=>void,
-    rateTitle: (id:number,rating:number)=>void,
-    getTitleById: (id: number) => Title | undefined
+    addTitle: ( item: Title )=>void,
+    removeTitle: ( item: Title )=>void,
+    rateTitle: ( id: number, rating: number )=>void,
+    getTitleById: ( id: number ) => Title | undefined
 }
 
 const useWatched = create<Watchedlist>()((set,get) => ({
