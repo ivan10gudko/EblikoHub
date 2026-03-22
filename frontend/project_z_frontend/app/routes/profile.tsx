@@ -5,15 +5,15 @@ import { ProfilePage } from "~/pages/profile";
 import { queryClient } from "~/shared/lib";
 
 export const clientLoader = () => {
-  const { user } = useAuthStore.getState();
+  const { userId } = useAuthStore.getState();
 
-  if (!user || !user.userId) {
+  if (!userId || !userId) {
     return redirect("/auth/login")
   }
 
   queryClient.prefetchQuery({
-    queryKey: ["user_profile", user.userId],
-    queryFn: () => userService.getUser(user!.userId),
+    queryKey: ["user_profile", userId],
+    queryFn: () => userService.getUser(userId),
   });
 
   return null;

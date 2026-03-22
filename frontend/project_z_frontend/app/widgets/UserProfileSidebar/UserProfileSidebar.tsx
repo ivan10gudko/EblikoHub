@@ -70,7 +70,7 @@ export const UserProfileSidebar = ({ isOpen, onClose }: SidebarProps) => {
                         <Button 
                             variant="outline" 
                             className="w-full justify-start gap-3 border-red-100 text-red-500 hover:bg-red-50 hover:border-red-200 transition-colors"
-                            action={handleLogout}
+                            onClick={handleLogout}
                         >
                             <LogoutIcon fontSize="small" />
                             Log Out

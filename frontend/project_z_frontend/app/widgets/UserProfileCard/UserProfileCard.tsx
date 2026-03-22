@@ -6,15 +6,21 @@ import { useAuthStore } from "~/features/auth";
 import { Button } from "~/shared/ui/Button";
 import { UserProfileEdit } from "./UserProfileEditCard";
 import toast from 'react-hot-toast';
+import { useNavigate } from 'react-router';
 
 export const UserProfileCard = () => {
     const [isEditing, setIsEditing] = useState(false);
-    const { user: authUser } = useAuthStore();
+    const { userId } = useAuthStore();
     const queryClient = useQueryClient();
-
+    const navigate = useNavigate()
+    
+    if(!userId){
+        navigate('/auth/login');
+        return;
+    }
     const { data: user } = useSuspenseQuery({
-        queryKey: ["user_profile", authUser?.userId],
-        queryFn: () => userService.getUser(authUser!.userId),
+        queryKey: ["user_profile", userId],
+        queryFn: () => userService.getUser(userId),
     });
 
     
@@ -33,7 +39,7 @@ export const UserProfileCard = () => {
         return updateTextPromise;
     },
     onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ["user_profile", authUser?.userId] });
+        queryClient.invalidateQueries({ queryKey: ["user_profile", userId] });
         setIsEditing(false);
         toast.success("succesfully updated")
     },
@@ -54,7 +60,7 @@ export const UserProfileCard = () => {
                             <span className="text-lg text-yellow-600 font-mono">@{user.nameTag}</span>
                         </div>
                         <Button
-                            action={() => setIsEditing(true)} 
+                            onClick={() => setIsEditing(true)} 
                             className="bg-gray-50 hover:bg-yellow-100 text-gray-600 hover:text-yellow-700 p-3 rounded-2xl transition-all"
                         >
                             <EditIcon />
