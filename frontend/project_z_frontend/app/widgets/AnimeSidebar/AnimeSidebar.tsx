@@ -4,6 +4,7 @@ import { PageRate } from "~/features/rating";
 import { ImageWithFallback } from "~/shared/ui/ImageWithFallback";
 import WatchlistButton from "~/features/watchlist/ui/WatchlistButton";
 import WatchedButton from "~/features/watchlist/ui/WatchedButton";
+import { Sidebar } from "~/shared/ui/Sidebar";
 
 interface Props{
     data: Anime;
@@ -18,7 +19,7 @@ const AnimeSidebar : React.FC<Props> = ({data}) => {
 
     return (
         
-            <aside className=" rounded-2xl divide-y text-md md:text-sm " >
+            <Sidebar>
                 <div className="w-full relative aspect-[3/4] overflow-hidden rounded-t-xl">
                     <ImageWithFallback
                         className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
@@ -34,7 +35,7 @@ const AnimeSidebar : React.FC<Props> = ({data}) => {
                     </div>
                     <PageRate item={item}/>
                 </div>
-            </aside>
+            </Sidebar>
     );
 }
 

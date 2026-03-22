@@ -19,3 +19,4 @@ export { default as PublicRating } from './ui/PublicRating';
 export { default as Synopsis } from './ui/Synopsis';
 export { default as Title } from './ui/Title';
 export { default as Trailer } from './ui/Trailer';
+export {default as AnimeCardMenu} from './ui/AnimeCardMenu';
