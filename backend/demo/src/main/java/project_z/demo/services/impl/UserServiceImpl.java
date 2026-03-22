@@ -9,10 +9,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
 import jakarta.transaction.Transactional;
 import project_z.demo.JavaUtil.BeanUtilsHelper;
@@ -47,7 +49,7 @@ public UserEntity save(UserEntity userEntity){
 @Override 
 public UserEntity findOne(UUID id){
 return  userRepository.findById(id).orElseThrow(
-    () -> new RuntimeException("user not found")
+    () -> new ResponseStatusException (HttpStatus.NOT_FOUND,"user not found")
 );
 }
 @Override
@@ -61,12 +63,12 @@ public UserEntity partialUpdate(UUID id, UserEntity source) {
             beanUtilsHelper.copyNonNullProperties(source, target);
             return userRepository.save(target);
         })
-        .orElseThrow(() -> new RuntimeException("User not found"));
+        .orElseThrow(() -> new ResponseStatusException (HttpStatus.NOT_FOUND,"user not found"));
 }
 @Override
 public void deleteById(UUID id){
      UserEntity user = userRepository.findById(id)
-        .orElseThrow(() -> new RuntimeException("User not found"));
+        .orElseThrow(() -> new ResponseStatusException (HttpStatus.NOT_FOUND,"user not found"));
     for (RoomEntity room : user.getRooms()) {
         room.getMembers().remove(user);
         roomRepository.save(room); 
