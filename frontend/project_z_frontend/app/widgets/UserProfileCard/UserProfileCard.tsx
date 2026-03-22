@@ -12,7 +12,6 @@ export const UserProfileCard = () => {
     const [isEditing, setIsEditing] = useState(false);
     const { userId } = useAuthStore();
     const queryClient = useQueryClient();
-    
     const navigate = useNavigate()
     
     if(!userId){

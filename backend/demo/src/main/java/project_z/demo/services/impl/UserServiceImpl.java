@@ -16,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import jakarta.transaction.Transactional;
 import project_z.demo.JavaUtil.BeanUtilsHelper;
+import project_z.demo.common.Exceptions.ResourceNotFoundException;
 import project_z.demo.config.MyConfig;
 import project_z.demo.entity.RoomEntity;
 import project_z.demo.entity.UserEntity;
@@ -47,7 +48,7 @@ public UserEntity save(UserEntity userEntity){
 @Override 
 public UserEntity findOne(UUID id){
 return  userRepository.findById(id).orElseThrow(
-    () -> new RuntimeException("user not found")
+    () -> new ResourceNotFoundException ("user not found")
 );
 }
 @Override
@@ -61,12 +62,12 @@ public UserEntity partialUpdate(UUID id, UserEntity source) {
             beanUtilsHelper.copyNonNullProperties(source, target);
             return userRepository.save(target);
         })
-        .orElseThrow(() -> new RuntimeException("User not found"));
+        .orElseThrow(() -> new ResourceNotFoundException ("user not found"));
 }
 @Override
 public void deleteById(UUID id){
      UserEntity user = userRepository.findById(id)
-        .orElseThrow(() -> new RuntimeException("User not found"));
+        .orElseThrow(() -> new ResourceNotFoundException ("user not found"));
     for (RoomEntity room : user.getRooms()) {
         room.getMembers().remove(user);
         roomRepository.save(room); 
