@@ -1,0 +1,1 @@
+export const generateFallbackName = () => `user_${Date.now().toString().slice(-5)}`;
