@@ -1,10 +1,8 @@
 package project_z.demo.controllers;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -25,6 +23,7 @@ import lombok.RequiredArgsConstructor;
 import project_z.demo.Mappers.Mapper;
 import project_z.demo.dto.UserDtos.UserDto;
 import project_z.demo.dto.UserDtos.UserPostDto;
+import project_z.demo.dto.UserDtos.UserUpdateDto;
 import project_z.demo.entity.UserEntity;
 import project_z.demo.repositories.UserRepository;
 import project_z.demo.services.UserService;
@@ -41,6 +40,7 @@ public class UserController {
     private final UserService userService;
     private final Mapper<UserEntity, UserDto> userMapper;
     private final Mapper<UserEntity, UserPostDto> userPostMapper;
+    private final Mapper<UserEntity, UserUpdateDto> userPutMapper;
     private final UserRepository userRepository;
 
     
@@ -57,11 +57,9 @@ public class UserController {
     
     @GetMapping(path = "/{id}")
     public ResponseEntity<UserDto> getUserById(@PathVariable("id") UUID id){
-        Optional<UserEntity> foundUser = userService.findOne(id);
-       return foundUser.map(UserEntity -> {
-            UserDto userDto  = userMapper.mapTo(UserEntity);
-            return new ResponseEntity<>(userDto, HttpStatus.OK);
-        }).orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        UserEntity foundUser = userService.findOne(id);
+        return new ResponseEntity<> (userMapper.mapTo(foundUser), HttpStatus.OK);
+            
     }
     @GetMapping(path = "/{nameTag}/nameTag")
     public UserDto findUsersByNameTag(@PathVariable("nameTag") String nameTag) {
@@ -94,13 +92,12 @@ public class UserController {
     public ResponseEntity<UserDto> fullUpdateUser(
         @PathVariable("id") UUID id,
         @RequestHeader("Authorization") String token,
-        @RequestBody UserDto userDto) {
-        if(!userService.isExists(id)){
-            return  new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-        userDto.setUserId(id);
-        UserEntity userEntity = userMapper.mapFrom(userDto);
-    UserEntity savedUserEntity =  userService.save(userEntity);
+        @RequestBody UserUpdateDto userDto) {
+        UserEntity userToUpdate = userService.findOne(id);
+
+        userPutMapper.updateEntity(userDto,userToUpdate);
+        
+        UserEntity savedUserEntity =  userService.save(userToUpdate);
       return new ResponseEntity<> (userMapper.mapTo(savedUserEntity), HttpStatus.OK);
     }
 
@@ -124,14 +121,14 @@ public class UserController {
         @PathVariable("id") UUID id,
         @RequestHeader("Authorization") String token,
         @RequestParam("file") MultipartFile file){
-        UserEntity userEntity = userService.findOne(id).orElseThrow(
-            () -> new RuntimeException("user not found"));
+        UserEntity userEntity = userService.findOne(id);
         
         String response =  userService.uploadAvatar(userEntity,file);
         userEntity.setImg(response);
         userRepository.save(userEntity);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping(path = "/{id}")
     public ResponseEntity<Void> deleteUserById(
