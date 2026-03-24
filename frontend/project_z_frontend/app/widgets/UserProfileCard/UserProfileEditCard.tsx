@@ -65,7 +65,7 @@ export const UserProfileEdit = ({ user, onSave, onCancel, isPending }: UserProfi
 
             <div className="flex gap-3 mt-2">
                 <Button 
-                    action={() => onSave(formData, selectedFile)} 
+                    onClick={() => onSave(formData, selectedFile)} 
                     disabled={isPending}
                     className="
                         flex-1 
@@ -80,7 +80,7 @@ export const UserProfileEdit = ({ user, onSave, onCancel, isPending }: UserProfi
                 </Button>
                 <Button
                     variant="outline"
-                    action={onCancel} 
+                    onClick={onCancel} 
                     className="px-6 py-3 rounded-xl !text-red-500 !border-red-500 font-bold bg-white "
                 >
                     Cancel
