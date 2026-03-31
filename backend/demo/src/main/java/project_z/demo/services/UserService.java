@@ -10,7 +10,7 @@ import project_z.demo.entity.UserEntity;
 
 public interface UserService {
     public UserEntity save(UserEntity user);
-    UserEntity findOne(UUID id);
+    Optional<UserEntity> findOne(UUID id);
     boolean isExists(UUID id);
     UserEntity partialUpdate(UUID id, UserEntity userEntity);
     void deleteById(UUID id);
