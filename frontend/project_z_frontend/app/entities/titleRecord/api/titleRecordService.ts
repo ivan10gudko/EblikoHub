@@ -83,9 +83,13 @@ export const titleRecordService: TitleRecordService = {
     async saveAction({ jikanId, data, initialData, existingTitle }) {
         //try to use title fetched before
         // if not search in database
+        console.log(data)
         const targetId = existingTitle?.titleId;
-    
+        
+        
+        console.log(targetId)
         if (targetId) {
+            console.log('patch')
             return this.patch(targetId, data);
         }
 

@@ -1,23 +1,25 @@
 
 import StarRoundedIcon from '@mui/icons-material/StarRounded';
 import { useRef, useState, type ChangeEvent, type FormEvent, type MouseEvent } from 'react';
-import type { Title } from '~/legacy/store/watchlist.store';
 import DoneOutlinedIcon from '@mui/icons-material/DoneOutlined';
-import useWatched from '~/legacy/store/watched.store';
 import { StarRating } from '~/shared/ui/Rating';
+import type { ManageTitleRecordProps } from '../model/manageTitleRecord';
+import { useTitleRecordMutation } from '../hooks/useTitleRecordMutation';
 
-interface Props{
-    item: Title,
-}
-const PageRate: React.FC<Props>=({item})=>{
+
+const PageRate=({ initialData, titleRecord } : ManageTitleRecordProps) => {
     const [isActive,setIsActive] = useState<boolean>(false);
     const [value,setValue] = useState<string>('');
     const [error,setError] = useState<string>('');
 
     const inputRef = useRef<HTMLInputElement|null>(null);
 
-    const title = useWatched(state => state.getTitleById(item.id));
-    const {addTitle} = useWatched();
+    const { rate, isAnyActionLoading } = useTitleRecordMutation(
+            initialData.apiTitleId,
+            initialData,
+        );
+    
+    const currentRating = titleRecord?.rating?.overall;
 
     function handleOpen(e: MouseEvent<HTMLDivElement>){
         e.preventDefault();
@@ -56,7 +58,7 @@ const PageRate: React.FC<Props>=({item})=>{
             return;
         }
         
-        addTitle({...item,rating:num});
+        rate(num);
         setIsActive(false);
         setValue('');
         
@@ -72,10 +74,10 @@ const PageRate: React.FC<Props>=({item})=>{
                     </span>
 
                     <span className='flex items-center gap-0.5 text-amber-400 '>
-                        {title?.rating && !isActive ?
+                        {currentRating && !isActive ?
                             <>
                                 <StarRoundedIcon fontSize="small" />
-                                <span className='[padding-top:0.15em]'>{`${title?.rating }`} / 10</span>
+                                <span className='[padding-top:0.15em]'>{`${currentRating }`} / 10</span>
                             </>
                         :
                             null
@@ -83,7 +85,7 @@ const PageRate: React.FC<Props>=({item})=>{
                     </span>
                 </div>
                 
-                <StarRating rating={+value || title?.rating || 0} />
+                <StarRating rating={+value || currentRating || 0} />
                 
                 <form onSubmit={handleSubmit} className={"flex justify-between overflow-hidden w-full"}>
                     <input

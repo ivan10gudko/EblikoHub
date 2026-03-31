@@ -2,8 +2,6 @@ import { useEffect, useState, type ReactNode } from "react";
 
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import CloseIcon from "@mui/icons-material/Close";
-import { AddToWatchedCardAction, AddToWatchlistCardAction } from "~/features/watchlist";
-import { RateCardAction } from "~/features/rating";
 
 interface AnimeCardMenuProps {
     parentRef: React.RefObject<HTMLDivElement | null>;

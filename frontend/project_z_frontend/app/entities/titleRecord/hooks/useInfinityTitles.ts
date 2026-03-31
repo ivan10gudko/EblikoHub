@@ -1,4 +1,4 @@
-import { useInfiniteQuery } from '@tanstack/react-query';
+import { useInfiniteQuery,} from '@tanstack/react-query';
 import { titleRecordService } from '../api/titleRecordService';
 import type { TitleParams } from '../model/titleRecord';
 
