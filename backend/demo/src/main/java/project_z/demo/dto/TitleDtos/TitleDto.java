@@ -8,7 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import project_z.demo.entity.TitleEntity.titleStatus;
+import project_z.demo.enums.TitleStatus;
 
 @Data
 @AllArgsConstructor
@@ -20,6 +20,6 @@ public class TitleDto {
     private Integer apiTitleId;
     private String titleName;
     private Map<String, Float> rating;
-    private titleStatus status;
+    private TitleStatus status;
     private LocalDateTime createdAt;
 }
