@@ -7,11 +7,11 @@ import useWatched from '~/legacy/store/watched.store';
 
 interface Props{
     item: Title,
-    setError: React.Dispatch<React.SetStateAction<string>>,
 }
-const RateCard: React.FC<Props>=({item,setError})=>{
+const RateCardAction: React.FC<Props>=({item})=>{
     const [isActive,setIsActive] = useState<boolean>(false);
     const [value,setValue] = useState<string>('');
+    const [error,setError] = useState<string|null>(null);
 
     const inputRef = useRef<HTMLInputElement|null>(null);
 
@@ -61,6 +61,7 @@ const RateCard: React.FC<Props>=({item,setError})=>{
 
 
     return (
+        <>
             <li className={`border-b border-b-white/15 flex text-center px-2 w-full transition-all duration-150 ${isActive|| title?.rating ? 'text-amber-300':'text-white gap-2'}`} >
                 <div className={isActive?"w-1/3 flex gap-0":"w-full flex gap-2 text-center justify-center transition-all duration-150"} onClick={handleOpen}>
                 <span className='flex items-center gap-0.5'>
@@ -97,7 +98,9 @@ const RateCard: React.FC<Props>=({item,setError})=>{
                     </button>
                 </form> : null}
             </li>
+            {error?<div className="text-red-500 text-sm my-0 py-0.5 px-6 text-center hover:text-red-400">{error}</div>:null}
+        </> 
     )
 }
 
-export default RateCard;
+export default RateCardAction;

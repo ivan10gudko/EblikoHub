@@ -1,2 +1,2 @@
-export {default as AddToWatchlistCard} from './ui/AddToWatchlistCard';
-export {default as AddToWatchedCard} from './ui/AddToWatchedCard'
+export {default as AddToWatchlistCardAction} from './ui/AddToWatchlistCardAction';
+export {default as AddToWatchedCardAction} from './ui/AddToWatchedCardAction'
