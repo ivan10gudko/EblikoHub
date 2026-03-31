@@ -1,6 +1,7 @@
 package project_z.demo.JavaUtil;
 
 import java.beans.PropertyDescriptor;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -14,15 +15,21 @@ public void copyNonNullProperties(Object src, Object target) {
     BeanUtils.copyProperties(src, target, getNullPropertyNames(src));
 }
 
-    public String[] getNullPropertyNames(Object source) {
+public String[] getNullPropertyNames(Object source) {
     final BeanWrapper src = new BeanWrapperImpl(source);
     PropertyDescriptor[] pds = src.getPropertyDescriptors();
 
-    Set <String> emptyNames = new HashSet<>();
+    Set<String> ignoreNames = new HashSet<>();
     for (PropertyDescriptor pd : pds) {
         Object srcValue = src.getPropertyValue(pd.getName());
-        if (srcValue == null) emptyNames.add(pd.getName());
+        
+        if (srcValue == null) {
+            ignoreNames.add(pd.getName());
+        } 
+        else if (Collection.class.isAssignableFrom(pd.getPropertyType())) {
+            ignoreNames.add(pd.getName());
+        }
     }
-    return emptyNames.toArray(new String[0]);
+    return ignoreNames.toArray(new String[0]);
 }
 }

@@ -51,7 +51,8 @@ public class TitleEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long titleId;
-    private int apiTitleId; //optional
+    @Column(name = "api_title_id", nullable = true)
+    private Integer apiTitleId; //optional
     private String titleName;
     @ElementCollection
     @CollectionTable(

@@ -17,7 +17,7 @@ import project_z.demo.entity.TitleEntity.titleStatus;
 public class TitleDto {
     @Id
     private Long titleId;
-    private int apiTitleId;
+    private Integer apiTitleId;
     private String titleName;
     private Map<String, Float> rating;
     private titleStatus status;

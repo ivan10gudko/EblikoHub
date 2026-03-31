@@ -23,8 +23,8 @@ import org.springframework.web.bind.annotation.RestController;
 import project_z.demo.Mappers.Mapper;
 import project_z.demo.common.QueryParameters.TitleQueryParameters;
 import project_z.demo.dto.TitleDtos.TitleDto;
+import project_z.demo.dto.TitleDtos.TitlePatchUpdateDto;
 import project_z.demo.entity.TitleEntity;
-import project_z.demo.security.SecurityService;
 import project_z.demo.services.TitleService;
 import project_z.demo.services.UserService;
 
@@ -38,6 +38,8 @@ import project_z.demo.services.UserService;
 public class TitleController {
 @Autowired
 private Mapper<TitleEntity, TitleDto> titleMapper;
+@Autowired
+private Mapper<TitleEntity, TitlePatchUpdateDto> titlePatchMapper;
 @Autowired
 private TitleService titleService;
 @Autowired
@@ -124,13 +126,13 @@ public ResponseEntity<TitleDto> fullUpdateTitle (
     public ResponseEntity<TitleDto> partialUpdate (
         @PathVariable("titleId") Long titleId,
         @RequestHeader("Authorization") String token,
-        @RequestBody TitleDto titleDto
+        @RequestBody TitlePatchUpdateDto titleDto
         ){
              if(!titleService.isExists(titleId)){
             return  new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-       TitleEntity titleEntity = titleMapper.mapFrom(titleDto);
-        TitleEntity updatedTitleEntity  = titleService.partialUpdate(titleId, titleEntity);
+        System.out.println(titleDto.getApiTitleId());
+        TitleEntity updatedTitleEntity  = titleService.partialUpdate(titleId, titleDto);
         return new ResponseEntity<>(titleMapper.mapTo(updatedTitleEntity), HttpStatus.OK);
     }
 
