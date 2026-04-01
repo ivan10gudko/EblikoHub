@@ -14,7 +14,7 @@ const Genres :React.FC<Props>  = ({genres}) => {
             <SellOutlinedIcon />
             Genres
         </h2>
-        <div className="flex gap-3">
+        <div className="flex gap-3 flex-wrap">
             {genres.map((genre)=> <Badge key={genre.mal_id} textColor="black">{genre.name}</Badge>)}
         </div>
         </div>
