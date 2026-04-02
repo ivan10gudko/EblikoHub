@@ -22,6 +22,7 @@ import project_z.demo.dto.TitleDtos.TitlePatchUpdateDto;
 import project_z.demo.entity.SeasonEntity;
 import project_z.demo.entity.TitleEntity;
 import project_z.demo.entity.UserEntity;
+import project_z.demo.enums.TitleStatus;
 import project_z.demo.repositories.Specifications.TitleSpecifications;
 import project_z.demo.repositories.TitleRepository;
 import project_z.demo.repositories.UserRepository;
@@ -110,14 +111,14 @@ public List<TitleEntity> addTitle(TitleEntity titleEntity, String token){
 public List<TitleEntity> getWatchedList(UUID userId){
     UserEntity userEntity = userRepository.findById(userId).orElseThrow(
     () -> new RuntimeException("user not found"));
-    List<TitleEntity> response = userEntity.getTitleList().stream().filter(title -> title.getStatus() == TitleEntity.titleStatus.WATCHED).toList();
+    List<TitleEntity> response = userEntity.getTitleList().stream().filter(title -> title.getStatus() == TitleStatus.WATCHED).toList();
     return response;
 }
 @Override
 public List<TitleEntity> getWatchList(UUID userId){
     UserEntity userEntity = userRepository.findById(userId).orElseThrow(
     () -> new RuntimeException("user not found"));
-    List<TitleEntity> response = userEntity.getTitleList().stream().filter(title -> title.getStatus() == TitleEntity.titleStatus.PLANNED).toList();
+    List<TitleEntity> response = userEntity.getTitleList().stream().filter(title -> title.getStatus() == TitleStatus.PLANNED).toList();
     return response;
     
 }

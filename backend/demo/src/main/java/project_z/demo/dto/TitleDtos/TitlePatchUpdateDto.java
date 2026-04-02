@@ -6,7 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import project_z.demo.entity.TitleEntity.titleStatus;
+import project_z.demo.enums.TitleStatus;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -15,5 +15,5 @@ public class TitlePatchUpdateDto {
     @Id
     private JsonNullable<Integer> apiTitleId = JsonNullable.undefined();
     private JsonNullable<String> titleName = JsonNullable.undefined();
-    private JsonNullable<titleStatus> status = JsonNullable.undefined();
+    private JsonNullable<TitleStatus> status = JsonNullable.undefined();
 }
