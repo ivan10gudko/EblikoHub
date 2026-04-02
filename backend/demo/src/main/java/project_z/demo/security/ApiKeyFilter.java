@@ -20,13 +20,25 @@ public class ApiKeyFilter extends OncePerRequestFilter{
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
+        
+        String path = request.getRequestURI();
+
+        if (path.contains("/v3/api-docs") || 
+            path.contains("/swagger-ui") || 
+            path.contains("/openapi.json")) {
+        
+                filterChain.doFilter(request, response);
+            return;
+        }
+
         boolean isEnabled = myConfig.isApiKeyEnabled();
-        String apiKeyValue = myConfig.getApiKeyValue();
+
         if (!isEnabled) {
             filterChain.doFilter(request, response);
             return;
         }
-
+        
+        String apiKeyValue = myConfig.getApiKeyValue();
         String requestKey = request.getHeader("X-API-KEY");
 
         if (apiKeyValue.equals(requestKey)) {

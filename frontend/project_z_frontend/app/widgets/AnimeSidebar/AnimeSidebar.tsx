@@ -1,24 +1,24 @@
-import type { Title } from "~/legacy/store/watchlist.store";
 import type { Anime } from "~/entities/title";
-import { PageRate } from "~/features/rating";
+import { Status, useTitleByApiId, type CreateTitleRecord } from "~/entities/titleRecord";
+import { PageRate, WatchedButton, WatchlistButton } from "~/features/manageTitle";
 import { ImageWithFallback } from "~/shared/ui/ImageWithFallback";
-import WatchlistButton from "~/features/watchlist/ui/WatchlistButton";
-import WatchedButton from "~/features/watchlist/ui/WatchedButton";
 import { Sidebar } from "~/shared/ui/Sidebar";
 
+//data.images?.jpg?.large_image_url,//check later if it returns "undefined" or "null"
 interface Props{
     data: Anime;
 }
 
 const AnimeSidebar : React.FC<Props> = ({data}) => {
-    const item:Title={
-        id:data.mal_id,
-        title:data.title,
-        img:String(data.images?.jpg?.large_image_url),//check later if it returns "undefined" or "null"
+    const initialData:CreateTitleRecord={
+        apiTitleId:data.mal_id,
+        titleName:data.title,
+        status: Status.WATCHED
     }
 
+    const { data: titleRecord} = useTitleByApiId(initialData.apiTitleId);
+
     return (
-        
             <Sidebar>
                 <div className="w-full relative aspect-[3/4] overflow-hidden rounded-t-xl">
                     <ImageWithFallback
@@ -30,10 +30,10 @@ const AnimeSidebar : React.FC<Props> = ({data}) => {
                 </div>
                 <div className="w-full py-8 flex flex-col gap-4 border rounded-b-xl px-4 border-gray-200 shadow divide-y divide-gray-200">
                     <div className="flex flex-col gap-4 py-2">
-                        <WatchlistButton item={item}/>
-                        <WatchedButton item={item}/>
+                        <WatchlistButton initialData={initialData} titleRecord={titleRecord}/>
+                        <WatchedButton initialData={initialData} titleRecord={titleRecord}/>
                     </div>
-                    <PageRate item={item}/>
+                    <PageRate initialData={initialData} titleRecord={titleRecord}/>
                 </div>
             </Sidebar>
     );

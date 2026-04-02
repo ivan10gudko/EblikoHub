@@ -9,7 +9,7 @@ import { Button } from "~/shared/ui/Button";
 import { Date } from "~/shared/ui/Date";
 
 const HeroSection: React.FC<{}> = () => {
-    const { isPending, error, data } = useSuspenseQuery<Anime>({
+    const { error, data } = useSuspenseQuery<Anime>({
         queryKey: ["hero_section", "top_anime"],
         queryFn: async ()=>{
             const res = await getTopAnime();
@@ -21,44 +21,59 @@ const HeroSection: React.FC<{}> = () => {
     if (!data || error) return <span>No anime data found.</span>;;
 
 return (
-    <div className="w-full flex h-[88vh] flex-row-reverse relative">
-        <img
-            loading="lazy"
-            src={data.trailer?.images.maximum_image_url ?? "/placeholder.jpg"}
-            alt={`Top Rated Anime: ${data.title_english}`}
-        />
-        <div className="bg-black w-full"></div>
-        <div className="absolute w-full h-full bg-linear-95 from-black/100 via-black/90 to-black/40 text-white py-8 lg:py-24 px-2 md:px-8 lg:px-20 flex items-center">
-            <div className="w-full md:w-2/3 xl:w-1/2 max-md:bg-linear-180 from-black/0 via-black/85 to-black/100 md:bg-transparent max-md:py-4 max-md:px-4">
-                <Badge size="sm" color="blue" border={false}>
-                    Featured anime
-                </Badge>
-                <h2 className="my-3 text-2xl sm:text-3xl md:text-4xl">
+    <div className="w-full relative min-h-[500px] md:min-h-[88vh] flex items-center bg-black overflow-hidden"> 
+        
+        <div className="absolute inset-0 z-0">
+            <img
+                loading="lazy"
+                className="w-full h-full object-cover opacity-60 md:opacity-100"
+                src={data.trailer?.images.maximum_image_url ?? "/placeholder.jpg"}
+                alt={data.title_english ?? 'featured-anime'}
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-transparent md:bg-gradient-to-r md:from-black md:via-black/70 md:to-transparent" />
+        </div>
+
+        <div className="relative z-10 w-full py-12 md:py-20 px-6 md:px-12 lg:px-24  text-gray-200 ">
+            <div className="max-w-full md:max-w-2xl xl:max-w-3xl">
+                <Badge size="sm" color="blue" textColor="white" border={false}>Featured anime</Badge>
+                
+                <h2 className="mt-4 mb-2 text-2xl sm:text-3xl md:text-5xl font-bold leading-tight">
                     {data.title_english}
                 </h2>
-                <div className="flex gap-4">
+
+                <div className="flex gap-4 items-center mb-6">
                     <Rating>{data.score}</Rating>
-                    <Date>{data.year ?? data.aired.prop.from.year }</Date>
+                    <Date>{data.year ?? data.aired.prop.from.year}</Date>
                 </div>
-                <div className="flex gap-4 my-4">
-                    {data.genres.map(
-                        (genre: { mal_id: number; name: string; [index: string]: any }) => (
-                            <Badge key={genre.mal_id}>{genre.name}</Badge>
-                            )
-                    )}
+
+                <div className="flex gap-2 mb-6 flex-wrap">
+                    {data.genres.map((genre) => (
+                        <Badge key={genre.mal_id}>{genre.name}</Badge>
+                    ))}
                 </div>
-                {data.synopsis ? <HeroDescription id={data.mal_id}>
-                    {data.synopsis}
-                </HeroDescription> : null }
+
+                {data.synopsis && (
+                    <div className="mb-8 text-gray-200 text-sm md:text-base line-clamp-4 md:line-clamp-none">
+                        <HeroDescription id={data.mal_id}>
+                            {data.synopsis}
+                        </HeroDescription>
+                    </div>
+                )}
                 
-                <div className="flex gap-8 my-4">
-                    {data.trailer.embed_url ? <Button color="white"><a href={data.trailer.embed_url}>Watch Trailer</a></Button>:null}
-                    <Button className="bg-amber-400 "><Link to={`/anime/${data.mal_id}`}>Learn more</Link></Button>
+                <div className="flex flex-wrap gap-4 mt-auto">
+                    {data.trailer.embed_url && (
+                        <Button color="white" className="flex-1 sm:flex-none">
+                            <a href={data.trailer.embed_url} target="_blank" rel="noreferrer">Watch Trailer</a>
+                        </Button>
+                    )}
+                    <Button className="bg-amber-400 text-black flex-1 sm:flex-none">
+                        <Link to={`/anime/${data.mal_id}`}>Learn more</Link>
+                    </Button>
                 </div>
             </div>
         </div>
     </div>
-    );
+);
 };
 
 export default HeroSection;

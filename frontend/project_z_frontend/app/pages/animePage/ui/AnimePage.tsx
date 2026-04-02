@@ -6,6 +6,8 @@ import AnimeInfo from "~/widgets/AnimeInfo/AnimeInfo";
 import AnimeSidebar from "~/widgets/AnimeSidebar/AnimeSidebar";
 import { getAnimeById } from "~/entities/title/api/jikan.api";
 import type { Anime } from "~/entities/title/model/animeTitle.types";
+import { Suspense } from "react";
+import { AnimeSidebarSkeleton } from "~/widgets/AnimeSidebar";
 
 const AnimePage = ({id}:{id: number | undefined}) => {
     
@@ -27,7 +29,9 @@ const AnimePage = ({id}:{id: number | undefined}) => {
 
     return (
         <div className="sm:flex sm:gap-8 mx-auto my-8 w-[90%] max-w-[1200px] h-fit">
-            <AnimeSidebar data={data} />
+            <Suspense fallback={<AnimeSidebarSkeleton/>}>
+                <AnimeSidebar data={data} />
+            </Suspense>
             <AnimeInfo data={data} />
         </div>
     )

@@ -18,7 +18,7 @@ import MenuIcon from '@mui/icons-material/Menu';
                     <div className="md:hidden mb-4 flex justify-start">
                         <Button 
                             variant="outline" 
-                            action={() => setIsSidebarOpen(true)}
+                            onClick={() => setIsSidebarOpen(true)}
                             className="flex items-center gap-2 px-4 py-2 bg-white shadow-sm border-gray-200 text-gray-700 rounded-xl"
                         >
                             <MenuIcon fontSize="small" />

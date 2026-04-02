@@ -6,7 +6,7 @@ interface Props{
 }
 const AnimeInfo : React.FC<Props> = ({data}) => {
     return (
-    <div className="w-full font-light">
+    <div className="w-full font-light mt-10 sm:mt-0">
         <Title originalTitle={data.title ?? ""}>{data.title_english ?? data.title }</Title>
         <AnimeStat
             year={data?.year}

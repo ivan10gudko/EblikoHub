@@ -1,6 +1,6 @@
 import { NavLink, useNavigate } from "react-router";
 import { useMemo, useState } from "react";
-import type { Session } from "@supabase/supabase-js";
+import SearchIcon from "@mui/icons-material/Search";
 
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import BurgerIcon from "../../shared/ui/Burger/BurgerIcon";
@@ -46,7 +46,10 @@ const Header = ()=> {
             </div>
             
             <div className="flex sm:hidden gap-1 items-center">
-                <SearchBar onSearch={handleMainSearch} className="w-64"/>
+                
+                <NavLink to="search">
+                        <SearchIcon fontSize="large" />
+                    </NavLink>
                 
                 {isAuth ? (
                     <NavLink to="profile">

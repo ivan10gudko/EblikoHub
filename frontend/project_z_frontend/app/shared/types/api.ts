@@ -9,3 +9,22 @@ export interface PaginationMeta {
         per_page: number;
     };
 }
+export interface PageResponse<T> {
+    content: T[];
+    totalPages: number;
+    totalElements: number;
+    size: number;
+    number: number; // current page
+    last: boolean;
+    first: boolean;
+    empty: boolean;
+}
+
+export type SortOrder = 'ask' | 'desk';
+
+export interface QueryParams {
+    page?: number;
+    limit?: number;
+    sortBy?: string;
+    order?: SortOrder;
+}

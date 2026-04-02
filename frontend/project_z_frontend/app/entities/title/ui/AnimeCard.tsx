@@ -26,7 +26,7 @@ const AnimeCard : React.FC<AnimeCardProps> = ({data, menuActions})=>{
         onClick={()=>navigate(`/anime/${data.id}`)}
         >
         <div className="w-full relative aspect-[3/4] overflow-hidden rounded-lg">
-            <img className="w-full h-full object-cover hover:scale-105 transition-transform duration-300" src={data.img}/>
+            <img className="w-full h-full object-cover hover:scale-105 transition-transform duration-300" src={data.img} loading="lazy"/>
             {menuActions && (
                 <AnimeCardMenu parentRef={ref}>
                     {menuActions}
