@@ -87,9 +87,12 @@ public class RoomController {
         if (roomDto.getMembers() != null) {
         for (UserDto u : roomDto.getMembers()) {
             
-        if (u != null && u.getUserId() != null) {
-                userService.findOne(u.getUserId()).ifPresent(users::add);
-    }
+            if (u != null && u.getUserId() != null) {
+                UserEntity user = userService.findOne(u.getUserId());
+                if (user != null) {
+                    users.add(user);
+                }
+            }
         }
         }
         existing.setMembers(users);

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.data.annotation.CreatedDate;
@@ -26,6 +27,7 @@ import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import project_z.demo.enums.UserRole;
 @EntityListeners(AuditingEntityListener.class)
@@ -34,8 +36,10 @@ import project_z.demo.enums.UserRole;
 @NoArgsConstructor
 @Builder
 @Entity
+@DynamicUpdate
 @Table(name = "users")
 @JsonIgnoreProperties(ignoreUnknown=true)
+@Getter
 public class UserEntity {
     @Id
     private UUID userId;

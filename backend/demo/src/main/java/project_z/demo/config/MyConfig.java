@@ -1,4 +1,5 @@
 package project_z.demo.config;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.beans.factory.annotation.Value;
 import lombok.Getter;
