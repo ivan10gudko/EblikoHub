@@ -131,7 +131,6 @@ public ResponseEntity<TitleDto> fullUpdateTitle (
              if(!titleService.isExists(titleId)){
             return  new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        System.out.println(titleDto.getApiTitleId());
         TitleEntity updatedTitleEntity  = titleService.partialUpdate(titleId, titleDto);
         return new ResponseEntity<>(titleMapper.mapTo(updatedTitleEntity), HttpStatus.OK);
     }

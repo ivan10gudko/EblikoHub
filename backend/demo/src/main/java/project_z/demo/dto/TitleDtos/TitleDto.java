@@ -7,6 +7,7 @@ import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import project_z.demo.enums.TitleStatus;
 
@@ -14,6 +15,7 @@ import project_z.demo.enums.TitleStatus;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@Getter
 public class TitleDto {
     @Id
     private Long titleId;

@@ -1,6 +1,7 @@
 package project_z.demo.services.impl;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -89,6 +90,7 @@ public TitleEntity partialUpdate(Long titleId, TitlePatchUpdateDto source) {
             patchHelper.updateIfPresent(source.getApiTitleId(),target::setApiTitleId);
             patchHelper.updateIfPresent(source.getTitleName(),target::setTitleName);
             patchHelper.updateIfPresent(source.getStatus(),target::setStatus);
+            patchHelper.updateIfPresent(source.getRating(),target::setRating);
             return titleRepository.save(target);
         })
         .orElseThrow(() -> new RuntimeException("Title not found"));
