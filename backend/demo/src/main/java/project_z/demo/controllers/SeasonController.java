@@ -63,7 +63,7 @@ public ResponseEntity<SeasonDto> fullSeasonUpdate(@PathVariable("seasonId") Long
             @RequestHeader("Authorization") String token, 
             @RequestBody SeasonDto seasonDto) {
     SeasonEntity existingSeason = seasonService.findById(seasonId).orElseThrow(
-      ()-> new RuntimeException("season dont found")
+      ()-> new RuntimeException("season not found")
     );
 
     existingSeason.setName(seasonDto.getName());
