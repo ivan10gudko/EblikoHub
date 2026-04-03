@@ -100,14 +100,12 @@ public void deleteById(Long Id){
     titleRepository.deleteById(Id);
 }
 @Override
-public List<TitleEntity> addTitle(TitleEntity titleEntity, String token){
+public TitleEntity addTitle(TitleEntity titleEntity, String token){
     UUID userId = jwtService.extractUsername(token);
     UserEntity userEntity = userRepository.findById(userId).orElseThrow(
         () -> new RuntimeException("user not found"));
-        titleEntity.setUser(userEntity);
-        userEntity.getTitleList().add(titleEntity);
-        userRepository.save(userEntity);
-        return userEntity.getTitleList();
+    titleEntity.setUser(userEntity);
+    return titleRepository.save(titleEntity);
 }
 @Override
 public List<TitleEntity> getWatchedList(UUID userId){

@@ -1,5 +1,4 @@
 package project_z.demo.controllers;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -45,16 +44,12 @@ private TitleService titleService;
 @Autowired
 private UserService userService;
 @PostMapping
-public ResponseEntity<List<TitleDto>> CreateTitle (
+public ResponseEntity<TitleDto> CreateTitle (
     @RequestHeader("Authorization") String token,
     @RequestBody TitleDto titleDto) {
         TitleEntity titleEntity = titleMapper.mapFrom(titleDto);
-        List<TitleEntity> titleEntitys = titleService.addTitle(titleEntity, token);
-        List<TitleDto> response = new ArrayList<>();
-        for(TitleEntity entity : titleEntitys){
-            response.add(titleMapper.mapTo(entity));
-        }
-    return new ResponseEntity<>(response, HttpStatus.CREATED);
+        TitleEntity response = titleService.addTitle(titleEntity, token);
+    return new ResponseEntity<>(titleMapper.mapTo(response), HttpStatus.CREATED);
 }
 
 
