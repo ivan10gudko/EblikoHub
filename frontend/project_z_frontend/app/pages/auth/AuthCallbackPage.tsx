@@ -45,8 +45,8 @@ const AuthCallbackPage = () => {
     }, [navigate, syncOAuthUser]);
 
     return (
-        <div className="flex justify-center items-center h-screen bg-slate-50">
-            <p className="bg-white text-4xl px-12 py-10 rounded-lg shadow-lg font-medium text-amber-300">
+        <div className="flex justify-center items-center h-screen">
+            <p className="text-white text-4xl px-12 py-10 rounded-lg shadow-lg font-medium ">
                 Finalizing login...
             </p>
         </div>

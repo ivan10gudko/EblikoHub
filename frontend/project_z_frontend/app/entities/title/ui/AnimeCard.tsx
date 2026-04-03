@@ -1,18 +1,19 @@
 import { useNavigate} from "react-router";
-import { useRef} from "react";
+import { useRef, type ReactNode} from "react";
 import type { AnimeCardType } from "../model/animeTitle.types";
-import { AnimeCardMenu } from "~/features/rating";//це виправлю після рефакторингу
 import CardDate from "./CardDate";
 import { Badge } from "~/shared/ui/Badge";
 import { Rating } from "~/shared/ui/Rating";
+import AnimeCardMenu from "./AnimeCardMenu";
 
-interface Props{
+interface AnimeCardProps{
     data:AnimeCardType;
+    menuActions?: ReactNode;
 }
 
 
 
-const AnimeCard : React.FC<Props> = ({data})=>{
+const AnimeCard : React.FC<AnimeCardProps> = ({data, menuActions})=>{
     const navigate = useNavigate();
     const ref = useRef<HTMLDivElement>(null);
 
@@ -25,8 +26,12 @@ const AnimeCard : React.FC<Props> = ({data})=>{
         onClick={()=>navigate(`/anime/${data.id}`)}
         >
         <div className="w-full relative aspect-[3/4] overflow-hidden rounded-lg">
-            <img className="w-full h-full object-cover hover:scale-105 transition-transform duration-300" src={data.img}/>
-            <AnimeCardMenu parentRef={ref as React.RefObject<HTMLDivElement>} item={{id:data.id,title:data.title,img:data.img}}/>
+            <img className="w-full h-full object-cover hover:scale-105 transition-transform duration-300" src={data.img} loading="lazy"/>
+            {menuActions && (
+                <AnimeCardMenu parentRef={ref}>
+                    {menuActions}
+                </AnimeCardMenu>
+            )}
         </div>
         <div className="px-3 pb-6 pt-6 flex flex-col grow">
             <div>

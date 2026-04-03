@@ -1,5 +1,4 @@
 package project_z.demo.controllers;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -23,8 +22,8 @@ import org.springframework.web.bind.annotation.RestController;
 import project_z.demo.Mappers.Mapper;
 import project_z.demo.common.QueryParameters.TitleQueryParameters;
 import project_z.demo.dto.TitleDtos.TitleDto;
+import project_z.demo.dto.TitleDtos.TitlePatchUpdateDto;
 import project_z.demo.entity.TitleEntity;
-import project_z.demo.security.SecurityService;
 import project_z.demo.services.TitleService;
 import project_z.demo.services.UserService;
 
@@ -39,20 +38,18 @@ public class TitleController {
 @Autowired
 private Mapper<TitleEntity, TitleDto> titleMapper;
 @Autowired
+private Mapper<TitleEntity, TitlePatchUpdateDto> titlePatchMapper;
+@Autowired
 private TitleService titleService;
 @Autowired
 private UserService userService;
 @PostMapping
-public ResponseEntity<List<TitleDto>> CreateTitle (
+public ResponseEntity<TitleDto> CreateTitle (
     @RequestHeader("Authorization") String token,
     @RequestBody TitleDto titleDto) {
         TitleEntity titleEntity = titleMapper.mapFrom(titleDto);
-        List<TitleEntity> titleEntitys = titleService.addTitle(titleEntity, token);
-        List<TitleDto> response = new ArrayList<>();
-        for(TitleEntity entity : titleEntitys){
-            response.add(titleMapper.mapTo(entity));
-        }
-    return new ResponseEntity<>(response, HttpStatus.CREATED);
+        TitleEntity response = titleService.addTitle(titleEntity, token);
+    return new ResponseEntity<>(titleMapper.mapTo(response), HttpStatus.CREATED);
 }
 
 
@@ -124,13 +121,12 @@ public ResponseEntity<TitleDto> fullUpdateTitle (
     public ResponseEntity<TitleDto> partialUpdate (
         @PathVariable("titleId") Long titleId,
         @RequestHeader("Authorization") String token,
-        @RequestBody TitleDto titleDto
+        @RequestBody TitlePatchUpdateDto titleDto
         ){
              if(!titleService.isExists(titleId)){
             return  new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-       TitleEntity titleEntity = titleMapper.mapFrom(titleDto);
-        TitleEntity updatedTitleEntity  = titleService.partialUpdate(titleId, titleEntity);
+        TitleEntity updatedTitleEntity  = titleService.partialUpdate(titleId, titleDto);
         return new ResponseEntity<>(titleMapper.mapTo(updatedTitleEntity), HttpStatus.OK);
     }
 

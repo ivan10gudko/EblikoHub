@@ -7,6 +7,7 @@ import java.util.UUID;
 import org.springframework.data.domain.Page;
 
 import project_z.demo.common.QueryParameters.TitleQueryParameters;
+import project_z.demo.dto.TitleDtos.TitlePatchUpdateDto;
 import project_z.demo.entity.SeasonEntity;
 import project_z.demo.entity.TitleEntity;
 
@@ -15,9 +16,9 @@ public interface TitleService {
     List<TitleEntity> findAll();
     Optional<TitleEntity> findOne(Long titleId);
     boolean isExists (Long titleId);
-    TitleEntity partialUpdate(Long titleId, TitleEntity titleEntity);
+    TitleEntity partialUpdate(Long titleId, TitlePatchUpdateDto titleEntity);
     void deleteById(Long id);
-    List<TitleEntity> addTitle(TitleEntity titleEntity, String token);
+    TitleEntity addTitle(TitleEntity titleEntity, String token);
     List<TitleEntity> getWatchedList(UUID userid);
     List<TitleEntity> getWatchList(UUID userid);
     TitleEntity addSeason(SeasonEntity seasonEntity, TitleEntity titleEntity);

@@ -1,6 +1,7 @@
 package project_z.demo.services.impl;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -14,14 +15,18 @@ import org.springframework.stereotype.Service;
 
 import project_z.demo.JavaUtil.BeanUtilsHelper;
 import project_z.demo.JavaUtil.PagingHelper;
+import project_z.demo.JavaUtil.PatchHelper;
+import project_z.demo.Mappers.impl.PatchMappers.TitlePatchMapper;
 import project_z.demo.common.Exceptions.ResourceNotFoundException;
 import project_z.demo.common.QueryParameters.TitleQueryParameters;
+import project_z.demo.dto.TitleDtos.TitlePatchUpdateDto;
 import project_z.demo.entity.SeasonEntity;
 import project_z.demo.entity.TitleEntity;
 import project_z.demo.entity.UserEntity;
+import project_z.demo.enums.TitleStatus;
+import project_z.demo.repositories.Specifications.TitleSpecifications;
 import project_z.demo.repositories.TitleRepository;
 import project_z.demo.repositories.UserRepository;
-import project_z.demo.repositories.Specifications.TitleSpecifications;
 import project_z.demo.security.JwtService;
 import project_z.demo.services.SeasonService;
 import project_z.demo.services.TitleService;
@@ -32,6 +37,7 @@ public class TitleServiceImpl implements TitleService {
     private final TitleSeachServiceImpl titleSeachServiceImpl;
 
     private final SeasonService seasonService;
+    private PatchHelper patchHelper;
     @Autowired
     private BeanUtilsHelper beanUtilsHelper;
     @Autowired
@@ -40,9 +46,10 @@ public class TitleServiceImpl implements TitleService {
     private UserRepository userRepository;
     @Autowired
     private JwtService jwtService;
-    TitleServiceImpl(SeasonService seasonService, TitleSeachServiceImpl titleSeachServiceImpl) {
+    TitleServiceImpl(SeasonService seasonService, TitleSeachServiceImpl titleSeachServiceImpl, PatchHelper patchHelper) {
         this.seasonService = seasonService;
         this.titleSeachServiceImpl = titleSeachServiceImpl;
+        this.patchHelper = patchHelper;
     }
 @Override
 public TitleEntity createTitle(TitleEntity title){
@@ -76,40 +83,42 @@ public boolean isExists(Long titleId){
     return titleRepository.existsById(titleId);
 }
 @Override
-public TitleEntity partialUpdate(Long titleId, TitleEntity source) {
+public TitleEntity partialUpdate(Long titleId, TitlePatchUpdateDto source) {
+    System.out.println("Source apiTitleId: " + source.getApiTitleId());
     return titleRepository.findById(titleId)
         .map(target -> {
-            beanUtilsHelper.copyNonNullProperties(source, target);
+            patchHelper.updateIfPresent(source.getApiTitleId(),target::setApiTitleId);
+            patchHelper.updateIfPresent(source.getTitleName(),target::setTitleName);
+            patchHelper.updateIfPresent(source.getStatus(),target::setStatus);
+            patchHelper.updateIfPresent(source.getRating(),target::setRating);
             return titleRepository.save(target);
         })
-        .orElseThrow(() -> new RuntimeException("User not found"));
+        .orElseThrow(() -> new RuntimeException("Title not found"));
 }
 @Override
 public void deleteById(Long Id){
     titleRepository.deleteById(Id);
 }
 @Override
-public List<TitleEntity> addTitle(TitleEntity titleEntity, String token){
-    UUID userId = UUID.fromString(jwtService.extractUsername(token));
+public TitleEntity addTitle(TitleEntity titleEntity, String token){
+    UUID userId = jwtService.extractUsername(token);
     UserEntity userEntity = userRepository.findById(userId).orElseThrow(
         () -> new RuntimeException("user not found"));
-        titleEntity.setUser(userEntity);
-        userEntity.getTitleList().add(titleEntity);
-        userRepository.save(userEntity);
-        return userEntity.getTitleList();
+    titleEntity.setUser(userEntity);
+    return titleRepository.save(titleEntity);
 }
 @Override
 public List<TitleEntity> getWatchedList(UUID userId){
     UserEntity userEntity = userRepository.findById(userId).orElseThrow(
     () -> new RuntimeException("user not found"));
-    List<TitleEntity> response = userEntity.getTitleList().stream().filter(title -> title.getStatus() == TitleEntity.titleStatus.WATCHED).toList();
+    List<TitleEntity> response = userEntity.getTitleList().stream().filter(title -> title.getStatus() == TitleStatus.WATCHED).toList();
     return response;
 }
 @Override
 public List<TitleEntity> getWatchList(UUID userId){
     UserEntity userEntity = userRepository.findById(userId).orElseThrow(
     () -> new RuntimeException("user not found"));
-    List<TitleEntity> response = userEntity.getTitleList().stream().filter(title -> title.getStatus() == TitleEntity.titleStatus.PLANNED).toList();
+    List<TitleEntity> response = userEntity.getTitleList().stream().filter(title -> title.getStatus() == TitleStatus.PLANNED).toList();
     return response;
     
 }
@@ -121,7 +130,7 @@ public TitleEntity addSeason(SeasonEntity seasonEntity, TitleEntity titleEntity)
 }
 @Override
 public TitleEntity findUserTitleByMalId(Long titleMalId, String token){
-    UUID userId = UUID.fromString(jwtService.extractUsername(token));
+    UUID userId = jwtService.extractUsername(token);
     TitleEntity response = titleRepository.findByApiTitleIdAndUserId(titleMalId,userId).orElseThrow(
     () -> new ResourceNotFoundException("Title not found")
     );
@@ -129,7 +138,7 @@ public TitleEntity findUserTitleByMalId(Long titleMalId, String token){
 }
 @Override
 public List<TitleEntity> findAllByMalIdInUserRooms(Long titleMalId, String token){
-    UUID userId = UUID.fromString(jwtService.extractUsername(token));
+    UUID userId = jwtService.extractUsername(token);
     return titleRepository.findAllByApiTitleIdInUserRooms(titleMalId,userId);
 }
 

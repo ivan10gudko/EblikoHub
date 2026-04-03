@@ -41,6 +41,7 @@ const SearchPage: React.FC = () => {
 
             <div className="py-8 border-b flex justify-between items-center px-2 mb-6">
                 <SearchBar
+                    key={queryStr}
                     onSearch={handleMainSearch}
                     className="w-full md:w-96"
                     initialValue={queryStr}

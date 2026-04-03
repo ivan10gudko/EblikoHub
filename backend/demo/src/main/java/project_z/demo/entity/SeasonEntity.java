@@ -4,7 +4,6 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-import jakarta.annotation.Generated;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.EnumType;
@@ -18,18 +17,18 @@ import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
-import project_z.demo.entity.TitleEntity.titleStatus;
+import project_z.demo.enums.TitleStatus;
 @EntityListeners(AuditingEntityListener.class)
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @Entity
-
 @Table(name="seasons")
 @JsonIgnoreProperties(ignoreUnknown=true)
-
+@Getter
 public class SeasonEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -37,9 +36,10 @@ public class SeasonEntity {
     private String name;
     private Float rating;
     @Enumerated(EnumType.STRING)
-    private titleStatus status;
+    private TitleStatus status;
     @ManyToOne
     @JoinColumn( name = "TitleId")
     @JsonBackReference
     private TitleEntity title;
+
 }

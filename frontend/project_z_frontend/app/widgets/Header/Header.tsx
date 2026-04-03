@@ -1,19 +1,17 @@
 import { NavLink, useNavigate } from "react-router";
 import { useMemo, useState } from "react";
-import type { Session } from "@supabase/supabase-js";
+import SearchIcon from "@mui/icons-material/Search";
 
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import BurgerIcon from "../../shared/ui/Burger/BurgerIcon";
 
 import { Logo } from "~/shared/ui/Logo";
 import { SearchBar } from "~/features/search";
+import { useAuthStore } from "~/features/auth";
 
 
-interface HeaderProps{
-    session : Session | null
-}
-const Header = ({session}:HeaderProps)=> {
-    const [isLogged, setIsLogged] = useState<boolean>(false);
+const Header = ()=> {
+    const {isAuth} = useAuthStore();
     const [burgerMenuOpen,setBurgerMenuOpen] = useState<boolean>(false);
 
     const navigate = useNavigate();
@@ -38,7 +36,7 @@ const Header = ({session}:HeaderProps)=> {
             ""
 )} >Rooms</NavLink>
                 <NavLink to={"/profile"}>Watchlist</NavLink>
-                {session ? (
+                {isAuth ? (
                     <NavLink to="/profile">
                         <AccountCircleIcon fontSize="large" />
                     </NavLink>
@@ -48,16 +46,19 @@ const Header = ({session}:HeaderProps)=> {
             </div>
             
             <div className="flex sm:hidden gap-1 items-center">
-                <SearchBar onSearch={handleMainSearch} className="w-64"/>
                 
-                {isLogged ? (
-                    <NavLink to="profile/123">
+                <NavLink to="search">
+                        <SearchIcon fontSize="large" />
+                    </NavLink>
+                
+                {isAuth ? (
+                    <NavLink to="profile">
                         <AccountCircleIcon fontSize="large" />
                     </NavLink>
                 ) : (
                     <NavLink to="auth" className="bg-amber-400 py-2 px-2 md:px-3 rounded-lg">Sign in</NavLink>
                 )}
-                <BurgerIcon action={()=>setBurgerMenuOpen(v=>!v)} isOpen={burgerMenuOpen}/>
+                <BurgerIcon onClick={()=>setBurgerMenuOpen(v=>!v)} isOpen={burgerMenuOpen}/>
                 
             </div>
             <div className={burgerMenuStyles} onClick={()=>setBurgerMenuOpen(false)}>
@@ -65,8 +66,8 @@ const Header = ({session}:HeaderProps)=> {
                 <li><NavLink to={"/rooms"}>Popular</NavLink></li>
                 <li><NavLink to={"/rooms"}>Rooms</NavLink></li>
                 <li><NavLink to={"/profile"}>Watchlist</NavLink></li>
-                <li >{isLogged ? (
-                    <NavLink to="profile/123"> Profile </NavLink>
+                <li >{isAuth ? (
+                    <NavLink to="profile"> Profile </NavLink>
                 ) : (
                     <NavLink to="auth" className="bg-amber-400 py-2 px-3 rounded-lg">Sign in</NavLink>
                 )}</li>

@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./demo  
+      dockerfile: Dockerfile
+    container_name: spring_backend
+    ports:
+      - "8080:8080"
+    env_file: .env  # this path valid if only .env file is in /backend and u do docker up from /backend/demo 
+    environment:
+      DATABASE_URL: jdbc:postgresql://host.docker.internal:5432/${DATABASE_NAME}
+      DATABASE_USERNAME: ${DATABASE_USERNAME}
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD}
+      SECURITY_API_KEY_ENABLED: ${SECURITY_API_KEY_ENABLED}
+      SECURITY_API_KEY_VALUE: ${SECURITY_API_KEY_VALUE}
+      SUPABASE_JWK_URL: ${SUPABASE_JWK_URL}
+      HUGFACE_TOKEN: ${HUGFACE_TOKEN}
+      SUPABASE_SERVICE_ROLE: ${SUPABASE_SERVICE_ROLE}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"

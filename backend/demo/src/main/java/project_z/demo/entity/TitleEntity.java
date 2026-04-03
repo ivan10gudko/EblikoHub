@@ -33,6 +33,7 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import project_z.demo.enums.TitleStatus;
 @EntityListeners(AuditingEntityListener.class)
 @Data
 @AllArgsConstructor
@@ -44,14 +45,12 @@ import lombok.Setter;
 @Table(name="titles")
 @JsonIgnoreProperties(ignoreUnknown=true)
 public class TitleEntity { 
-    public enum titleStatus {
-    WATCHED,
-    PLANNED
-}
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long titleId;
-    private int apiTitleId; //optional
+    @Column(name = "api_title_id", nullable = true)
+    private Integer apiTitleId;
     private String titleName;
     @ElementCollection
     @CollectionTable(
@@ -63,7 +62,7 @@ public class TitleEntity {
     @Column(name = "value")
     private Map<String, Float> rating;
     @Enumerated(EnumType.STRING)
-    private titleStatus status;
+    private TitleStatus status;
     
     @ManyToOne
     @JoinColumn(name = "user_id")

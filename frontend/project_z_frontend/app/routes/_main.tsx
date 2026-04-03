@@ -23,5 +23,5 @@ export function HydrateFallback() {
 }
 
 export default function MainRoute({ loaderData }: Route.ComponentProps) {
-    return <MainLayout session={loaderData?.session ?? null} />;
+    return <MainLayout/>;
 }

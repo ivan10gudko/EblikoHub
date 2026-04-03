@@ -1,14 +1,21 @@
 package project_z.demo.config;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-
+import org.springframework.beans.factory.annotation.Value;
 import lombok.Getter;
 
 @Component
 @Getter
 public class MyConfig {
 
-    @org.springframework.beans.factory.annotation.Value("${app.api.jwk-url}")
+    @Value("${app.api.jwk-url}")
     private String jwkUrl;
-    @org.springframework.beans.factory.annotation.Value("${app.api.hugface-token}")
+    @Value("${app.api.hugface-token}")
     private String hugfaceToken;
+    @Value("${app.api.supabase-service-role}")
+    private String supabaseServiceRole;
+    @Value("${app.security.api-key.enabled}")
+    private boolean isApiKeyEnabled;
+    @Value("${app.security.api-key.value}")
+    private String apiKeyValue;
 }

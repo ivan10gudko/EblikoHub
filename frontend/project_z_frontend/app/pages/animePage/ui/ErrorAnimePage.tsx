@@ -25,7 +25,7 @@ const ErrorAnimePage : React.FC = ()=>{
 
           <div className="space-y-3 pt-2">
               <Button
-                action={()=>navigate(-1)}
+                onClick={()=>navigate(-1)}
                 className="w-full"
                 variant="fill"
               >
@@ -35,7 +35,7 @@ const ErrorAnimePage : React.FC = ()=>{
 
 
               <Button
-                action={()=>navigate("/")}
+                onClick={()=>navigate("/")}
                 className="w-full"
                 variant="outline"
               >
