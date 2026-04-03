@@ -74,10 +74,8 @@ const LoginPage = () => {
                 </Input>
                 <Button
                     variant="fill"
-                    htmlType="submit"
-                    className="w-full py-3 font-medium text-xl my-2"
-                    bgColor="var(--color-amber-300)"
-                    color="white "
+                    type="submit"
+                    className="w-full py-3 font-medium text-xl my-2 bg-amber-300 text-white"
                     disabled={isLoading}
                 >
                     {isLoading ? "Logging in..." : "Login"}

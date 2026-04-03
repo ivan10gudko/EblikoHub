@@ -30,10 +30,11 @@ const WatchlistButton = ({
     return (
         <Button
             variant={isInWatchlist ? "fill" : "outline"}
-            color="rgba(0,0,0,0.85)"
-            borderColor="rgba(14,14,14,0.2)"
-            bgColor={`rgba(236, 238, 242,${isAnyActionLoading ? "0.6" : "1"})`}
-            className={isInWatchlist ? "border-0 gap-3" : "border-[1px] gap-3"}
+            className={`
+                gap-3 transition-opacity
+                ${isInWatchlist ? "border-none bg-[#eceef2] text-black/85" : "border-black/20 text-black/85"}
+                ${isAnyActionLoading ? "opacity-60 cursor-not-allowed" : "opacity-100"}
+                `}
             onClick={handleClick}
             disabled={isAnyActionLoading}
         >

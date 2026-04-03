@@ -81,7 +81,7 @@ export const UserProfileEdit = ({ user, onSave, onCancel, isPending }: UserProfi
                 <Button
                     variant="outline"
                     onClick={onCancel} 
-                    className="px-6 py-3 rounded-xl !text-red-500 !border-red-500 font-bold bg-white "
+                    className="px-6 py-3 rounded-xl text-red-500 border-red-500 font-bold bg-white "
                 >
                     Cancel
                 </Button>

@@ -52,9 +52,7 @@ const AnimeSidebar: React.FC<Props> = ({ data }) => {
                 {titleRecord && (
                     <Button
                         variant="fill"
-                        bgColor="var(--color-red-600)"
-                        color="var(--color-white)"
-                        className="flex gap-2 mt-2 w-full"
+                        className="flex gap-2 mt-2 w-full bg-red-600 text-white"
                         onClick={()=>deleteTitle(titleRecord.titleId)}
                     >
                         Remove from Library
