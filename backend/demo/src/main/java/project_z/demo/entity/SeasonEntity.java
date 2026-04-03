@@ -17,6 +17,7 @@ import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import project_z.demo.enums.TitleStatus;
 @EntityListeners(AuditingEntityListener.class)
@@ -27,7 +28,7 @@ import project_z.demo.enums.TitleStatus;
 @Entity
 @Table(name="seasons")
 @JsonIgnoreProperties(ignoreUnknown=true)
-
+@Getter
 public class SeasonEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -40,4 +41,5 @@ public class SeasonEntity {
     @JoinColumn( name = "TitleId")
     @JsonBackReference
     private TitleEntity title;
+
 }
