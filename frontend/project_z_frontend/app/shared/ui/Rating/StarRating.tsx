@@ -6,7 +6,7 @@ interface Props {
 const StarRating: React.FC<Props> = ({rating}) => {
 
     return (
-        <div className="flex justify-center gap-1 py-4">
+        <div className="flex justify-center py-4">
                     {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((star) => (
                         <StarRoundedIcon
                             key={star}

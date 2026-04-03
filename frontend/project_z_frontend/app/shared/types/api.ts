@@ -1,4 +1,4 @@
-
+// for jikan
 export interface PaginationMeta {
     last_visible_page: number;
     has_next_page: boolean;
@@ -9,6 +9,7 @@ export interface PaginationMeta {
         per_page: number;
     };
 }
+//for our back
 export interface PageResponse<T> {
     content: T[];
     totalPages: number;

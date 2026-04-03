@@ -11,7 +11,12 @@ const WatchedButton = ({
     titleRecord,
 }: ManageTitleRecordProps) => {
     const isWatched = titleRecord?.status == Status.WATCHED;
-    const { isAnyActionLoading, updateStatus, deleteTitle } = useTitleRecordMutation(initialData.apiTitleId, initialData);
+    const { isAnyActionLoading, updateStatus, deleteTitle } =
+        useTitleRecordMutation(
+            initialData.apiTitleId,
+            initialData,
+            titleRecord,
+        );
 
     function handleWatched(e: React.MouseEvent<HTMLElement>) {
         e.stopPropagation();

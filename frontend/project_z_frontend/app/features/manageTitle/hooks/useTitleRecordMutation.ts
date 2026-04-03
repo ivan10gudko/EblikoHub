@@ -1,30 +1,40 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Status, titleRecordService, type CreateTitleRecord, type TitleRating, type TitleRecord } from "~/entities/titleRecord";
 
-export const useTitleRecordMutation = (jikanId: number, initialData: CreateTitleRecord) => {
+export const useTitleRecordMutation = (apiTitleId: number | undefined, initialData: CreateTitleRecord,existingTitleRecord?: TitleRecord | null) => {
     const queryClient = useQueryClient();
+
+    const queryKey = apiTitleId 
+        ? ['titleRecord', apiTitleId] 
+        : ['titleRecord', 'local', existingTitleRecord?.titleId];
 
     const mutationConfig = {
         onSuccess: (updatedRecord: TitleRecord | null) => {
-            queryClient.setQueryData(['titleRecord', jikanId], updatedRecord);
+            queryClient.setQueryData(queryKey, updatedRecord);
         },
         onSettled: () => {
-            queryClient.invalidateQueries({ queryKey: ['titleRecord', jikanId] });
+            queryClient.invalidateQueries({ queryKey: queryKey });
         },
     };
 
-    const getCache = () => queryClient.getQueryData<TitleRecord>(['titleRecord', jikanId]);
+    const getCache = () => queryClient.getQueryData<TitleRecord>(queryKey) || existingTitleRecord;
 
     const rateMutation = useMutation({
         mutationFn: (score: number | TitleRating) => 
-            titleRecordService.rate({ jikanId, score, initialData, existingTitle: getCache() }),
+            titleRecordService.rate({ apiTitleId, score, initialData, existingTitle: getCache() }),
+        ...mutationConfig
+    });
+
+    const clearRateMutation = useMutation({
+        mutationFn: () =>
+            titleRecordService.clearRating({ apiTitleId, initialData, existingTitle: getCache() }),
         ...mutationConfig
     });
 
     const statusMutation = useMutation({
         mutationFn: (status: Status) => {
             const data = { status };
-            return titleRecordService.saveAction({ jikanId, data, initialData, existingTitle: getCache() });
+            return titleRecordService.saveAction({ apiTitleId, data, initialData, existingTitle: getCache() });
         },
         ...mutationConfig
     });
@@ -32,10 +42,10 @@ export const useTitleRecordMutation = (jikanId: number, initialData: CreateTitle
     const deleteMutation = useMutation({
         mutationFn: (titleId: number) => titleRecordService.delete(titleId),
         onSuccess: () => {
-            queryClient.setQueryData(['titleRecord', jikanId], null);
+            queryClient.setQueryData(queryKey, null);
         },
         onSettled: () => {
-            queryClient.invalidateQueries({ queryKey: ['titleRecord', jikanId] });
+            queryClient.invalidateQueries({ queryKey: queryKey });
         },
     });
 
@@ -45,6 +55,9 @@ export const useTitleRecordMutation = (jikanId: number, initialData: CreateTitle
         
         rate: rateMutation.mutate,
         rateLoading: rateMutation.isPending,
+
+        clearRate: clearRateMutation.mutate,
+        clearRateLoading: clearRateMutation.isPending,
 
         deleteTitle: deleteMutation.mutate,
         deleteLoading: deleteMutation.isPending,

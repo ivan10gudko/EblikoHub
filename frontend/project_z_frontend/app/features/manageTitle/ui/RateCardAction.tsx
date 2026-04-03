@@ -24,6 +24,7 @@ const RateCardAction = ({
     const { rate, isAnyActionLoading } = useTitleRecordMutation(
         initialData.apiTitleId,
         initialData,
+        titleRecord,
     );
 
     const currentRating = titleRecord?.rating?.overall;

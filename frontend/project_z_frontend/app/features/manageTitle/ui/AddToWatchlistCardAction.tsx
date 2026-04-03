@@ -10,7 +10,8 @@ const AddToWatchlistCardAction = ({ initialData, titleRecord }: ManageTitleRecor
     
     const { isAnyActionLoading, updateStatus, deleteTitle } = useTitleRecordMutation(
         initialData.apiTitleId,
-        initialData
+        initialData,
+        titleRecord
     );
 
     function handleWatchlist(e: React.MouseEvent<HTMLLIElement>) {
@@ -36,7 +37,7 @@ const AddToWatchlistCardAction = ({ initialData, titleRecord }: ManageTitleRecor
                         <WatchLaterOutlinedIcon fontSize="small" />
                     )}
                     <span className="ml-2">
-                        {isPlanned ? "Remove from watchlist" : "Add to watchlist"}
+                        {isPlanned ? "Remove from watchlist" : "Plan to Watch"}
                     </span>
                 </>
             )}

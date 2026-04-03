@@ -12,7 +12,11 @@ const WatchlistButton = ({
 }: ManageTitleRecordProps) => {
     const isInWatchlist = titleRecord?.status == Status.PLANNED;
     const { updateStatus, deleteTitle, isAnyActionLoading } =
-        useTitleRecordMutation(initialData.apiTitleId, initialData);
+        useTitleRecordMutation(
+            initialData.apiTitleId,
+            initialData,
+            titleRecord,
+        );
 
     function handleClick(e: React.MouseEvent<HTMLElement>) {
         e.stopPropagation();
@@ -43,7 +47,7 @@ const WatchlistButton = ({
             ) : (
                 <>
                     <WatchLaterOutlinedIcon fontSize="small" />
-                    Add to watchlist
+                    Plan to Watch
                 </>
             )}
         </Button>

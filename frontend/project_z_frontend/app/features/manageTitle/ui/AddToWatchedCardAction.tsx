@@ -12,7 +12,8 @@ const AddToWatchedCardAction = ({ initialData, titleRecord }: ManageTitleRecordP
     console.log(initialData);
     const { isAnyActionLoading, updateStatus, deleteTitle } = useTitleRecordMutation(
         initialData.apiTitleId,
-        initialData
+        initialData,
+        titleRecord
     );
 
     function handleWatched(e: React.MouseEvent<HTMLLIElement>) {
