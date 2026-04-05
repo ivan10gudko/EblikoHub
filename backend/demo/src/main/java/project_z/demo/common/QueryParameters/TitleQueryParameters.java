@@ -8,4 +8,5 @@ import project_z.demo.enums.TitleStatus;
 
 public class TitleQueryParameters extends QueryParameters {
     private TitleStatus status;
+    private String search;
 }

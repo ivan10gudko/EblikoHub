@@ -4,7 +4,8 @@ import type { QueryParams } from "~/shared/types";
 export enum Status{
     WATCHED = "WATCHED",
     PLANNED = "PLANNED",
-    DROPPED = "DROPPED"
+    DROPPED = "DROPPED",
+    INPROGRESS = "INPROGRESS",
 }
 
 export interface TitleRating {
@@ -21,6 +22,7 @@ export interface TitleRecord {
 }
 export interface TitleParams  extends QueryParams {
     status?: Status;
+    search?: string;
 }
 
 export interface CreateTitleRecord extends Omit<TitleRecord, 'titleId' | 'createdAt'> {}

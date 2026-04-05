@@ -14,4 +14,9 @@ public class TitleSpecifications {
     public static Specification<TitleEntity> hasStatus(TitleStatus status) {
         return (root, query, cb) -> (status == null) ? null : cb.equal(root.get("status"), status);
     }
+    public static Specification<TitleEntity> hasName(String titleName){
+        return(root, query,cb) -> (titleName == null || titleName.equals("")) ? null :cb.like(
+            cb.lower(root.get("titleName")), "%" + titleName.toLowerCase() + "%");
+    }
+
 }

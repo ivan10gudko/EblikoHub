@@ -71,7 +71,8 @@ public Optional<TitleEntity> findOne(Long titleId){
 public Page<TitleEntity> findAllByUserId(TitleQueryParameters params, UUID userId){
    Specification<TitleEntity> spec = Specification
             .where(TitleSpecifications.belongsToUser(userId))
-            .and(TitleSpecifications.hasStatus(params.getStatus()));
+            .and(TitleSpecifications.hasStatus(params.getStatus())
+            .and(TitleSpecifications.hasName(params.getSearch())));
 
     Pageable pageable = PagingHelper.toPageable(params);
 
