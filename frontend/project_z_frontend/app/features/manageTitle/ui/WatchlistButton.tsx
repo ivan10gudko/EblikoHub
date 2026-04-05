@@ -2,7 +2,7 @@ import WatchLaterOutlinedIcon from "@mui/icons-material/WatchLaterOutlined";
 import WatchLaterIcon from "@mui/icons-material/WatchLater";
 import { Button } from "~/shared/ui/Button";
 import { Status } from "~/entities/titleRecord";
-import { useTitleRecordMutation } from "../hooks/useTitleRecordMutation";
+import { useTitleRecordMutation } from "../../../entities/titleRecord";
 import { FaSpinner } from "react-icons/fa";
 import type { ManageTitleRecordProps } from "../model/manageTitleRecord";
 

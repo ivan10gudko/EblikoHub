@@ -3,12 +3,12 @@ import type { Anime } from "~/entities/title";
 import {
     Status,
     useTitleByApiId,
+    useTitleRecordMutation,
     type CreateTitleRecord,
 } from "~/entities/titleRecord";
 import {
     PageRate,
     StatusSelect,
-    useTitleRecordMutation,
     WatchedButton,
     WatchlistButton,
 } from "~/features/manageTitle";
@@ -41,18 +41,18 @@ const AnimeSidebar: React.FC<Props> = ({ data }) => {
                     alt={data.title}
                 />
             </div>
-            <div className="w-full py-8 flex flex-col gap-2 border rounded-b-xl px-4 border-gray-300 shadow divide-y divide-gray-300">
+            <div className="w-full py-8 flex flex-col gap-4 border rounded-b-xl px-4 border-gray-300 shadow">
                 <StatusSelect
                     initialData={initialData}
                     titleRecord={titleRecord}
                 />
-                <div className="w-full py-4">
+                <div className="w-full py-4 border-y-gray-300 border-y">
                     <PageRate initialData={initialData} titleRecord={titleRecord} />
                 </div>
                 {titleRecord && (
                     <Button
                         variant="fill"
-                        className="flex gap-2 mt-2 w-full bg-red-600 text-white"
+                        className="flex gap-2 w-full bg-red-600 hover:bg-red-700 text-white"
                         onClick={()=>deleteTitle(titleRecord.titleId)}
                     >
                         Remove from Library

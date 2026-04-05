@@ -13,7 +13,7 @@ export interface RateOptions extends ActionOptions {
 }
 
 interface TitleRecordService {
-    get(userId: number, params?: TitleParams): Promise<PageResponse<TitleRecord>>;
+    get(userId: string, params?: TitleParams): Promise<PageResponse<TitleRecord>>;
     post(titleData: CreateTitleRecord): Promise<TitleRecord>;
     put(titleId: number, titleData: TitleRecord): Promise<TitleRecord>;
     patch(titleId: number, titleData: Partial<TitleRecord>): Promise<TitleRecord>;

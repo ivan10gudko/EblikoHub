@@ -28,9 +28,22 @@ export const UserProfileSidebar = ({ isOpen, onClose }: SidebarProps) => {
                 <div
                     className="fixed inset-0 bg-black/40 z-40 md:hidden transition-opacity backdrop-blur-[2px]"
                     onClick={onClose}
-                />
+                >
+                    {" "}
+                </div>
             )}
-            <Sidebar>
+
+            <Sidebar
+                className={`
+                fixed inset-y-0 left-0 z-50 w-72 bg-white border-r border-gray-200 flex flex-col
+                transition-transform duration-300 ease-in-out shadow-xl md:shadow-none
+                
+                ${isOpen ? "translate-x-0" : "-translate-x-full"}
+                rounded-none
+                md:relative md:translate-x-0 md:min-h-[calc(100vh-64px)] md:z-auto md:rounded-2xl
+
+            `}
+            >
                 <div className="flex flex-col h-full p-4">
                     <div className="flex justify-between items-center mb-6 md:hidden">
                         <IconButton onClick={onClose} size="medium">

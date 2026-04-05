@@ -1,22 +1,22 @@
 import { redirect } from "react-router";
 import { userService } from "~/entities/user";
-import { useAuthStore } from "~/features/auth";
+import { ensureAuthenticated, useAuthStore } from "~/features/auth";
 import { ProfilePage } from "~/pages/profile";
-import { queryClient } from "~/shared/lib";
+import { queryClient, supabase } from "~/shared/lib";
 
-export const clientLoader = () => {
-  const { userId } = useAuthStore.getState();
+export const clientLoader = async () => {
+    const userId = await ensureAuthenticated();
 
-  if (!userId) {
-    return redirect("/auth/login")
-  }
+    if (!userId) {
+        return redirect("/auth/login");
+    }
 
-  queryClient.prefetchQuery({
-    queryKey: ["user_profile", userId],
-    queryFn: () => userService.getUser(userId),
-  });
+    queryClient.prefetchQuery({
+        queryKey: ["user_profile", userId],
+        queryFn: () => userService.getUser(userId),
+    });
 
-  return null;
+    return null;
 };
 export default function ProfileRoute() {
     return <ProfilePage />;

@@ -9,7 +9,7 @@ import {
 import DoneOutlinedIcon from "@mui/icons-material/DoneOutlined";
 import { StarRating } from "~/shared/ui/Rating";
 import type { ManageTitleRecordProps } from "../model/manageTitleRecord";
-import { useTitleRecordMutation } from "../hooks/useTitleRecordMutation";
+import { useTitleRecordMutation } from "../../../entities/titleRecord";
 import { Button } from "~/shared/ui/Button";
 import ClearIcon from "@mui/icons-material/Clear";
 
@@ -64,7 +64,7 @@ const PageRate = ({ initialData, titleRecord }: ManageTitleRecordProps) => {
         <div
             className={`border-y border-y-white/15 text-center w-full transition-all duration-150 text-md`}
         >
-            <div className="w-full flex gap-2 text-center justify-center transition-all duration-150">
+            <div className="w-full flex gap-2 text-center justify-center items-center transition-all duration-150">
                 <span className="ml-1 [padding-top:0.15em]">Your Rating</span>
 
                 <span className="flex items-center gap-0.5 text-amber-400 ">
@@ -77,7 +77,7 @@ const PageRate = ({ initialData, titleRecord }: ManageTitleRecordProps) => {
                             <Button variant="text-only" onClick={handleClear}>
                                 <ClearIcon
                                     fontSize="small"
-                                    className="text-red-500  ml-2 hover:scale-120 hover:text-red-600"
+                                    className="text-red-500 hover:scale-120 hover:text-red-600"
                                 />
                             </Button>
                         </>

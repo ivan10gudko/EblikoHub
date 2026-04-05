@@ -2,8 +2,7 @@
 import LibraryAddCheckOutlinedIcon from '@mui/icons-material/LibraryAddCheckOutlined';
 import LibraryAddCheckIcon from '@mui/icons-material/LibraryAddCheck';
 import type { ManageTitleRecordProps } from "../model/manageTitleRecord";
-import { Status } from "~/entities/titleRecord";
-import { useTitleRecordMutation } from "../hooks/useTitleRecordMutation";
+import { Status, useTitleRecordMutation } from "~/entities/titleRecord";
 import { FaSpinner } from "react-icons/fa";
 
 

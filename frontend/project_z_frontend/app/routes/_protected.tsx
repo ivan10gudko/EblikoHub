@@ -1,16 +1,16 @@
 import { Outlet, redirect } from "react-router";
 import type { Route } from "./+types/_protected";
-import { supabase } from "~/shared/lib";
 import { Loader } from "~/shared/ui/Loader";
+import { ensureAuthenticated } from "~/features/auth";
 
 export async function clientLoader() {
-    const { data: { session } } = await supabase.auth.getSession();
+    const userId = await ensureAuthenticated();
 
-    if (!session) {
+    if (!userId) {
         throw redirect("/auth/login");
     }
 
-    return { session };
+    return { userId };
 }
 
 export function HydrateFallback() {

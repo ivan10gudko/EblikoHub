@@ -13,15 +13,11 @@ export const UserProfileCard = () => {
     const { userId } = useAuthStore();
     const queryClient = useQueryClient();
     const navigate = useNavigate()
-    
-    if(!userId){
-        navigate('/auth/login');
-        return;
-    }
+
 
     const { data: user } = useSuspenseQuery({
         queryKey: ["user_profile", userId],
-        queryFn: () => userService.getUser(userId),
+        queryFn: () => userService.getUser(userId!),
     });
 
     

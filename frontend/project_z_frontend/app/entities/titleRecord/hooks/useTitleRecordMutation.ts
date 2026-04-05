@@ -1,11 +1,14 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import toast from "react-hot-toast";
 import { Status, titleRecordService, type CreateTitleRecord, type TitleRating, type TitleRecord } from "~/entities/titleRecord";
+import { getSessionUserId } from "~/shared/lib/supabase";
 
-export const useTitleRecordMutation = (apiTitleId: number | undefined, initialData: CreateTitleRecord,existingTitleRecord?: TitleRecord | null) => {
+
+export const useTitleRecordMutation = (apiTitleId: number | undefined, initialData: CreateTitleRecord, existingTitleRecord?: TitleRecord | null) => {
     const queryClient = useQueryClient();
 
-    const queryKey = apiTitleId 
-        ? ['titleRecord', apiTitleId] 
+    const queryKey = apiTitleId
+        ? ['titleRecord', apiTitleId]
         : ['titleRecord', 'local', existingTitleRecord?.titleId];
 
     const mutationConfig = {
@@ -15,12 +18,16 @@ export const useTitleRecordMutation = (apiTitleId: number | undefined, initialDa
         onSettled: () => {
             queryClient.invalidateQueries({ queryKey: queryKey });
         },
+        onError: (error: any) => {
+            const message = error.response?.data?.message || "Something went wrong";
+            toast.error(message);
+        },
     };
 
     const getCache = () => queryClient.getQueryData<TitleRecord>(queryKey) || existingTitleRecord;
 
     const rateMutation = useMutation({
-        mutationFn: (score: number | TitleRating) => 
+        mutationFn: (score: number | TitleRating) =>
             titleRecordService.rate({ apiTitleId, score, initialData, existingTitle: getCache() }),
         ...mutationConfig
     });
@@ -47,24 +54,34 @@ export const useTitleRecordMutation = (apiTitleId: number | undefined, initialDa
         onSettled: () => {
             queryClient.invalidateQueries({ queryKey: queryKey });
         },
+        onError: (error: any) => {
+            const message = error.response?.data?.message || "Something went wrong";
+            toast.error(message);
+        },
     });
 
+    const checkAuthAndRun = async (action: () => void) => {
+        const userId = await getSessionUserId();
+        if (!userId) {
+            toast.error("Please sign in first to perform this action")
+            return;
+        }
+        action();
+    };
+
     return {
-        updateStatus: statusMutation.mutate,
+        updateStatus: (status: Status) => checkAuthAndRun(() => statusMutation.mutate(status)),
+        rate: (score: number | TitleRating) => checkAuthAndRun(() => rateMutation.mutate(score)),
+        clearRate: () => checkAuthAndRun(() => clearRateMutation.mutate()),
+        deleteTitle: (titleId: number) => checkAuthAndRun(() => deleteMutation.mutate(titleId)),
+
+        moveToPlanned: () => checkAuthAndRun(() => statusMutation.mutate(Status.PLANNED)),
+        markAsWatched: () => checkAuthAndRun(() => statusMutation.mutate(Status.WATCHED)),
+
         statusLoading: statusMutation.isPending,
-        
-        rate: rateMutation.mutate,
         rateLoading: rateMutation.isPending,
-
-        clearRate: clearRateMutation.mutate,
         clearRateLoading: clearRateMutation.isPending,
-
-        deleteTitle: deleteMutation.mutate,
         deleteLoading: deleteMutation.isPending,
-
-        moveToPlanned: () => statusMutation.mutate(Status.PLANNED),
-        markAsWatched: () => statusMutation.mutate(Status.WATCHED),
-        
         isAnyActionLoading: statusMutation.isPending || rateMutation.isPending || deleteMutation.isPending
     };
 };

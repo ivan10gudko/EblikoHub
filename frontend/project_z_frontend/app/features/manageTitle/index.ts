@@ -8,5 +8,3 @@ export { default as AddToWatchedCardAction } from './ui/AddToWatchedCardAction';
 export { default as AddToWatchlistCardAction } from './ui/AddToWatchlistCardAction';
 export {default as StatusSelect} from './ui/StatusSelect';
 export {default as ManagedAnimeCard} from './ui/ManagedAnimeCard';
-
-export * from './hooks/useTitleRecordMutation';
