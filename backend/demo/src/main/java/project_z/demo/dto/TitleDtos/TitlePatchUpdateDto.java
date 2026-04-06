@@ -21,4 +21,5 @@ public class TitlePatchUpdateDto {
     private JsonNullable<String> titleName = JsonNullable.undefined();
     private JsonNullable<TitleStatus> status = JsonNullable.undefined();
     private JsonNullable<Map<String,Float>> rating = JsonNullable.undefined();
+    private JsonNullable<Double> customOrder = JsonNullable.undefined();
 }

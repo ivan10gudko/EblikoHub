@@ -26,6 +26,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.MapKeyColumn;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -40,8 +41,6 @@ import project_z.demo.enums.TitleStatus;
 @NoArgsConstructor
 @Builder
 @Entity
-@Getter
-@Setter
 @Table(name="titles")
 @JsonIgnoreProperties(ignoreUnknown=true)
 public class TitleEntity { 
@@ -72,8 +71,17 @@ public class TitleEntity {
     @OneToMany(mappedBy= "title",cascade = CascadeType.ALL, orphanRemoval=true)
     @JsonManagedReference
     private List<SeasonEntity> seasons = new ArrayList<>();
+    @Column(name = "custom_order")
+    private Double customOrder;
+
     @CreatedDate
     @Column(nullable=false, updatable=false)
     private LocalDateTime createdAt;
+    @PrePersist
+    protected void onCreate(){
+        if(this.customOrder==null){
+            this.customOrder = (double) System.currentTimeMillis() + Math.random();
+        }
+    }
 }
 

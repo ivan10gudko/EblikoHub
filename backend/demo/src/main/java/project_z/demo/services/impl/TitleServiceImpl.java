@@ -14,6 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import jakarta.transaction.Transactional;
 import project_z.demo.JavaUtil.BeanUtilsHelper;
 import project_z.demo.JavaUtil.PagingHelper;
 import project_z.demo.JavaUtil.PatchHelper;
@@ -101,9 +102,18 @@ public TitleEntity partialUpdate(Long titleId, TitlePatchUpdateDto source) {
             patchHelper.updateIfPresent(source.getTitleName(),target::setTitleName);
             patchHelper.updateIfPresent(source.getStatus(),target::setStatus);
             patchHelper.updateIfPresent(source.getRating(),target::setRating);
+            patchHelper.updateIfPresent(source.getCustomOrder(), target::setCustomOrder);
             return titleRepository.save(target);
         })
         .orElseThrow(() -> new RuntimeException("Title not found"));
+}
+@Override
+@Transactional
+public void titlePositionUpdate(Double newPosition, Long titleId){
+    TitleEntity titleEntity = titleRepository.findById(titleId).orElseThrow(
+    () -> new ResourceNotFoundException("title not found"));
+    titleEntity.setCustomOrder(newPosition);
+    titleRepository.save(titleEntity);
 }
 @Override
 public void deleteById(Long Id){
