@@ -9,6 +9,7 @@ import java.util.stream.StreamSupport;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -74,9 +75,17 @@ public Page<TitleEntity> findAllByUserId(TitleQueryParameters params, UUID userI
             .and(TitleSpecifications.hasStatus(params.getStatus())
             .and(TitleSpecifications.hasName(params.getSearch())));
 
+    if ("rating".equals(params.getSortBy())) {
+        spec = spec.and(TitleSpecifications.sortByRating(params.getOrder()));
+    }
+
     Pageable pageable = PagingHelper.toPageable(params);
 
-    return titleRepository.findAll(spec,pageable);
+    if ("rating".equals(params.getSortBy())) {
+        pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
+    }
+
+    return titleRepository.findAll(spec, pageable);
 }
 
 @Override
