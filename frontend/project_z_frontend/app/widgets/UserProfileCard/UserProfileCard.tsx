@@ -13,15 +13,11 @@ export const UserProfileCard = () => {
     const { userId } = useAuthStore();
     const queryClient = useQueryClient();
     const navigate = useNavigate()
-    
-    if(!userId){
-        navigate('/auth/login');
-        return;
-    }
+
 
     const { data: user } = useSuspenseQuery({
         queryKey: ["user_profile", userId],
-        queryFn: () => userService.getUser(userId),
+        queryFn: () => userService.getUser(userId!),
     });
 
     
@@ -62,9 +58,9 @@ export const UserProfileCard = () => {
                         </div>
                         <Button
                             onClick={() => setIsEditing(true)} 
-                            className="bg-gray-50 hover:bg-yellow-100 text-gray-600 hover:text-yellow-700 p-3 rounded-2xl transition-all"
+                            className="bg-gray-50 hover:bg-yellow-100 text-gray-600 hover:text-amber-500 p-3 rounded-2xl transition-all"
                         >
-                            <EditIcon />
+                            <EditIcon className='text-amber-300'/>
                         </Button>
                     </div>
                     

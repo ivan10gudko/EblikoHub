@@ -1,93 +1,36 @@
 import type { ComponentProps } from "react";
 
 interface ButtonProps extends ComponentProps<"button"> {
-    children: React.ReactNode | string;
     variant?: "fill" | "outline" | "text-only";
-    onClick?: (() => void) | ((e: React.MouseEvent<HTMLElement>) => void);
-    color?: string;
-    bgColor?: string;
-    className?: string;
-    borderColor?: string;
-    htmlType?: "button" | "submit" | "reset";
 }
 
 const Button = ({
     children,
-    variant,
-    onClick,
-    color = "black",
-    bgColor = "white",
+    variant = "fill",
     className = "",
-    borderColor,
-    htmlType = "button",
+    type = "button",
     ...props
 }: ButtonProps) => {
-    switch (variant) {
-        case "fill":
-            return (
-                <button
-                    type={htmlType}
-                    onClick={onClick}
-                    className={
-                        "px-3 py-2 rounded-md flex justify-center hover:opacity-80  items-center cursor-pointer " +
-                        " " +
-                        className
-                    }
-                    style={{ color: color, background: bgColor }}
-                    {...props}
-                >
-                    {children}
-                </button>
-            );
-        case "outline":
-            return (
-                <button
-                    type={htmlType}
-                    onClick={onClick}
-                    className={
-                        "px-3 py-2 border-2 rounded-md border-opacity-70 flex justify-center items-center cursor-pointer " +
-                        " " +
-                        className
-                    }
-                    style={{ color: color, borderColor: borderColor ?? color }}
-                    {...props}
-                >
-                    {children}
-                </button>
-            );
-        case "text-only":
-            return (
-                <button
-                    type={htmlType}
-                    onClick={onClick}
-                    className={
-                        "hover:underline transition-all duration-100 delay-75 flex justify-center items-center cursor-pointer " +
-                        " " +
-                        className
-                    }
-                    style={{ color: color }}
-                    {...props}
-                >
-                    {children}
-                </button>
-            );
-        default:
-            return (
-                <button
-                    type={htmlType}
-                    onClick={onClick}
-                    className={
-                        "px-3 py-2 border-2 rounded-md flex justify-center items-center" +
-                        " " +
-                        className
-                    }
-                    style={{ color: color, borderColor: borderColor ?? color }}
-                    {...props}
-                >
-                    {children}
-                </button>
-            );
-    }
+
+    const baseStyles = "px-4 py-2 rounded-lg flex justify-center items-center transition-all duration-200 cursor-pointer active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed font-medium text-sm hover:scale-98";
+
+    const variantStyles = {
+        fill: "bg-amber-400 text-white hover:bg-amber-300 shadow-sm",
+        outline: "border-2 border-amber-400 text-amber-400 bg-transparent",
+        "text-only": "text-gray-600 hover:text-amber-600 hover:underline px-0 py-0 bg-transparent",
+    };
+
+    const combinedClassName = `${baseStyles} ${variantStyles[variant]} ${className}`;
+
+    return (
+        <button
+            type={type}
+            className={combinedClassName}
+            {...props}
+        >
+            {children}
+        </button>
+    );
 };
 
 export default Button;

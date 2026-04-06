@@ -62,11 +62,11 @@ return (
                 
                 <div className="flex flex-wrap gap-4 mt-auto">
                     {data.trailer.embed_url && (
-                        <Button color="white" className="flex-1 sm:flex-none">
+                        <Button variant="outline" className="flex-1 sm:flex-none text-white border-white">
                             <a href={data.trailer.embed_url} target="_blank" rel="noreferrer">Watch Trailer</a>
                         </Button>
                     )}
-                    <Button className="bg-amber-400 text-black flex-1 sm:flex-none">
+                    <Button className="bg-amber-300 text-black flex-1 sm:flex-none">
                         <Link to={`/anime/${data.mal_id}`}>Learn more</Link>
                     </Button>
                 </div>

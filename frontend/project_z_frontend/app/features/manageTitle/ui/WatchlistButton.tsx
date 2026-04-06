@@ -2,7 +2,7 @@ import WatchLaterOutlinedIcon from "@mui/icons-material/WatchLaterOutlined";
 import WatchLaterIcon from "@mui/icons-material/WatchLater";
 import { Button } from "~/shared/ui/Button";
 import { Status } from "~/entities/titleRecord";
-import { useTitleRecordMutation } from "../hooks/useTitleRecordMutation";
+import { useTitleRecordMutation } from "../../../entities/titleRecord";
 import { FaSpinner } from "react-icons/fa";
 import type { ManageTitleRecordProps } from "../model/manageTitleRecord";
 
@@ -12,7 +12,11 @@ const WatchlistButton = ({
 }: ManageTitleRecordProps) => {
     const isInWatchlist = titleRecord?.status == Status.PLANNED;
     const { updateStatus, deleteTitle, isAnyActionLoading } =
-        useTitleRecordMutation(initialData.apiTitleId, initialData);
+        useTitleRecordMutation(
+            initialData.apiTitleId,
+            initialData,
+            titleRecord,
+        );
 
     function handleClick(e: React.MouseEvent<HTMLElement>) {
         e.stopPropagation();
@@ -26,10 +30,11 @@ const WatchlistButton = ({
     return (
         <Button
             variant={isInWatchlist ? "fill" : "outline"}
-            color="rgba(0,0,0,0.85)"
-            borderColor="rgba(14,14,14,0.2)"
-            bgColor={`rgba(236, 238, 242,${isAnyActionLoading ? "0.6" : "1"})`}
-            className={isInWatchlist ? "border-0 gap-3" : "border-[1px] gap-3"}
+            className={`
+                gap-3 transition-opacity
+                ${isInWatchlist ? "border-none bg-[#eceef2] text-black/85" : "border-black/20 text-black/85"}
+                ${isAnyActionLoading ? "opacity-60 cursor-not-allowed" : "opacity-100"}
+                `}
             onClick={handleClick}
             disabled={isAnyActionLoading}
         >
@@ -43,7 +48,7 @@ const WatchlistButton = ({
             ) : (
                 <>
                     <WatchLaterOutlinedIcon fontSize="small" />
-                    Add to watchlist
+                    Plan to Watch
                 </>
             )}
         </Button>

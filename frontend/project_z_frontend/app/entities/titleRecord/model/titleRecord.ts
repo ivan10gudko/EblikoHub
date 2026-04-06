@@ -1,26 +1,29 @@
 import type { QueryParams } from "~/shared/types";
 
 //apiTitleId: 0 - no mal id
-export enum Status{
+export enum Status {
     WATCHED = "WATCHED",
     PLANNED = "PLANNED",
-    DROPPED = "DROPPED"
+    DROPPED = "DROPPED",
+    INPROGRESS = "INPROGRESS",
+    DEFAULT = "DEFAULT"
 }
 
-export interface TitleRating {
-    overall: number;
-    [key: string]: number;
-}
+export type TitleRating =
+    | { overall: number;[key: string]: number }
+    | Record<string, never>;
+    
 export interface TitleRecord {
     titleId: number,
-    apiTitleId: number,//0 - if no mal id
+    apiTitleId?: number,
     titleName: string,
-    rating?:TitleRating,
+    rating?: TitleRating,
     status: Status,
     createdAt: string,
 }
-export interface TitleParams  extends QueryParams {
+
+export interface TitleParams extends QueryParams {
     status?: Status;
 }
 
-export interface CreateTitleRecord extends Omit<TitleRecord, 'titleId' | 'createdAt'> {}
+export interface CreateTitleRecord extends Omit<TitleRecord, 'titleId' | 'createdAt'> { }

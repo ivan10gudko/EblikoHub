@@ -8,7 +8,7 @@ import {
     type MouseEvent,
 } from "react";
 import DoneOutlinedIcon from "@mui/icons-material/DoneOutlined";
-import { useTitleRecordMutation } from "../hooks/useTitleRecordMutation";
+import { useTitleRecordMutation } from "../../../entities/titleRecord";
 import type { ManageTitleRecordProps } from "../model/manageTitleRecord";
 
 const RateCardAction = ({
@@ -24,6 +24,7 @@ const RateCardAction = ({
     const { rate, isAnyActionLoading } = useTitleRecordMutation(
         initialData.apiTitleId,
         initialData,
+        titleRecord,
     );
 
     const currentRating = titleRecord?.rating?.overall;
