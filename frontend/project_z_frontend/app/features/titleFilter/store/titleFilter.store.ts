@@ -1,9 +1,10 @@
 import { create } from 'zustand';
 import { Status } from '~/entities/titleRecord';
+import { getInitialValue } from '~/shared/helpers';
 import type { SortOrder } from '~/shared/types/api';
 
 
-export type TitleSortType = 'rating' | 'title' | 'chapters' | 'createdAt';
+export type TitleSortType = 'rating' | 'title' | 'chapters' | 'createdAt' | 'customOrder';
 
 interface TitleFilterState {
     search: string;
@@ -22,10 +23,10 @@ interface TitleFilterState {
 }
 
 export const useTitleFilterStore = create<TitleFilterState>((set) => ({
-    search: '',
-    sortBy: 'createdAt',
-    order: 'desc',
-    status: undefined,
+    search: getInitialValue('search', ''),
+    sortBy: getInitialValue<TitleSortType>('sortBy', 'createdAt'),
+    order: getInitialValue<SortOrder>('order', 'desc'),
+    status: getInitialValue<Status | undefined>('status', undefined),
 
     setSearch: (search) => set({ search }),
     
@@ -46,7 +47,7 @@ export const useTitleFilterStore = create<TitleFilterState>((set) => ({
         status: undefined,
     }),
     setSortFromUrl: (val: string) => {
-        const valid: TitleSortType[] = ['rating', 'title', 'chapters', 'createdAt'];
+        const valid: TitleSortType[] = ['rating', 'title', 'chapters', 'createdAt','customOrder'];
         if (valid.includes(val as TitleSortType)) set({ sortBy: val as TitleSortType });
     },
     

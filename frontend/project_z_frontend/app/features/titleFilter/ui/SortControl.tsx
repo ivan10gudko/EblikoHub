@@ -6,8 +6,9 @@ import { Button } from "~/shared/ui/Button";
   const sortOptions: Option[] = [
     { label: "Rating", value: "rating" },
     { label: "Title", value: "title" },
-    { label: "Status", value: "status" },
     { label: "Date Added", value: "createdAt" },
+    { label: "Status", value: "status" },
+    {label: "Custom Order", value: "customOrder"},
   ];
 
  const SortControl = () => {

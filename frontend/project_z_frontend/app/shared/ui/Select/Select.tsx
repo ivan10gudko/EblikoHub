@@ -41,6 +41,7 @@ const Select: React.FC<SelectProps> = ({
             <div className="relative w-full">
                 <select
                     id={id}
+                    value={value}
                     className={`
                         w-full appearance-none rounded-lg border bg-white px-4 py-2.5 text-sm outline-none transition-all
                         cursor-pointer disabled:cursor-not-allowed disabled:bg-gray-50 disabled:opacity-70
