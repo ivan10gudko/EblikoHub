@@ -41,7 +41,7 @@ public class TitleSpecifications {
         }
         
         return null;
-    };
-}
+        };
+    }
 
 }
