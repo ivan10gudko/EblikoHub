@@ -9,10 +9,12 @@ import java.util.stream.StreamSupport;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import jakarta.transaction.Transactional;
 import project_z.demo.JavaUtil.BeanUtilsHelper;
 import project_z.demo.JavaUtil.PagingHelper;
 import project_z.demo.JavaUtil.PatchHelper;
@@ -71,11 +73,20 @@ public Optional<TitleEntity> findOne(Long titleId){
 public Page<TitleEntity> findAllByUserId(TitleQueryParameters params, UUID userId){
    Specification<TitleEntity> spec = Specification
             .where(TitleSpecifications.belongsToUser(userId))
-            .and(TitleSpecifications.hasStatus(params.getStatus()));
+            .and(TitleSpecifications.hasStatus(params.getStatus())
+            .and(TitleSpecifications.hasName(params.getSearch())));
+
+    if ("rating".equals(params.getSortBy())) {
+        spec = spec.and(TitleSpecifications.sortByRating(params.getOrder()));
+    }
 
     Pageable pageable = PagingHelper.toPageable(params);
 
-    return titleRepository.findAll(spec,pageable);
+    if ("rating".equals(params.getSortBy())) {
+        pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
+    }
+
+    return titleRepository.findAll(spec, pageable);
 }
 
 @Override
@@ -91,9 +102,18 @@ public TitleEntity partialUpdate(Long titleId, TitlePatchUpdateDto source) {
             patchHelper.updateIfPresent(source.getTitleName(),target::setTitleName);
             patchHelper.updateIfPresent(source.getStatus(),target::setStatus);
             patchHelper.updateIfPresent(source.getRating(),target::setRating);
+            patchHelper.updateIfPresent(source.getCustomOrder(), target::setCustomOrder);
             return titleRepository.save(target);
         })
         .orElseThrow(() -> new RuntimeException("Title not found"));
+}
+@Override
+@Transactional
+public void titlePositionUpdate(Double newPosition, Long titleId){
+    TitleEntity titleEntity = titleRepository.findById(titleId).orElseThrow(
+    () -> new ResourceNotFoundException("title not found"));
+    titleEntity.setCustomOrder(newPosition);
+    titleRepository.save(titleEntity);
 }
 @Override
 public void deleteById(Long Id){

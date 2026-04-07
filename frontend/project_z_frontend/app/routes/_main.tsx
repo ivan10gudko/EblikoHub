@@ -8,7 +8,12 @@ export async function clientLoader() {
     
     return userId;
 }
-
+export function shouldRevalidate({ currentUrl, nextUrl, defaultShouldRevalidate }: ShouldRevalidateFunctionArgs) {
+    if (currentUrl.pathname === nextUrl.pathname) {
+        return false;
+    }
+    return defaultShouldRevalidate;
+}
 export function HydrateFallback() {
     return (
         <div className="min-h-screen flex items-center justify-center">
@@ -18,5 +23,5 @@ export function HydrateFallback() {
 }
 
 export default function MainRoute({ loaderData }: Route.ComponentProps) {
-    return <MainLayout/>;
+    return <MainLayout />;
 }

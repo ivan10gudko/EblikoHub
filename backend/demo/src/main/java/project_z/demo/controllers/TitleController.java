@@ -23,6 +23,7 @@ import project_z.demo.Mappers.Mapper;
 import project_z.demo.common.QueryParameters.TitleQueryParameters;
 import project_z.demo.dto.TitleDtos.TitleDto;
 import project_z.demo.dto.TitleDtos.TitlePatchUpdateDto;
+import project_z.demo.dto.TitleDtos.TitlePositionUpdateDto;
 import project_z.demo.entity.TitleEntity;
 import project_z.demo.services.TitleService;
 import project_z.demo.services.UserService;
@@ -128,6 +129,17 @@ public ResponseEntity<TitleDto> fullUpdateTitle (
         }
         TitleEntity updatedTitleEntity  = titleService.partialUpdate(titleId, titleDto);
         return new ResponseEntity<>(titleMapper.mapTo(updatedTitleEntity), HttpStatus.OK);
+    }
+
+@PreAuthorize("hasRole('ADMIN') || @securityService.isTitleOwner(#titleId, #token)")
+@PatchMapping(path = "{titleId}/position")
+    public ResponseEntity<Void> titlePositionUpdate(
+        @PathVariable ("titleId") Long titleId,
+        @RequestHeader("Authorization") String token,
+        @RequestBody TitlePositionUpdateDto titleDto
+    ){
+        titleService.titlePositionUpdate(titleDto.getCustomOrder(), titleId);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
 @PreAuthorize("hasRole('ADMIN') || @securityService.isTitleOwner(#titleId, #token)")

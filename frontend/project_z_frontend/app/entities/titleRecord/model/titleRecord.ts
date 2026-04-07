@@ -24,6 +24,7 @@ export interface TitleRecord {
 
 export interface TitleParams extends QueryParams {
     status?: Status;
+    search?: string;
 }
 
 export interface CreateTitleRecord extends Omit<TitleRecord, 'titleId' | 'createdAt'> { }

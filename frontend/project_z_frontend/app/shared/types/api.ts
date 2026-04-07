@@ -21,7 +21,7 @@ export interface PageResponse<T> {
     empty: boolean;
 }
 
-export type SortOrder = 'ask' | 'desk';
+export type SortOrder = 'asc' | 'desc';
 
 export interface QueryParams {
     page?: number;

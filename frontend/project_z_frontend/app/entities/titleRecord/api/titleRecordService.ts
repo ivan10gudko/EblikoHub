@@ -19,9 +19,9 @@ interface TitleRecordService {
     patch(titleId: number, titleData: Partial<TitleRecord>): Promise<TitleRecord>;
     delete(titleId: number): Promise<void>;
 
-    getWatched(userId: number): Promise<Array<TitleRecord>>;
-    getPlanned(userId: number): Promise<Array<TitleRecord>>;
-    getByApiTitleId(apiTitleId: number): Promise<TitleRecord>;
+    getWatched(userId: string): Promise<Array<TitleRecord>>;
+    getPlanned(userId: string): Promise<Array<TitleRecord>>;
+    getByJikanId(jikanId: number): Promise<TitleRecord>;
 
     rate(options: RateOptions): Promise<TitleRecord>;
     clearRating(options:ActionOptions): Promise<TitleRecord>;
@@ -34,7 +34,7 @@ interface TitleRecordService {
 
 export const titleRecordService: TitleRecordService = {
     async get(userId,params) {
-        const response = await publicClient.get(`/titles/${userId}`, {
+        const response = await apiClient.get(`/titles/${userId}`, {
             params
         });
         
@@ -64,13 +64,13 @@ export const titleRecordService: TitleRecordService = {
     },
 
     async getWatched(userId) {
-        const response = await publicClient.get(`/titles/${userId}/WATCHED`);
+        const response = await apiClient.get(`/titles/${userId}/WATCHED`);
 
         return response.data;
     },
 
     async getPlanned(userId) {
-        const response = await publicClient.get(`/titles/${userId}/PLANNED`);
+        const response = await apiClient.get(`/titles/${userId}/PLANNED`);
 
         return response.data;
     },
