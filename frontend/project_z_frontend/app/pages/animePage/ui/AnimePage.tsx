@@ -28,7 +28,7 @@ const AnimePage = ({id}:{id: number | undefined}) => {
     }
 
     return (
-        <div className="sm:flex sm:gap-8 mx-auto my-8 w-[90%] max-w-[1200px] h-fit">
+        <div className="sm:flex sm:gap-8 mx-auto my-8 w-[90%]  h-fit">
             <Suspense fallback={<AnimeSidebarSkeleton/>}>
                 <AnimeSidebar data={data} />
             </Suspense>

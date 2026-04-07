@@ -3,13 +3,13 @@ import type { PageResponse } from "~/shared/types";
 import { apiClient, publicClient } from "~/shared/api";
 
 export interface ActionOptions {
-    jikanId: number;
+    apiTitleId?: number | null;
     initialData: CreateTitleRecord;
     existingTitle?: TitleRecord | null;
 }
 
 export interface RateOptions extends ActionOptions {
-    score: number | TitleRating;
+    score: number | TitleRating; // {} - for delete
 }
 
 interface TitleRecordService {
@@ -24,6 +24,7 @@ interface TitleRecordService {
     getByJikanId(jikanId: number): Promise<TitleRecord>;
 
     rate(options: RateOptions): Promise<TitleRecord>;
+    clearRating(options:ActionOptions): Promise<TitleRecord>;
     moveToPlanned(options: ActionOptions): Promise<TitleRecord>;
     markAsWatched(options: ActionOptions): Promise<TitleRecord>;
     markAsDropped(options: ActionOptions): Promise<TitleRecord>;
@@ -42,7 +43,7 @@ export const titleRecordService: TitleRecordService = {
 
     async post(titleData) {
         const response = await apiClient.post(`/titles`,titleData);
-        
+        console.log(response.data)
         return response.data;
     },
 
@@ -74,37 +75,39 @@ export const titleRecordService: TitleRecordService = {
         return response.data;
     },
 
-    async getByJikanId(jikanId) {
-        const response = await apiClient.get(`/titles/mal/${jikanId}`);
+    async getByApiTitleId(apiTitleId) {
+        const response = await apiClient.get(`/titles/mal/${apiTitleId}`);
 
         return response.data;
     },
 
-    async saveAction({ jikanId, data, initialData, existingTitle }) {
+    async saveAction({ apiTitleId, data, initialData, existingTitle }) {
         //try to use title fetched before
         // if not search in database
-        console.log(data)
         const targetId = existingTitle?.titleId;
         
-        
-        console.log(targetId)
+    
         if (targetId) {
             console.log('patch')
             return this.patch(targetId, data);
         }
 
-         // 2.  Jikan title (id > 0) 
-        if (jikanId && jikanId > 0) {
-            const existing = await this.getByJikanId(jikanId).catch(() => null);
+        if (apiTitleId && typeof apiTitleId === 'number') {
+            const existing = await this.getByApiTitleId(apiTitleId).catch(() => null);
             if (existing) return this.patch(existing.titleId, data);
         }
 
         return this.post({ ...initialData, ...data });
     },
 
-    async rate({ jikanId, score, initialData, existingTitle }) {
+    async rate({ apiTitleId, score, initialData, existingTitle }) {
         const rating = typeof score === 'number' ? { overall: score } : score;
-        return this.saveAction({ jikanId, data: { rating }, initialData, existingTitle });
+        console.log(rating);
+        return this.saveAction({ apiTitleId, data: { rating }, initialData, existingTitle });
+    },
+
+    async clearRating({ apiTitleId, initialData, existingTitle }){
+        return this.rate({ apiTitleId, score: {} ,initialData, existingTitle })
     },
 
     async moveToPlanned(options) {

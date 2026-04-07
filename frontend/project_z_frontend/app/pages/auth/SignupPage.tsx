@@ -165,9 +165,8 @@ const SignupPage = () => {
 
                 <Button
                     variant="fill"
-                    htmlType="submit"
-                    className="w-full py-3 font-medium text-xl my-2"
-                    bgColor="var(--color-amber-300)"
+                    type="submit"
+                    className="w-full py-3 font-medium text-xl my-2 bg--amber-300 text-amber-300"
                     color="white"
                     disabled={isLoading}
                 >

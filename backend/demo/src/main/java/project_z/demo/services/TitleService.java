@@ -18,7 +18,7 @@ public interface TitleService {
     boolean isExists (Long titleId);
     TitleEntity partialUpdate(Long titleId, TitlePatchUpdateDto titleEntity);
     void deleteById(Long id);
-    List<TitleEntity> addTitle(TitleEntity titleEntity, String token);
+    TitleEntity addTitle(TitleEntity titleEntity, String token);
     List<TitleEntity> getWatchedList(UUID userid);
     List<TitleEntity> getWatchList(UUID userid);
     TitleEntity addSeason(SeasonEntity seasonEntity, TitleEntity titleEntity);

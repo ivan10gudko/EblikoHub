@@ -11,8 +11,8 @@ const SocialMediaBlock: React.FC = ()=>{
         }
     };
     return(
-    <div className="flex items-center justify-between flex-col gap-4 font-medium text-black/50">
-        <Button variant="outline" className="border-[1px] w-full flex" onClick={handleDiscordLogin}>
+    <div className="flex items-center justify-between flex-col gap-4 font-medium text-black/70">
+        <Button variant="outline" className="border-[1px] w-full flex text-inherit border-black " onClick={handleDiscordLogin}>
             Continue with <FaDiscord color="#5865F2" size={32} className="mx-4" />
         </Button>
     </div>)

@@ -7,7 +7,7 @@ import MenuIcon from '@mui/icons-material/Menu';
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
     return (
-        <div className="flex flex-col md:flex-row bg-gray-50 min-h-[calc(100vh-64px)] relative">
+        <div className="flex flex-col md:flex-row min-h-[calc(100vh-8rem)] relative w-[90%] sm:gap-8 mx-auto my-8">
             <UserProfileSidebar 
                 isOpen={isSidebarOpen} 
                 onClose={() => setIsSidebarOpen(false)} 

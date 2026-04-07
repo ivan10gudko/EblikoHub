@@ -1,18 +1,12 @@
-import { supabase } from "~/shared/lib/supabase";
-import { useAuthStore } from "~/features/auth/store/auth.store";
 import MainLayout from "~/core/layouts/MainLayout";
 import Loader from "~/shared/ui/Loader/Loader";
 import type { Route } from "./+types/_main";
-import type { ShouldRevalidateFunctionArgs } from "react-router";
+import { ensureAuthenticated } from "~/features/auth";
 
 export async function clientLoader() {
-    const { data: { session } } = await supabase.auth.getSession();
-
-    if (session?.user?.id) {
-        useAuthStore.getState().restoreSession(session.user.id).catch(console.error);
-    }
-
-    return { session };
+    const userId = await ensureAuthenticated();
+    
+    return userId;
 }
 export function shouldRevalidate({ currentUrl, nextUrl, defaultShouldRevalidate }: ShouldRevalidateFunctionArgs) {
     if (currentUrl.pathname === nextUrl.pathname) {
