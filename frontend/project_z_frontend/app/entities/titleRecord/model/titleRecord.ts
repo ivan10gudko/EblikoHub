@@ -1,6 +1,6 @@
 import type { QueryParams } from "~/shared/types";
 
-//apiTitleId: 0 - no mal id
+
 export enum Status {
     WATCHED = "WATCHED",
     PLANNED = "PLANNED",
@@ -19,6 +19,8 @@ export interface TitleRecord {
     titleName: string,
     rating?: TitleRating,
     status: Status,
+    imageUrl?: string | null,
+    customOrder: number,
     createdAt: string,
 }
 
@@ -27,4 +29,4 @@ export interface TitleParams extends QueryParams {
     search?: string;
 }
 
-export interface CreateTitleRecord extends Omit<TitleRecord, 'titleId' | 'createdAt'> { }
+export interface CreateTitleRecord extends Omit<TitleRecord, 'titleId' | 'createdAt' | 'customOrder'> { }

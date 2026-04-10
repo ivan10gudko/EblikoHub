@@ -26,6 +26,7 @@ const AnimeSidebar: React.FC<Props> = ({ data }) => {
         apiTitleId: data.mal_id,
         titleName: data.title,
         status: Status.WATCHED,
+        imageUrl: data.images.jpg.image_url
     };
 
     const { data: titleRecord } = useTitleByApiId(initialData.apiTitleId);

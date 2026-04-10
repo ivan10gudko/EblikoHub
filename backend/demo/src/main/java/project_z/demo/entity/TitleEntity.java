@@ -50,7 +50,9 @@ public class TitleEntity {
     private Long titleId;
     @Column(name = "api_title_id", nullable = true)
     private Integer apiTitleId;
+
     private String titleName;
+    
     @ElementCollection
     @CollectionTable(
     name = "title_ratings",
@@ -60,6 +62,7 @@ public class TitleEntity {
     @MapKeyColumn(name = "name")
     @Column(name = "value")
     private Map<String, Float> rating;
+
     @Enumerated(EnumType.STRING)
     private TitleStatus status;
     
@@ -71,8 +74,12 @@ public class TitleEntity {
     @OneToMany(mappedBy= "title",cascade = CascadeType.ALL, orphanRemoval=true)
     @JsonManagedReference
     private List<SeasonEntity> seasons = new ArrayList<>();
+
     @Column(name = "custom_order")
     private Double customOrder;
+
+    @Column(name = "image_url")
+    private String imageUrl;
 
     @CreatedDate
     @Column(nullable=false, updatable=false)
@@ -83,5 +90,6 @@ public class TitleEntity {
             this.customOrder = (double) System.currentTimeMillis() + Math.random();
         }
     }
+
 }
 
