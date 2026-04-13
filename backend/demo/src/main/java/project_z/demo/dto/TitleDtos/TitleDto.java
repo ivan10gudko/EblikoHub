@@ -23,7 +23,7 @@ public class TitleDto {
     private String titleName;
     private Map<String, Float> rating;
     private TitleStatus status;
-    private Long customOrder;
+    private Double customOrder;
     private String imageUrl;
     private LocalDateTime createdAt;
 }

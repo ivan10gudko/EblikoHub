@@ -52,7 +52,7 @@ export const useUpdateTitleRecord = (titleId: number) => {
           };
         }
       );
-      toast.success("Видалено зі списку");
+      toast.success("deleted!");
     },
     onError: (error: any) => {
       toast.error(error.response?.data?.message || "Не вдалося видалити");

@@ -19,6 +19,7 @@ interface TitleRecordService {
     patch(titleId: number, titleData: Partial<TitleRecord>): Promise<TitleRecord>;
     delete(titleId: number): Promise<void>;
     patchCustomOrder(titleId:number,newTitlePosition:number) : Promise<void>;
+    reindexCustomOrder(userId:string) : Promise<void>;
     getWatched(userId: string): Promise<Array<TitleRecord>>;
     getPlanned(userId: string): Promise<Array<TitleRecord>>;
     getByJikanId(jikanId: number): Promise<TitleRecord>;
@@ -40,7 +41,7 @@ export const titleRecordService: TitleRecordService = {
         
         return response.data;
     },
-
+   
     async post(titleData) {
         const response = await apiClient.post(`/titles`,titleData);
         console.log(response.data)
@@ -62,6 +63,9 @@ export const titleRecordService: TitleRecordService = {
         console.log(titleId,newTitlePosition);
         await apiClient.patch(`titles/${titleId}/position`,{ customOrder : newTitlePosition});
     
+    },
+    async reindexCustomOrder(userId){
+        await apiClient.post(`titles/${userId}/reindex`);
     },
     async delete(titleId) {
         await apiClient.delete(`/titles/${titleId}`);

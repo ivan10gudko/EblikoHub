@@ -18,7 +18,7 @@ public class PagingHelper {
                            : params.getSortBy();
         
         Sort sort = Sort.by(direction, sortField);
-
+        sort = sort.and(Sort.by(Sort.Direction.ASC, "titleId"));
         int pageIndex = Math.max(0, params.getPage() - 1);
         int pageSize = Math.max(1, params.getLimit());
 

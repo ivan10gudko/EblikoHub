@@ -14,7 +14,7 @@ export const useInfinityTitles = (userId: string | null, params: TitleParams) =>
         },
         enabled:!!userId,
         initialPageParam: 1,
-        staleTime: 1000 * 60,
+        staleTime: 0,
         refetchOnWindowFocus: false,
     });
 };

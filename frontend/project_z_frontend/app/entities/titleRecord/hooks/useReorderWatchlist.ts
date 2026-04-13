@@ -1,45 +1,78 @@
+import { useState, useEffect, useRef } from "react";
 import { useQueryClient, type InfiniteData } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import { titleRecordService, type TitleRecord } from "~/entities/titleRecord";
 import { calculateNewOrder } from "~/shared/helpers";
 import type { PageResponse } from "~/shared/types";
+import { useSearchParams } from "react-router";
 
-export const useReorderWatchlist = (titles: TitleRecord[], queryKey: any[]) => {
-  const PAGE_SIZE = 10;
+export const useReorderWatchlist = (titles: TitleRecord[], queryKey: any[], userId: string | undefined) => {
+  const [searchParams] = useSearchParams();
   const queryClient = useQueryClient();
+  const [optimisticTitles, setOptimisticTitles] = useState<TitleRecord[]>(titles);
+  const isMutating = useRef(false);
+  const optimisticOrderRef = useRef<number[]>(titles.map(t => t.titleId));
+
+  useEffect(() => {
+    if (isMutating.current) return;
+    setOptimisticTitles(titles);
+
+    optimisticOrderRef.current = titles.map(t => t.titleId);
+  }, [titles]);
 
   const reorder = async (sourceIndex: number, destinationIndex: number) => {
-    const reorderedItems = Array.from(titles);
-    const [movedItem] = reorderedItems.splice(sourceIndex, 1);
-    reorderedItems.splice(destinationIndex, 0, movedItem);
+    const reordered = Array.from(optimisticTitles);
+    const [moved] = reordered.splice(sourceIndex, 1);
+    reordered.splice(destinationIndex, 0, moved);
 
-    const movedTitleId = titles[sourceIndex].titleId;
-    const newOrderValue = calculateNewOrder(reorderedItems, destinationIndex);
+    const movedTitleId = optimisticTitles[sourceIndex].titleId;
+    const isDesc = (searchParams.get('order') || 'asc') === 'desc';
+    const newOrderValue = calculateNewOrder(reordered, destinationIndex, movedTitleId, isDesc);
 
-    // Оновлюємо ТІЛЬКИ конкретний запит за повним ключем
+    if (newOrderValue === null) {
+      if (!userId) return;
+      await titleRecordService.reindexCustomOrder(userId);
+      await queryClient.invalidateQueries({ queryKey });
+      return;
+    }
+    moved.customOrder = newOrderValue;
+    isMutating.current = true;
+    optimisticOrderRef.current = reordered.map(t => t.titleId); // зберігаємо новий порядок
+    setOptimisticTitles(reordered);
+
     queryClient.setQueryData<InfiniteData<PageResponse<TitleRecord>>>(
-      queryKey, 
+      queryKey,
       (oldData) => {
         if (!oldData) return oldData;
-
+        const pageSize = oldData.pages[0]?.content.length || 10;
+        const allItems = oldData.pages.flatMap((p) => p.content);
+        const itemInCache = allItems.find(item => item.titleId === movedTitleId);
+        if (itemInCache) {
+          itemInCache.customOrder = newOrderValue;
+        }
+        const [movedItem] = allItems.splice(sourceIndex, 1);
+        allItems.splice(destinationIndex, 0, movedItem);
         return {
           ...oldData,
           pages: oldData.pages.map((page, pageIdx) => ({
             ...page,
-            content: reorderedItems.slice(pageIdx * PAGE_SIZE, (pageIdx + 1) * PAGE_SIZE),
+            content: allItems.slice(pageIdx * pageSize, (pageIdx + 1) * pageSize),
           })),
         };
       }
     );
 
-    // 3. Запит на бекенд
     try {
       await titleRecordService.patchCustomOrder(movedTitleId, newOrderValue);
-    } catch (err) {
+    } catch {
+      optimisticOrderRef.current = titles.map(t => t.titleId);
+      setOptimisticTitles(titles);
       queryClient.invalidateQueries({ queryKey });
       toast.error("Failed to save position");
+    } finally {
+      isMutating.current = false;
     }
   };
 
-  return { reorder };
+  return { reorder, optimisticTitles };
 };

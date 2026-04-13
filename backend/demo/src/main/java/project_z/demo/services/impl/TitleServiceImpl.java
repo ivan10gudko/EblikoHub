@@ -109,7 +109,7 @@ public TitleEntity partialUpdate(Long titleId, TitlePatchUpdateDto source) {
 }
 @Override
 @Transactional
-public void titlePositionUpdate(Long newPosition, Long titleId){
+public void titlePositionUpdate(Double newPosition, Long titleId){
     TitleEntity titleEntity = titleRepository.findById(titleId).orElseThrow(
     () -> new ResourceNotFoundException("title not found"));
     titleEntity.setCustomOrder(newPosition);
@@ -161,5 +161,8 @@ public List<TitleEntity> findAllByMalIdInUserRooms(Long titleMalId, String token
     UUID userId = jwtService.extractUsername(token);
     return titleRepository.findAllByApiTitleIdInUserRooms(titleMalId,userId);
 }
-
+@Override
+public void reindexCustomOrder(UUID userId) {
+    titleRepository.reindexNative(userId);
+}
 }
