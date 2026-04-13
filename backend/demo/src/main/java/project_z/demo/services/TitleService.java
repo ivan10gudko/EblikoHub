@@ -25,5 +25,5 @@ public interface TitleService {
     TitleEntity findUserTitleByMalId(Long titleMalId, String token);
     List<TitleEntity> findAllByMalIdInUserRooms(Long titleMalId, String token);
     Page<TitleEntity> findAllByUserId(TitleQueryParameters parameters, UUID userId);
-    void titlePositionUpdate(Double newPosition, Long titleId);
+    void titlePositionUpdate(Long newPosition, Long titleId);
 }

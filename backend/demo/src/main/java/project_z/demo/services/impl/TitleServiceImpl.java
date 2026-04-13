@@ -109,7 +109,7 @@ public TitleEntity partialUpdate(Long titleId, TitlePatchUpdateDto source) {
 }
 @Override
 @Transactional
-public void titlePositionUpdate(Double newPosition, Long titleId){
+public void titlePositionUpdate(Long newPosition, Long titleId){
     TitleEntity titleEntity = titleRepository.findById(titleId).orElseThrow(
     () -> new ResourceNotFoundException("title not found"));
     titleEntity.setCustomOrder(newPosition);

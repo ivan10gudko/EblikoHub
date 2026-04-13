@@ -1,4 +1,5 @@
 package project_z.demo.entity;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -76,7 +77,7 @@ public class TitleEntity {
     private List<SeasonEntity> seasons = new ArrayList<>();
 
     @Column(name = "custom_order")
-    private Double customOrder;
+    private Long customOrder;
 
     @Column(name = "image_url")
     private String imageUrl;
@@ -87,7 +88,7 @@ public class TitleEntity {
     @PrePersist
     protected void onCreate(){
         if(this.customOrder==null){
-            this.customOrder = (double) System.currentTimeMillis() + Math.random();
+            this.customOrder = System.currentTimeMillis();
         }
     }
 

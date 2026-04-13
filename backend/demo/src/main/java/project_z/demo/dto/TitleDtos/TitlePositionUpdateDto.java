@@ -8,5 +8,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TitlePositionUpdateDto {
-    private Double customOrder;
+    private Long customOrder;
 }
