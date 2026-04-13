@@ -2,10 +2,12 @@ import { Select } from "~/shared/ui/Select";
 import type { Option } from "~/shared/ui/Select/Select";
 import { useTitleFilterStore, type TitleSortType } from "../store/titleFilter.store";
 import { Button } from "~/shared/ui/Button";
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 
   const sortOptions: Option[] = [
     { label: "Rating", value: "rating" },
-    { label: "Title", value: "title" },
+    { label: "Title", value: "titleName" },
     { label: "Date Added", value: "createdAt" },
     { label: "Status", value: "status" },
     {label: "Custom Order", value: "customOrder"},
@@ -23,8 +25,16 @@ import { Button } from "~/shared/ui/Button";
           onChange={(val) => setSort(val as TitleSortType)}
           className="flex-1"
         />
-        <Button onClick={toggleOrder} className="px-4 bg-gray-100 hover:bg-gray-200 rounded-xl font-bold transition-colors">
-          {order === "asc" ? "↑" : "↓"}
+        <Button 
+          variant="outline" 
+          onClick={toggleOrder} 
+          className="px-4 bg-gray-100 hover:bg-gray-200 rounded-xl transition-colors"
+        >
+          {order === "asc" ? (
+            <KeyboardArrowUpIcon sx={{ stroke: "#374151", strokeWidth: 2, fontSize: 24 }} />
+          ) : (
+            <KeyboardArrowDownIcon sx={{ stroke: "#374151", strokeWidth: 2, fontSize: 24 }} />
+          )}
         </Button>
       </div>
     </div>

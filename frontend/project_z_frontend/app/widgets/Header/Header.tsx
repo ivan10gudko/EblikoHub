@@ -11,7 +11,7 @@ import { useAuthStore } from "~/features/auth";
 
 
 const Header = ()=> {
-    const {isAuth} = useAuthStore();
+    const {isAuth, userId} = useAuthStore();
     const [burgerMenuOpen,setBurgerMenuOpen] = useState<boolean>(false);
 
     const navigate = useNavigate();
@@ -19,7 +19,7 @@ const Header = ()=> {
     const handleMainSearch = (query: string) => {
         navigate(`/search?query=${encodeURIComponent(query)}`);
     };
-
+    const watchlistPath = isAuth && userId ? `/watchlist/${userId}` : "/auth/login";
     const burgerMenuStyles = useMemo(()=> burgerMenuOpen ? "border-t-1 bg-black/60  backdrop-blur-sm absolute top-17 w-full left-0 h-full clip flex justify-center pt-4 text-white z-1000" : "hidden",[burgerMenuOpen]);
 
     return (
@@ -34,8 +34,8 @@ const Header = ()=> {
             isActive ? "text-amber-400 border-b font-bold " :
             isPending ? "text-amber-200 font-bold " :
             ""
-)} >Rooms</NavLink>
-                <NavLink to={"/profile"}>Watchlist</NavLink>
+             )} >Rooms</NavLink>
+                <NavLink to={watchlistPath}>Watchlist</NavLink>
                 {isAuth ? (
                     <NavLink to="/profile">
                         <AccountCircleIcon fontSize="large" />
@@ -65,7 +65,7 @@ const Header = ()=> {
                 <ul className=" text-lg flex flex-col *:hover:backdrop-hue-rotate-15 *:hover:scale-y-105 w-full *:flex *:justify-center *:py-3">
                 <li><NavLink to={"/rooms"}>Popular</NavLink></li>
                 <li><NavLink to={"/rooms"}>Rooms</NavLink></li>
-                <li><NavLink to={"/profile"}>Watchlist</NavLink></li>
+                <li><NavLink to={watchlistPath}>Watchlist</NavLink></li>
                 <li >{isAuth ? (
                     <NavLink to="profile"> Profile </NavLink>
                 ) : (

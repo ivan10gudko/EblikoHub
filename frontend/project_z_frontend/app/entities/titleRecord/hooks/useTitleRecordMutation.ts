@@ -1,7 +1,8 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient, type InfiniteData } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import { Status, titleRecordService, type CreateTitleRecord, type TitleRating, type TitleRecord } from "~/entities/titleRecord";
 import { getSessionUserId } from "~/shared/lib/supabase";
+import type { PageResponse } from "~/shared/types";
 
 
 export const useTitleRecordMutation = (apiTitleId: number | undefined, initialData: CreateTitleRecord, existingTitleRecord?: TitleRecord | null) => {
@@ -14,6 +15,24 @@ export const useTitleRecordMutation = (apiTitleId: number | undefined, initialDa
     const mutationConfig = {
         onSuccess: (updatedRecord: TitleRecord | null) => {
             queryClient.setQueryData(queryKey, updatedRecord);
+            if (updatedRecord) {
+            queryClient.setQueriesData<InfiniteData<PageResponse<TitleRecord>>>(
+                { queryKey: ['titles'] }, 
+                (oldData) => {
+                    if (!oldData) return oldData;
+
+                    return {
+                        ...oldData,
+                        pages: oldData.pages.map((page) => ({
+                            ...page,
+                            content: page.content.map((item) =>
+                                item.titleId === updatedRecord.titleId ? updatedRecord : item
+                            ),
+                        })),
+                    };
+                }
+            );
+        }
         },
         onSettled: () => {
             queryClient.invalidateQueries({ queryKey: queryKey });
