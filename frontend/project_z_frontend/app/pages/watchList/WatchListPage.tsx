@@ -1,10 +1,9 @@
-
 import { useMemo } from "react";
 import { TitleFilters } from "~/features/titleFilter";
 import { useTitlesQuery } from "~/features/titleFilter/hooks/useTitlesQuery";
 import { useTitleFilterStore } from "~/features/titleFilter/store/titleFilter.store";
+import { FilterResponsiveWrapper } from "~/features/titleFilter/ui/FilterWrapper";
 import { useSyncUrl } from "~/shared/hooks";
-import { queryClient } from "~/shared/lib";
 import { InfiniteScrollLoader } from "~/shared/ui/infinityScroll";
 import { WatchlistTable } from "~/widgets/WatchListTable";
 
@@ -32,26 +31,23 @@ export const WatchListPage = ({ userId }: { userId: string | null }) => {
     data?.pages.flatMap(page => page.content) || [],
     [data]
   );
-
   return (
-    <div className="flex gap-6 p-6 max-w-[1400px] mx-auto min-h-screen">
-      <aside className="w-64">
+    <div className="flex flex-col lg:flex-row gap-6 p-4 sm:p-8 max-w-[1400px] mx-auto min-h-screen bg-gray-50/30">
+
+      <FilterResponsiveWrapper>
         <TitleFilters />
-      </aside>
+      </FilterResponsiveWrapper>
 
       <main className="flex-1 flex flex-col gap-4">
-        <WatchlistTable
-          titles={allTitles}
-          isLoading={isLoading}
+        <WatchlistTable titles={allTitles} isLoading={isLoading} />
 
-        />
-
-
-        <InfiniteScrollLoader
-          hasNextPage={hasNextPage}
-          isFetchingNextPage={isFetchingNextPage}
-          fetchNextPage={fetchNextPage}
-        />
+        <div className="py-10 flex justify-center">
+          <InfiniteScrollLoader
+            hasNextPage={hasNextPage}
+            isFetchingNextPage={isFetchingNextPage}
+            fetchNextPage={fetchNextPage}
+          />
+        </div>
       </main>
     </div>
   );
