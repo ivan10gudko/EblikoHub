@@ -41,6 +41,6 @@ public interface TitleRepository extends JpaRepository<TitleEntity, Long>,
       "FROM (SELECT title_id, ROW_NUMBER() OVER (ORDER BY custom_order ASC, title_id ASC) * 1000000 as new_order " +
       "      FROM titles WHERE user_id = :userId) as sub " +
       "WHERE titles.title_id = sub.title_id " +
-      "AND titles.user_id = :userId", nativeQuery = true) // Додай цю перевірку для безпеки та швидкості
+      "AND titles.user_id = :userId", nativeQuery = true)
   void reindexNative(@Param("userId") UUID userId);
 }

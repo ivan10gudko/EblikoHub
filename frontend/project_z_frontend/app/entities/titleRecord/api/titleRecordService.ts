@@ -60,7 +60,6 @@ export const titleRecordService: TitleRecordService = {
         return response.data;
     },
     async patchCustomOrder(titleId, newTitlePosition){
-        console.log(titleId,newTitlePosition);
         await apiClient.patch(`titles/${titleId}/position`,{ customOrder : newTitlePosition});
     
     },
