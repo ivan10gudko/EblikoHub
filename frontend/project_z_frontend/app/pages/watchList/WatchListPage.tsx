@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import { useAuthStore } from "~/features/auth";
 import { TitleFilters } from "~/features/titleFilter";
 import { useTitlesQuery } from "~/features/titleFilter/hooks/useTitlesQuery";
 import { useTitleFilterStore } from "~/features/titleFilter/store/titleFilter.store";
@@ -8,7 +9,8 @@ import { InfiniteScrollLoader } from "~/shared/ui/infinityScroll";
 import { WatchlistTable } from "~/widgets/WatchListTable";
 
 export const WatchListPage = ({ userId }: { userId: string | null }) => {
-
+  const currentSessionUserId = useAuthStore(state => state.userId);
+  const isOwn = Boolean(currentSessionUserId && currentSessionUserId === userId);
   const {
     search, sortBy, order, status,
     setSearch,
@@ -39,7 +41,11 @@ export const WatchListPage = ({ userId }: { userId: string | null }) => {
       </FilterResponsiveWrapper>
 
       <main className="flex-1 flex flex-col gap-4">
-        <WatchlistTable titles={allTitles} isLoading={isLoading} />
+        <WatchlistTable
+          titles={allTitles}
+          isLoading={isLoading}
+          isOwn={isOwn}
+        />
 
         <div className="py-10 flex justify-center">
           <InfiniteScrollLoader

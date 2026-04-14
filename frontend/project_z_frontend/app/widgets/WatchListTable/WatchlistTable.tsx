@@ -9,15 +9,16 @@ import { useMemo } from "react";
 interface WatchlistTableProps {
   titles: TitleRecord[];
   isLoading?: boolean;
+  isOwn: boolean;
 }
-export const WatchlistTable = ({ titles, isLoading }: WatchlistTableProps) => {
+export const WatchlistTable = ({ titles, isLoading, isOwn }: WatchlistTableProps) => {
   const [searchParams] = useSearchParams();
   const { userId } = useParams<{ userId: string }>();
   const { search, sortBy, order, status } = useTitleFilterStore();
   const queryKey = useMemo(
-  () => ['titles', userId, { search, sortBy, order, status }],
-  [userId, search, sortBy, order, status]
-);
+    () => ['titles', userId, { search, sortBy, order, status }],
+    [userId, search, sortBy, order, status]
+  );
 
   const isCustomOrder = searchParams.get("sortBy") === "customOrder";
   const isFiltered = !!searchParams.get("search") || !!searchParams.get("status");
@@ -58,7 +59,10 @@ export const WatchlistTable = ({ titles, isLoading }: WatchlistTableProps) => {
                     {...provided.dragHandleProps}
                     className={!isDragable ? "cursor-default" : "cursor-grab active:cursor-grabbing"}
                   >
-                    <WatchlistRow title={title} />
+                    <WatchlistRow
+                      title={title}
+                      isOwn={isOwn}
+                    />
                   </div>
                 )}
               </Draggable>
