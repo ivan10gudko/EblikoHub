@@ -37,7 +37,7 @@ export const useReorderWatchlist = (titles: TitleRecord[], queryKey: any[], user
     }
     moved.customOrder = newOrderValue;
     isMutating.current = true;
-    optimisticOrderRef.current = reordered.map(t => t.titleId); // зберігаємо новий порядок
+    optimisticOrderRef.current = reordered.map(t => t.titleId); 
     setOptimisticTitles(reordered);
 
     queryClient.setQueryData<InfiniteData<PageResponse<TitleRecord>>>(

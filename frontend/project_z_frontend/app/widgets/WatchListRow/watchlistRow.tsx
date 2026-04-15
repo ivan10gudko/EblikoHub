@@ -40,7 +40,7 @@ return (
           </div>
         )}
 
-        <div className="relative h-10 w-16 flex-shrink-0" onPointerDown={(e) => e.stopPropagation()}>
+        <div className="relative h-10 w-16 flex-shrink-0 transition-transform duration-500 hover:scale-[2.5] hover:z-10"  onPointerDown={(e) => e.stopPropagation()}>
           <img 
             src={title.imageUrl || DEFAULT_IMAGE} 
             onClick={handleImageClick}
