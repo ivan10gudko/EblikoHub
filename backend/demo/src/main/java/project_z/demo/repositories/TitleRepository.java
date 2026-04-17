@@ -20,7 +20,7 @@ public interface TitleRepository extends JpaRepository<TitleEntity, Long>,
   // @Query("SELECT t FROM TitleEntity t WHERE t.user.id = :userId")
   // List<TitleEntity> findByUserId(@Param("userId") UUID userId); mal
   @Query("SELECT t FROM TitleEntity t WHERE t.apiTitleId = :apiTitleId AND t.user.userId = :userId")
-  Optional<TitleEntity> findByApiTitleIdAndUserId(Long apiTitleId, UUID userId);
+  Optional<TitleEntity> findByApiTitleIdAndUserId(Integer apiTitleId, UUID userId);
 
   @Query("SELECT t FROM TitleEntity t " +
       "JOIN t.user u " +
@@ -28,7 +28,7 @@ public interface TitleRepository extends JpaRepository<TitleEntity, Long>,
       "WHERE t.apiTitleId = :apiTitleId " +
       "AND r.id IN (SELECT r2.id FROM UserEntity u2 JOIN u2.rooms r2 WHERE u2.id = :userId) " +
       "AND u.id != :userId")
-  List<TitleEntity> findAllByApiTitleIdInUserRooms(Long apiTitleId, UUID userId);
+  List<TitleEntity> findAllByApiTitleIdInUserRooms(Integer apiTitleId, UUID userId);
 
   @Query("SELECT t FROM TitleEntity t WHERE t.user.userId = :userId ORDER BY t.customOrder ASC")
   List<TitleEntity> findAllByUserId(UUID userId);
