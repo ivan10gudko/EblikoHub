@@ -10,6 +10,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import lombok.RequiredArgsConstructor;
@@ -25,7 +26,6 @@ public class TranslationServiceImpl implements TranslationService {
 
     @Override
     public String translateToEnglish(String text) {
-
         String systemPrompt = """
                        IMPORTANT: RETURN ONLY THE OFFICIAL ENGLISH ANIME TITLE.
                 START YOUR ANSWER WITH "RESULT: " FOLLOWED BY THE TITLE.
@@ -74,10 +74,11 @@ public class TranslationServiceImpl implements TranslationService {
                     }
 
                     String res = cleanContent.replace("RESULT:", "").trim();
-
                     return res;
                 }
             }
+        } catch (HttpClientErrorException e) {
+            throw e;
         } catch (Exception e) {
             e.printStackTrace();
         }

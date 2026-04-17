@@ -7,7 +7,7 @@ import type { AnimeCardType } from '~/entities/title';
 
 export const TitleSearch = ({ onSelect }: { onSelect: (anime: AnimeCardType) => void }) => {
     const [localQuery, setLocalQuery] = useState("");
-    const { data } = useQuery({
+    const { data, isFetching } = useQuery({
         ...searchOptions(localQuery, 1),
         enabled: localQuery.length >= 3
     });
@@ -20,6 +20,7 @@ export const TitleSearch = ({ onSelect }: { onSelect: (anime: AnimeCardType) => 
     return (
         <div className="relative w-full">
             <SearchBar
+                isLoading={isFetching}
                 onSearch={(val) => setLocalQuery(val)}
                 placeholder="Search anime to add..."
                 className="!max-w-full border-2 border-slate-200 focus-within:border-amber-400 rounded-xl"
@@ -30,6 +31,7 @@ export const TitleSearch = ({ onSelect }: { onSelect: (anime: AnimeCardType) => 
                     results={results}
                     onSelect={onSelect}
                     onClose={onClose}
+                    
                 />
             )}
         </div>

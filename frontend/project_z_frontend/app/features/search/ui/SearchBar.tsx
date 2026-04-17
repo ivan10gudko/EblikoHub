@@ -1,8 +1,16 @@
 import { useState } from "react";
 import SearchIcon from "@mui/icons-material/Search";
-
+import CircularProgress from "@mui/material/CircularProgress";
 interface SearchBarProps {
     onSearch: (query: string) => void;
+    placeholder?: string;
+    minLength?: number;
+    className?: string;
+    initialValue?: string;
+}
+interface SearchBarProps {
+    onSearch: (query: string) => void;
+    isLoading?: boolean; 
     placeholder?: string;
     minLength?: number;
     className?: string;
@@ -11,6 +19,7 @@ interface SearchBarProps {
 
 const SearchBar: React.FC<SearchBarProps> = ({
     onSearch,
+    isLoading = false, 
     placeholder = "Search...",
     minLength = 3,
     className = "",
@@ -48,6 +57,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
                 className="border-none outline-none p-2 rounded-l-lg w-full bg-transparent"
                 value={value}
                 onChange={handleChange}
+                disabled={isLoading} 
             />
             
             {error && (
@@ -58,10 +68,15 @@ const SearchBar: React.FC<SearchBarProps> = ({
             
             <button
                 type="submit"
-                className="px-3 py-2 hover:bg-gray-100 transition-colors rounded-r-lg"
+                className="px-3 py-2 hover:bg-gray-100 transition-colors rounded-r-lg flex items-center justify-center min-w-[48px]"
                 aria-label="Search"
+                disabled={isLoading} 
             >
-                <SearchIcon />
+                {isLoading ? (
+                    <CircularProgress size={20} color="inherit" /> 
+                ) : (
+                    <SearchIcon />
+                )}
             </button>
         </form>
     );

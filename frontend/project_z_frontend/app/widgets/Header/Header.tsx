@@ -1,4 +1,4 @@
-import { NavLink, useNavigate } from "react-router";
+import { NavLink, useNavigate, useNavigation } from "react-router";
 import { useMemo, useState } from "react";
 import SearchIcon from "@mui/icons-material/Search";
 
@@ -15,7 +15,8 @@ const Header = ()=> {
     const [burgerMenuOpen,setBurgerMenuOpen] = useState<boolean>(false);
 
     const navigate = useNavigate();
-
+    const navigation = useNavigation();
+    const isNavigating = navigation.state === "loading";
     const handleMainSearch = (query: string) => {
         navigate(`/search?query=${encodeURIComponent(query)}`);
     };
@@ -29,7 +30,7 @@ const Header = ()=> {
             </NavLink>
             
             <div className="hidden sm:flex gap-4 items-center">
-                <SearchBar onSearch={handleMainSearch} className="w-56"/>
+                <SearchBar isLoading = {isNavigating} onSearch={handleMainSearch} className="w-56"/>
                 <NavLink to={"/rooms"} className= {({ isActive, isPending }) => (
             isActive ? "text-amber-400 border-b font-bold " :
             isPending ? "text-amber-200 font-bold " :
