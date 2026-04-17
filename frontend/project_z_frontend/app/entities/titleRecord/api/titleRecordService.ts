@@ -22,7 +22,7 @@ interface TitleRecordService {
     reindexCustomOrder(userId:string) : Promise<void>;
     getWatched(userId: string): Promise<Array<TitleRecord>>;
     getPlanned(userId: string): Promise<Array<TitleRecord>>;
-    getByJikanId(jikanId: number): Promise<TitleRecord>;
+    getByApiTitleId(jikanId: number): Promise<TitleRecord>;
 
     rate(options: RateOptions): Promise<TitleRecord>;
     clearRating(options:ActionOptions): Promise<TitleRecord>;
@@ -44,7 +44,6 @@ export const titleRecordService: TitleRecordService = {
    
     async post(titleData) {
         const response = await apiClient.post(`/titles`,titleData);
-        console.log(response.data)
         return response.data;
     },
 

@@ -1,15 +1,9 @@
-import { Status } from "~/entities/titleRecord";
+import { Status, statusOptions } from "~/entities/titleRecord";
 import { useTitleRecordMutation } from "../../../entities/titleRecord";
 import type { ManageTitleRecordProps } from "../model/manageTitleRecord";
 import { Select } from "~/shared/ui/Select";
 
-const statusOptions = [
-    { value: Status.PLANNED, label: "Plan to Watch" },
-    { value: Status.WATCHED, label: "Watched" },
-    { value: Status.DROPPED, label: "Dropped" },
-    { value: Status.INPROGRESS, label: "In Progress" },
-    { value: Status.DEFAULT, label: "No Status" },
-];
+
 interface StatusSelectProps extends ManageTitleRecordProps {
     className?: string;
     variant?: "page" | "card";

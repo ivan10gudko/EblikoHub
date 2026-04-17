@@ -5,9 +5,10 @@ import { useParams, useSearchParams } from "react-router";
 import AddIcon from "@mui/icons-material/Add";
 import { useReorderWatchlist } from "~/entities/titleRecord/hooks/useReorderWatchlist";
 import { useTitleFilterStore } from "~/features/titleFilter/store/titleFilter.store";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { Button } from "~/shared/ui/Button";
 import { WatchlistSkeleton } from "./WatchlistTableSkeleton";
+import AddTitleModal from "../AddTitleModal/addTitleModal";
 interface WatchlistTableProps {
   titles: TitleRecord[];
   isLoading?: boolean;
@@ -25,6 +26,7 @@ export const WatchlistTable = ({ titles, isLoading, isOwn }: WatchlistTableProps
   const isCustomOrder = searchParams.get("sortBy") === "customOrder";
   const isFiltered = !!searchParams.get("search") || !!searchParams.get("status");
   const isDragable = isCustomOrder && !isFiltered;
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
 
   const { reorder, optimisticTitles } = useReorderWatchlist(titles, queryKey, userId);
@@ -35,19 +37,17 @@ export const WatchlistTable = ({ titles, isLoading, isOwn }: WatchlistTableProps
 
     reorder(source.index, destination.index);
   };
-  const handleAddTitle = () => {
-    alert("modal");
-  };
+
 
   if (isLoading) return <WatchlistSkeleton />;
-  
+
   if (titles.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center p-12 bg-gray-50/50 rounded-3xl border-2 border-dashed border-gray-200">
         <p className="text-gray-500 font-medium mb-4">Watchlist is empty</p>
         {isOwn && (
           <Button
-            onClick={handleAddTitle}
+            onClick={() => setIsModalOpen(true)}
             className="flex items-center gap-2 bg-amber-400 hover:bg-amber-500 text-white px-6 py-2 rounded-xl transition-all"
           >
             <AddIcon />
@@ -58,11 +58,11 @@ export const WatchlistTable = ({ titles, isLoading, isOwn }: WatchlistTableProps
     );
   }
   return (
-      <div className="flex flex-col gap-2 w-full">
-      
+    <div className="flex flex-col gap-2 w-full">
+
       {isOwn && (
-        <button
-          onClick={handleAddTitle}
+        <Button
+          onClick={() => setIsModalOpen(true)}
           className="
             group flex items-center justify-center gap-3 w-full py-3 
             bg-gray-50/50 hover:bg-amber-50 
@@ -76,7 +76,7 @@ export const WatchlistTable = ({ titles, isLoading, isOwn }: WatchlistTableProps
           <span className="font-bold text-black group-hover:text-amber-600 transition-colors">
             Add new title
           </span>
-        </button>
+        </Button>
       )}
       <DragDropContext onDragEnd={onDragEnd}>
         <Droppable droppableId="watchlist">
@@ -113,6 +113,10 @@ export const WatchlistTable = ({ titles, isLoading, isOwn }: WatchlistTableProps
           )}
         </Droppable>
       </DragDropContext>
+      <AddTitleModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+      />
     </div>
   );
 };

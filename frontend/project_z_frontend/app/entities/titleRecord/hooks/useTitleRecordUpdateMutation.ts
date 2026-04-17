@@ -11,7 +11,6 @@ export const useUpdateTitleRecord = (titleId: number) => {
       titleRecordService.patch(titleId, updates),
     
     onSuccess: (updatedRecord: TitleRecord) => {
-      // Оновлюємо список
       queryClient.setQueriesData<InfiniteData<PageResponse<TitleRecord>>>(
         { queryKey: ['titles'] },
         (oldData) => {
@@ -55,7 +54,7 @@ export const useUpdateTitleRecord = (titleId: number) => {
       toast.success("deleted!");
     },
     onError: (error: any) => {
-      toast.error(error.response?.data?.message || "Не вдалося видалити");
+      toast.error(error.response?.data?.message || "error while deleting");
     }
   });
 

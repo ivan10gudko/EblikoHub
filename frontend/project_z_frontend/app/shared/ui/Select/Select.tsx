@@ -48,7 +48,7 @@ const Select: React.FC<SelectProps> = ({
 
 
     return (
-        <div className={`flex flex-col gap-1.5 w-full ${containerClasses}`}>
+        <div className={`flex flex-col gap-1.5 w-full min-w-0 ${containerClasses}`}>
             {label && (
                 <label
                     htmlFor={id}

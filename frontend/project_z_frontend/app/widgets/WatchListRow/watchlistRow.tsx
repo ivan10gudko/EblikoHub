@@ -14,7 +14,6 @@ interface WatchlistRowProps {
 }
 export const WatchlistRow = ({ title, isOwn }: WatchlistRowProps) => {
   const [tempTitleName, setTempTitleName] = useState(title.titleName);
-  const DEFAULT_IMAGE = "https://t4.ftcdn.net/jpg/05/97/47/95/360_F_597479556_7bbQ7t4Z8k3xbAloHFHVdZIizWK1PdOo.jpg";
   const navigate = useNavigate()
   const { updateTitle, deleteTitle } = useUpdateTitleRecord(title.titleId);
   const handleImageClick = (e: React.MouseEvent) => {
@@ -42,7 +41,7 @@ return (
 
         <div className="relative h-10 w-16 flex-shrink-0 transition-transform duration-500 hover:scale-[2.5] hover:z-10"  onPointerDown={(e) => e.stopPropagation()}>
           <img 
-            src={title.imageUrl || DEFAULT_IMAGE} 
+            src={title.imageUrl || "/defautlTitleRecordImage.jpg"}
             onClick={handleImageClick}
             className="absolute inset-0 h-full w-full object-cover rounded-md cursor-pointer" 
             alt={title.titleName}

@@ -43,7 +43,7 @@ const Input: React.FC<InputProps> = ({
     };
 
     return (
-        <div className="relative my-5">
+        <div className="relative">
             <input
                 id={id}
                 className={

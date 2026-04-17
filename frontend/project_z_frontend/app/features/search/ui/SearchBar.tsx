@@ -26,8 +26,6 @@ const SearchBar: React.FC<SearchBarProps> = ({
         if (trimmedValue && trimmedValue.length >= minLength) {
             setError(null);
             onSearch(trimmedValue);
-            
-            setValue("");
         } else {
             setError(`Length should be at least ${minLength}`);
         }

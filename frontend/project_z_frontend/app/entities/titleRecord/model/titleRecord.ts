@@ -8,7 +8,13 @@ export enum Status {
     INPROGRESS = "INPROGRESS",
     DEFAULT = "DEFAULT"
 }
-
+export const statusOptions = [
+    { value: Status.PLANNED, label: "Plan to Watch" },
+    { value: Status.WATCHED, label: "Watched" },
+    { value: Status.DROPPED, label: "Dropped" },
+    { value: Status.INPROGRESS, label: "In Progress" },
+    { value: Status.DEFAULT, label: "No Status" },
+];
 export type TitleRating =
     | { overall: number;[key: string]: number }
     | Record<string, never>;

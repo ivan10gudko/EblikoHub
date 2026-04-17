@@ -16,23 +16,23 @@ export const useTitleRecordMutation = (apiTitleId: number | undefined, initialDa
         onSuccess: (updatedRecord: TitleRecord | null) => {
             queryClient.setQueryData(queryKey, updatedRecord);
             if (updatedRecord) {
-            queryClient.setQueriesData<InfiniteData<PageResponse<TitleRecord>>>(
-                { queryKey: ['titles'] }, 
-                (oldData) => {
-                    if (!oldData) return oldData;
+                queryClient.setQueriesData<InfiniteData<PageResponse<TitleRecord>>>(
+                    { queryKey: ['titles'] },
+                    (oldData) => {
+                        if (!oldData) return oldData;
 
-                    return {
-                        ...oldData,
-                        pages: oldData.pages.map((page) => ({
-                            ...page,
-                            content: page.content.map((item) =>
-                                item.titleId === updatedRecord.titleId ? updatedRecord : item
-                            ),
-                        })),
-                    };
-                }
-            );
-        }
+                        return {
+                            ...oldData,
+                            pages: oldData.pages.map((page) => ({
+                                ...page,
+                                content: page.content.map((item) =>
+                                    item.titleId === updatedRecord.titleId ? updatedRecord : item
+                                ),
+                            })),
+                        };
+                    }
+                );
+            }
         },
         onSettled: () => {
             queryClient.invalidateQueries({ queryKey: queryKey });
@@ -44,7 +44,6 @@ export const useTitleRecordMutation = (apiTitleId: number | undefined, initialDa
     };
 
     const getCache = () => queryClient.getQueryData<TitleRecord>(queryKey) || existingTitleRecord;
-
     const rateMutation = useMutation({
         mutationFn: (score: number | TitleRating) =>
             titleRecordService.rate({ apiTitleId, score, initialData, existingTitle: getCache() }),
@@ -93,7 +92,6 @@ export const useTitleRecordMutation = (apiTitleId: number | undefined, initialDa
         rate: (score: number | TitleRating) => checkAuthAndRun(() => rateMutation.mutate(score)),
         clearRate: () => checkAuthAndRun(() => clearRateMutation.mutate()),
         deleteTitle: (titleId: number) => checkAuthAndRun(() => deleteMutation.mutate(titleId)),
-
         moveToPlanned: () => checkAuthAndRun(() => statusMutation.mutate(Status.PLANNED)),
         markAsWatched: () => checkAuthAndRun(() => statusMutation.mutate(Status.WATCHED)),
 
