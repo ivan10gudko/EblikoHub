@@ -25,7 +25,7 @@ public class TranslationServiceImpl implements TranslationService {
     private final MyConfig myConfig;
 
     @Override
-    public String translateToEnglish(String text) {
+    public String translateToEnglishWithDeepSeek(String text) {
         String systemPrompt = """
                        IMPORTANT: RETURN ONLY THE OFFICIAL ENGLISH ANIME TITLE.
                 START YOUR ANSWER WITH "RESULT: " FOLLOWED BY THE TITLE.
@@ -81,6 +81,67 @@ public class TranslationServiceImpl implements TranslationService {
             throw e;
         } catch (Exception e) {
             e.printStackTrace();
+        }
+
+        return text;
+    }
+
+    @Override
+    public String translateToEnglistWithGoogleAI(String text) {
+        String systemPrompt = """
+                IMPORTANT: RETURN ONLY THE OFFICIAL ENGLISH ANIME TITLE.
+                START YOUR ANSWER WITH "RESULT: " FOLLOWED BY THE TITLE.
+                DO NOT INCLUDE ANY EXPLANATIONS, REASONING, COMMENTS, OR <think> TAGS.
+
+                You are a Japanese anime expert and translator.
+                The user will give you the title of an anime in any language.
+                Your task is to return ONLY the official English title.
+                """;
+
+        String apiUrl = myConfig.getGoogleApiUrl();
+        String apiKey = myConfig.getGoogleApiKey();
+        String urlWithKey = apiUrl + "?key=" + apiKey;
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        Map<String, Object> requestBody = Map.of(
+                "contents", List.of(
+                        Map.of("parts", List.of(
+                                Map.of("text", systemPrompt + "\nInput: " + text)))));
+
+        HttpEntity<Map<String, Object>> request = new HttpEntity<>(requestBody, headers);
+
+        try {
+            ResponseEntity<Map> response = restTemplate.postForEntity(urlWithKey, request, Map.class);
+
+            if (response.getBody() != null) {
+                List<?> candidates = (List<?>) response.getBody().get("candidates");
+                if (candidates != null && !candidates.isEmpty()) {
+                    Map<?, ?> firstCandidate = (Map<?, ?>) candidates.get(0);
+                    Map<?, ?> content = (Map<?, ?>) firstCandidate.get("content");
+                    List<?> parts = (List<?>) content.get("parts");
+                    Map<?, ?> firstPart = (Map<?, ?>) parts.get(0);
+
+                    String responseText = firstPart.get("text").toString().trim();
+                    System.out.println("Gemini Response: " + responseText);
+
+                    Pattern p = Pattern.compile("RESULT:\\s*(.*)", Pattern.CASE_INSENSITIVE);
+                    Matcher m = p.matcher(responseText);
+
+                    if (m.find()) {
+                        return m.group(1).trim().replace("\"", "").replace("}", "");
+                    }
+
+                    return responseText.replace("RESULT:", "").trim();
+                }
+            }
+        } catch (HttpClientErrorException.TooManyRequests e) {
+            System.err.println("Google API Rate limit exceeded: " + e.getResponseBodyAsString());
+            throw e;
+        }
+        catch (Exception e) {
+            System.err.println("Google API Error: " + e.getMessage());
         }
 
         return text;

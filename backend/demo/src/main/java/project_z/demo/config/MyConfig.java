@@ -1,7 +1,7 @@
 package project_z.demo.config;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.springframework.beans.factory.annotation.Value;
+
 import lombok.Getter;
 
 @Component
@@ -18,4 +18,8 @@ public class MyConfig {
     private boolean isApiKeyEnabled;
     @Value("${app.security.api-key.value}")
     private String apiKeyValue;
+    @Value("${app.api.google-api-key}")
+    private String googleApiKey;
+    @Value("${app.api.google-api-url}")
+    private String googleApiUrl;
 }

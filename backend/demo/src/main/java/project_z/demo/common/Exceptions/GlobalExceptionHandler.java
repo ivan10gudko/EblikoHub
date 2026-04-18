@@ -43,8 +43,13 @@ public class GlobalExceptionHandler {
             body.put("message", "AI transaltion Service: Limit exhausted");
             return new ResponseEntity<>(body, HttpStatus.PAYMENT_REQUIRED);
         }
-
+        if(ex.getStatusCode().value() == 429){
+           body.put("message", "AI Translation Service: Daily quota or balance exhausted.");
+           return new ResponseEntity<>(body, HttpStatus.TOO_MANY_REQUESTS);
+        }
         body.put("message", ex.getMessage());
         return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }
+
+    
 }
