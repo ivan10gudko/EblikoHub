@@ -33,7 +33,7 @@ return (
       <div className="flex items-center flex-1 gap-3 min-w-0">
         {isOwn && (
           <div onPointerDown={(e) => e.stopPropagation()}>
-            <Button onClick={handleDelete} className="p-1.5 bg-red-500 text-white rounded-lg">
+            <Button onClick={handleDelete} className="p-1.5 bg-red-500 hover:bg-red-700 text-white rounded-lg">
               <DeleteOutlineIcon sx={{ fontSize: 16 }} />
             </Button>
           </div>

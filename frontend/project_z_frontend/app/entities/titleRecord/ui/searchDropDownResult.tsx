@@ -51,6 +51,14 @@ export const AnimeSearchResults = ({ results, onSelect, onClose }: AnimeSearchRe
                         </Button>
                     </div>
                 ))}
+                <div className="p-2 bg-slate-50 border-t border-slate-100 flex justify-end">
+                    <Button
+                        onClick={onClose}
+                        className="text-xs font-bold text-slate-500 hover:text-slate-800 px-3 py-1 transition-colors"
+                    >
+                        Cancel Search
+                    </Button>
+                </div>
             </div>
         </div>
     );

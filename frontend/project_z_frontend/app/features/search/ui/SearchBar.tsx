@@ -15,6 +15,7 @@ interface SearchBarProps {
     minLength?: number;
     className?: string;
     initialValue?: string;
+    clearOnSubmit?: boolean;
 }
 
 const SearchBar: React.FC<SearchBarProps> = ({
@@ -23,7 +24,8 @@ const SearchBar: React.FC<SearchBarProps> = ({
     placeholder = "Search...",
     minLength = 3,
     className = "",
-    initialValue = ""
+    initialValue = "",
+    clearOnSubmit = true
 }) => {
     const [value, setValue] = useState<string>(initialValue);
     const [error, setError] = useState<string | null>(null);
@@ -38,6 +40,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
         } else {
             setError(`Length should be at least ${minLength}`);
         }
+        if(clearOnSubmit) setValue("")
     };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
