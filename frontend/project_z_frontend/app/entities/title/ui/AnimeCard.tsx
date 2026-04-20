@@ -38,13 +38,13 @@ const AnimeCard : React.FC<AnimeCardProps> = ({data, menuActions})=>{
                 <span className="font-light grow">{data.title}</span>
                     {data.year ? <CardDate >{data.year}</CardDate> : null}
                 <div className="flex flex-wrap gap-2 my-4">
-                    {genres.map(genre=><Badge key={genre.mal_id} textColor="black" size="sm">{genre.name}</Badge>)}
+                    {genres.map(genre=><Badge key={genre.mal_id} color = "background-muted" textColor="foreground"  size="sm">{genre.name}</Badge>)}
                 </div>
             </div>
 
             <div className="flex flex-col gap-3 sm:flex-row justify-between mt-auto">
                 <Rating className="gap-1 text-sm ">{data?.score}</Rating>
-                {data.airing ? <Badge textColor="black" size="sm">Ongoing</Badge>:<Badge color="black" textColor="background" size="sm">Completed</Badge>}    
+                {data.airing ? <Badge textColor="foreground" color = "background-muted" size="sm">Ongoing</Badge>:<Badge color = "background-muted" textColor="foreground" size="sm">Completed</Badge>}    
             </div>
         </div>
     </div>)

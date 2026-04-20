@@ -1,7 +1,5 @@
 import { AnimeCard, type AnimeCardType } from "~/entities/title";
 import { useTitleByApiId, Status } from "~/entities/titleRecord";
-import AddToWatchedCardAction from "./AddToWatchedCardAction";
-import AddToWatchlistCardAction from "./AddToWatchlistCardAction";
 import RateCardAction from "./RateCardAction";
 import StatusSelect from "./StatusSelect";
 
@@ -23,6 +21,7 @@ const ManagedAnimeCard = ({ anime }: { anime: AnimeCardType }) => {
                     initialData={initialData}
                     titleRecord={titleRecord}
                     variant="card"
+                    
                 />
                     <RateCardAction initialData={initialData} titleRecord={titleRecord} />
                 </>

@@ -27,8 +27,8 @@ const StatusSelect = ({
     const styles = {
         page: className,
         card: (className =
-            "my-2 border-none hover:text-primary-hover bg-background rounded-none py-4 " +
-            (titleRecord?.status ? "text-primary text-center": "text-center") +
+            "my-2 border-none hover:text-primary-hover bg-transparent rounded-none py-4 " +
+            (titleRecord?.status ? "text-primary text-center": "text-primary text-center") +
             className),
     };
 
