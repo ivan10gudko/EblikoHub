@@ -53,7 +53,7 @@ export const UserProfileCard = () => {
                     <div className="flex flex-col sm:flex-row items-center gap-6">
                         <UserAvatar src={user.img} name={user.name} size="lg" />
                         <div className="flex flex-col items-center sm:items-start grow">
-                            <h1 className="text-3xl font-black text-gray-900 tracking-tight">{user.name}</h1>
+                            <h1 className="text-3xl font-black text-foreground tracking-tight">{user.name}</h1>
                             <span className="text-lg text-primary font-mono">@{user.nameTag}</span>
                         </div>
                         <Button

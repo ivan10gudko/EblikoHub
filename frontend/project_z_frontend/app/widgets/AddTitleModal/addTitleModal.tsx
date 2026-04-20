@@ -2,7 +2,7 @@ import Modal from '~/shared/ui/Modal/Modal';
 import { Button } from '~/shared/ui/Button';
 import { Select } from '~/shared/ui/Select';
 import { Input } from '~/shared/ui/Input';
-import type { Anime, AnimeCardType } from '~/entities/title';
+import type { AnimeCardType } from '~/entities/title';
 import {
     Status,
     statusOptions,
@@ -13,6 +13,8 @@ import {
 import toast from 'react-hot-toast';
 import { useState } from 'react';
 import { TitleSearch } from '../TitleSearch/titleSearch';
+import DeleteSweepIcon from '@mui/icons-material/DeleteSweep';
+import { formatRatingInput } from '~/shared/helpers/formatRating';
 
 interface AddTitleModalProps {
     isOpen: boolean;
@@ -39,6 +41,10 @@ const AddTitleModal = ({ isOpen, onClose }: AddTitleModalProps) => {
             imageUrl: anime.img,
         });
     };
+    const handleClear = () => {
+        setFormData(INITIAL_FORM_DATA);
+        toast.success("Form cleared");
+    };
     const handleSave = () => {
         if (!formData.titleName.trim()) {
             toast.error("Enter name!");
@@ -54,20 +60,16 @@ const AddTitleModal = ({ isOpen, onClose }: AddTitleModalProps) => {
         });
     };
     const handleRatingChange = (val: string) => {
-        if (val === '' || /^[0-9]*\.?[0-9]*$/.test(val)) {
-            const num = parseFloat(val);
+        const formatted = formatRatingInput(val);
 
-            if (val === '' || (!isNaN(num) && num <= 10)) {
-                setFormData(prev => ({
-                    ...prev,
-                    rating: val === ''
-                        ? {}
-                        : {
-                            ...prev.rating,
-                            overall: num
-                        } as TitleRating
-                }));
-            }
+        if (formatted !== null) {
+            setFormData(prev => ({
+                ...prev,
+                rating: {
+                    ...prev.rating,
+                    overall: formatted as unknown as number
+                }
+            }));
         }
     };
     return (
@@ -139,6 +141,16 @@ const AddTitleModal = ({ isOpen, onClose }: AddTitleModalProps) => {
                                     />
                                 </div>
                             </div>
+                        </div>
+                        <div className="flex justify-end">
+                            <Button
+                                onClick={handleClear}
+                                variant="text-only"
+                                className="flex items-center gap-2 text-xs font-bold text-foreground/50 hover:text-danger transition-colors py-1 px-2"
+                            >
+                                <DeleteSweepIcon sx={{ fontSize: 18 }} />
+                                Clear Form
+                            </Button>
                         </div>
                     </div>
                 </div>
