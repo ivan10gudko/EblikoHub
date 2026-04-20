@@ -28,12 +28,12 @@ export const WatchlistRow = ({ title, isOwn }: WatchlistRowProps) => {
   };
 
 return (
-    <div className="group flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-4 bg-white p-2 rounded-xl border border-gray-300 transition-all w-full">
+    <div className="group flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-4 bg-card p-2 rounded-xl border border-border transition-all w-full">
       
       <div className="flex items-center flex-1 gap-3 min-w-0">
         {isOwn && (
           <div onPointerDown={(e) => e.stopPropagation()}>
-            <Button onClick={handleDelete} className="p-1.5 bg-red-500 hover:bg-red-700 text-white rounded-lg">
+            <Button variant="fill" onClick={handleDelete} className="p-1.5 bg-danger hover:bg-danger-hover rounded-lg">
               <DeleteOutlineIcon sx={{ fontSize: 16 }} />
             </Button>
           </div>
@@ -55,10 +55,10 @@ return (
               value={tempTitleName}
               onChange={(val) => setTempTitleName(val)}
               onBlur={() => tempTitleName !== title.titleName && updateTitle({ titleName: tempTitleName })}
-              className="w-full font-bold text-gray-900 uppercase text-xs sm:text-sm bg-transparent border-none p-0 h-auto leading-tight focus:ring-0"
+              className="w-full font-bold text-foreground uppercase text-xs sm:text-sm bg-transparent border-none p-0 h-auto leading-tight focus:ring-0"
             />
           ) : (
-            <span className="block truncate font-bold text-gray-900 uppercase text-xs sm:text-sm leading-tight">
+            <span className="block truncate font-bold text-foreground uppercase text-xs sm:text-sm leading-tight">
               {title.titleName}
             </span>
           )}
@@ -73,11 +73,11 @@ return (
                 variant="page" 
                 initialData={title}
                 titleRecord={title}
-                className="h-9 text-xs font-bold bg-gray-100/50 rounded-lg" 
+                className="h-9 text-xs font-bold bg-transparent rounded-lg" 
               />
             </div>
           ) : (
-            <div className="px-3 py-1.5 bg-amber-50 text-amber-700 text-[10px] font-black uppercase tracking-wider rounded-lg border border-amber-100">
+            <div className="px-3 py-1.5 bg-transparent text-primary text-[10px] font-black uppercase tracking-wider rounded-lg border border-border">
               {title.status || "No Status"}
             </div>
           )}

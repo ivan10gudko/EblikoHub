@@ -22,7 +22,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
     onSearch,
     isLoading = false, 
     placeholder = "Search...",
-    minLength = 3,
+    minLength = 2,
     className = "",
     initialValue = "",
     clearOnSubmit = true
@@ -64,14 +64,14 @@ const SearchBar: React.FC<SearchBarProps> = ({
             />
             
             {error && (
-                <span className="text-red-700 text-xs bg-white px-2 py-1 rounded border border-red-700 absolute left-0 -bottom-8 z-10 shadow-sm">
+                <span className="text-danger text-xs bg-background px-2 py-1 rounded border border-danger absolute left-0 -bottom-8 z-10 shadow-sm">
                     {error}
                 </span>
             )}
             
             <button
                 type="submit"
-                className="px-3 py-2 hover:bg-gray-100 transition-colors rounded-r-lg flex items-center justify-center min-w-[48px]"
+                className="px-3 py-2 hover:bg-background-muted transition-colors rounded-r-lg flex items-center justify-center min-w-[48px]"
                 aria-label="Search"
                 disabled={isLoading} 
             >

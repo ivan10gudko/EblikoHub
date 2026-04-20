@@ -16,7 +16,7 @@ const CollapsibleSectionSkeleton = ({ title,renderItem }:CollapsibleSectionSkele
             {/* Заголовок */}
             <div className="mt-10 border-b flex justify-between items-center px-2">
                 {/* Показуємо справжній заголовок, це покращує UX */}
-                <h3 className="text-2xl text-gray-800">
+                <h3 className="text-2xl text-foreground-muted">
                     {title}
                 </h3>
                 

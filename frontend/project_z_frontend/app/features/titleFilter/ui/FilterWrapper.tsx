@@ -21,7 +21,7 @@ export const FilterResponsiveWrapper = ({ children, title = "Filters" }: FilterR
         </h1>
         <Button 
           onClick={() => setIsOpen(true)}
-          className="flex items-center gap-2 bg-amber-400 hover:bg-amber-500 text-white px-5 py-2.5 rounded-2xl shadow-md shadow-amber-200 transition-all active:scale-95"
+          className="flex items-center gap-2 bg-primary hover:bg-primary-hover text-background px-5 py-2.5 rounded-2xl shadow-md shadow-amber-200 transition-all active:scale-95"
         >
           <FilterListIcon sx={{ fontSize: 20 }} />
           <span className="font-bold text-sm">Filters</span>
@@ -34,18 +34,18 @@ export const FilterResponsiveWrapper = ({ children, title = "Filters" }: FilterR
         flex lg:block
       `}>
         <div 
-          className="absolute inset-0 bg-black/60 backdrop-blur-sm lg:hidden transition-opacity" 
+          className="absolute inset-0 bg-foreground/60 backdrop-blur-sm lg:hidden transition-opacity" 
           onClick={close} 
         />
         
         <div className={`
-          relative w-80 lg:w-64 h-full bg-white lg:bg-transparent shadow-2xl lg:shadow-none transition-transform duration-300
+          relative w-80 lg:w-64 h-full bg-background lg:bg-transparent shadow-2xl lg:shadow-none transition-transform duration-300
           ${isOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}
         `}>
-          <div className="lg:hidden flex justify-between items-center p-5 border-b border-gray-100 bg-gray-50/50">
+          <div className="lg:hidden flex justify-between items-center p-5 border-b border-border bg-background-muted/50">
              <span className="font-black uppercase tracking-wider text-gray-500 text-xs">{title}</span>
              <button 
-               className="p-2 hover:bg-gray-200 rounded-xl transition-colors text-gray-400" 
+               className="p-2 hover:bg-background-muted-hover rounded-xl transition-colors text-foreground-muted" 
                onClick={close}
              >
                <CloseIcon />

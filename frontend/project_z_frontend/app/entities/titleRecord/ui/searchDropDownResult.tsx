@@ -24,12 +24,12 @@ export const AnimeSearchResults = ({ results, onSelect, onClose }: AnimeSearchRe
     };
 
     return (
-        <div className="absolute left-0 right-0 z-[100] mt-1 bg-white border-2 border-slate-200 rounded-xl overflow-hidden shadow-2xl">
+        <div className="absolute left-0 right-0 z-[100] mt-1 bg-background border-2 border-border rounded-xl overflow-hidden shadow-2xl">
             <div className="max-h-[280px] overflow-y-auto custom-scrollbar">
                 {results.map((anime) => (
                     <div
                         key={anime.id}
-                        className="flex items-center gap-3 p-5 hover:bg-amber-50 cursor-pointer transition-colors border-b border-slate-100 last:border-0"
+                        className="flex items-center gap-3 p-5 hover:bg-background-muted cursor-pointer transition-colors border-b border-border last:border-0"
                         onClick={(e) => handleImageClick(e, anime.id)}
                     >
                         <img
@@ -38,7 +38,7 @@ export const AnimeSearchResults = ({ results, onSelect, onClose }: AnimeSearchRe
                             alt={anime.title}
                         />
                         <div className="flex-grow min-w-0">
-                            <p className="font-bold text-gray-900 text-sm leading-tight truncate">
+                            <p className="font-bold text-foreground text-sm leading-tight truncate">
                                 {anime.title}
                             </p>
                         </div>
@@ -47,14 +47,14 @@ export const AnimeSearchResults = ({ results, onSelect, onClose }: AnimeSearchRe
                             className="p-1 hover:bg-amber-200 rounded-full transition-colors"
                             title="Import to my list"
                         >
-                            <FileDownloadIcon className="text-amber-500 shrink-0" fontSize="small" />
+                            <FileDownloadIcon className="text-primary shrink-0" fontSize="small" />
                         </Button>
                     </div>
                 ))}
-                <div className="p-2 bg-slate-50 border-t border-slate-100 flex justify-end">
+                <div className="p-2 bg-background-muted border-t border-border flex justify-end">
                     <Button
                         onClick={onClose}
-                        className="text-xs font-bold text-slate-500 hover:text-slate-800 px-3 py-1 transition-colors"
+                        className="text-xs font-bold text-foreground-muted hover:text-foregroundpx-3 py-1 transition-colors"
                     >
                         Cancel Search
                     </Button>

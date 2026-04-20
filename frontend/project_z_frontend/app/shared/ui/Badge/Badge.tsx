@@ -27,7 +27,7 @@ const Badge: React.FC<Props> = ({
     
     const cursorStyles = onClick ? "cursor-pointer" : "cursor-default";
 
-    const defaultColors = !color && !textColor ? "text-white border-white" : "";
+    const defaultColors = !color && !textColor ? "text-background border-background" : "";
 
     const combinedClassName = `${baseStyles} ${sizeStyles[size]} ${cursorStyles} ${defaultColors}`;
 

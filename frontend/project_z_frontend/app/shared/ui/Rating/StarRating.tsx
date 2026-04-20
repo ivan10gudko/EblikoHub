@@ -12,8 +12,8 @@ const StarRating: React.FC<Props> = ({rating}) => {
                             key={star}
                             className={`h-6 w-6 ${
                             star <= Math.round(rating)
-                                ? 'fill-yellow-400 text-yellow-400'
-                                : 'text-slate-300'
+                                ? 'fill-primary text-primary'
+                                : 'text-card'
                             }`}
                         />
                     ))}

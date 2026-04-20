@@ -14,7 +14,7 @@ interface ModalProps {
 
 const Modal = ({ children, title, isOpen, onClose, maxWidth = "max-w-lg", className = "" }: ModalProps) => {
     const modalRef = useRef<HTMLDivElement>(null);
-    const DEFAULT_STYLES = "relative bg-white w-full rounded-3xl shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200 mt-10 mb-10";
+    const DEFAULT_STYLES = "relative bg-background w-full rounded-3xl shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200 mt-10 mb-10";
     const handleEsc = useCallback((e: KeyboardEvent) => {
         if (e.key === "Escape") onClose();
     }, [onClose]);
@@ -34,7 +34,7 @@ const Modal = ({ children, title, isOpen, onClose, maxWidth = "max-w-lg", classN
 
     return createPortal(
         <div
-            className="fixed inset-0 z-[100] flex items-start justify-center overflow-y-auto bg-slate-900/40 backdrop-blur-[2px] p-4 md:p-16"
+            className="fixed inset-0 z-[100] flex items-start justify-center overflow-y-auto bg-foreground-muted/20 backdrop-blur-[2px] p-4 md:p-16"
             onClick={onClose}
         >
             <div
@@ -46,16 +46,16 @@ const Modal = ({ children, title, isOpen, onClose, maxWidth = "max-w-lg", classN
                     `}
                 onClick={(e) => e.stopPropagation()}
             >
-                <div className="flex items-center justify-between p-5 border-b border-gray-100">
+                <div className="flex items-center justify-between p-5 border-b border-border">
                     {title ? (
-                        <h2 className="text-xl font-bold text-slate-800">{title}</h2>
+                        <h2 className="text-xl font-bold text-foreground">{title}</h2>
                     ) : (
                         <div />
                     )}
                     <Button
                         variant="text-only" 
                         onClick={onClose}
-                        className="p-1 text-gray-400 hover:text-slate-600 hover:bg-gray-100 rounded-full transition-colors"
+                        className="p-1 text-foreground-muted hover:text-foreground hover:bg-card rounded-full transition-colors"
                     >
                         <CloseIcon fontSize="small" />
                     </Button>

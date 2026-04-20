@@ -13,11 +13,11 @@ const sizes = {
 
 export const UserAvatar = ({ src, name, size = "md" }: UserAvatarProps) => {
     return (
-        <div className={`${sizes[size]} rounded-full overflow-hidden bg-gray-100 border`}>
+        <div className={`${sizes[size]} rounded-full overflow-hidden bg-background-muted border`}>
             {src ? (
                 <img src={src} alt={name} className="w-full h-full object-cover" />
             ) : (
-                <div className="w-full h-full flex items-center justify-center bg-blue-500 text-white font-bold">
+                <div className="w-full h-full flex items-center justify-center bg-secondary text-background font-bold">
                     {name.charAt(0).toUpperCase()}
                 </div>
             )}

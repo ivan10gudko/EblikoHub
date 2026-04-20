@@ -2,6 +2,7 @@ import MainLayout from "~/core/layouts/MainLayout";
 import Loader from "~/shared/ui/Loader/Loader";
 import type { Route } from "./+types/_main";
 import { ensureAuthenticated } from "~/features/auth";
+import type { ShouldRevalidateFunctionArgs } from "react-router";
 
 export async function clientLoader() {
     const userId = await ensureAuthenticated();

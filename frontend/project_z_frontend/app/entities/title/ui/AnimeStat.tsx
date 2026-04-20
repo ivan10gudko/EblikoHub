@@ -12,7 +12,7 @@ interface Props{
 }
 const AnimeStat :React.FC<Props>  = ({year,studio,rating,duration,scored_by})=> {
     return (
-    <div className="flex gap-4 text-gray-600 text-normal font-light py-2 my-2 flex-wrap justify-around sm:justify-start">
+    <div className="flex gap-4 text-foreground-muted text-normal font-light py-2 my-2 flex-wrap justify-around sm:justify-start">
         {rating && <PubicRating rating={rating} scored_by={scored_by}/>}
         {studio &&
             <div className="flex gap-3 items-center justify-between">

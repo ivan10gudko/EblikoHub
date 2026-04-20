@@ -42,18 +42,18 @@ const AnimeSidebar: React.FC<Props> = ({ data }) => {
                     alt={data.title}
                 />
             </div>
-            <div className="w-full py-8 flex flex-col gap-4 border rounded-b-xl px-4 border-gray-300 shadow">
+            <div className="w-full py-8 flex flex-col gap-4 border rounded-b-xl px-4 border-border shadow">
                 <StatusSelect
                     initialData={initialData}
                     titleRecord={titleRecord}
                 />
-                <div className="w-full py-4 border-y-gray-300 border-y">
+                <div className="w-full py-4 border-y-border border-y">
                     <PageRate initialData={initialData} titleRecord={titleRecord} />
                 </div>
                 {titleRecord && (
                     <Button
                         variant="fill"
-                        className="flex gap-2 w-full bg-red-600 hover:bg-red-700 text-white"
+                        className="flex gap-2 w-full bg-danger hover:bg-danger-hover text-background"
                         onClick={()=>deleteTitle(titleRecord.titleId)}
                     >
                         Remove from Library

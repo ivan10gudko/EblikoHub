@@ -17,8 +17,8 @@ interface SelectProps extends Omit<ComponentProps<"select">, "onChange"> {
 
 const SELECT_CLASSES = {
     base: "w-full appearance-none rounded-lg border px-4 py-2.5 text-sm outline-none transition-all cursor-pointer disabled:cursor-not-allowed disabled:bg-gray-50 disabled:opacity-70",
-    error: "border-red-500 focus:ring-1 focus:ring-red-500",
-    default: "border-gray-200 focus:border-amber-400 focus:ring-1 focus:ring-amber-400"
+    error: "border-danger focus:ring-1 focus:ring-danger",
+    default: "border-border focus:border-primary focus:ring-1 focus:ring-primary"
 };
 
 const Select: React.FC<SelectProps> = ({
@@ -36,7 +36,7 @@ const Select: React.FC<SelectProps> = ({
     const id = useId();
 
     const hasCustomBg = className.includes("bg-");
-    const backgroundStyle = hasCustomBg ? "" : "bg-white";
+    const backgroundStyle = hasCustomBg ? "" : "bg-background";
 
     const isMargin = (c: string) => c.startsWith('m-') || c.startsWith('mb-') || c.startsWith('mt-') || c.startsWith('mx-') || c.startsWith('my-');
     const containerClasses = className.split(' ').filter(isMargin).join(' ');
@@ -44,7 +44,7 @@ const Select: React.FC<SelectProps> = ({
 
     const optionClasses = themeVariant === "dark" 
         ? "bg-[#1a1a1a]"
-        : "bg-white text-gray-900";
+        : "bg-background text-foreground";
 
 
     return (
@@ -52,7 +52,7 @@ const Select: React.FC<SelectProps> = ({
             {label && (
                 <label
                     htmlFor={id}
-                    className={`text-sm font-medium l-1 ${selectClasses.includes('text-') ? '' : "text-gray-700" }`}
+                    className={`text-sm font-medium l-1 ${selectClasses.includes('text-') ? '' : "text-foreground" }`}
                 >
                     {label}
                 </label>
@@ -72,7 +72,7 @@ const Select: React.FC<SelectProps> = ({
                     {...props}
                 >
                     {placeholder && (
-                        <option key='placeholder' value="">
+                        <option key='placeholder' value="" className = "text-foreground bg-background">
                             {placeholder}
                         </option>
                     )}
@@ -85,14 +85,14 @@ const Select: React.FC<SelectProps> = ({
                 </select>
 
                 <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3">
-                    <svg className={`h-4 w-4 fill-current ${selectClasses.includes('text-') ? '' : 'text-gray-400'}`} viewBox="0 0 20 20">
+                    <svg className={`h-4 w-4 fill-current ${selectClasses.includes('text-') ? '' : 'text-foreground-muted'}`} viewBox="0 0 20 20">
                         <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
                     </svg>
                 </div>
             </div>
 
             {error && (
-                <span className="text-xs text-red-500 ml-1 mt-0.5">
+                <span className="text-xs text-danger ml-1 mt-0.5">
                     {error}
                 </span>
             )}

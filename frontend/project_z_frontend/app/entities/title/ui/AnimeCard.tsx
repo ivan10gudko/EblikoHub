@@ -44,7 +44,7 @@ const AnimeCard : React.FC<AnimeCardProps> = ({data, menuActions})=>{
 
             <div className="flex flex-col gap-3 sm:flex-row justify-between mt-auto">
                 <Rating className="gap-1 text-sm ">{data?.score}</Rating>
-                {data.airing ? <Badge textColor="black" size="sm">Ongoing</Badge>:<Badge color="black" textColor="white" size="sm">Completed</Badge>}    
+                {data.airing ? <Badge textColor="black" size="sm">Ongoing</Badge>:<Badge color="black" textColor="background" size="sm">Completed</Badge>}    
             </div>
         </div>
     </div>)

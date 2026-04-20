@@ -11,7 +11,7 @@ const Title :React.FC<Props>  = ({children , originalTitle})=> {
         </h1>
         {
         originalTitle &&
-            <h5 className="text-xs text-black/60">
+            <h5 className="text-xs text-foreground/60">
                 {originalTitle}
             </h5>
         }

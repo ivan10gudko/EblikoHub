@@ -21,7 +21,7 @@ const HeroSection: React.FC<{}> = () => {
     if (!data || error) return <span>No anime data found.</span>;;
 
 return (
-    <div className="w-full relative min-h-[500px] md:min-h-[88vh] flex items-center bg-black overflow-hidden"> 
+    <div className="w-full relative min-h-[500px] md:min-h-[88vh] flex items-center bg-foreground overflow-hidden"> 
         
         <div className="absolute inset-0 z-0">
             <img
@@ -33,9 +33,9 @@ return (
             <div className="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-transparent md:bg-gradient-to-r md:from-black md:via-black/70 md:to-transparent" />
         </div>
 
-        <div className="relative z-10 w-full py-12 md:py-20 px-6 md:px-12 lg:px-24  text-gray-200 ">
+        <div className="relative z-10 w-full py-12 md:py-20 px-6 md:px-12 lg:px-24  text-white ">
             <div className="max-w-full md:max-w-2xl xl:max-w-3xl">
-                <Badge size="sm" color="blue" textColor="white" border={false}>Featured anime</Badge>
+                <Badge size="md" color="blue" textColor="white" border={false}>Featured anime</Badge>
                 
                 <h2 className="mt-4 mb-2 text-2xl sm:text-3xl md:text-5xl font-bold leading-tight">
                     {data.title_english}
@@ -48,12 +48,12 @@ return (
 
                 <div className="flex gap-2 mb-6 flex-wrap">
                     {data.genres.map((genre) => (
-                        <Badge key={genre.mal_id}>{genre.name}</Badge>
+                        <Badge textColor = "white" key={genre.mal_id}>{genre.name}</Badge>
                     ))}
                 </div>
 
                 {data.synopsis && (
-                    <div className="mb-8 text-gray-200 text-sm md:text-base line-clamp-4 md:line-clamp-none">
+                    <div className="mb-8 text-white text-sm md:text-base line-clamp-4 md:line-clamp-none">
                         <HeroDescription id={data.mal_id}>
                             {data.synopsis}
                         </HeroDescription>
@@ -62,11 +62,11 @@ return (
                 
                 <div className="flex flex-wrap gap-4 mt-auto">
                     {data.trailer.embed_url && (
-                        <Button variant="outline" className="flex-1 sm:flex-none text-white border-white">
+                        <Button variant="fill" className="flex-1 sm:flex-none text-black">
                             <a href={data.trailer.embed_url} target="_blank" rel="noreferrer">Watch Trailer</a>
                         </Button>
                     )}
-                    <Button className="bg-amber-300 text-black flex-1 sm:flex-none">
+                    <Button className="bg-primary text-black flex-1 sm:flex-none">
                         <Link to={`/anime/${data.mal_id}`}>Learn more</Link>
                     </Button>
                 </div>

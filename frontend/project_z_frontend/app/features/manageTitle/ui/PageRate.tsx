@@ -62,12 +62,12 @@ const PageRate = ({ initialData, titleRecord }: ManageTitleRecordProps) => {
 
     return (
         <div
-            className={`border-y border-y-white/15 text-center w-full transition-all duration-150 text-md`}
+            className={`border-y border-y-background/15 text-center w-full transition-all duration-150 text-md`}
         >
             <div className="w-full flex gap-2 text-center justify-center items-center transition-all duration-150">
                 <span className="ml-1 [padding-top:0.15em]">Your Rating</span>
 
-                <span className="flex items-center gap-0.5 text-amber-400 ">
+                <span className="flex items-center gap-0.5 text-primary ">
                     {currentRating && (
                         <>
                             <StarRoundedIcon fontSize="small" />
@@ -77,7 +77,7 @@ const PageRate = ({ initialData, titleRecord }: ManageTitleRecordProps) => {
                             <Button variant="text-only" onClick={handleClear}>
                                 <ClearIcon
                                     fontSize="small"
-                                    className="text-red-500 hover:scale-120 hover:text-red-600"
+                                    className="text-danger hover:scale-120 hover:text-danger-hover"
                                 />
                             </Button>
                         </>
@@ -95,17 +95,18 @@ const PageRate = ({ initialData, titleRecord }: ManageTitleRecordProps) => {
                     name="rating"
                     type="text"
                     value={value}
+                    autoComplete="off"
                     min={1}
                     max={10}
                     onChange={handleChange}
                     onClick={(e) => e.stopPropagation()}
                     ref={inputRef}
                     placeholder="1-10"
-                    className=" bg-gray-200 rounded-l-md text-center outline-0 w-full py-2"
+                    className=" bg-background-muted text-foreground rounded-l-md text-center outline-0 w-full py-2"
                 />
                 <button
                     type="submit"
-                    className="group px-4 bg-amber-400 cursor-pointer  text-amber-50  rounded-r-md duration-150"
+                    className="group px-4 bg-primary cursor-pointer  text-background-muted-hover rounded-r-md duration-150"
                 >
                     <DoneOutlinedIcon
                         fontSize="small"

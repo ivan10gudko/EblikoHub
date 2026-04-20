@@ -8,7 +8,7 @@ const Synopsis :React.FC<Props>  = ({synopsis}) => {
         return(
         <div className="my-4" >
             <h4 className="font-normal text-lg mb-2">Synopsis</h4>
-            <p className="border-t border-t-black/30  py-3">
+            <p className="border-t border-t-foreground/30  py-3">
                 {synopsis.replace("[Written by MAL Rewrite]","")}
             </p>
         </div>)

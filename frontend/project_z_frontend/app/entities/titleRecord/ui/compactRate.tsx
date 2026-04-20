@@ -41,8 +41,8 @@ export const CompactRate = ({ currentRating, onRate, onClear }: CompactRateProps
         className={`
           flex items-center justify-center w-8 h-full transition-all rounded-none rounded-l-md
           ${currentRating !== undefined && !isReadOnly
-            ? "bg-red-500 text-white hover:bg-red-600 border-y border-l border-red-200" 
-            : "bg-gray-50 text-gray-300 border-y border-l border-gray-200 cursor-not-allowed"}
+            ? "bg-danger text-background hover:bg-danger-hover border-y border-l border-danger" 
+            : "bg-background-muted text-foreground-muted border-y border-l border-border cursor-not-allowed"}
         `}
       >
         <ClearIcon sx={{ fontSize: 16 }} />
@@ -56,10 +56,10 @@ export const CompactRate = ({ currentRating, onRate, onClear }: CompactRateProps
           onChange={handleChange}
           placeholder="0.0"
           className={`
-            my-0 rounded-none w-12 font-bold text-center py-1.5 text-sm outline-none border-y
+            my-0 rounded-none w-12 font-bold text-center py-1.5 text-sm outline-none border
             ${isReadOnly 
-              ? "bg-gray-50 text-gray-500 border-gray-200" 
-              : "bg-amber-50 text-amber-700 border-amber-200 focus:ring-1 focus:ring-amber-400"}
+              ? "bg-background-muted text-foreground-muted border-border" 
+              : "bg-background-muted text-primary border-primary focus:ring-1 focus:ring-primary"}
           `}
         />
       </div>
@@ -70,8 +70,8 @@ export const CompactRate = ({ currentRating, onRate, onClear }: CompactRateProps
         className={`
           px-2 py-1.5 transition-colors rounded-none rounded-r-md
           ${isReadOnly 
-            ? "bg-gray-100 text-gray-300 border-y border-r border-gray-200" 
-            : "bg-amber-400 hover:bg-amber-500 text-white"}
+            ? "bg-background text-foreground-muted border-y border-r border-border" 
+            : "bg-primary hover:bg-primary-hover text-background"}
         `}
       >
         <DoneOutlinedIcon sx={{ fontSize: 18 }} />

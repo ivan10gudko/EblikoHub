@@ -20,11 +20,11 @@ export const TitleSearch = ({ onSelect }: { onSelect: (anime: AnimeCardType) => 
     return (
         <div className="relative w-full">
             <SearchBar
-                clearOnSubmit = {false}
+                clearOnSubmit = {true}
                 isLoading={isFetching}
                 onSearch={(val) => setLocalQuery(val)}
                 placeholder="Search anime to add..."
-                className="!max-w-full border-2 border-slate-200 focus-within:border-amber-400 rounded-xl"
+                className="!max-w-full border-2 border-border focus-within:border-primary-hover rounded-xl"
             />
 
             {localQuery && (

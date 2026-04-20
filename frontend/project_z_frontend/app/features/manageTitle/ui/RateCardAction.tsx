@@ -72,7 +72,7 @@ const RateCardAction = ({
     return (
         <>
             <li
-                className={`border-b border-b-white/15 flex text-center px-2 w-full transition-all duration-150 ${isActive || currentRating ? "text-amber-300" : "text-white gap-2"}`}
+                className={`border-b border-b-background/15 flex text-center px-2 w-full transition-all duration-150 ${isActive || currentRating ? "text-primary" : "text-background gap-2"}`}
             >
                 <div
                     className={
@@ -120,23 +120,23 @@ const RateCardAction = ({
                             disabled={isAnyActionLoading}
                             ref={inputRef}
                             placeholder="1-10"
-                            className="border-b-amber-300 border-b text-center w-4/6 outline-0"
+                            className="border-b-primary border-b text-center w-4/6 outline-0"
                         />
                         <button
                             type="submit"
-                            className="w-1/5 cursor-pointer hover:scale-105 text-amber-100"
+                            className="w-1/5 cursor-pointer hover:scale-105 text-primary"
                             disabled={isAnyActionLoading || !value}
                         >
                             <DoneOutlinedIcon
                                 fontSize="small"
-                                className="text-amber-300"
+                                className="text-primary"
                             />
                         </button>
                     </form>
                 ) : null}
             </li>
             {error ? (
-                <div className="text-red-500 text-sm my-0 py-0.5 px-6 text-center hover:text-red-400">
+                <div className="text-danger text-sm my-0 py-0.5 px-6 text-center hover:text-danger-hover">
                     {error}
                 </div>
             ) : null}

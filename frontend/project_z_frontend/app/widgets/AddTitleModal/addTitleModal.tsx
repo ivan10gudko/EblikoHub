@@ -79,14 +79,14 @@ const AddTitleModal = ({ isOpen, onClose }: AddTitleModalProps) => {
         >
             <div className="space-y-6 p-2">
                 <div className="space-y-2">
-                    <label className="text-xs font-bold tracking-widest text-gray-900 ml-1 leading-tight uppercase">
+                    <label className="text-xs font-bold tracking-widest text-foreground ml-1 leading-tight uppercase">
                         Quick Import via MAL
                     </label>
                     <TitleSearch onSelect={handleImport} />
                 </div>
                 <div className="flex flex-col md:flex-row gap-8">
                     <div className="w-full md:w-auto flex justify-center">
-                        <div className="h-[260px] w-[180px] bg-white rounded-2xl border-2 border-slate-200 flex items-center justify-center overflow-hidden shadow-md transition-transform hover:scale-[1.02]">
+                        <div className="h-[260px] w-[180px] bg-background rounded-2xl border-2 border-border flex items-center justify-center overflow-hidden shadow-md transition-transform hover:scale-[1.02]">
                             <img
                                 src={formData.imageUrl || "/defautlTitleRecordImage.jpg"}
                                 className={`h-full w-full object-cover ${!formData.imageUrl && 'opacity-30'}`}
@@ -96,25 +96,26 @@ const AddTitleModal = ({ isOpen, onClose }: AddTitleModalProps) => {
                     </div>
                     <div className="flex-grow space-y-6">
                         <div className="space-y-2">
-                            <label className="text-xs font-bold tracking-widest text-gray-900 ml-1 leading-tight">
+                            <label className="text-xs font-bold tracking-widest text-foreground ml-1 leading-tight">
                                 Title Name
                             </label>
                             <Input
+                                autoComplete='off'
                                 placeholder="Enter name..."
                                 value={formData.titleName}
                                 onChange={(val) => setFormData({ ...formData, titleName: val })}
-                                className="h-12 border-2 w-full border-slate-200 rounded-xl font-bold text-gray-900 text-sm focus:border-amber-400 transition-all shadow-sm"
+                                className="h-12 border-2 w-full border-border rounded-xl font-bold text-foreground text-sm focus:border-primary transition-all shadow-sm"
                             />
                         </div>
                         <div className="w-full">
                             <div className="flex gap-4 mb-1">
                                 <div className="flex-1">
-                                    <label className="text-xs font-bold tracking-widest text-gray-900 ml-1 uppercase">
+                                    <label className="text-xs font-bold tracking-widest text-foreground ml-1 uppercase">
                                         Status
                                     </label>
                                 </div>
                                 <div className="w-[112px] flex-shrink-0">
-                                    <label className="text-xs font-bold tracking-widest text-gray-900 uppercase text-center block">
+                                    <label className="text-xs font-bold tracking-widest text-foreground uppercase text-center block">
                                         Rating
                                     </label>
                                 </div>
@@ -125,32 +126,33 @@ const AddTitleModal = ({ isOpen, onClose }: AddTitleModalProps) => {
                                         value={formData.status}
                                         onChange={(val) => setFormData({ ...formData, status: val as Status })}
                                         options={[...statusOptions]}
-                                        className="h-12 border-2 border-slate-200 rounded-xl font-bold text-gray-900 text-sm shadow-sm"
+                                        className="h-12 border-2 border-border rounded-xl font-bold text-foreground text-sm shadow-sm"
                                     />
                                 </div>
                                 <div className="w-[112px] flex-shrink-0">
                                     <Input
+                                        autoComplete='off'
                                         placeholder="0.0"
                                         value={formData.rating?.overall?.toString() || ''}
                                         onChange={handleRatingChange}
-                                        className="h-12 w-full border-2 border-slate-200 rounded-xl font-bold text-gray-900 text-center focus:border-amber-400 transition-all shadow-sm"
+                                        className="h-12 w-full border-2 border-border rounded-xl font-bold text-foreground text-center focus:border-primary transition-all shadow-sm"
                                     />
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div className="flex gap-4 pt-6 border-t border-slate-100">
+                <div className="flex gap-4 pt-6 border-t border-border">
                     <Button
                         onClick={onClose}
-                        className="flex-1 h-14 rounded-xl bg-slate-200 text-gray-900 font-bold text-xs tracking-wider hover:bg-slate-300 transition-all active:scale-95 shadow-sm"
+                        className="flex-1 h-14 rounded-xl bg-card text-foreground font-bold text-xs tracking-wider hover:bg-card transition-all active:scale-95 shadow-sm"
                     >
                         Cancel
                     </Button>
                     <Button
                         onClick={handleSave}
                         disabled={isCreating}
-                        className="flex-[2] h-14 rounded-xl bg-amber-400 text-gray-900 font-bold text-xs tracking-wider shadow-[0_4px_0_0_#d97706] hover:bg-amber-500 active:translate-y-[2px] active:shadow-none transition-all disabled:opacity-50"
+                        className="flex-[2] h-14 rounded-xl bg-primary text-foreground font-bold text-xs tracking-wider shadow-[0_4px_0_0_#d97706] hover:primary-hover active:translate-y-[2px] active:shadow-none transition-all disabled:opacity-50"
                     >
                         {isCreating ? "Saving..." : "Save Title"}
                     </Button>

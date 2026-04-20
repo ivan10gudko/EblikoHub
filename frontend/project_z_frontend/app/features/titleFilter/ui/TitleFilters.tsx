@@ -12,7 +12,7 @@ export const TitleFilters = () => {
   } = useTitleFilterStore();
 
 return (
-    <div className="flex flex-col gap-10 p-4 bg-white rounded-2xl shadow-sm border border-gray-100">
+    <div className="flex flex-col gap-10 p-4 bg-background rounded-2xl shadow-sm border border-border">
       <SearchFilter
           searchQuery={search}
           setSearchQuery={setSearch}
@@ -26,7 +26,7 @@ return (
         <Button 
           onClick={reset}
           variant="outline"
-          className="text-sm hover:bg-red-50 transition-colors font-medium p-0 h-auto"
+          className="text-sm hover:bg-background-muted hover:text-danger-hover transition-colors font-medium p-0 h-auto"
         >
           Reset all filters
         </Button>
