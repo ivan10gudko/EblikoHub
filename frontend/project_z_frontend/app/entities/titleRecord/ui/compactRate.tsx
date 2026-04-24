@@ -11,7 +11,11 @@ interface CompactRateProps {
   onClear?: () => void;
 }
 
-export const CompactRate = ({ currentRating, onRate, onClear }: CompactRateProps) => {
+export const CompactRate = ({
+  currentRating,
+  onRate,
+  onClear,
+}: CompactRateProps) => {
   const [value, setValue] = useState<string>(currentRating?.toString() || "");
 
   const isReadOnly = !onRate || !onClear;
@@ -24,7 +28,7 @@ export const CompactRate = ({ currentRating, onRate, onClear }: CompactRateProps
     if (isReadOnly) return;
 
     const formatted = formatRatingInput(val);
-    
+
     if (formatted !== null) {
       setValue(formatted);
     }
@@ -38,7 +42,9 @@ export const CompactRate = ({ currentRating, onRate, onClear }: CompactRateProps
   };
 
   return (
-    <div className={`flex items-center gap-0 group/rate ${isReadOnly ? "pointer-events-none" : ""}`}>
+    <div
+      className={`flex items-center gap-0 group/rate ${isReadOnly ? "pointer-events-none" : ""}`}
+    >
       <Button
         type="button"
         onClick={() => {
@@ -48,9 +54,11 @@ export const CompactRate = ({ currentRating, onRate, onClear }: CompactRateProps
         disabled={currentRating === undefined || isReadOnly}
         className={`
           flex items-center justify-center w-8 h-full transition-all rounded-none rounded-l-md
-          ${currentRating !== undefined && !isReadOnly
-            ? "bg-danger text-background hover:bg-danger-hover border-y border-l border-danger"
-            : "bg-background-muted text-foreground-muted border-y border-l border-border cursor-not-allowed"}
+          ${
+            currentRating !== undefined && !isReadOnly
+              ? "bg-danger text-background hover:bg-danger-hover border-y border-l border-danger"
+              : "bg-background-muted text-foreground-muted border-y border-l border-border cursor-not-allowed"
+          }
         `}
       >
         <ClearIcon sx={{ fontSize: 16 }} />
@@ -63,11 +71,14 @@ export const CompactRate = ({ currentRating, onRate, onClear }: CompactRateProps
           value={value}
           onChange={handleChange}
           placeholder="0.0"
+          name="rate"
           className={`
             my-0 rounded-none w-12 font-bold text-center py-1.5 text-sm outline-none border
-            ${isReadOnly
-              ? "bg-background-muted text-foreground-muted border-border"
-              : "bg-background-muted text-primary border-primary focus:ring-1 focus:ring-primary"}
+            ${
+              isReadOnly
+                ? "bg-background-muted text-foreground-muted border-border"
+                : "bg-background-muted text-primary border-primary focus:ring-1 focus:ring-primary"
+            }
           `}
         />
       </div>
@@ -78,9 +89,11 @@ export const CompactRate = ({ currentRating, onRate, onClear }: CompactRateProps
         disabled={isReadOnly}
         className={`
           px-2 py-1.5 transition-colors rounded-none rounded-r-md
-          ${isReadOnly
-            ? "bg-background text-foreground-muted border-y border-r border-border"
-            : "bg-primary hover:bg-primary-hover text-background"}
+          ${
+            isReadOnly
+              ? "bg-background text-foreground-muted border-y border-r border-border"
+              : "bg-primary hover:bg-primary-hover text-background"
+          }
         `}
       >
         <DoneOutlinedIcon sx={{ fontSize: 18 }} />

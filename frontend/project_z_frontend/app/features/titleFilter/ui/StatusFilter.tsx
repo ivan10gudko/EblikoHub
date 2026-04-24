@@ -3,18 +3,20 @@ import { Button } from "~/shared/ui/Button";
 import { useTitleFilterStore } from "../store/titleFilter.store";
 
 const statusOptions = [
-    { label: "All", value: undefined },
-    { label: "In Progress", value: Status.INPROGRESS },
-    { label: "Planned", value: Status.PLANNED },
-    { label: "Watched", value: Status.WATCHED },
-    { label: "Dropped", value: Status.DROPPED },
-  ];
+  { label: "All", value: undefined },
+  { label: "In Progress", value: Status.INPROGRESS },
+  { label: "Planned", value: Status.PLANNED },
+  { label: "Watched", value: Status.WATCHED },
+  { label: "Dropped", value: Status.DROPPED },
+];
 
-  const StatusFilter = () => {
+const StatusFilter = () => {
   const { status, setStatus } = useTitleFilterStore();
   return (
     <div className="flex flex-col gap-2">
-      <label className="text-sm font-bold text-foreground-muted uppercase px-1">Status</label>
+      <label className="text-sm font-bold text-foreground-muted uppercase px-1">
+        Status
+      </label>
       <div className="flex flex-wrap gap-2">
         {statusOptions.map((opt) => (
           <Button
