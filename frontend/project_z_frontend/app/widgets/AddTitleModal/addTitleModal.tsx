@@ -106,7 +106,7 @@ const AddTitleModal = ({ isOpen, onClose }: AddTitleModalProps) => {
                                 placeholder="Enter name..."
                                 value={formData.titleName}
                                 onChange={(val) => setFormData({ ...formData, titleName: val })}
-                                className="h-12 border-2 w-full border-border rounded-xl font-bold text-foreground text-sm focus:border-primary transition-all shadow-sm"
+                                className=" p-2 h-12 border-2 w-full border-border rounded-xl font-bold text-foreground text-sm focus:border-primary transition-all shadow-sm"
                             />
                         </div>
                         <div className="w-full">

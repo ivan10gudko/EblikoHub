@@ -17,7 +17,7 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
   const { sortBy, setSort, order, toggleOrder } = useTitleFilterStore();
   return (
     <div className="flex flex-col gap-2">
-      <label className="text-sm font-bold text-foreground-muted uppercase px-1">Sort by</label>
+      <label className="text-sm font-bold text-foreground uppercase px-1">Sort by</label>
       <div className="flex gap-2">
         <Select
           value={sortBy}
@@ -31,9 +31,9 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
           className="px-4 bg-background hover:bg-background-muted-hover rounded-xl transition-colors"
         >
           {order === "asc" ? (
-            <KeyboardArrowUpIcon sx={{ stroke: "#374151", strokeWidth: 2, fontSize: 24 }} />
+            <KeyboardArrowUpIcon className="text-primary hover:text-primary-hover" sx={{ strokeWidth: 2, fontSize: 24 }} />
           ) : (
-            <KeyboardArrowDownIcon sx={{ stroke: "#374151", strokeWidth: 2, fontSize: 24 }} />
+            <KeyboardArrowDownIcon className="text-primary hover:text-primary-hover" sx={{strokeWidth: 2, fontSize: 24 }} />
           )}
         </Button>
       </div>

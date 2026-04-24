@@ -23,7 +23,7 @@ const statusOptions = [
             onClick={() => setStatus(opt.value)}
             className={`border-none px-4 py-2 rounded-full text-sm font-semibold transition-all ${
               (status === opt.value || (opt.value === undefined && status === undefined))
-                ? 'bg-primary text-foreground shadow-md shadow-yellow-100'
+                ? 'bg-primary text-foreground shadow-xs shadow-yellow-100'
                 : 'bg-background-muted text-foreground hover:bg-background-muted-hover hover:text-foreground-muted '
             }`}
           >

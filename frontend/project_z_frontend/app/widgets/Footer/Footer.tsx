@@ -3,7 +3,7 @@ import { Logo } from "../../shared/ui/Logo";
 
 const Footer : React.FC<{}> = ()=>{
     return (
-    <footer className="w-full flex items-center justify-center flex-col gap-4 py-16 bg-background-muted text-foreground">
+    <footer className="w-full flex items-center justify-center flex-col gap-4 py-16 bg-card text-foreground">
         <Logo />
         <div className="text-lg ">Your ultimate destination for anime discovery and ratings</div>
         <ul className="list-none flex justify-center gap-4 *:cursor-pointer">

@@ -21,7 +21,7 @@ const HeroSection: React.FC<{}> = () => {
     if (!data || error) return <span>No anime data found.</span>;;
 
 return (
-    <div className="w-full relative min-h-[500px] md:min-h-[88vh] flex items-center bg-foreground overflow-hidden"> 
+    <div className="w-full relative min-h-[500px] md:min-h-[88vh] flex items-center bg-black overflow-hidden"> 
         
         <div className="absolute inset-0 z-0">
             <img

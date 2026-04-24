@@ -18,11 +18,10 @@ const AnimeCard : React.FC<AnimeCardProps> = ({data, menuActions})=>{
     const ref = useRef<HTMLDivElement>(null);
 
     const genres = data.genres.length <= 3 ? data.genres : [...data.genres.slice(0,3) , {mal_id:0,type:"",name:`+${data.genres.length-3}`,url:""}]
-
     return (
     <div
         ref={ref}
-        className="rounded-lg shadow hover:shadow-md pb-2 flex flex-col cursor-pointer h-full"
+        className="rounded-lg border border-border shadow-foreground-muted hover:shadow-md pb-2 flex flex-col cursor-pointer h-full"
         onClick={()=>navigate(`/anime/${data.id}`)}
         >
         <div className="w-full relative aspect-[3/4] overflow-hidden rounded-lg">

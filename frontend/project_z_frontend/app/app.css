@@ -81,7 +81,7 @@ body {
     height: 2px;
     display: block;
     margin: 20% auto;
-    background-color: #252525;
+    background-color: var(--foreground);
     transition-duration: 200ms;
     transition-delay: 75ms;
     border-radius: 3px;

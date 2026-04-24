@@ -53,7 +53,7 @@ const AnimeSidebar: React.FC<Props> = ({ data }) => {
                 {titleRecord && (
                     <Button
                         variant="fill"
-                        className="flex gap-2 w-full bg-danger hover:bg-danger-hover text-background"
+                        className="flex gap-2 w-full bg-danger hover:bg-danger-hover text-foreground"
                         onClick={()=>deleteTitle(titleRecord.titleId)}
                     >
                         Remove from Library
