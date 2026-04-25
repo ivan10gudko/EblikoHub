@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import project_z.demo.Mappers.Mapper;
 import project_z.demo.common.QueryParameters.TitleQueryParameters;
+import project_z.demo.dto.TitleDtos.TitleBatchCreateDto;
 import project_z.demo.dto.TitleDtos.TitleDto;
 import project_z.demo.dto.TitleDtos.TitlePatchUpdateDto;
 import project_z.demo.dto.TitleDtos.TitlePositionUpdateDto;
@@ -42,12 +43,19 @@ public class TitleController {
     private UserService userService;
 
     @PostMapping
-    public ResponseEntity<TitleDto> CreateTitle(
+    public ResponseEntity<TitleDto> createTitle(
             @RequestHeader("Authorization") String token,
             @RequestBody TitleDto titleDto) {
         TitleEntity titleEntity = titleMapper.mapFrom(titleDto);
         TitleEntity response = titleService.addTitle(titleEntity, token);
         return new ResponseEntity<>(titleMapper.mapTo(response), HttpStatus.CREATED);
+    }
+
+    @PostMapping("/batch")
+    public ResponseEntity<Void> batchCreateTitle(@RequestBody TitleBatchCreateDto titles,
+            @RequestHeader("Authorization") String token) {
+        titleService.batchCreateTitle(titles, token);
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @PreAuthorize("hasRole('ADMIN') || @securityService.isUserOwner(#userId, #token)")

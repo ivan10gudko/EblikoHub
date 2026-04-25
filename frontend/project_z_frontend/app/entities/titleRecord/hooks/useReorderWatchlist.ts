@@ -6,7 +6,7 @@ import { calculateNewOrder } from "~/shared/helpers";
 import type { PageResponse } from "~/shared/types";
 import { useSearchParams } from "react-router";
 
-export const useReorderWatchlist = (titles: TitleRecord[], queryKey: any[], userId: string | undefined) => {
+export const useReorderWatchlist = (titles: TitleRecord[], queryKey: unknown[], userId: string | undefined) => {
   const [searchParams] = useSearchParams();
   const queryClient = useQueryClient();
   const [optimisticTitles, setOptimisticTitles] = useState<TitleRecord[]>(titles);
@@ -14,10 +14,18 @@ export const useReorderWatchlist = (titles: TitleRecord[], queryKey: any[], user
   const optimisticOrderRef = useRef<number[]>(titles.map(t => t.titleId));
 
   useEffect(() => {
-    if (isMutating.current) return;
-    setOptimisticTitles(titles);
+    const incomingIds = titles.map(t => t.titleId).join(',');
+    const currentIds = optimisticOrderRef.current.join(',');
 
-    optimisticOrderRef.current = titles.map(t => t.titleId);
+    if (incomingIds !== currentIds) {
+      isMutating.current = false;
+      // дедуплікація на випадок якщо щось пішло не так
+      const unique = titles.filter(
+        (t, i, arr) => arr.findIndex(x => x.titleId === t.titleId) === i
+      );
+      setOptimisticTitles(unique);
+      optimisticOrderRef.current = unique.map(t => t.titleId);
+    }
   }, [titles]);
 
   const reorder = async (sourceIndex: number, destinationIndex: number) => {

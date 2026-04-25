@@ -27,12 +27,14 @@ export const WatchListPage = ({ userId }: { userId: string | null }) => {
     status: setStatusFromUrl,
     order: setOrderFromUrl
   });
-  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } = useTitlesQuery(userId);
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading, queryKey } = useTitlesQuery(userId);
 
-  const allTitles = useMemo(() =>
-    data?.pages.flatMap(page => page.content) || [],
-    [data]
-  );
+  const allTitles = useMemo(() => {
+    const flat = data?.pages.flatMap(page => page.content) || [];
+    return flat.filter(
+      (t, i, arr) => arr.findIndex(x => x.titleId === t.titleId) === i
+    );
+  }, [data]);
   return (
     <div className="flex flex-col lg:flex-row gap-6 p-4 sm:p-8 max-w-[1400px] mx-auto min-h-screen bg-background-muted/30">
 
@@ -45,6 +47,7 @@ export const WatchListPage = ({ userId }: { userId: string | null }) => {
           titles={allTitles}
           isLoading={isLoading}
           isOwn={isOwn}
+          queryKey={queryKey}
         />
 
         <div className="py-10 flex justify-center">

@@ -13,16 +13,13 @@ interface WatchlistTableProps {
   titles: TitleRecord[];
   isLoading?: boolean;
   isOwn: boolean;
+  queryKey:unknown[];
 }
-export const WatchlistTable = ({ titles, isLoading, isOwn }: WatchlistTableProps) => {
+export const WatchlistTable = ({ titles, isLoading, isOwn, queryKey }: WatchlistTableProps) => {
   const [searchParams] = useSearchParams();
   const { userId } = useParams<{ userId: string }>();
   const { search, sortBy, order, status } = useTitleFilterStore();
   
-  const queryKey = useMemo(
-    () => ['titles', userId, { search, sortBy, order, status }],
-    [userId, search, sortBy, order, status]
-  );
 
   const isCustomOrder = searchParams.get("sortBy") === "customOrder";
   const isFiltered = !!searchParams.get("search") || !!searchParams.get("status");
