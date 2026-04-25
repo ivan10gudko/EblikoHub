@@ -5,14 +5,15 @@ import type { TitleParams } from '../model/titleRecord';
 export const useInfinityTitles = (userId: string | null, params: TitleParams) => {
     return useInfiniteQuery({
         queryKey: ['titles', userId, params],
-        queryFn: ({ pageParam = 1 }) =>
-            titleRecordService.get(userId!, { ...params, page: pageParam }),
+        queryFn: ({ pageParam = 0 }) =>{
+            return titleRecordService.get(userId!, { ...params, page: pageParam })},
         getNextPageParam: (lastPage) => {
-            return lastPage.number< lastPage.totalPages
-                ? lastPage.number + 1
-                : undefined;
+            if(lastPage.last)return undefined
+            return lastPage.number + 1;
         },
         enabled:!!userId,
-        initialPageParam: 1,
+        initialPageParam: 0,
+        staleTime: 5000,
+        refetchOnWindowFocus: false,
     });
 };

@@ -44,13 +44,13 @@ const AnimeCardMenu: React.FC<AnimeCardMenuProps> = ({
                 className={`z-20 w-6 h-6 rounded-full
                     absolute  top-1 right-1
                     flex justify-center items-center
-                    hover:scale-105  ${isModalOpen ? "bg-black/10 hover:bg-black/95" : "bg-white hover:bg-white/90"}`}
+                    hover:scale-105  ${isModalOpen ? "bg-foreground/10 hover:bg-background/95" : "bg-background hover:bg-background-muted/90"}`}
                 onClick={openModal}
             >
                 {isModalOpen ? (
-                    <CloseIcon fontSize="small" className="text-white" />
+                    <CloseIcon fontSize="small" className="text-foreground " />
                 ) : (
-                    <MoreHorizIcon fontSize="small" />
+                    <MoreHorizIcon fontSize="small" className="text-foreground " />
                 )}
             </div>
             {isModalOpen ? (
@@ -58,7 +58,7 @@ const AnimeCardMenu: React.FC<AnimeCardMenuProps> = ({
                     className="transition-all duration-100 absolute bg-black/80 z-10 w-full top-0 left-0 bottom-0 right-0 py-7"
                     onClick={(e) => e.stopPropagation()}
                 >
-                    <ul className="divide-y divide-white/15 [&>li]:my-2 [&>li]:w-full [&>li]:py-4 [&>li]:px-8 [&>li]:hover:scale-105 text-sm text-white [&>li]:hover:text-amber-400 [&>li]:text-center">
+                    <ul className="divide-y divide-background/15 [&>li]:my-2 [&>li]:w-full [&>li]:py-4 [&>li]:px-8 [&>li]:hover:scale-105 text-sm text-background [&>li]:hover:text-primary [&>li]:text-center">
                         {children}
                     </ul>
                 </div>

@@ -9,7 +9,7 @@ const Rating: React.FC<Props> = ({children,className=""})=>{
     const styles ='flex gap-2 items-center '+ className;
     return (
         <span className={styles}>
-            <StarIcon className='text-amber-300'/>
+            <StarIcon className='text-primary'/>
             <span className='pt-0.5'>{children ? children: "?"} / 10</span>
         </span>
     );

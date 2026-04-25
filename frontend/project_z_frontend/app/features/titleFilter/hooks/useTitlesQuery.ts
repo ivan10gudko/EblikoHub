@@ -1,16 +1,17 @@
-import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
+
+import { useMemo } from "react";
 import { useTitleFilterStore } from "../store/titleFilter.store";
-import { titleRecordService, type TitleParams } from "~/entities/titleRecord";
-import { useAuthStore } from "~/features/auth";
 import { useInfinityTitles } from "~/entities/titleRecord/hooks/useInfinityTitles";
 
 
-export const useTitlesQuery = () => {
+export const useTitlesQuery = (userId: string | null) => {
 
-    const params = useTitleFilterStore();
-    const {userId} = useAuthStore();
+    const { search, sortBy, order, status } = useTitleFilterStore();
+    const params = useMemo(() => ({
+        search, sortBy, order, status
+    }), [search, sortBy, order, status]);
     return useInfinityTitles(
-        userId,params
+        userId, params
     );
-    
+
 };

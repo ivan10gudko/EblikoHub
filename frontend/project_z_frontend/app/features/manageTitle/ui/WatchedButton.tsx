@@ -32,7 +32,7 @@ const WatchedButton = ({
             variant={isWatched ? "fill" : "outline"}
             className={`
                 gap-3 transition-opacity
-                ${isWatched ? "border-none bg-[#eceef2] text-black/85" : "border-black/20 text-black/85"}
+                ${isWatched ? "border-none bg-background text-foreground/85" : "border-foreground/20 text-foreground/85"}
                 ${isAnyActionLoading ? "opacity-60 cursor-not-allowed" : "opacity-100"}
             `}
             onClick={handleWatched}

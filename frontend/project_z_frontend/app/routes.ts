@@ -10,7 +10,7 @@ export default [
     layout("./routes/_main.tsx",[
     
         index("./routes/home.tsx"),
-    
+        route("watchlist/:userId", "./routes/watchlist.$userId.tsx"),
         layout("./routes/_protected.tsx",[
             route("profile", "./routes/profile.tsx"),
 

@@ -22,4 +22,5 @@ public class TitlePatchUpdateDto {
     private JsonNullable<TitleStatus> status = JsonNullable.undefined();
     private JsonNullable<Map<String,Float>> rating = JsonNullable.undefined();
     private JsonNullable<Double> customOrder = JsonNullable.undefined();
+    private JsonNullable<String> imageUrl = JsonNullable.undefined();
 }

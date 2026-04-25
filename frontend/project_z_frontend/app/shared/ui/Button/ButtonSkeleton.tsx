@@ -10,7 +10,7 @@ const ButtonSkeleton: React.FC<SkeletonProps> = ({
     className = ""
 }) => {
     
-    const baseClasses = "animate-pulse bg-gray-300 cursor-default pointer-events-none rounded";
+    const baseClasses = "animate-pulse bg-background-muted cursor-default pointer-events-none rounded";
 
     const getShapeClasses = () => {
         if(type=="text-only") return "h-6 w-20 rounded";

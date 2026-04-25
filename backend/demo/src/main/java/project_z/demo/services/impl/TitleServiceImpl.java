@@ -20,6 +20,7 @@ import project_z.demo.JavaUtil.PagingHelper;
 import project_z.demo.JavaUtil.PatchHelper;
 import project_z.demo.Mappers.impl.PatchMappers.TitlePatchMapper;
 import project_z.demo.common.Exceptions.ResourceNotFoundException;
+import project_z.demo.common.Exceptions.TitleWithThatMalIdAlreadyExistsException;
 import project_z.demo.common.QueryParameters.TitleQueryParameters;
 import project_z.demo.dto.TitleDtos.TitlePatchUpdateDto;
 import project_z.demo.entity.SeasonEntity;
@@ -48,118 +49,142 @@ public class TitleServiceImpl implements TitleService {
     private UserRepository userRepository;
     @Autowired
     private JwtService jwtService;
-    TitleServiceImpl(SeasonService seasonService, TitleSeachServiceImpl titleSeachServiceImpl, PatchHelper patchHelper) {
+
+    TitleServiceImpl(SeasonService seasonService, TitleSeachServiceImpl titleSeachServiceImpl,
+            PatchHelper patchHelper) {
         this.seasonService = seasonService;
         this.titleSeachServiceImpl = titleSeachServiceImpl;
         this.patchHelper = patchHelper;
     }
-@Override
-public TitleEntity createTitle(TitleEntity title){
-    return titleRepository.save(title);
-}
-@Override
-public List<TitleEntity> findAll(){
-   return  StreamSupport.stream( 
-        titleRepository.findAll().spliterator(),
-        false)
-        .collect(Collectors.toList());
-}
-@Override
-public Optional<TitleEntity> findOne(Long titleId){
-    return titleRepository.findById(titleId);
-}
 
-@Override
-public Page<TitleEntity> findAllByUserId(TitleQueryParameters params, UUID userId){
-   Specification<TitleEntity> spec = Specification
-            .where(TitleSpecifications.belongsToUser(userId))
-            .and(TitleSpecifications.hasStatus(params.getStatus())
-            .and(TitleSpecifications.hasName(params.getSearch())));
-
-    if ("rating".equals(params.getSortBy())) {
-        spec = spec.and(TitleSpecifications.sortByRating(params.getOrder()));
+    @Override
+    public TitleEntity createTitle(TitleEntity title) {
+        return titleRepository.save(title);
     }
 
-    Pageable pageable = PagingHelper.toPageable(params);
-
-    if ("rating".equals(params.getSortBy())) {
-        pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
+    @Override
+    public List<TitleEntity> findAll() {
+        return StreamSupport.stream(
+                titleRepository.findAll().spliterator(),
+                false)
+                .collect(Collectors.toList());
     }
 
-    return titleRepository.findAll(spec, pageable);
-}
+    @Override
+    public Optional<TitleEntity> findOne(Long titleId) {
+        return titleRepository.findById(titleId);
+    }
 
-@Override
-public boolean isExists(Long titleId){
-    return titleRepository.existsById(titleId);
-}
-@Override
-public TitleEntity partialUpdate(Long titleId, TitlePatchUpdateDto source) {
-    System.out.println("Source apiTitleId: " + source.getApiTitleId());
-    return titleRepository.findById(titleId)
-        .map(target -> {
-            patchHelper.updateIfPresent(source.getApiTitleId(),target::setApiTitleId);
-            patchHelper.updateIfPresent(source.getTitleName(),target::setTitleName);
-            patchHelper.updateIfPresent(source.getStatus(),target::setStatus);
-            patchHelper.updateIfPresent(source.getRating(),target::setRating);
-            patchHelper.updateIfPresent(source.getCustomOrder(), target::setCustomOrder);
-            return titleRepository.save(target);
-        })
-        .orElseThrow(() -> new RuntimeException("Title not found"));
-}
-@Override
-@Transactional
-public void titlePositionUpdate(Double newPosition, Long titleId){
-    TitleEntity titleEntity = titleRepository.findById(titleId).orElseThrow(
-    () -> new ResourceNotFoundException("title not found"));
-    titleEntity.setCustomOrder(newPosition);
-    titleRepository.save(titleEntity);
-}
-@Override
-public void deleteById(Long Id){
-    titleRepository.deleteById(Id);
-}
-@Override
-public TitleEntity addTitle(TitleEntity titleEntity, String token){
-    UUID userId = jwtService.extractUsername(token);
-    UserEntity userEntity = userRepository.findById(userId).orElseThrow(
-        () -> new RuntimeException("user not found"));
-    titleEntity.setUser(userEntity);
-    return titleRepository.save(titleEntity);
-}
-@Override
-public List<TitleEntity> getWatchedList(UUID userId){
-    UserEntity userEntity = userRepository.findById(userId).orElseThrow(
-    () -> new RuntimeException("user not found"));
-    List<TitleEntity> response = userEntity.getTitleList().stream().filter(title -> title.getStatus() == TitleStatus.WATCHED).toList();
-    return response;
-}
-@Override
-public List<TitleEntity> getWatchList(UUID userId){
-    UserEntity userEntity = userRepository.findById(userId).orElseThrow(
-    () -> new RuntimeException("user not found"));
-    List<TitleEntity> response = userEntity.getTitleList().stream().filter(title -> title.getStatus() == TitleStatus.PLANNED).toList();
-    return response;
-    
-}
-@Override
-public TitleEntity addSeason(SeasonEntity seasonEntity, TitleEntity titleEntity){
-    seasonEntity.setTitle(titleEntity);
-    seasonService.save(seasonEntity);
-    return titleEntity;
-}
-@Override
-public TitleEntity findUserTitleByMalId(Long titleMalId, String token){
-    UUID userId = jwtService.extractUsername(token);
-    TitleEntity response = titleRepository.findByApiTitleIdAndUserId(titleMalId,userId).orElseThrow(
-    () -> new ResourceNotFoundException("Title not found")
-    );
-    return response;
-}
-@Override
-public List<TitleEntity> findAllByMalIdInUserRooms(Long titleMalId, String token){
-    UUID userId = jwtService.extractUsername(token);
-    return titleRepository.findAllByApiTitleIdInUserRooms(titleMalId,userId);
-}
+    @Override
+    public Page<TitleEntity> findAllByUserId(TitleQueryParameters params, UUID userId) {
+        Specification<TitleEntity> spec = Specification
+                .where(TitleSpecifications.belongsToUser(userId))
+                .and(TitleSpecifications.hasStatus(params.getStatus())
+                        .and(TitleSpecifications.hasName(params.getSearch())));
 
+        if ("rating".equals(params.getSortBy())) {
+            spec = spec.and(TitleSpecifications.sortByRating(params.getOrder()));
+        }
+
+        Pageable pageable = PagingHelper.toPageable(params);
+
+        if ("rating".equals(params.getSortBy())) {
+            pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
+        }
+
+        return titleRepository.findAll(spec, pageable);
+    }
+
+    @Override
+    public boolean isExists(Long titleId) {
+        return titleRepository.existsById(titleId);
+    }
+
+    @Override
+    public TitleEntity partialUpdate(Long titleId, TitlePatchUpdateDto source) {
+        System.out.println("Source apiTitleId: " + source.getApiTitleId());
+        return titleRepository.findById(titleId)
+                .map(target -> {
+                    patchHelper.updateIfPresent(source.getApiTitleId(), target::setApiTitleId);
+                    patchHelper.updateIfPresent(source.getTitleName(), target::setTitleName);
+                    patchHelper.updateIfPresent(source.getStatus(), target::setStatus);
+                    patchHelper.updateIfPresent(source.getRating(), target::setRating);
+                    patchHelper.updateIfPresent(source.getCustomOrder(), target::setCustomOrder);
+                    return titleRepository.save(target);
+                })
+                .orElseThrow(() -> new RuntimeException("Title not found"));
+    }
+
+    @Override
+    @Transactional
+    public void titlePositionUpdate(Double newPosition, Long titleId) {
+        TitleEntity titleEntity = titleRepository.findById(titleId).orElseThrow(
+                () -> new ResourceNotFoundException("title not found"));
+        titleEntity.setCustomOrder(newPosition);
+        titleRepository.save(titleEntity);
+    }
+
+    @Override
+    public void deleteById(Long Id) {
+        titleRepository.deleteById(Id);
+    }
+
+    @Override
+    public TitleEntity addTitle(TitleEntity titleEntity, String token) {
+        UUID userId = jwtService.extractUsername(token);
+        UserEntity userEntity = userRepository.findById(userId).orElseThrow(
+                () -> new RuntimeException("user not found"));
+        titleRepository.findByApiTitleIdAndUserId(titleEntity.getApiTitleId(), userId)
+                .ifPresent(existingTitle -> {
+                    throw new TitleWithThatMalIdAlreadyExistsException(
+                            "This title already exists in your list");
+                });
+        titleEntity.setUser(userEntity);
+        return titleRepository.save(titleEntity);
+    }
+
+    @Override
+    public List<TitleEntity> getWatchedList(UUID userId) {
+        UserEntity userEntity = userRepository.findById(userId).orElseThrow(
+                () -> new RuntimeException("user not found"));
+        List<TitleEntity> response = userEntity.getTitleList().stream()
+                .filter(title -> title.getStatus() == TitleStatus.WATCHED).toList();
+        return response;
+    }
+
+    @Override
+    public List<TitleEntity> getWatchList(UUID userId) {
+        UserEntity userEntity = userRepository.findById(userId).orElseThrow(
+                () -> new RuntimeException("user not found"));
+        List<TitleEntity> response = userEntity.getTitleList().stream()
+                .filter(title -> title.getStatus() == TitleStatus.PLANNED).toList();
+        return response;
+
+    }
+
+    @Override
+    public TitleEntity addSeason(SeasonEntity seasonEntity, TitleEntity titleEntity) {
+        seasonEntity.setTitle(titleEntity);
+        seasonService.save(seasonEntity);
+        return titleEntity;
+    }
+
+    @Override
+    public TitleEntity findUserTitleByMalId(Integer titleMalId, String token) {
+        UUID userId = jwtService.extractUsername(token);
+        TitleEntity response = titleRepository.findByApiTitleIdAndUserId(titleMalId, userId).orElseThrow(
+                () -> new ResourceNotFoundException("Title not found"));
+        return response;
+    }
+
+    @Override
+    public List<TitleEntity> findAllByMalIdInUserRooms(Integer titleMalId, String token) {
+        UUID userId = jwtService.extractUsername(token);
+        return titleRepository.findAllByApiTitleIdInUserRooms(titleMalId, userId);
+    }
+
+    @Override
+    public void reindexCustomOrder(UUID userId) {
+        titleRepository.reindexNative(userId);
+    }
 }

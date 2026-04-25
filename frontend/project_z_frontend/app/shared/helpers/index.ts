@@ -1,1 +1,2 @@
-export {getInitialValue} from "./getInitialValueFromUrl"
+export { calculateNewOrder } from "./calculateNewOrder";
+export {getInitialValue} from "./getInitialValueFromUrl";

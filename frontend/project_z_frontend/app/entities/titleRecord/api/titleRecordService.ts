@@ -18,10 +18,11 @@ interface TitleRecordService {
     put(titleId: number, titleData: TitleRecord): Promise<TitleRecord>;
     patch(titleId: number, titleData: Partial<TitleRecord>): Promise<TitleRecord>;
     delete(titleId: number): Promise<void>;
-
+    patchCustomOrder(titleId:number,newTitlePosition:number) : Promise<void>;
+    reindexCustomOrder(userId:string) : Promise<void>;
     getWatched(userId: string): Promise<Array<TitleRecord>>;
     getPlanned(userId: string): Promise<Array<TitleRecord>>;
-    getByJikanId(jikanId: number): Promise<TitleRecord>;
+    getByApiTitleId(jikanId: number): Promise<TitleRecord>;
 
     rate(options: RateOptions): Promise<TitleRecord>;
     clearRating(options:ActionOptions): Promise<TitleRecord>;
@@ -40,10 +41,9 @@ export const titleRecordService: TitleRecordService = {
         
         return response.data;
     },
-
+   
     async post(titleData) {
         const response = await apiClient.post(`/titles`,titleData);
-        console.log(response.data)
         return response.data;
     },
 
@@ -58,7 +58,13 @@ export const titleRecordService: TitleRecordService = {
         
         return response.data;
     },
-
+    async patchCustomOrder(titleId, newTitlePosition){
+        await apiClient.patch(`titles/${titleId}/position`,{ customOrder : newTitlePosition});
+    
+    },
+    async reindexCustomOrder(userId){
+        await apiClient.post(`titles/${userId}/reindex`);
+    },
     async delete(titleId) {
         await apiClient.delete(`/titles/${titleId}`);
     },

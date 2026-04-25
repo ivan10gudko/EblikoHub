@@ -41,6 +41,7 @@ const SearchPage: React.FC = () => {
 
             <div className="py-8 border-b flex justify-between items-center px-2 mb-6">
                 <SearchBar
+                    isLoading = {isLoading}
                     key={queryStr}
                     onSearch={handleMainSearch}
                     className="w-full md:w-96"
@@ -55,13 +56,13 @@ const SearchPage: React.FC = () => {
             )}
 
             {isError && !isLoading && (
-                <div className="text-red-500 text-center py-10">
+                <div className="text-danger text-center py-10">
                     <h2 className="text-xl">Something went wrong. Please try again later.</h2>
                 </div>
             )}
 
             {!isLoading && !isError && !hasResults && queryStr && (
-                <h2 className="text-xl px-2 text-gray-500">
+                <h2 className="text-xl px-2 text-foreground-muted">
                     There are no results for query "{queryStr}"
                 </h2>
             )}
