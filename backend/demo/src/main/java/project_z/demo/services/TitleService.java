@@ -24,8 +24,9 @@ public interface TitleService {
     List<TitleEntity> getWatchedList(UUID userid);
     List<TitleEntity> getWatchList(UUID userid);
     TitleEntity addSeason(SeasonEntity seasonEntity, TitleEntity titleEntity);
-    TitleEntity findUserTitleByMalId(Long titleMalId, String token);
-    List<TitleEntity> findAllByMalIdInUserRooms(Long titleMalId, String token);
+    TitleEntity findUserTitleByMalId(Integer titleMalId, String token);
+    List<TitleEntity> findAllByMalIdInUserRooms(Integer titleMalId, String token);
     Page<TitleEntity> findAllByUserId(TitleQueryParameters parameters, UUID userId);
     void titlePositionUpdate(Double newPosition, Long titleId);
+    void reindexCustomOrder(UUID userId);
 }

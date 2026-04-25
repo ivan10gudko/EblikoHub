@@ -13,6 +13,7 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "./shared/lib/queryClient";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { Toaster } from 'react-hot-toast';
+import { useThemeStore } from "./features/theme/store/theme.store";
 
 export const links: Route.LinksFunction = () => [
     { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -39,14 +40,14 @@ export function Layout({ children }: { children: React.ReactNode }) {
                 <Meta />
                 <Links />
             </head>
-            <body>
+            <body className=" bg-background text-foreground transition-colors">
                 <Toaster position="top-center" reverseOrder={false} />
                 <QueryClientProvider client={queryClient}>
                     {children}
                     <ReactQueryDevtools initialIsOpen={false} />
                 </QueryClientProvider>
                 <ScrollRestoration />
-                
+
                 <Scripts />
             </body>
         </html>
@@ -74,7 +75,7 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
     }
 
     return (
-        <main className="pt-16 p-4 container mx-auto font-bold">
+        <main className="pt-16 p-4 container mx-auto font-bold ">
             <h1>{message}</h1>
             <p>{details}</p>
             {stack && (

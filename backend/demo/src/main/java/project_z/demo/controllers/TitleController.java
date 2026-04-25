@@ -58,6 +58,14 @@ public class TitleController {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
+    @PreAuthorize("hasRole('ADMIN') || @securityService.isUserOwner(#userId, #token)")
+    @PostMapping("/{userId}/reindex")
+    public ResponseEntity<Void> reindex(@PathVariable("userId") UUID userId,
+            @RequestHeader("Authorization") String token) {
+        titleService.reindexCustomOrder(userId);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
     @GetMapping("/{userId}")
     public Page<TitleDto> getTitleListByUserId(@PathVariable("userId") UUID userId, TitleQueryParameters params) {
         Page<TitleEntity> entitiesPage = titleService.findAllByUserId(params, userId);
@@ -65,14 +73,14 @@ public class TitleController {
     }
 
     @GetMapping(path = "/mal/{titleMalId}")
-    public ResponseEntity<TitleDto> getUserTitleByMalId(@PathVariable("titleMalId") Long titleMalId,
+    public ResponseEntity<TitleDto> getUserTitleByMalId(@PathVariable("titleMalId") Integer titleMalId,
             @RequestHeader("Authorization") String token) {
         TitleEntity title = titleService.findUserTitleByMalId(titleMalId, token);
         return new ResponseEntity<>(titleMapper.mapTo(title), HttpStatus.OK);
     }
 
     @GetMapping(path = "/mal/{titleMalId}/room")
-    public List<TitleDto> getUsersTitlesByMalId(@PathVariable("titleMalId") Long titleMalId,
+    public List<TitleDto> getUsersTitlesByMalId(@PathVariable("titleMalId") Integer titleMalId,
             @RequestHeader("Authorization") String token) {
         return titleService.findAllByMalIdInUserRooms(titleMalId, token)
                 .stream().map(titleMapper::mapTo).collect(Collectors.toList());

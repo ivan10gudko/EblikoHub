@@ -24,5 +24,6 @@ public class TitleDto {
     private Map<String, Float> rating;
     private TitleStatus status;
     private Double customOrder;
+    private String imageUrl;
     private LocalDateTime createdAt;
 }

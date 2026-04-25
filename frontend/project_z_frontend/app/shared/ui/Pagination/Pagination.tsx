@@ -40,9 +40,9 @@ const Pagination: React.FC<Props> = ({
     const pageNumbers = getPageNumbers();
 
     const baseBtnClass = "flex items-center justify-center min-w-[32px] h-8 px-3 rounded-md text-sm font-medium transition-colors duration-200";
-    const activeBtnClass = "bg-amber-400 text-white hover:bg-amber-400";
-    const inactiveBtnClass = "text-gray-700 hover:bg-gray-100 hover:text-amber-400";
-    const navBtnClass = "bg-amber-400 text-white p-2 rounded-md hover:bg-amber-400 disabled:bg-gray-200 disabled:cursor-not-allowed";
+    const activeBtnClass = "bg-primary text-background hover:bg-primary";
+    const inactiveBtnClass = "text-gray-700 hover:bg-background-muted-hover hover:text-primary";
+    const navBtnClass = "bg-primary text-background p-2 rounded-md hover:bg-primary disabled:card disabled:cursor-not-allowed";
 
     return (
         <div className="flex items-center justify-center gap-2 mt-8 select-none">
@@ -64,7 +64,7 @@ const Pagination: React.FC<Props> = ({
                     >
                         1
                     </button>
-                    {pageNumbers[0] > 2 && <span className="text-gray-400 px-1">...</span>}
+                    {pageNumbers[0] > 2 && <span className="text-foreground-muted px-1">...</span>}
                 </>
             )}
 
@@ -83,7 +83,7 @@ const Pagination: React.FC<Props> = ({
 
             {pageNumbers[pageNumbers.length - 1] < totalPages && (
                 <>
-                    {pageNumbers[pageNumbers.length - 1] < totalPages - 1 && <span className="text-gray-400 px-1">...</span>}
+                    {pageNumbers[pageNumbers.length - 1] < totalPages - 1 && <span className="text-foreground-muted px-1">...</span>}
                     <button
                         className={clsx(baseBtnClass, inactiveBtnClass)}
                         onClick={() => onPageChange(totalPages)}

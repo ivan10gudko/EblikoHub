@@ -1,53 +1,76 @@
-import { useNavigate} from "react-router";
-import { useRef, type ReactNode} from "react";
+import { useNavigate } from "react-router";
+import { useRef, type ReactNode } from "react";
 import type { AnimeCardType } from "../model/animeTitle.types";
 import CardDate from "./CardDate";
 import { Badge } from "~/shared/ui/Badge";
 import { Rating } from "~/shared/ui/Rating";
 import AnimeCardMenu from "./AnimeCardMenu";
 
-interface AnimeCardProps{
-    data:AnimeCardType;
-    menuActions?: ReactNode;
+interface AnimeCardProps {
+  data: AnimeCardType;
+  menuActions?: ReactNode;
 }
 
+const AnimeCard: React.FC<AnimeCardProps> = ({ data, menuActions }) => {
+  const navigate = useNavigate();
+  const ref = useRef<HTMLDivElement>(null);
 
-
-const AnimeCard : React.FC<AnimeCardProps> = ({data, menuActions})=>{
-    const navigate = useNavigate();
-    const ref = useRef<HTMLDivElement>(null);
-
-    const genres = data.genres.length <= 3 ? data.genres : [...data.genres.slice(0,3) , {mal_id:0,type:"",name:`+${data.genres.length-3}`,url:""}]
-
-    return (
+  const genres =
+    data.genres.length <= 3
+      ? data.genres
+      : [
+          ...data.genres.slice(0, 3),
+          { mal_id: 0, type: "", name: `+${data.genres.length - 3}`, url: "" },
+        ];
+  return (
     <div
-        ref={ref}
-        className="rounded-lg shadow hover:shadow-md pb-2 flex flex-col cursor-pointer h-full"
-        onClick={()=>navigate(`/anime/${data.id}`)}
-        >
-        <div className="w-full relative aspect-[3/4] overflow-hidden rounded-lg">
-            <img className="w-full h-full object-cover hover:scale-105 transition-transform duration-300" src={data.img} loading="lazy"/>
-            {menuActions && (
-                <AnimeCardMenu parentRef={ref}>
-                    {menuActions}
-                </AnimeCardMenu>
-            )}
+      ref={ref}
+      className="rounded-lg border border-border shadow-foreground-muted hover:shadow-xs pb-2 flex flex-col cursor-pointer h-full"
+      onClick={() => navigate(`/anime/${data.id}`)}
+    >
+      <div className="w-full relative aspect-[3/4] overflow-hidden rounded-lg">
+        <img
+          className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+          src={data.img}
+          loading="lazy"
+        />
+        {menuActions && (
+          <AnimeCardMenu parentRef={ref}>{menuActions}</AnimeCardMenu>
+        )}
+      </div>
+      <div className="px-3 pb-6 pt-6 flex flex-col grow">
+        <div>
+          <span className="font-light grow">{data.title}</span>
+          {data.year ? <CardDate>{data.year}</CardDate> : null}
+          <div className="flex flex-wrap gap-2 my-4">
+            {genres.map((genre) => (
+              <Badge
+                key={genre.mal_id}
+                color="background-muted"
+                textColor="foreground"
+                size="sm"
+              >
+                {genre.name}
+              </Badge>
+            ))}
+          </div>
         </div>
-        <div className="px-3 pb-6 pt-6 flex flex-col grow">
-            <div>
-                <span className="font-light grow">{data.title}</span>
-                    {data.year ? <CardDate >{data.year}</CardDate> : null}
-                <div className="flex flex-wrap gap-2 my-4">
-                    {genres.map(genre=><Badge key={genre.mal_id} textColor="black" size="sm">{genre.name}</Badge>)}
-                </div>
-            </div>
 
-            <div className="flex flex-col gap-3 sm:flex-row justify-between mt-auto">
-                <Rating className="gap-1 text-sm ">{data?.score}</Rating>
-                {data.airing ? <Badge textColor="black" size="sm">Ongoing</Badge>:<Badge color="black" textColor="white" size="sm">Completed</Badge>}    
-            </div>
+        <div className="flex flex-col gap-3 sm:flex-row justify-between mt-auto">
+          <Rating className="gap-1 text-sm ">{data?.score}</Rating>
+          {data.airing ? (
+            <Badge textColor="foreground" color="background-muted" size="sm">
+              Ongoing
+            </Badge>
+          ) : (
+            <Badge color="background-muted" textColor="foreground" size="sm">
+              Completed
+            </Badge>
+          )}
         </div>
-    </div>)
+      </div>
+    </div>
+  );
 };
 
 export default AnimeCard;

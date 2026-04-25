@@ -26,7 +26,7 @@ export const UserProfileSidebar = ({ isOpen, onClose }: SidebarProps) => {
         <>
             {isOpen && (
                 <div
-                    className="fixed inset-0 bg-black/40 z-40 md:hidden transition-opacity backdrop-blur-[2px]"
+                    className="fixed inset-0 bg-card z-40 md:hidden transition-opacity backdrop-blur-[2px]"
                     onClick={onClose}
                 >
                     {" "}
@@ -35,7 +35,7 @@ export const UserProfileSidebar = ({ isOpen, onClose }: SidebarProps) => {
 
             <Sidebar
                 className={`
-                fixed inset-y-0 left-0 z-50 w-72 bg-white border-r border-gray-200 flex flex-col
+                fixed inset-y-0 left-0 z-50 w-72 bg-background border-r border-border flex flex-col
                 transition-transform duration-300 ease-in-out shadow-xl md:shadow-none
                 
                 ${isOpen ? "translate-x-0" : "-translate-x-full"}
@@ -58,8 +58,8 @@ export const UserProfileSidebar = ({ isOpen, onClose }: SidebarProps) => {
                             className={({ isActive }) =>
                                 `flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 ${
                                     isActive
-                                        ? "bg-yellow-400 text-white shadow-sm"
-                                        : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                                        ? "bg-primary text-background shadow-sm"
+                                        : "text-card hover:bg-background-muted hover:text-foreground"
                                 }`
                             }
                         >
@@ -72,7 +72,7 @@ export const UserProfileSidebar = ({ isOpen, onClose }: SidebarProps) => {
                         <Divider sx={{ mb: 2 }} />
                         <Button
                             variant="outline"
-                            className="w-full justify-start gap-3 border-red-100 text-red-500 hover:bg-red-50 hover:border-red-200 transition-colors"
+                            className="w-full justify-start gap-3 border-danger text-danger hover:text-danger-hover transition-colors"
                             onClick={handleLogout}
                         >
                             <LogoutIcon fontSize="small" />

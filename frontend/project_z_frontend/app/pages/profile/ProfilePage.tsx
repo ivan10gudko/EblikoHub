@@ -19,7 +19,7 @@ import MenuIcon from '@mui/icons-material/Menu';
                         <Button 
                             variant="outline" 
                             onClick={() => setIsSidebarOpen(true)}
-                            className="flex items-center gap-2 px-4 py-2 bg-white shadow-sm border-gray-200 text-gray-700 rounded-xl"
+                            className="flex items-center gap-2 px-4 py-2 bg-background shadow-sm border-border text-foreground-muted rounded-xl"
                         >
                             <MenuIcon fontSize="small" />
                             <span className="font-medium">Menu</span>
