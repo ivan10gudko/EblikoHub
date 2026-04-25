@@ -60,8 +60,8 @@ const AddTitleModal = ({ isOpen, onClose }: AddTitleModalProps) => {
       },
     });
   };
-  const handleRatingChange = (val: string) => {
-    const formatted = formatRatingInput(val);
+  const handleRatingChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const formatted = formatRatingInput(e.target.value);
 
     if (formatted !== null) {
       setFormData((prev) => ({
@@ -102,13 +102,15 @@ const AddTitleModal = ({ isOpen, onClose }: AddTitleModalProps) => {
               <label className="text-xs font-bold tracking-widest text-foreground ml-1 leading-tight">
                 Title Name
               </label>
-              <Input
+              <input
                 name="Title name"
                 autoComplete="off"
                 placeholder="Enter name..."
                 value={formData.titleName}
-                onChange={(val) => setFormData({ ...formData, titleName: val })}
-                className="h-12 border-2 w-full border-border rounded-xl font-bold text-foreground text-sm focus:border-primary transition-all shadow-sm"
+                onChange={(e) =>
+                  setFormData({ ...formData, titleName: e.target.value })
+                }
+                className="h-12 w-full px-4  border-2 border-border rounded-xl font-bold text-foreground text-sm focus:border-primary transition-all shadow-sm"
               />
             </div>
             <div className="w-full">
@@ -136,7 +138,7 @@ const AddTitleModal = ({ isOpen, onClose }: AddTitleModalProps) => {
                   />
                 </div>
                 <div className="w-[112px] flex-shrink-0">
-                  <Input
+                  <input
                     name="Rating"
                     autoComplete="off"
                     placeholder="0.0"
@@ -162,14 +164,14 @@ const AddTitleModal = ({ isOpen, onClose }: AddTitleModalProps) => {
         <div className="flex gap-4 pt-6 border-t border-border">
           <Button
             onClick={onClose}
-            className="flex-1 h-14 rounded-xl bg-card text-foreground font-bold text-xs tracking-wider hover:bg-card transition-all active:scale-95 shadow-sm"
+            className="flex-1 h-14 rounded-xl bg-card text-foreground !font-bold tracking-wider hover:bg-card transition-all active:scale-95 shadow-sm"
           >
             Cancel
           </Button>
           <Button
             onClick={handleSave}
             disabled={isCreating}
-            className="flex-[2] h-14 rounded-xl bg-primary text-foreground font-bold text-xs tracking-wider shadow-[0_4px_0_0_#d97706] hover:primary-hover active:translate-y-[2px] active:shadow-none transition-all disabled:opacity-50"
+            className="flex-[2] h-14 rounded-xl bg-primary text-foreground !font-bold tracking-wider shadow-[0_4px_0_0_#d97706] hover:primary-hover active:translate-y-[2px] active:shadow-none transition-all disabled:opacity-50"
           >
             {isCreating ? "Saving..." : "Save Title"}
           </Button>

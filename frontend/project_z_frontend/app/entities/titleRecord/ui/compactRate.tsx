@@ -24,7 +24,8 @@ export const CompactRate = ({
     setValue(currentRating?.toString() || "");
   }, [currentRating]);
 
-  const handleChange = (val: string) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value;
     if (isReadOnly) return;
 
     const formatted = formatRatingInput(val);
@@ -65,7 +66,7 @@ export const CompactRate = ({
       </Button>
 
       <div className="relative flex items-center">
-        <Input
+        <input
           type="text"
           readOnly={isReadOnly}
           value={value}

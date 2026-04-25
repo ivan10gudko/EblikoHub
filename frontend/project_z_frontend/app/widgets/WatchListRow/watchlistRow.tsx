@@ -62,11 +62,11 @@ export const WatchlistRow = ({ title, isOwn }: WatchlistRowProps) => {
           onPointerDown={(e) => e.stopPropagation()}
         >
           {isOwn ? (
-            <Input
+            <input
               name="Title name"
               type="text"
               value={tempTitleName}
-              onChange={(val) => setTempTitleName(val)}
+              onChange={(e) => setTempTitleName(e.target.value)}
               onBlur={() =>
                 tempTitleName !== title.titleName &&
                 updateTitle({ titleName: tempTitleName })
