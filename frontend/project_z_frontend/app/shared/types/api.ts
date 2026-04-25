@@ -1,4 +1,4 @@
-
+// for jikan
 export interface PaginationMeta {
     last_visible_page: number;
     has_next_page: boolean;
@@ -9,6 +9,7 @@ export interface PaginationMeta {
         per_page: number;
     };
 }
+//for our back
 export interface PageResponse<T> {
     content: T[];
     totalPages: number;
@@ -20,7 +21,7 @@ export interface PageResponse<T> {
     empty: boolean;
 }
 
-export type SortOrder = 'ask' | 'desk';
+export type SortOrder = 'asc' | 'desc';
 
 export interface QueryParams {
     page?: number;

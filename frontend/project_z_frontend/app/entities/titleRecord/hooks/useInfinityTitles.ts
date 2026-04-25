@@ -1,17 +1,23 @@
-import { useInfiniteQuery,} from '@tanstack/react-query';
+import { useInfiniteQuery, } from '@tanstack/react-query';
 import { titleRecordService } from '../api/titleRecordService';
 import type { TitleParams } from '../model/titleRecord';
 
-export const useInfinityTitles = (userId: number, params: TitleParams) => {
-    return useInfiniteQuery({
-        queryKey: ['titles', userId, params],
-        queryFn: ({ pageParam = 1 }) =>
-            titleRecordService.get(userId, { ...params, page: pageParam }),
+type TitlesQueryKey = ['titles', string | null, TitleParams];
+export const useInfinityTitles = (userId: string | null, params: TitleParams) => {
+    const queryKey: TitlesQueryKey = ['titles', userId, params];
+
+    const query = useInfiniteQuery({
+        queryKey,
+        queryFn: ({ pageParam = 0 }) =>
+            titleRecordService.get(userId!, { ...params, page: pageParam }),
         getNextPageParam: (lastPage) => {
-            return lastPage.number< lastPage.totalPages
-                ? lastPage.number + 1
-                : undefined;
+            if (lastPage.last) return undefined;
+            return lastPage.number + 1;
         },
-        initialPageParam: 1,
+        enabled: !!userId,
+        initialPageParam: 0,
+        staleTime: 0,
+        refetchOnWindowFocus: false,
     });
+    return { ...query, queryKey };
 };

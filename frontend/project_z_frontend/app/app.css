@@ -1,58 +1,122 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
 @import "tailwindcss";
 
 @theme {
-    --font-inter: "Inter", sans-serif;
-    --font-industrial: Bahnschrift, 'DIN Alternate', 'Franklin Gothic Medium', 'Nimbus Sans Narrow', sans-serif-condensed, sans-serif;
+  --font-inter: "Inter", sans-serif;
+  --font-industrial:
+    Bahnschrift, "DIN Alternate", "Franklin Gothic Medium",
+    "Nimbus Sans Narrow", sans-serif-condensed, sans-serif;
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-foreground-muted: var(--foreground-muted);
+  --color-card: var(--card);
+  --color-border: var(--border);
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-danger: var(--danger);
+  --color-danger-hover: var(--danger-hover);
+  --color-success: var(--success);
+  --color-background-muted: var(--background-muted);
+  --color-background-muted-hover: var(--background-muted-hover);
+  --color-secondary: var(--secondary);
+  --color-secondary-hover: var(--secondary-hover);
+}
+
+@layer base {
+  :root {
+    --background: #ffffff;
+    --background-muted: #faf9f9;
+    --background-muted-hover: #f5eded;
+    --foreground: #121212;
+    --foreground-muted: #1d1d1d;
+    --card: #f3f4f6;
+    --border: #e2e8f0;
+    --primary: #ffa31a;
+    --primary-hover: #f89a0e;
+    --secondary: #3935ff;
+    --secondary-hover: #2e399e;
+    --danger: #db1717;
+    --danger-hover: #b12626;
+    --success: green;
+  }
+  .dark {
+    --background: #0c0b0b;
+    --foreground: #ffffff;
+    --foreground-muted: #d1bebe;
+    --background-muted: #383535;
+    --background-muted-hover: #2b2727;
+    --card: #1b1b1b;
+    --border: #444444;
+    --primary: #ffa31a;
+    --primary-hover: #f89a0e;
+    --secondary: #3935ff;
+    --secondary-hover: #2e399e;
+    --danger: #b62222;
+    --danger-hover: #9c2727;
+    --success: green;
+  }
+
+  input[type="search"]::-webkit-search-decoration,
+  input[type="search"]::-webkit-search-cancel-button,
+  input[type="search"]::-webkit-search-results-button,
+  input[type="search"]::-webkit-search-results-decoration {
+    -webkit-appearance: none;
+  }
+
+  input::placeholder {
+    opacity: 0.8 !important;
+    color: hsl(var(--muted-foreground) / 0.6) !important;
+  }
 }
 
 @layer components {
   .card-container {
-    @apply w-full grid gap-y-6 xl:gap-y-10 grid-cols-2 md:grid-cols-4 xl:grid-cols-5 grid-rows-1 overflow-hidden 2xl:grid-cols-6 flex-wrap gap-6 py-10 justify-between;
+    @apply w-full grid gap-y-6 xl:gap-y-10 grid-cols-1 md:grid-cols-3 xl:grid-cols-5 grid-rows-1 overflow-hidden 2xl:grid-cols-6 flex-wrap gap-6 py-10 justify-between;
   }
 }
 
-body{
-    font-style: var(--font-inter);
-    font-weight: var(--font-weight-medium);
-}
-.burger{
-    width: 40px;
-    height: 40px;
-    /* box-shadow: 0px 0px 2px; */
-    padding: 2px;
-    /* border-radius: 2px; */
-}
-.burger span{
-    width: 80%;
-    height: 2px;
-    display: block;
-    margin:20% auto ;
-    background-color: #252525;
-    transition-duration: 200ms;
-    transition-delay: 75ms;
-    border-radius:3px;
+body {
+  font-style: var(--font-inter);
+  font-weight: var(--font-weight-medium);
 }
 
-.burger.active span:nth-child(1){
-    transform: rotate(-45deg) translateY(8px) translateX(-5px);
-
-}
-.burger.active span:nth-child(2){
-    width: 0;
-}
-.burger.active span:nth-child(3){
-    transform: rotate(45deg) translateY(-8px) translateX(-5px);
-
-    
+.burger {
+  width: 40px;
+  height: 40px;
+  /* box-shadow: 0px 0px 2px; */
+  padding: 2px;
+  /* border-radius: 2px; */
 }
 
-.dropdown{
-    transition-duration: 200ms;
-    transition-delay: 75ms;
+.burger span {
+  width: 80%;
+  height: 2px;
+  display: block;
+  margin: 20% auto;
+  background-color: var(--foreground);
+  transition-duration: 200ms;
+  transition-delay: 75ms;
+  border-radius: 3px;
 }
 
-.dropdown.open{
+.burger.active span:nth-child(1) {
+  transform: rotate(-45deg) translateY(8px) translateX(-5px);
+}
 
-    transform: rotate(0.5turn);
+.burger.active span:nth-child(2) {
+  width: 0;
+}
+
+.burger.active span:nth-child(3) {
+  transform: rotate(45deg) translateY(-8px) translateX(-5px);
+}
+
+.dropdown {
+  transition-duration: 200ms;
+  transition-delay: 75ms;
+}
+
+.dropdown.open {
+  transform: rotate(0.5turn);
 }

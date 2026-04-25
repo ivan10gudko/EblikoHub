@@ -8,7 +8,7 @@ interface Props{
 const HeroDescription: React.FC<Props> = ({children,id})=>{
     const text = children.slice(0,240);
     return (<span className='w-fit line-clamp-3 lg:line-clamp-none'>
-            {text} <Link to={`/anime/${id}`} className="text-blue-600 hover:text-blue-400">...Read more</Link>
+            {text} <Link to={`/anime/${id}`} className="text-secondary hover:text-secondary-hover">...Read more</Link>
         </span>);
 };
 

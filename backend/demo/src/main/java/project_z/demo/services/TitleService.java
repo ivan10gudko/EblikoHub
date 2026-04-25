@@ -7,12 +7,14 @@ import java.util.UUID;
 import org.springframework.data.domain.Page;
 
 import project_z.demo.common.QueryParameters.TitleQueryParameters;
+import project_z.demo.dto.TitleDtos.TitleBatchCreateDto;
 import project_z.demo.dto.TitleDtos.TitlePatchUpdateDto;
 import project_z.demo.entity.SeasonEntity;
 import project_z.demo.entity.TitleEntity;
 
 public interface TitleService {
     TitleEntity createTitle(TitleEntity title );
+    void batchCreateTitle(TitleBatchCreateDto titles, String token);
     List<TitleEntity> findAll();
     Optional<TitleEntity> findOne(Long titleId);
     boolean isExists (Long titleId);
@@ -22,7 +24,9 @@ public interface TitleService {
     List<TitleEntity> getWatchedList(UUID userid);
     List<TitleEntity> getWatchList(UUID userid);
     TitleEntity addSeason(SeasonEntity seasonEntity, TitleEntity titleEntity);
-    TitleEntity findUserTitleByMalId(Long titleMalId, String token);
-    List<TitleEntity> findAllByMalIdInUserRooms(Long titleMalId, String token);
+    TitleEntity findUserTitleByMalId(Integer titleMalId, String token);
+    List<TitleEntity> findAllByMalIdInUserRooms(Integer titleMalId, String token);
     Page<TitleEntity> findAllByUserId(TitleQueryParameters parameters, UUID userId);
+    void titlePositionUpdate(Double newPosition, Long titleId);
+    void reindexCustomOrder(UUID userId);
 }

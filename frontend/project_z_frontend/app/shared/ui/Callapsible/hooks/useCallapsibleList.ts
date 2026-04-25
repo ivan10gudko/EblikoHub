@@ -10,9 +10,9 @@ export function useCollapsibleList<T>({items = []}: UseCollapsibleListProps<T>) 
 
     let itemsInFirstRow;
     if (windowSize == 'xs' || windowSize == 'sm') {
-        itemsInFirstRow = 2;
+        itemsInFirstRow = 1;
     } else if (windowSize == 'md' || windowSize == 'lg') {
-        itemsInFirstRow = 4;
+        itemsInFirstRow = 3;
     } else if (windowSize == 'xl') {
         itemsInFirstRow = 5;
     } else {

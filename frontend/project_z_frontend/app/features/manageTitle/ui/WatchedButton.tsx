@@ -2,7 +2,7 @@ import LibraryAddCheckOutlinedIcon from "@mui/icons-material/LibraryAddCheckOutl
 import LibraryAddCheckIcon from "@mui/icons-material/LibraryAddCheck";
 import { Button } from "~/shared/ui/Button";
 import { Status } from "~/entities/titleRecord";
-import { useTitleRecordMutation } from "../hooks/useTitleRecordMutation";
+import { useTitleRecordMutation } from "../../../entities/titleRecord";
 import { FaSpinner } from "react-icons/fa";
 import type { ManageTitleRecordProps } from "../model/manageTitleRecord";
 
@@ -11,7 +11,12 @@ const WatchedButton = ({
     titleRecord,
 }: ManageTitleRecordProps) => {
     const isWatched = titleRecord?.status == Status.WATCHED;
-    const { isAnyActionLoading, updateStatus, deleteTitle } = useTitleRecordMutation(initialData.apiTitleId, initialData);
+    const { isAnyActionLoading, updateStatus, deleteTitle } =
+        useTitleRecordMutation(
+            initialData.apiTitleId,
+            initialData,
+            titleRecord,
+        );
 
     function handleWatched(e: React.MouseEvent<HTMLElement>) {
         e.stopPropagation();
@@ -25,10 +30,11 @@ const WatchedButton = ({
     return (
         <Button
             variant={isWatched ? "fill" : "outline"}
-            color="rgba(0,0,0,0.85)"
-            borderColor="rgba(14,14,14,0.2)"
-            bgColor={`rgba(236, 238, 242,${isAnyActionLoading ? "0.6" : "1"})`}
-            className={isWatched ? "border-0 gap-3" : "border-[1px] gap-3"}
+            className={`
+                gap-3 transition-opacity
+                ${isWatched ? "border-none bg-background text-foreground/85" : "border-foreground/20 text-foreground/85"}
+                ${isAnyActionLoading ? "opacity-60 cursor-not-allowed" : "opacity-100"}
+            `}
             onClick={handleWatched}
             disabled={isAnyActionLoading}
         >

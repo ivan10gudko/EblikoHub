@@ -1,5 +1,5 @@
 function RoomsPage() {
-    return ( <h1>RoomsPage
+    return ( <h1>RoomsPage(coming soon)
     
     </h1> );
 }

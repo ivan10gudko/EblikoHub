@@ -1,19 +1,21 @@
-import { supabase } from "~/shared/lib/supabase";
-import { useAuthStore } from "~/features/auth/store/auth.store";
 import MainLayout from "~/core/layouts/MainLayout";
 import Loader from "~/shared/ui/Loader/Loader";
 import type { Route } from "./+types/_main";
+import { ensureAuthenticated } from "~/features/auth";
+import { isRouteErrorResponse, useRouteError, type ShouldRevalidateFunctionArgs } from "react-router";
+import { ErrorScreen } from "~/shared/ui/ErrorScreen/ErrorScreen";
 
 export async function clientLoader() {
-    const { data: { session } } = await supabase.auth.getSession();
-    
-    if (session?.user?.id) {
-        useAuthStore.getState().restoreSession(session.user.id).catch(console.error);
-    }
+    const userId = await ensureAuthenticated();
 
-    return { session };
+    return userId;
 }
-
+export function shouldRevalidate({ currentUrl, nextUrl, defaultShouldRevalidate }: ShouldRevalidateFunctionArgs) {
+    if (currentUrl.pathname === nextUrl.pathname) {
+        return false;
+    }
+    return defaultShouldRevalidate;
+}
 export function HydrateFallback() {
     return (
         <div className="min-h-screen flex items-center justify-center">
@@ -23,5 +25,32 @@ export function HydrateFallback() {
 }
 
 export default function MainRoute({ loaderData }: Route.ComponentProps) {
-    return <MainLayout/>;
+    return <MainLayout />;
+}
+export function ErrorBoundary() {
+    const error = useRouteError();
+
+    if (isRouteErrorResponse(error)) {
+        return (
+            <ErrorScreen
+                status={error.status}
+                title={error.status === 404 ? "Page Not Found" : "Server Error"}
+                message={error.status === 404
+                    ? "The page you are looking for doesn't exist or has been moved."
+                    : error.data?.message || "An unexpected error occurred on our side."
+                }
+            />
+        );
+    }
+
+    const errorMessage = error instanceof Error ? error.message : "Unknown application error";
+
+    return (
+        <ErrorScreen
+            title="Application Crash"
+            message="Something went seriously wrong in the app's code."
+            stack={errorMessage}
+            onRetry={() => window.location.href = "/"} 
+        />
+    );
 }

@@ -1,7 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import TrendingUpRoundedIcon from "@mui/icons-material/TrendingUpRounded";
 import {
-    AnimeCard,
     AnimeCardSceleton,
     getSeasonalAnimeList,
     type AnimeCardType,
@@ -9,17 +8,8 @@ import {
 
 import CollapsibleSection from "~/shared/ui/Callapsible/ui/CollapsableSection";
 import {
-    AddToWatchedCardAction,
-    AddToWatchlistCardAction,
     ManagedAnimeCard,
-    RateCardAction,
 } from "~/features/manageTitle";
-
-import {
-    Status,
-    useTitleByApiId,
-    type CreateTitleRecord,
-} from "~/entities/titleRecord";
 
 const SeasonAnimeList: React.FC<{}> = ({}) => {
     const { data, isPending, error } = useQuery({

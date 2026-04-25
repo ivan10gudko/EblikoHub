@@ -94,11 +94,11 @@ const SignupPage = () => {
         }
     };
     return (
-        <div className="max-w-md w-full bg-white border-slate-200 shadow-lg py-6 px-8 rounded font-normal">
-            <h2 className="text-amber-300 text-2xl font-medium w-full text-center mb-5">
+        <div className="max-w-md w-full bg-background border-border shadow-lg py-6 px-8 rounded font-normal">
+            <h2 className="text-primary text-2xl font-medium w-full text-center mb-5">
                 Sign Up
             </h2>
-            <form onSubmit={handleSubmit} noValidate>
+            <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-4">
                 <Input
                     type="text"
                     name="name"
@@ -165,21 +165,19 @@ const SignupPage = () => {
 
                 <Button
                     variant="fill"
-                    htmlType="submit"
-                    className="w-full py-3 font-medium text-xl my-2"
-                    bgColor="var(--color-amber-300)"
-                    color="white"
+                    type="submit"
+                    className="w-full py-3 font-medium text-xl my-2 bg-primary text-background"
                     disabled={isLoading}
                 >
                     {isLoading ? "Signing up..." : "Sign Up"}
                 </Button>
             </form>
 
-            <div className="text-sm text-gray-400 mt-4 text-center">
+            <div className="text-sm text-foreground-muted mt-4 text-center">
                 Already have an account?{"  "}
                 <button
                     type="button"
-                    className="cursor-pointer text-amber-300 hover:text-amber-200 font-medium bg-transparent border-none p-0 underline-offset-2 hover:underline"
+                    className="cursor-pointer text-primary hover:text-primary-hover font-medium bg-transparent border-none p-0 underline-offset-2 hover:underline"
                     onClick={() => navigate("/auth/login")}
                 >
                     Log in

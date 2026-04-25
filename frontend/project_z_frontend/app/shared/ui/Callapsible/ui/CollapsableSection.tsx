@@ -14,7 +14,7 @@ type CollapsibleSectionProps<T, K extends string | number> = {
 };
 
 const defaultSceletonItem = (key: number | string ) => (
-    <div key={key} className="w-full h-64 bg-gray-200 animate-pulse rounded-md"></div>
+    <div key={key} className="w-full h-64 bg-card animate-pulse rounded-md"></div>
 );
 function CollapsibleSection<T, K extends string | number>({
     title,
@@ -36,7 +36,7 @@ function CollapsibleSection<T, K extends string | number>({
     if (isPending) {
         return <CollapsibleSectionSkeleton title={title} renderItem={renderSceletonItem} />;
     };
-    if (error) return <div className="p-10 text-red-500">Error loading {title}.</div>;
+    if (error) return <div className="p-10 text-danger">Error loading {title}.</div>;
 
     return (
         <div className="w-full px-2 md:px-8 lg:px-20">
@@ -46,7 +46,7 @@ function CollapsibleSection<T, K extends string | number>({
                 </h3>
                 <button
                     onClick={toggleOpen}
-                    className="p-1 rounded-full hover:bg-gray-100 transition-colors cursor-pointer"
+                    className="p-1 rounded-full hover:bg-background-muted-hover transition-colors cursor-pointer"
                     aria-expanded={isOpen}
                     aria-controls={`list-container-${title}`}
                     aria-label={isOpen ? "Collapse list" : "Expand list"}

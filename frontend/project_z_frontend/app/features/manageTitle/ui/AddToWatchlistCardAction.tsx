@@ -2,15 +2,15 @@ import WatchLaterOutlinedIcon from '@mui/icons-material/WatchLaterOutlined';
 import WatchLaterIcon from '@mui/icons-material/WatchLater';
 import { FaSpinner } from "react-icons/fa";
 import type { ManageTitleRecordProps } from "../model/manageTitleRecord";
-import { Status } from "~/entities/titleRecord";
-import { useTitleRecordMutation } from "../hooks/useTitleRecordMutation";
+import { Status ,useTitleRecordMutation } from "~/entities/titleRecord";
 
 const AddToWatchlistCardAction = ({ initialData, titleRecord }: ManageTitleRecordProps) => {
     const isPlanned = titleRecord?.status === Status.PLANNED;
     
     const { isAnyActionLoading, updateStatus, deleteTitle } = useTitleRecordMutation(
         initialData.apiTitleId,
-        initialData
+        initialData,
+        titleRecord
     );
 
     function handleWatchlist(e: React.MouseEvent<HTMLLIElement>) {
@@ -36,7 +36,7 @@ const AddToWatchlistCardAction = ({ initialData, titleRecord }: ManageTitleRecor
                         <WatchLaterOutlinedIcon fontSize="small" />
                     )}
                     <span className="ml-2">
-                        {isPlanned ? "Remove from watchlist" : "Add to watchlist"}
+                        {isPlanned ? "Remove from watchlist" : "Plan to Watch"}
                     </span>
                 </>
             )}
