@@ -7,12 +7,12 @@ const SocialMediaBlock: React.FC = ()=>{
         try {
             await authService.signInWithOauth('discord');
         } catch (error) {
-            console.error("Помилка ініціалізації OAuth:", error);
+            console.error("initialization error OAuth:", error);
         }
     };
     return(
     <div className="flex items-center justify-between flex-col gap-4 font-medium text-foreground">
-        <Button variant="outline" className="border-[1px] w-full flex text-inherit border-black " onClick={handleDiscordLogin}>
+        <Button variant="outline" className="border-[1px] w-full flex text-inherit border-border " onClick={handleDiscordLogin}>
             Continue with <FaDiscord color="#5865F2" size={32} className="mx-4" />
         </Button>
     </div>)
