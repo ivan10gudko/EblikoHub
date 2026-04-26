@@ -5,6 +5,7 @@ export const publicClient = axios.create({
     baseURL: import.meta.env.VITE_API_URL || '/api/v1',
     headers: {
         "Content-Type": "application/json",
+        "X-API-KEY": import.meta.env.VITE_BACKEND_API_KEY,
     },
     timeout: 10000,
     
