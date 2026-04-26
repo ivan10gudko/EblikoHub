@@ -5,7 +5,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import BurgerIcon from "../../shared/ui/Burger/BurgerIcon";
 
-import { Logo } from "~/shared/ui/Logo";
+import { Logo, LogoImg } from "~/shared/ui/Logo";
 import { SearchBar } from "~/features/search";
 import { useAuthStore } from "~/features/auth";
 import { ThemeToggle } from "~/features/theme/ui/ThemeToggle";
@@ -25,13 +25,16 @@ const Header = () => {
     const burgerMenuStyles = useMemo(() => burgerMenuOpen ? "border-t-1 bg-card  backdrop-blur-sm absolute top-17 w-full left-0 h-full clip flex justify-center pt-4 text-foreground z-1000" : "hidden", [burgerMenuOpen]);
 
     return (
-        <header className="py-4 px-6 *:text-sm *:md:text-md md:px-14 w-full border-b flex justify-between items-center">
-            <NavLink to="/">
-                <Logo />
+        <header className="py-4 px-6 *:text-sm *:md:text-md md:px-14 lg:px-24 w-full border-b flex justify-between items-center">
+            <NavLink to="/" className="flex items-center">
+                <LogoImg className="text-primary w-12 h-12" />
+                <span className="hidden md:block">
+                    <Logo />
+                </span>
             </NavLink>
 
             <div className="hidden sm:flex gap-4 items-center">
-                <ThemeToggle/>
+                <ThemeToggle />
                 <SearchBar isLoading={isNavigating} onSearch={handleMainSearch} className="w-56" />
                 <NavLink to={"/rooms"} className={({ isActive, isPending }) => (
                     isActive ? "text-primary border-b font-bold " :

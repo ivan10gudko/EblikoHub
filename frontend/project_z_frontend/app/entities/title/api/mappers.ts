@@ -5,7 +5,7 @@ export const mapJikanToAnimeCard = (anime: Anime): AnimeCardType => {
         id: anime.mal_id,
         title: anime.title,
         score: anime.score ?? 0,
-        img: anime.images.jpg?.image_url ?? "",
+        img: anime.images.jpg?.large_image_url ?? "",
         year: anime.year ?? 0,
         episodes: anime.episodes ?? 0,
         

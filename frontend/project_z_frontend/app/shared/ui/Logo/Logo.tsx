@@ -1,7 +1,5 @@
-const Logo : React.FC<{}> =({})=>{
-return (<h1 className="relative text-xs">Project Z
-        <sub className="absolute text-foreground-muted -translate-x-12">temprary_name</sub>
-    </h1>)
+const Logo: React.FC<{}> = ({ }) => {
+    return (<h1 className="relative text-xl text-primary text-nowrap">Ebliko-Hub</h1>)
 };
 
 export default Logo;
