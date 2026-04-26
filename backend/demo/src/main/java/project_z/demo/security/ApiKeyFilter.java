@@ -25,7 +25,8 @@ public class ApiKeyFilter extends OncePerRequestFilter{
 
         if (path.contains("/v3/api-docs") || 
             path.contains("/swagger-ui") || 
-            path.contains("/openapi.json")) {
+            path.contains("/openapi.json")||
+            path.contains("/api/v1/health")) {
         
                 filterChain.doFilter(request, response);
             return;

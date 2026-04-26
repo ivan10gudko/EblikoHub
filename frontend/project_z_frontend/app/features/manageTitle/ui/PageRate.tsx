@@ -9,7 +9,7 @@ import {
 import DoneOutlinedIcon from "@mui/icons-material/DoneOutlined";
 import { StarRating } from "~/shared/ui/Rating";
 import type { ManageTitleRecordProps } from "../model/manageTitleRecord";
-import { useTitleRecordMutation } from "../../../entities/titleRecord";
+import { useTitleRecordMutation } from '~/entities/titleRecord/hooks/useTitleRecordMutation';
 import { Button } from "~/shared/ui/Button";
 import ClearIcon from "@mui/icons-material/Clear";
 

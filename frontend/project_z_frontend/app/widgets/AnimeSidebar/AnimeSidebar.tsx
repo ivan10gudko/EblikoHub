@@ -3,9 +3,9 @@ import type { Anime } from "~/entities/title";
 import {
   Status,
   useTitleByApiId,
-  useTitleRecordMutation,
   type CreateTitleRecord,
 } from "~/entities/titleRecord";
+import { useTitleRecordMutation } from '~/entities/titleRecord/hooks/useTitleRecordMutation';
 import {
   PageRate,
   StatusSelect,
