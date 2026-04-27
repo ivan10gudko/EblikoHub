@@ -32,52 +32,54 @@ const Header = () => {
                     <Logo />
                 </span>
             </NavLink>
-
-            <div className="hidden sm:flex gap-4 items-center">
+            <div className="flex items-center gap-2">
                 <ThemeToggle />
-                <SearchBar isLoading={isNavigating} onSearch={handleMainSearch} className="w-56" />
-                <NavLink to={"/rooms"} className={({ isActive, isPending }) => (
-                    isActive ? "text-primary border-b font-bold " :
-                        isPending ? "text-primary-hover font-bold " :
-                            ""
-                )} >Rooms</NavLink>
-                <NavLink to={watchlistPath}>Watchlist</NavLink>
-                {isAuth ? (
-                    <NavLink to="/profile">
-                        <AccountCircleIcon fontSize="large" />
-                    </NavLink>
-                ) : (
-                    <NavLink to="auth/signup" className="bg-primary py-2 px-3 rounded-lg">Sign up</NavLink>
-                )}
-            </div>
+                <div className="hidden sm:flex gap-4 items-center">
 
-            <div className="flex sm:hidden gap-1 items-center">
-
-                <NavLink to="search">
-                    <SearchIcon fontSize="large" />
-                </NavLink>
-
-                {isAuth ? (
-                    <NavLink to="profile">
-                        <AccountCircleIcon fontSize="large" />
-                    </NavLink>
-                ) : (
-                    <NavLink to="auth" className="bg-primary py-2 px-2 md:px-3 rounded-lg">Sign in</NavLink>
-                )}
-                <BurgerIcon onClick={() => setBurgerMenuOpen(v => !v)} isOpen={burgerMenuOpen} />
-
-            </div>
-            <div className={burgerMenuStyles} onClick={() => setBurgerMenuOpen(false)}>
-                <ul className=" text-lg flex flex-col *:hover:backdrop-hue-rotate-15 *:hover:scale-y-105 w-full *:flex *:justify-center *:py-3">
-                    <li><NavLink to={"/rooms"}>Popular</NavLink></li>
-                    <li><NavLink to={"/rooms"}>Rooms</NavLink></li>
-                    <li><NavLink to={watchlistPath}>Watchlist</NavLink></li>
-                    <li >{isAuth ? (
-                        <NavLink to="profile"> Profile </NavLink>
+                    <SearchBar isLoading={isNavigating} onSearch={handleMainSearch} className="w-56" />
+                    <NavLink to={"/rooms"} className={({ isActive, isPending }) => (
+                        isActive ? "text-primary border-b font-bold " :
+                            isPending ? "text-primary-hover font-bold " :
+                                ""
+                    )} >Rooms</NavLink>
+                    <NavLink to={watchlistPath}>Watchlist</NavLink>
+                    {isAuth ? (
+                        <NavLink to="/profile">
+                            <AccountCircleIcon fontSize="large" />
+                        </NavLink>
                     ) : (
-                        <NavLink to="auth" className="bg-primary py-2 px-3 rounded-lg">Sign in</NavLink>
-                    )}</li>
-                </ul>
+                        <NavLink to="auth/signup" className="bg-primary py-2 px-3 rounded-lg">Sign up</NavLink>
+                    )}
+                </div>
+
+                <div className="flex sm:hidden gap-1 items-center">
+
+                    <NavLink to="search">
+                        <SearchIcon fontSize="large" />
+                    </NavLink>
+
+                    {isAuth ? (
+                        <NavLink to="profile">
+                            <AccountCircleIcon fontSize="large" />
+                        </NavLink>
+                    ) : (
+                        <NavLink to="auth" className="bg-primary py-2 px-2 md:px-3 rounded-lg">Sign in</NavLink>
+                    )}
+                    <BurgerIcon onClick={() => setBurgerMenuOpen(v => !v)} isOpen={burgerMenuOpen} />
+
+                </div>
+                <div className={burgerMenuStyles} onClick={() => setBurgerMenuOpen(false)}>
+                    <ul className=" text-lg flex flex-col *:hover:backdrop-hue-rotate-15 *:hover:scale-y-105 w-full *:flex *:justify-center *:py-3">
+                        <li><NavLink to={"/rooms"}>Popular</NavLink></li>
+                        <li><NavLink to={"/rooms"}>Rooms</NavLink></li>
+                        <li><NavLink to={watchlistPath}>Watchlist</NavLink></li>
+                        <li >{isAuth ? (
+                            <NavLink to="profile"> Profile </NavLink>
+                        ) : (
+                            <NavLink to="auth" className="bg-primary py-2 px-3 rounded-lg">Sign in</NavLink>
+                        )}</li>
+                    </ul>
+                </div>
             </div>
         </header>
     );
