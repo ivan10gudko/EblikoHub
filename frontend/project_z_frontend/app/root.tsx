@@ -14,6 +14,11 @@ import { queryClient } from "./shared/lib/queryClient";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { Toaster } from 'react-hot-toast';
 
+export const meta: Route.MetaFunction = () => {
+    return [
+        { title: "Ebliko-Hub" },
+    ];
+};
 export const links: Route.LinksFunction = () => [
     { rel: "preconnect", href: "https://fonts.googleapis.com" },
     {
