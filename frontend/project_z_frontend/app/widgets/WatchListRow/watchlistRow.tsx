@@ -3,13 +3,11 @@ import { useState } from "react";
 import { useNavigate } from "react-router";
 import {
   CompactRate,
-  type Status,
   type TitleRecord,
 } from "~/entities/titleRecord";
 import { useUpdateTitleRecord } from "~/entities/titleRecord/hooks/useTitleRecordUpdateMutation";
-import { StatusSelect } from "~/features/manageTitle";
+import { StatusSelect, TitleActionsMenu } from "~/features/manageTitle";
 import { Button } from "~/shared/ui/Button";
-import { Input } from "~/shared/ui/Input";
 
 interface WatchlistRowProps {
   title: TitleRecord;
@@ -25,11 +23,11 @@ export const WatchlistRow = ({ title, isOwn }: WatchlistRowProps) => {
       navigate(`/anime/${title.apiTitleId}`);
     }
   };
-  const handleDelete = (e: React.MouseEvent) => {
-    e.stopPropagation();
+  const handleDelete = (e?: React.MouseEvent) => {
+    e?.stopPropagation();
     deleteTitle();
   };
-
+  const DEFAULT_IMAGE_PATH = "/defaultTitleRecordImage.jpg";
   return (
     <div className="group flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-4 bg-card p-2 rounded-xl border border-border transition-all w-full">
       <div className="flex items-center flex-1 gap-3 min-w-0">
@@ -46,11 +44,11 @@ export const WatchlistRow = ({ title, isOwn }: WatchlistRowProps) => {
         )}
 
         <div
-          className="relative h-10 w-16 flex-shrink-0 transition-transform duration-500 hover:scale-[2.5] hover:z-10"
+          className="relative h-10 w-16 flex-shrink-0 transition-transform duration-500 hover:scale-[3.0] hover:z-10"
           onPointerDown={(e) => e.stopPropagation()}
         >
           <img
-            src={title.imageUrl || "/defautlTitleRecordImage.jpg"}
+            src={title.imageUrl || DEFAULT_IMAGE_PATH}
             onClick={handleImageClick}
             className="absolute inset-0 h-full w-full object-cover rounded-md cursor-pointer"
             alt={title.titleName}
@@ -118,6 +116,14 @@ export const WatchlistRow = ({ title, isOwn }: WatchlistRowProps) => {
             }
           />
         </div>
+        {isOwn && (
+          <div className="flex-shrink-0 ml-1 border-l border-border pl-2">
+            <TitleActionsMenu
+              title={title}
+              onDelete={handleDelete}
+            />
+          </div>
+        )}
       </div>
     </div>
   );

@@ -16,7 +16,7 @@ export const FilterResponsiveWrapper = ({ children, title = "Filters" }: FilterR
   return (
     <>
       <div className="lg:hidden flex items-center justify-between gap-4 mb-6 px-2">
-        <h1 className="text-2xl font-black text-gray-800 tracking-tight">
+        <h1 className="text-2xl font-black text-foreground tracking-tight">
           Your Watchlist
         </h1>
         <Button 

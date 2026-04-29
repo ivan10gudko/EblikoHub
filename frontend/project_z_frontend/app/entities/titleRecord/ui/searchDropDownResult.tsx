@@ -7,7 +7,7 @@ interface AnimeSearchResultsProps {
     onSelect: (anime: AnimeCardType) => void;
     onClose: () => void;
 }
-
+const DEFAULT_IMAGE_PATH = "/defaultTitleRecordImage.jpg";
 export const AnimeSearchResults = ({ results, onSelect, onClose }: AnimeSearchResultsProps) => {
 
     if (results.length === 0) return null;
@@ -33,7 +33,7 @@ export const AnimeSearchResults = ({ results, onSelect, onClose }: AnimeSearchRe
                         onClick={(e) => handleImageClick(e, anime.id)}
                     >
                         <img
-                            src={anime.img || "/defautlTitleRecordImage.jpg"}
+                            src={anime.img || DEFAULT_IMAGE_PATH}
                             className="h-12 w-12 min-w-[36px] object-cover rounded shadow-sm duration-500 hover:scale-[2.0] hover:z-10"
                             alt={anime.title}
                         />
@@ -44,7 +44,7 @@ export const AnimeSearchResults = ({ results, onSelect, onClose }: AnimeSearchRe
                         </div>
                         <Button
                             onClick={(e) => handleImport(e, anime)}
-                            className="p-1 hover:bg-amber-200 rounded-full transition-colors"
+                            className="p-1 hover:bg-primary/70 rounded-full transition-colors"
                             title="Import to my list"
                         >
                             <FileDownloadIcon className="text-primary shrink-0" fontSize="small" />
