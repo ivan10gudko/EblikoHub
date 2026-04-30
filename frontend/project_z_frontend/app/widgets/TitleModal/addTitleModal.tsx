@@ -1,7 +1,6 @@
 import Modal from "~/shared/ui/Modal/Modal";
 import { Button } from "~/shared/ui/Button";
 import { Select } from "~/shared/ui/Select";
-import { Input } from "~/shared/ui/Input";
 import type { AnimeCardType } from "~/entities/title";
 import {
   Status,
@@ -15,6 +14,7 @@ import { useState } from "react";
 import { TitleSearch } from "../TitleSearch/titleSearch";
 import DeleteSweepIcon from "@mui/icons-material/DeleteSweep";
 import { formatRatingInput } from "~/shared/helpers/formatRating";
+import { TitleImageEditor } from "~/features/manageTitle";
 
 interface AddTitleModalProps {
   isOpen: boolean;
@@ -29,7 +29,7 @@ const INITIAL_FORM_DATA: CreateTitleRecord = {
   rating: undefined,
 };
 
-const AddTitleModal = ({ isOpen, onClose }: AddTitleModalProps) => {
+export const AddTitleModal = ({ isOpen, onClose }: AddTitleModalProps) => {
   const [formData, setFormData] =
     useState<CreateTitleRecord>(INITIAL_FORM_DATA);
   const { createNewTitleRecord, isCreating } = useCreateTitleRecord();
@@ -73,12 +73,15 @@ const AddTitleModal = ({ isOpen, onClose }: AddTitleModalProps) => {
       }));
     }
   };
+  const handleImageChange = (url: string | null) => {
+    setFormData((prev) => ({ ...prev, imageUrl: url }));
+  };
   return (
     <Modal
       isOpen={isOpen}
       onClose={onClose}
       title="Add New Title"
-      maxWidth="max-w-3xl"
+      maxWidth="max-w-4xl"
     >
       <div className="space-y-6 p-2">
         <div className="space-y-2">
@@ -88,14 +91,11 @@ const AddTitleModal = ({ isOpen, onClose }: AddTitleModalProps) => {
           <TitleSearch onSelect={handleImport} />
         </div>
         <div className="flex flex-col md:flex-row gap-8">
-          <div className="w-full md:w-auto flex justify-center">
-            <div className="h-[260px] w-[180px] bg-background rounded-2xl border-2 border-border flex items-center justify-center overflow-hidden shadow-md transition-transform hover:scale-[1.02]">
-              <img
-                src={formData.imageUrl || "/defautlTitleRecordImage.jpg"}
-                className={`h-full w-full object-cover ${!formData.imageUrl && "opacity-30"}`}
-                alt="Preview"
-              />
-            </div>
+          <div className="border-t border-border/50 pt-6">
+            <TitleImageEditor
+              imageUrl={formData.imageUrl ?? null}
+              onImageChange={handleImageChange}
+            />
           </div>
           <div className="flex-grow space-y-6">
             <div className="space-y-2">
@@ -149,16 +149,6 @@ const AddTitleModal = ({ isOpen, onClose }: AddTitleModalProps) => {
                 </div>
               </div>
             </div>
-            <div className="flex justify-end">
-              <Button
-                onClick={handleClear}
-                variant="text-only"
-                className="flex items-center gap-2 text-xs font-bold text-foreground/50 hover:text-danger transition-colors py-1 px-2"
-              >
-                <DeleteSweepIcon sx={{ fontSize: 18 }} />
-                Clear Form
-              </Button>
-            </div>
           </div>
         </div>
         <div className="flex gap-4 pt-6 border-t border-border">
@@ -175,10 +165,19 @@ const AddTitleModal = ({ isOpen, onClose }: AddTitleModalProps) => {
           >
             {isCreating ? "Saving..." : "Save Title"}
           </Button>
+          <div className="flex justify-center">
+            <Button
+              onClick={handleClear}
+              variant="text-only"
+              className="flex items-center gap-2 text-[10px] tracking-widest text-foreground hover:text-danger transition-colors uppercase py-2 px-4"
+            >
+              <DeleteSweepIcon sx={{ fontSize: 16 }} />
+              Clear Form Data
+            </Button>
+          </div>
         </div>
       </div>
     </Modal>
   );
 };
 
-export default AddTitleModal;

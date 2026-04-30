@@ -8,7 +8,7 @@ import { useTitleFilterStore } from "~/features/titleFilter/store/titleFilter.st
 import { useMemo, useState } from "react";
 import { Button } from "~/shared/ui/Button";
 import { WatchlistSkeleton } from "./WatchlistTableSkeleton";
-import AddTitleModal from "../AddTitleModal/addTitleModal";
+import { AddTitleModal } from "../TitleModal";
 interface WatchlistTableProps {
   titles: TitleRecord[];
   isLoading?: boolean;
