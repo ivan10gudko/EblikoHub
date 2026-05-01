@@ -12,6 +12,7 @@ import type { ManageTitleRecordProps } from "../model/manageTitleRecord";
 import { useTitleRecordMutation } from '~/entities/titleRecord/hooks/useTitleRecordMutation';
 import { Button } from "~/shared/ui/Button";
 import ClearIcon from "@mui/icons-material/Clear";
+import { formatRatingInput } from "~/shared/helpers/formatRating";
 
 const PageRate = ({ initialData, titleRecord }: ManageTitleRecordProps) => {
     const [value, setValue] = useState<string>("");
@@ -31,12 +32,12 @@ const PageRate = ({ initialData, titleRecord }: ManageTitleRecordProps) => {
         e.stopPropagation();
 
         const val = e.target.value;
-        // допускаємо тільки числа та крапку
-        if (/^[0-9]*\.?[0-9]*$/.test(val)) {
-            if (Number(val) <= 10) {
-                setValue(val);
-                setError("");
-            }
+
+        const formatted = formatRatingInput(val);
+
+        if (formatted !== null) {
+            setValue(formatted);
+            setError("");
         }
     }
 
