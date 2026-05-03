@@ -94,7 +94,6 @@ export const titleRecordService: TitleRecordService = {
         
     
         if (targetId) {
-            console.log('patch')
             return this.patch(targetId, data);
         }
 

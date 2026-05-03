@@ -14,6 +14,7 @@ const StatusSelect = ({
     variant = "page",
     className = "",
 }: StatusSelectProps) => {
+    
     const { updateStatus, isAnyActionLoading } = useTitleRecordMutation(
         initialData.apiTitleId,
         initialData,
@@ -36,7 +37,7 @@ const StatusSelect = ({
         <Select
             placeholder="Add to list..."
             options={statusOptions}
-            value={(titleRecord?.status?.trim().toUpperCase() as Status) || ""}
+            value={(titleRecord?.status as Status) || ""}
             onChange={handleStatusChange}
             disabled={isAnyActionLoading}
             className={styles[variant]}
