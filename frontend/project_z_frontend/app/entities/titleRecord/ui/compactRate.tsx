@@ -42,7 +42,7 @@ export const CompactRate = ({
     }
   };
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault(); // Зупиняємо перезавантаження
+    e.preventDefault();
     handleSave();
   };
 

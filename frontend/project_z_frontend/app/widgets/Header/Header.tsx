@@ -61,7 +61,7 @@ const Header = () => {
                 </div>
 
                 <div
-                    className={`fixed inset-0 top-[73px] bg-background/10 backdrop-blur-xl z-[999] transition-all duration-300 flex justify-center p-6 ${burgerMenuOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none translate-y-4"
+                    className={`fixed w-full h-screen inset-0 top-[73px] bg-card/60 backdrop-blur-xl z-[999] transition-all duration-300 flex justify-center p-6 ${burgerMenuOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none translate-y-4"
                         }`}
                     onClick={() => setBurgerMenuOpen(false)}
                 >
@@ -84,7 +84,7 @@ const Header = () => {
                             <span className="font-semibold text-lg text-foreground">Watchlist</span>
                         </NavLink>
 
-                        <div className="mt-auto pb-10">
+                        <div className="pb-10">
                             {isAuth ? (
                                 <NavLink to="/profile" onClick={() => setBurgerMenuOpen(false)} className={burgerLinkStyle}>
                                     <PersonIcon className="text-secondary" />
