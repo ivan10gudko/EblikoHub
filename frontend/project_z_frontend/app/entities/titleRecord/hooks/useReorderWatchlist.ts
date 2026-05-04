@@ -14,20 +14,15 @@ export const useReorderWatchlist = (titles: TitleRecord[], queryKey: unknown[], 
   const optimisticOrderRef = useRef<number[]>(titles.map(t => t.titleId));
 
   useEffect(() => {
-    const incomingIds = titles.map(t => t.titleId).join(',');
-    const currentIds = optimisticOrderRef.current.join(',');
+    if (isMutating.current) return;
 
-    if (incomingIds !== currentIds) {
-      isMutating.current = false;
-      // дедуплікація на випадок якщо щось пішло не так
-      const unique = titles.filter(
-        (t, i, arr) => arr.findIndex(x => x.titleId === t.titleId) === i
-      );
-      setOptimisticTitles(unique);
-      optimisticOrderRef.current = unique.map(t => t.titleId);
-    }
+    const unique = titles.filter(
+      (t, i, arr) => arr.findIndex(x => x.titleId === t.titleId) === i
+    );
+    setOptimisticTitles(unique);
+    optimisticOrderRef.current = unique.map(t => t.titleId);
   }, [titles]);
-
+  
   const reorder = async (sourceIndex: number, destinationIndex: number) => {
     const reordered = Array.from(optimisticTitles);
     const [moved] = reordered.splice(sourceIndex, 1);

@@ -42,17 +42,38 @@ export function Layout({ children }: { children: React.ReactNode }) {
                     name="viewport"
                     content="width=device-width, initial-scale=1"
                 />
+
+                <style dangerouslySetInnerHTML={{
+                    __html: `
+                    html { background-color: #0c0b0b; } 
+                `}} />
+
+                <script dangerouslySetInnerHTML={{
+                    __html: `
+                    (function() {
+                        try {
+                            var theme = localStorage.getItem('theme');
+                            var supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                            if (theme === 'dark' || (theme !== 'light' && supportDarkMode)) {
+                                document.documentElement.classList.add('dark');
+                            } else {
+                                document.documentElement.classList.remove('dark');
+                                document.documentElement.style.backgroundColor = '#ffffff';
+                            }
+                        } catch (e) {}
+                    })();
+                `}} />
+
                 <Meta />
                 <Links />
             </head>
-            <body className=" bg-background text-foreground transition-colors">
+            <body className="bg-background text-foreground transition-colors">
                 <Toaster position="top-center" reverseOrder={false} />
                 <QueryClientProvider client={queryClient}>
                     {children}
                     <ReactQueryDevtools initialIsOpen={false} />
                 </QueryClientProvider>
                 <ScrollRestoration />
-
                 <Scripts />
             </body>
         </html>
