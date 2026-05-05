@@ -2,7 +2,7 @@
 import Modal from "~/shared/ui/Modal/Modal";
 import { Button } from "~/shared/ui/Button";
 import { Input } from "~/shared/ui/Input";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { TitleRecord, Status } from "~/entities/titleRecord";
 import { CompactRate } from "~/entities/titleRecord";
 import { useUpdateTitleRecord } from "~/entities/titleRecord/hooks/useTitleRecordUpdateMutation";
@@ -23,6 +23,11 @@ export const EditTitleModal = ({ title, isOpen, onClose }: EditTitleModalProps) 
     const [rating, setRating] = useState<number | undefined>(title.rating?.overall);
 
     const { updateTitle, isUpdating } = useUpdateTitleRecord(title.titleId);
+    useEffect(() => {
+        if (title.status) {
+            setStatus(title.status);
+        }
+    }, [title.status]);
 
     const handleSave = () => {
         if (!titleName.trim()) {
@@ -31,11 +36,11 @@ export const EditTitleModal = ({ title, isOpen, onClose }: EditTitleModalProps) 
         }
 
         updateTitle(
-            { 
-                titleName, 
-                imageUrl, 
-                status, 
-                rating: rating !== undefined ? { overall: rating } : undefined 
+            {
+                titleName,
+                imageUrl,
+                status,
+                rating: rating !== undefined ? { overall: rating } : undefined
             },
             {
                 onSuccess: () => {
@@ -70,7 +75,7 @@ export const EditTitleModal = ({ title, isOpen, onClose }: EditTitleModalProps) 
                             <StatusSelect
                                 variant="page"
                                 initialData={title}
-                                titleRecord={{ ...title, status }} 
+                                titleRecord={{ ...title, status }}
                                 className="h-12 w-full border-2 border-border rounded-xl bg-background"
                             />
                         </div>

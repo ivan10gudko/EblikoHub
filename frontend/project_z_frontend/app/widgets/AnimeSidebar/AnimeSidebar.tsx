@@ -9,6 +9,7 @@ import { useTitleRecordMutation } from '~/entities/titleRecord/hooks/useTitleRec
 import {
   PageRate,
   StatusSelect,
+  TitleActionsMenu,
   WatchedButton,
   WatchlistButton,
 } from "~/features/manageTitle";
@@ -35,7 +36,11 @@ const AnimeSidebar: React.FC<Props> = ({ data }) => {
     initialData,
     titleRecord,
   );
-
+  const handleDelete = () => {
+    if (titleRecord) {
+      deleteTitle(titleRecord.titleId);
+    }
+  };
   return (
     <Sidebar className="h-fit">
       <div className="w-full relative aspect-[3/4] overflow-hidden rounded-t-xl">
@@ -47,7 +52,20 @@ const AnimeSidebar: React.FC<Props> = ({ data }) => {
         />
       </div>
       <div className="w-full py-8 flex flex-col gap-4 border rounded-b-xl px-4 border-border shadow">
-        <StatusSelect initialData={initialData} titleRecord={titleRecord} />
+        <div className="flex items-center gap-2">
+          <div className="flex-1">
+            <StatusSelect initialData={initialData} titleRecord={titleRecord} />
+          </div>
+
+          {titleRecord && (
+            <div className="flex-shrink-0 border-l border-border pl-1">
+              <TitleActionsMenu
+                title={titleRecord}
+                onDelete={handleDelete}
+              />
+            </div>
+          )}
+        </div>
         <div className="w-full py-4 border-y-border border-y">
           <PageRate initialData={initialData} titleRecord={titleRecord} />
         </div>

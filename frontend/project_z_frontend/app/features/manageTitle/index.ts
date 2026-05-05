@@ -11,3 +11,4 @@ export {default as ManagedAnimeCard} from './ui/ManagedAnimeCard';
 export {TitleActionsMenu} from './ui/TitleActionsMenu';
 export {TitleImageEditor} from "./ui/TitleImageEditor";
 export {EditTitleModal} from "./ui/EditTitleModal";
+export {EditRatingModal} from "./ui/EditRatingModal";
