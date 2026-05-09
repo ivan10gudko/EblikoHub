@@ -26,7 +26,7 @@ const Header = () => {
     };
 
     const watchlistPath = isAuth && userId ? `/watchlist/${userId}` : "/auth/login";
-    const burgerLinkStyle = "flex items-center gap-4 w-full p-4 rounded-2xl bg-background-muted border border-border/50 hover:bg-primary-hover hover:border-primary/50 hover:scale-[1.02] transition-all duration-200 active:scale-95 group";
+    const burgerLinkStyle = "flex items-center gap-4 w-full p-4 rounded-2xl bg-background-muted border border-border/50 hover:border-primary/50 hover:scale-[1.02] transition-all duration-200 active:scale-95 group";
 
     return (
         <header className="py-4 px-6 md:px-14 lg:px-24 w-full border-b flex justify-between items-center bg-background/80 backdrop-blur-md sticky top-0 z-[1000]">
@@ -70,24 +70,24 @@ const Header = () => {
                         onClick={(e) => e.stopPropagation()} 
                     >
                         <NavLink to="/rooms" onClick={() => setBurgerMenuOpen(false)} className={burgerLinkStyle}>
-                            <WhatshotIcon className="text-secondary group-hover:animate-pulse" />
+                            <WhatshotIcon className="text-primary group-hover:animate-pulse" />
                             <span className="font-semibold text-lg text-foreground">Popular</span>
                         </NavLink>
 
                         <NavLink to="/rooms" onClick={() => setBurgerMenuOpen(false)} className={burgerLinkStyle}>
-                            <MeetingRoomIcon className="text-secondary" />
+                            <MeetingRoomIcon className="text-primary" />
                             <span className="font-semibold text-lg text-foreground">Rooms</span>
                         </NavLink>
 
                         <NavLink to={watchlistPath} onClick={() => setBurgerMenuOpen(false)} className={burgerLinkStyle}>
-                            <FormatListBulletedIcon className="text-secondary" />
+                            <FormatListBulletedIcon className="text-primary" />
                             <span className="font-semibold text-lg text-foreground">Watchlist</span>
                         </NavLink>
 
                         <div className="pb-10">
                             {isAuth ? (
                                 <NavLink to="/profile" onClick={() => setBurgerMenuOpen(false)} className={burgerLinkStyle}>
-                                    <PersonIcon className="text-secondary" />
+                                    <PersonIcon className="text-primary" />
                                     <span className="font-semibold text-lg text-foreground">Profile Settings</span>
                                 </NavLink>
                             ) : (
