@@ -128,6 +128,7 @@ public class TitleServiceImpl implements TitleService {
                     patchHelper.updateIfPresent(source.getStatus(), target::setStatus);
                     patchHelper.updateIfPresent(source.getRating(), target::setRating);
                     patchHelper.updateIfPresent(source.getCustomOrder(), target::setCustomOrder);
+                    patchHelper.updateIfPresent(source.getImageUrl(),target::setImageUrl);
                     return titleRepository.save(target);
                 })
                 .orElseThrow(() -> new ResourceNotFoundException("Title not found"));
