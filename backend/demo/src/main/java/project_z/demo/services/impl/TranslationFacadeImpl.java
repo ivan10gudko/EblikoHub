@@ -16,10 +16,10 @@ public class TranslationFacadeImpl implements TranslationFacade {
     @Override
     public String translateToEnglish(String rawTitle) {
         try {
-            return translationService.translateToEnglishWithDeepSeek(rawTitle);
-        } catch (Exception e) {
-            System.out.println("DeepSeek failed, falling back to Gemini...");
             return translationService.translateToEnglistWithGoogleAI(rawTitle);
+        } catch (Exception e) {
+            System.out.println("Genimi failed, falling back to DeepSeek...");
+            return translationService.translateToEnglishWithDeepSeek(rawTitle);
         }
     }
 
