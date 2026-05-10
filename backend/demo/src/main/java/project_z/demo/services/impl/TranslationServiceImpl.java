@@ -14,6 +14,7 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import lombok.RequiredArgsConstructor;
+import project_z.demo.common.Exceptions.TranslationAiErrorException;
 import project_z.demo.config.MyConfig;
 import project_z.demo.services.TranslationService;
 
@@ -136,15 +137,15 @@ public class TranslationServiceImpl implements TranslationService {
                     return responseText.replace("RESULT:", "").trim();
                 }
             }
+            throw new TranslationAiErrorException("Empty or invalid response structure from Google AI");
         } catch (HttpClientErrorException.TooManyRequests e) {
             System.err.println("Google API Rate limit exceeded: " + e.getResponseBodyAsString());
             throw e;
         }
         catch (Exception e) {
             System.err.println("Google API Error: " + e.getMessage());
+            throw new TranslationAiErrorException("Genimi is unavailable");
         }
-
-        return text;
     }
 }
 /*

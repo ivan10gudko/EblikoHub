@@ -5,7 +5,8 @@ import { DeleteDropdownItem, DropdownItem } from "~/shared/ui/DropDown/DropDown"
 import { EditTitleModal } from "./EditTitleModal";
 import { useState } from "react";
 import type { TitleRecord } from "~/entities/titleRecord";
-
+import { EditRatingModal } from "./EditRatingModal";
+import StarRoundedIcon from "@mui/icons-material/StarRounded";
 interface TitleActionsMenuProps {
   title: TitleRecord;
   onDelete: () => void;
@@ -13,8 +14,9 @@ interface TitleActionsMenuProps {
 
 export const TitleActionsMenu = ({ title, onDelete }: TitleActionsMenuProps) => {
   const [isEditOpen, setIsEditOpen] = useState(false);
-
+  const [isRatingsOpen, setIsRatingsOpen] = useState(false);
   const handleCloseEdit = () => setIsEditOpen(false);
+  const handleCloseRatings = () => setIsRatingsOpen(false);
 
   return (
     <>
@@ -30,6 +32,10 @@ export const TitleActionsMenu = ({ title, onDelete }: TitleActionsMenuProps) => 
           <EditIcon sx={{ fontSize: 16 }} />
           Edit Record
         </DropdownItem>
+        <DropdownItem onClick={() => setIsRatingsOpen(true)}>
+          <StarRoundedIcon sx={{ fontSize: 16 }}/>
+          Rating
+        </DropdownItem>
 
         <div className="h-px bg-border my-1" />
 
@@ -42,6 +48,11 @@ export const TitleActionsMenu = ({ title, onDelete }: TitleActionsMenuProps) => 
         title={title}
         isOpen={isEditOpen}
         onClose={handleCloseEdit}
+      />
+      <EditRatingModal
+        title = {title}
+        isOpen = {isRatingsOpen}
+        onClose={handleCloseRatings}
       />
     </>
   );

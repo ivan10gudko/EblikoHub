@@ -3,7 +3,7 @@ import React, { useId, useState, type ComponentProps } from "react";
 interface InputProps
   extends Omit<ComponentProps<"input">, "onChange" | "onBlur"> {
   children?: string;
-  name: string;
+  name?: string;
   value: string | number;
   type?: React.HTMLInputTypeAttribute;
   pattern?: string;

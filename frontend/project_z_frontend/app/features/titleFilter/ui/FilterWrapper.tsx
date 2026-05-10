@@ -40,7 +40,7 @@ export const FilterResponsiveWrapper = ({ children, title = "Filters" }: FilterR
 
         <div className={`
           relative w-80 lg:w-64 h-full bg-background lg:bg-transparent shadow-2xl lg:shadow-none transition-transform duration-300
-          lg:sticky lg:top-6 lg:h-fit
+          lg:sticky lg:top-21 lg:h-fit
           ${isOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}
         `}>
           <div className="lg:hidden flex justify-between items-center p-5 border-b border-border bg-background-muted/50">
