@@ -39,7 +39,7 @@ export const CategoryRow = ({
                     value={localName}
                     onChange={(e) => setLocalName(e.target.value)}
                     onBlur={() => onRename(categoryKey, localName)}
-                    className="h-9 sm:h-10 w-full text-xs sm:text-sm border-none bg-transparent p-0 focus:ring-0 font-bold truncate placeholder:opacity-50 outline-none"
+                    className="h-9 sm:h-10 w-full text-xs sm:text-sm bg-transparent p-0 border border-transparent focus:border-foreground/80 transition-colors font-bold truncate placeholder:opacity-50 outline-none"
                 />
             </div>
 

@@ -70,7 +70,7 @@ export const WatchlistRow = ({ title, isOwn }: WatchlistRowProps) => {
                 tempTitleName !== title.titleName &&
                 updateTitle({ titleName: tempTitleName })
               }
-              className="w-full font-bold text-foreground uppercase text-xs sm:text-sm bg-transparent border-none p-0 h-auto leading-tight focus:ring-0"
+              className="w-auto font-bold text-foreground uppercase text-xs sm:text-sm bg-transparent border-none p-0 h-auto leading-tight focus:ring-0"
             />
           ) : (
             <span className="block truncate font-bold text-foreground uppercase text-xs sm:text-sm leading-tight">
