@@ -1,8 +1,8 @@
 import WatchLaterOutlinedIcon from '@mui/icons-material/WatchLaterOutlined';
 import WatchLaterIcon from '@mui/icons-material/WatchLater';
 import { FaSpinner } from "react-icons/fa";
-import type { ManageTitleRecordProps } from "../model/manageTitleRecord";
-import { Status ,useTitleRecordMutation } from "~/entities/titleRecord";
+import {useTitleRecordMutation, type ManageTitleRecordProps } from "~/entities/titleRecord";
+import { Status } from '~/shared/types';
 
 const AddToWatchlistCardAction = ({ initialData, titleRecord }: ManageTitleRecordProps) => {
     const isPlanned = titleRecord?.status === Status.PLANNED;

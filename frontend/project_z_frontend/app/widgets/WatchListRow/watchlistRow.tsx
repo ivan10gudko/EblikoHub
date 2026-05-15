@@ -2,12 +2,13 @@ import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import {
-  CompactRate,
+  StatusSelect,
   type TitleRecord,
 } from "~/entities/titleRecord";
 import { useUpdateTitleRecord } from "~/entities/titleRecord/hooks/useTitleRecordUpdateMutation";
-import { StatusSelect, TitleActionsMenu } from "~/features/manageTitle";
+import { TitleActionsMenu } from "~/features/manageTitle";
 import { Button } from "~/shared/ui/Button";
+import { CompactRate } from "~/shared/ui/CompactRate";
 
 interface WatchlistRowProps {
   title: TitleRecord;

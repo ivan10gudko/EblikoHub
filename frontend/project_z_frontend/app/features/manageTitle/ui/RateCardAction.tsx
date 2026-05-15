@@ -8,8 +8,8 @@ import {
   type MouseEvent,
 } from "react";
 import DoneOutlinedIcon from "@mui/icons-material/DoneOutlined";
-import type { ManageTitleRecordProps } from "../model/manageTitleRecord";
 import { useTitleRecordMutation } from '~/entities/titleRecord/hooks/useTitleRecordMutation';
+import type { ManageTitleRecordProps } from "~/entities/titleRecord";
 
 const RateCardAction = ({
   initialData,

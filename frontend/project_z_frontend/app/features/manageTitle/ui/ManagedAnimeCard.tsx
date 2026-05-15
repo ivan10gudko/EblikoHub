@@ -1,7 +1,7 @@
 import { AnimeCard, type AnimeCardType } from "~/entities/title";
-import { useTitleByApiId, Status } from "~/entities/titleRecord";
+import { useTitleByApiId, StatusSelect } from "~/entities/titleRecord";
 import RateCardAction from "./RateCardAction";
-import StatusSelect from "./StatusSelect";
+import { Status } from "~/shared/types/Status";
 
 const ManagedAnimeCard = ({ anime }: { anime: AnimeCardType }) => {
     const { data: titleRecord } = useTitleByApiId(anime.id);

@@ -1,8 +1,9 @@
 import { useMutation, useQueryClient, type InfiniteData } from "@tanstack/react-query";
 import toast from "react-hot-toast";
-import { Status, titleRecordService, type CreateTitleRecord, type TitleRating, type TitleRecord } from "~/entities/titleRecord";
+import { titleRecordService, type CreateTitleRecord, type TitleRecord } from "~/entities/titleRecord";
 import { getSessionUserId } from "~/shared/lib/supabase";
-import type { PageResponse } from "~/shared/types";
+import type { PageResponse, Rating } from "~/shared/types";
+import { Status } from "~/shared/types/Status";
 
 
 export const useTitleRecordMutation = (apiTitleId: number | undefined, initialData: CreateTitleRecord, existingTitleRecord?: TitleRecord | null) => {
@@ -45,7 +46,7 @@ export const useTitleRecordMutation = (apiTitleId: number | undefined, initialDa
 
     const getCache = () => queryClient.getQueryData<TitleRecord>(queryKey) || existingTitleRecord;
     const rateMutation = useMutation({
-        mutationFn: (score: number | TitleRating) =>
+        mutationFn: (score: number | Rating) =>
             titleRecordService.rate({ apiTitleId, score, initialData, existingTitle: getCache() }),
         ...mutationConfig
     });
@@ -89,7 +90,7 @@ export const useTitleRecordMutation = (apiTitleId: number | undefined, initialDa
 
     return {
         updateStatus: (status: Status) => checkAuthAndRun(() => statusMutation.mutate(status)),
-        rate: (score: number | TitleRating) => checkAuthAndRun(() => rateMutation.mutate(score)),
+        rate: (score: number | Rating) => checkAuthAndRun(() => rateMutation.mutate(score)),
         clearRate: () => checkAuthAndRun(() => clearRateMutation.mutate()),
         deleteTitle: (titleId: number) => checkAuthAndRun(() => deleteMutation.mutate(titleId)),
         moveToPlanned: () => checkAuthAndRun(() => statusMutation.mutate(Status.PLANNED)),

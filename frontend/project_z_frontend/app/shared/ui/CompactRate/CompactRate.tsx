@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import DoneOutlinedIcon from "@mui/icons-material/DoneOutlined";
 import ClearIcon from "@mui/icons-material/Clear";
 import { Button } from "~/shared/ui/Button";
-import { Input } from "~/shared/ui/Input";
 import { formatRatingInput } from "~/shared/helpers/formatRating";
 
 interface CompactRateProps {

@@ -40,7 +40,6 @@ public class SupabaseJwkProviderService {
           try {
         if (token.startsWith("Bearer ")) token = token.substring(7);
 
-        // JWT має формат header.payload.signature
         String[] parts = token.split("\\.");
         if (parts.length != 3) throw new RuntimeException("Invalid JWT format");
 
