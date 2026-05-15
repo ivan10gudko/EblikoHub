@@ -31,7 +31,7 @@ export const SeasonRow = ({ season, titleId, onDelete, onUpdate }: SeasonRowProp
                     value={localName}
                     onChange={(e) => setLocalName(e.target.value)}
                     onBlur={handleNameBlur}
-                    className="w-full bg-transparent border-none p-0 font-bold uppercase text-[13px] sm:text-[14px] tracking-wide focus:ring-0 focus:text-primary transition-colors truncate"
+                    className="w-auto bg-transparent border-none p-0 font-bold uppercase text-[13px] sm:text-[14px] tracking-wide focus:ring-0 focus:text-primary transition-colors truncate"
                     placeholder="Season name..."
                 />
             </div>
