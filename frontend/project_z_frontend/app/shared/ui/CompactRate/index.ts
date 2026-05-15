@@ -1,1 +1,1 @@
-export {CompactRate} from "./compactRate"
+export {CompactRate} from "./CompactRate";

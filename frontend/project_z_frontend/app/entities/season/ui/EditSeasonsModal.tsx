@@ -70,49 +70,45 @@ export const EditSeasonsModal = ({ titleId, isOpen, onClose }: SeasonsModalProps
             onClose={onClose}
             title="Manage Seasons"
         >
-            <div className="flex flex-col max-h-[75vh] sm:max-h-[70vh]">
-                <div
-                    className="flex-1 overflow-y-auto pr-1 sm:pr-3 space-y-6 p-1 sm:p-2 custom-scrollbar"
-                    style={{
-                        scrollbarWidth: 'thin',
-                        scrollbarColor: 'var(--background-muted) transparent',
-                    }}
-                >
+            <div className="flex flex-col max-h-[80vh] px-1 sm:px-0">
+
+                <div className="flex-1 overflow-y-auto pr-1 sm:pr-3 space-y-5 p-1 custom-scrollbar">
+
                     <div className="sticky top-0 z-20 backdrop-blur-md pb-4 bg-background/5">
-                        <div className="flex gap-2 p-2 bg-background-muted/50 rounded-2xl border-2 border-primary/30 shadow-sm transition-all hover:border-primary/50">
+                        <div className="flex gap-2 p-1.5 sm:p-2 bg-background-muted/50 rounded-2xl border-2 border-primary/30 shadow-sm focus-within:border-primary/60 transition-all">
                             <input
-                                placeholder="Enter season name"
+                                placeholder="Add new season..."
                                 value={newName}
                                 onChange={(e) => setNewName(e.target.value)}
                                 onKeyDown={(e) => e.key === "Enter" && handleAddSeason()}
-                                className="flex-1 bg-transparent border-none px-3 font-bold text-sm placeholder:text-muted-foreground/50 focus:ring-0"
+                                className="flex-1 bg-transparent border-none px-2 sm:px-3 font-bold text-sm placeholder:text-muted-foreground/40 focus:ring-0 min-w-0"
                             />
                             <Button
                                 onClick={handleAddSeason}
-                                className="bg-primary text-background hover:bg-primary-hover px-4 rounded-xl shadow-lg active:scale-95 transition-all"
+                                className="bg-primary text-background hover:bg-primary-hover h-9 sm:h-10 px-3 sm:px-5 rounded-xl shadow-lg active:scale-95 transition-all shrink-0"
                             >
-                                <AddIcon />
-                                <span className="hidden sm:inline ml-1 font-black uppercase text-[11px]">Add</span>
+                                <AddIcon fontSize="small" />
+                                <span className="hidden xs:inline ml-1 font-black uppercase text-[11px]">Add</span>
                             </Button>
                         </div>
                     </div>
 
                     <div className="space-y-3">
-                        <div className="flex justify-between items-center px-2">
-                            <h3 className="text-[10px] sm:text-[12px] font-black uppercase text-muted-foreground tracking-[0.2em] italic">
+                        <div className="flex justify-between items-center px-1">
+                            <h3 className="text-[10px] font-black uppercase text-muted-foreground tracking-[0.2em] italic opacity-70">
                                 Season List
                             </h3>
                         </div>
 
-                        <div className="flex flex-col gap-3">
+                        <div className="flex flex-col gap-3 pb-4">
                             {localSeasons.length === 0 ? (
-                                <div className="text-center p-8 border-2 border-dashed border-border/40 rounded-2xl text-muted-foreground text-xs font-medium">
-                                    No seasons created for this title yet.
+                                <div className="text-center py-10 border-2 border-dashed border-border/20 rounded-3xl text-muted-foreground text-[11px] font-bold uppercase tracking-widest">
+                                    Empty List
                                 </div>
                             ) : (
                                 localSeasons.map((season, idx) => (
                                     <SeasonRow
-                                        key={season.seasonId ?? `new-${idx}-${season.name}`}
+                                        key={season.seasonId ?? `new-${idx}`}
                                         season={season}
                                         titleId={titleId}
                                         onDelete={() => handleRemove(season.seasonId)}
@@ -124,10 +120,10 @@ export const EditSeasonsModal = ({ titleId, isOpen, onClose }: SeasonsModalProps
                     </div>
                 </div>
 
-                <div className="flex flex-col-reverse sm:flex-row gap-2 sm:gap-3 pt-4 sm:pt-6 mt-4 border-t border-border">
+                <div className="flex flex-col sm:flex-row gap-3 pt-4 border-t border-border/50">
                     <Button
                         variant="outline"
-                        className="text-foreground bg-card border-none w-full sm:flex-1 h-12 rounded-xl font-bold transition-colors hover:bg-border/40"
+                        className="order-2 sm:order-1 text-foreground bg-card/50 border-none w-full sm:flex-1 h-12 rounded-2xl font-bold hover:bg-border/20"
                         onClick={onClose}
                         disabled={isPending}
                     >
@@ -135,7 +131,7 @@ export const EditSeasonsModal = ({ titleId, isOpen, onClose }: SeasonsModalProps
                     </Button>
                     <Button
                         disabled={isPending}
-                        className="w-full sm:flex-[2] h-12 rounded-xl bg-primary text-background font-black tracking-wide shadow-[0_4px_0_0_#d97706] active:translate-y-[1px] active:shadow-none transition-all disabled:opacity-50"
+                        className="order-1 sm:order-2 w-full sm:flex-[2] h-12 rounded-2xl bg-primary text-background font-black tracking-widest shadow-[0_4px_0_0_#d97706] active:translate-y-[1px] active:shadow-none transition-all"
                         onClick={() => syncAll()}
                     >
                         {isPending ? "Syncing..." : "Save Changes"}
