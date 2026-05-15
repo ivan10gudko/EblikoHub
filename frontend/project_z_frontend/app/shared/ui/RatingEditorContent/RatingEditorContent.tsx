@@ -1,10 +1,9 @@
 import StarRoundedIcon from "@mui/icons-material/StarRounded";
 import AddIcon from "@mui/icons-material/Add";
-import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import { Button } from "~/shared/ui/Button";
-import { Input } from "~/shared/ui/Input";
 import { CompactRate } from "../CompactRate";
 import type { Rating } from "~/shared/types";
+import { CategoryRow } from "./RatingRow";
 
 interface RatingEditorContentProps {
     ratings: Rating;
@@ -109,38 +108,20 @@ export const RatingEditorContent = ({
                         )}
 
                         {customCategories.map((key) => (
-                            <div key={key} className="group flex items-center gap-2 sm:gap-4 bg-card p-2 sm:p-3 pl-3 sm:pl-4 rounded-2xl border-2 border-border/60 hover:border-primary/40 transition-all shadow-sm">
-                                <Button
-                                    variant="outline"
-                                    onClick={() => handleDeleteCategory(key)}
-                                    className="h-9 w-9 sm:h-10 sm:w-10 p-0 text-white bg-danger hover:bg-danger-hover shrink-0 border-none rounded-xl flex items-center justify-center transition-transform active:scale-90"
-                                >
-                                    <DeleteOutlineIcon sx={{ fontSize: { xs: 18, sm: 20 } }} />
-                                </Button>
-
-                                <div className="flex-1 min-w-0">
-                                    <Input
-                                        value={key}
-                                        onBlur={(newVal: string) => handleRenameCategory(key, newVal)}
-                                        onChange={() => { }} // Empty because we use onBlur for renames
-                                        className="h-9 sm:h-10 text-xs sm:text-sm border-none bg-transparent p-0 focus-visible:ring-0 font-bold truncate placeholder:opacity-50"
-                                    />
-                                </div>
-
-                                <div className="shrink-0 scale-[0.8] sm:scale-100 origin-right">
-                                    <CompactRate
-                                        currentRating={safeRatings[key] || undefined}
-                                        onRate={(val) => handleUpdateNumericValue(key, val)}
-                                        onClear={() => handleUpdateNumericValue(key, 0)}
-                                    />
-                                </div>
-                            </div>
+                            <CategoryRow
+                                key={key}
+                                categoryKey={key}
+                                value={safeRatings[key]}
+                                onRename={handleRenameCategory}
+                                onDelete={handleDeleteCategory}
+                                onRate={(val) => handleUpdateNumericValue(key, val)}
+                                onClear={() => handleUpdateNumericValue(key, 0)}
+                            />
                         ))}
                     </div>
                 </div>
             </div>
 
-            {/* Actions Section */}
             <div className="flex flex-col-reverse sm:flex-row gap-2 sm:gap-3 pt-4 sm:pt-6 mt-4 border-t border-border">
                 <Button
                     variant="outline"

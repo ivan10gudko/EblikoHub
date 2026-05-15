@@ -1,1 +1,2 @@
-export {RatingEditorContent} from "./RatingEditorContent"
+export {RatingEditorContent} from "./RatingEditorContent";
+export {CategoryRow} from "./RatingRow";
