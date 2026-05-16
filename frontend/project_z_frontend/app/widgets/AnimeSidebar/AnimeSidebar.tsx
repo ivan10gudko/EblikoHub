@@ -1,18 +1,18 @@
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import type { Anime } from "~/entities/title";
 import {
-  Status,
+  StatusSelect,
   useTitleByApiId,
   type CreateTitleRecord,
 } from "~/entities/titleRecord";
-import { useTitleRecordMutation } from '~/entities/titleRecord/hooks/useTitleRecordMutation';
+import { useTitleRecordMutation } from "~/entities/titleRecord/hooks/useTitleRecordMutation";
 import {
   PageRate,
-  StatusSelect,
   TitleActionsMenu,
   WatchedButton,
   WatchlistButton,
 } from "~/features/manageTitle";
+import { Status } from "~/shared/types";
 import { Button } from "~/shared/ui/Button";
 import { ImageWithFallback } from "~/shared/ui/ImageWithFallback";
 import { Sidebar } from "~/shared/ui/Sidebar";
@@ -59,10 +59,7 @@ const AnimeSidebar: React.FC<Props> = ({ data }) => {
 
           {titleRecord && (
             <div className="flex-shrink-0 border-l border-border pl-1">
-              <TitleActionsMenu
-                title={titleRecord}
-                onDelete={handleDelete}
-              />
+              <TitleActionsMenu title={titleRecord} onDelete={handleDelete} />
             </div>
           )}
         </div>

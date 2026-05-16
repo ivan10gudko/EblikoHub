@@ -7,7 +7,7 @@ export const useSeasons = (titleId: number) => {
   const queryClient = useQueryClient();
   const queryKey = ["seasons", titleId];
 
-  const { data: seasons, isLoading,refetch } = useQuery({
+  const { data: seasons, isLoading, refetch } = useQuery({
     queryKey,
     queryFn: () => seasonService.getAllByTitleId(titleId),
     enabled: !!titleId,
@@ -17,7 +17,7 @@ export const useSeasons = (titleId: number) => {
   const createMutation = useMutation({
     mutationFn: (data: CreateSeasonDto) => seasonService.create(titleId, data),
     onSuccess: (newSeason: Season) => {
-      queryClient.setQueryData<Season[]>(queryKey, (old) => 
+      queryClient.setQueryData<Season[]>(queryKey, (old) =>
         old ? [...old, newSeason] : [newSeason]
       );
       toast.success("Season added!");

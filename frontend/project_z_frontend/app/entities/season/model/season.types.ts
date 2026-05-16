@@ -16,11 +16,7 @@ export interface CreateSeasonDto {
     rating?: Rating;
 }
 
-export interface ManageTitleRecordProps{
-    initialData: CreateSeasonDto,
-    titleRecord: Season | null,
-}
-export interface UpdateSeasonDto extends Partial<Omit<CreateSeasonDto, 'seasonId'>> {}
+export interface UpdateSeasonDto extends Partial<Omit<CreateSeasonDto, 'seasonId'>> { }
 
 export type DraftSeason = Omit<Season, 'seasonId'> & {
     seasonId: number | null;

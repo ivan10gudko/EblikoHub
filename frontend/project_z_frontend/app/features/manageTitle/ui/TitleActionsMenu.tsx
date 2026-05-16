@@ -1,11 +1,14 @@
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import EditIcon from "@mui/icons-material/Edit";
 import { Dropdown } from "~/shared/ui/DropDown";
-import { DeleteDropdownItem, DropdownItem } from "~/shared/ui/DropDown/DropDown";
+import {
+  DeleteDropdownItem,
+  DropdownItem,
+} from "~/shared/ui/DropDown/DropDown";
 import { EditTitleModal } from "./EditTitleModal";
 import { useState } from "react";
 import type { TitleRecord } from "~/entities/titleRecord";
-import { EditRatingModal } from "../../../entities/titleRecord/ui/EditRatingModal";
+import { EditRatingModal } from "~/entities/titleRecord";
 import StarRoundedIcon from "@mui/icons-material/StarRounded";
 import { EditSeasonsModal } from "~/entities/season";
 import ViewListIcon from "@mui/icons-material/ViewList";
@@ -14,7 +17,10 @@ interface TitleActionsMenuProps {
   onDelete: () => void;
 }
 
-export const TitleActionsMenu = ({ title, onDelete }: TitleActionsMenuProps) => {
+export const TitleActionsMenu = ({
+  title,
+  onDelete,
+}: TitleActionsMenuProps) => {
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isRatingsOpen, setIsRatingsOpen] = useState(false);
   const [isSeasonsOpen, setIsSeasonsOpen] = useState(false);
@@ -46,9 +52,7 @@ export const TitleActionsMenu = ({ title, onDelete }: TitleActionsMenuProps) => 
         </DropdownItem>
         <div className="h-px bg-border my-1" />
 
-        <DeleteDropdownItem
-          onDelete={onDelete}
-        />
+        <DeleteDropdownItem onDelete={onDelete} />
       </Dropdown>
 
       <EditTitleModal
