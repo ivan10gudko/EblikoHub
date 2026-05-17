@@ -2,12 +2,13 @@ import Modal from "~/shared/ui/Modal/Modal";
 import { Button } from "~/shared/ui/Button";
 import { Input } from "~/shared/ui/Input";
 import { useEffect, useState } from "react";
-import type { TitleRecord, Status } from "~/entities/titleRecord";
-import { CompactRate } from "~/entities/titleRecord";
+import type { TitleRecord } from "~/entities/titleRecord";
+import { StatusSelect } from "~/entities/titleRecord";
 import { useUpdateTitleRecord } from "~/entities/titleRecord/hooks/useTitleRecordUpdateMutation";
-import { StatusSelect } from "~/features/manageTitle";
 import toast from "react-hot-toast";
 import { TitleImageEditor } from "~/features/manageTitle";
+import type { Status } from "~/shared/types/Status";
+import { CompactRate } from "~/shared/ui/CompactRate";
 
 interface EditTitleModalProps {
   title: TitleRecord;

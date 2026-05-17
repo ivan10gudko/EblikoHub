@@ -2,12 +2,13 @@ import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import {
-  CompactRate,
+  StatusSelect,
   type TitleRecord,
 } from "~/entities/titleRecord";
 import { useUpdateTitleRecord } from "~/entities/titleRecord/hooks/useTitleRecordUpdateMutation";
-import { StatusSelect, TitleActionsMenu } from "~/features/manageTitle";
+import { TitleActionsMenu } from "~/features/manageTitle";
 import { Button } from "~/shared/ui/Button";
+import { CompactRate } from "~/shared/ui/CompactRate";
 
 interface WatchlistRowProps {
   title: TitleRecord;
@@ -69,7 +70,7 @@ export const WatchlistRow = ({ title, isOwn }: WatchlistRowProps) => {
                 tempTitleName !== title.titleName &&
                 updateTitle({ titleName: tempTitleName })
               }
-              className="w-full font-bold text-foreground uppercase text-xs sm:text-sm bg-transparent border-none p-0 h-auto leading-tight focus:ring-0"
+              className="w-auto font-bold text-foreground uppercase text-xs sm:text-sm bg-transparent border-none p-0 h-auto leading-tight focus:ring-0"
             />
           ) : (
             <span className="block truncate font-bold text-foreground uppercase text-xs sm:text-sm leading-tight">

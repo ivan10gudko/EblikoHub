@@ -3,11 +3,8 @@ import { Button } from "~/shared/ui/Button";
 import { Select } from "~/shared/ui/Select";
 import type { AnimeCardType } from "~/entities/title";
 import {
-  Status,
-  statusOptions,
   useCreateTitleRecord,
-  type CreateTitleRecord,
-  type TitleRating,
+  type CreateTitleRecord
 } from "~/entities/titleRecord";
 import toast from "react-hot-toast";
 import { useState } from "react";
@@ -15,6 +12,7 @@ import { TitleSearch } from "../TitleSearch/titleSearch";
 import DeleteSweepIcon from "@mui/icons-material/DeleteSweep";
 import { formatRatingInput } from "~/shared/helpers/formatRating";
 import { TitleImageEditor } from "~/features/manageTitle";
+import { Status, statusOptions } from "~/shared/types/Status";
 
 interface AddTitleModalProps {
   isOpen: boolean;

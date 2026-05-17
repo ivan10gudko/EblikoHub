@@ -1,6 +1,6 @@
 import { create } from 'zustand';
-import { Status } from '~/entities/titleRecord';
 import { getInitialValue } from '~/shared/helpers';
+import { Status } from '~/shared/types';
 import type { SortOrder } from '~/shared/types/api';
 
 

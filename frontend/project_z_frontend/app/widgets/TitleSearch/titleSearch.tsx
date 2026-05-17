@@ -2,8 +2,8 @@ import { useState } from "react";
 import { SearchBar } from "~/features/search";
 import { searchOptions } from "~/features/search";
 import { useQuery } from "@tanstack/react-query";
-import { AnimeSearchResults } from "~/entities/titleRecord/ui/searchDropDownResult";
 import type { AnimeCardType } from "~/entities/title";
+import { AnimeSearchDropDownResults } from "~/entities/titleRecord";
 
 export const TitleSearch = ({
   onSelect,
@@ -32,7 +32,7 @@ export const TitleSearch = ({
       />
 
       {localQuery && (
-        <AnimeSearchResults
+        <AnimeSearchDropDownResults
           results={results}
           onSelect={onSelect}
           onClose={onClose}

@@ -1,6 +1,7 @@
-import { Status } from "~/entities/titleRecord";
+
 import { Button } from "~/shared/ui/Button";
 import { useTitleFilterStore } from "../store/titleFilter.store";
+import { Status } from "~/shared/types/Status";
 
 const statusOptions = [
   { label: "All", value: undefined },

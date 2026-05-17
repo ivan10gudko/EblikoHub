@@ -1,5 +1,7 @@
 package project_z.demo.dto.SeasonDtos;
 
+import java.util.Map;
+
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -16,10 +18,8 @@ import project_z.demo.enums.TitleStatus;
 @Builder
 @Getter
 public class SeasonDto {
-    @Id
     private Long seasonId;
     private String name;
-    private Float rating;
+    private Map<String, Float> rating;
     private TitleStatus status;
-    private TitleEntity title;
 }

@@ -1,6 +1,8 @@
-import { Status, type CreateTitleRecord, type TitleParams, type TitleRating, type TitleRecord } from "../model/titleRecord"
+import {type CreateTitleRecord, type TitleParams, type TitleRecord } from "../model/titleRecord"
 import type { PageResponse } from "~/shared/types";
 import { apiClient, publicClient } from "~/shared/api";
+import { Status } from "~/shared/types/Status";
+import type { Rating } from "~/shared/types/Rating";
 
 export interface ActionOptions {
     apiTitleId?: number | null;
@@ -9,7 +11,7 @@ export interface ActionOptions {
 }
 
 export interface RateOptions extends ActionOptions {
-    score: number | TitleRating; // {} - for delete
+    score: number | Rating; // {} - for delete
 }
 
 interface TitleRecordService {
