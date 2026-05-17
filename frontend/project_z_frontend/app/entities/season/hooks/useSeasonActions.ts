@@ -1,11 +1,26 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
-import type { UpdateSeasonDto, Season } from "../model/season.types";
+import type { UpdateSeasonDto, Season, DraftSeason } from "../model/season.types";
 import { seasonService } from "../api/SeasonService";
 
-export const useSeasonActions = (titleId: number) => {
+export const useSeasonActions = (titleId: number, onClose?: () => void) => {
   const queryClient = useQueryClient();
   const queryKey = ["seasons", titleId];
+
+  const syncMutation = useMutation({
+    mutationFn: (localSeasons: Array<DraftSeason & { localId: string }>) => {
+      const cleanSeasons: DraftSeason[] = localSeasons.map(({ localId, ...rest }) => rest);
+      return seasonService.sync(titleId, cleanSeasons);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey });
+      toast.success("Updated!");
+      if (onClose) onClose();
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.message || "Sync failed");
+    }
+  });
 
   const updateMutation = useMutation({
     mutationFn: ({ seasonId, data }: { seasonId: number; data: UpdateSeasonDto }) =>
@@ -34,9 +49,13 @@ export const useSeasonActions = (titleId: number) => {
   });
 
   return {
-    updateSeason: (seasonId: number, data: UpdateSeasonDto) => 
+    syncSeasons: (localSeasons: Array<DraftSeason & { localId: string }>) =>
+      syncMutation.mutate(localSeasons),
+    isSyncing: syncMutation.isPending,
+
+    updateSeason: (seasonId: number, data: UpdateSeasonDto) =>
       updateMutation.mutate({ seasonId, data }),
-    deleteSeason: (seasonId: number) => 
+    deleteSeason: (seasonId: number) =>
       deleteMutation.mutate(seasonId),
     isUpdating: updateMutation.isPending,
     isDeleting: deleteMutation.isPending

@@ -3,7 +3,7 @@ import AddIcon from "@mui/icons-material/Add";
 import Modal from "~/shared/ui/Modal/Modal";
 import { Button } from "~/shared/ui/Button";
 import { Status } from "~/shared/types/Status";
-import { seasonService, useSeasons, type DraftSeason, type Season } from "~/entities/season";
+import { seasonService, useSeasonActions, useSeasons, type DraftSeason, type LocalDraftSeason, type Season } from "~/entities/season";
 import { SeasonRow } from "./SeasonRow";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
@@ -16,9 +16,9 @@ interface SeasonsModalProps {
 
 export const EditSeasonsModal = ({ titleId, isOpen, onClose }: SeasonsModalProps) => {
     const { seasons: initialSeasons, isLoading, refetch } = useSeasons(titleId);
-    const queryClient = useQueryClient();
+    const { syncSeasons, isSyncing } = useSeasonActions(titleId, onClose);
 
-    const [localSeasons, setLocalSeasons] = useState<DraftSeason[]>([]);
+    const [localSeasons, setLocalSeasons] = useState<LocalDraftSeason[]>([]);
     const [newName, setNewName] = useState("");
 
     useEffect(() => {
@@ -26,16 +26,23 @@ export const EditSeasonsModal = ({ titleId, isOpen, onClose }: SeasonsModalProps
             refetch();
         }
     }, [isOpen, refetch]);
+
     useEffect(() => {
         if (initialSeasons && isOpen) {
-            setLocalSeasons(initialSeasons);
+            const mapped = initialSeasons.map((s) => ({
+                ...s,
+                localId: s.seasonId ? String(s.seasonId) : `existing-${Math.random()}`
+            }));
+            setLocalSeasons(mapped);
         }
     }, [initialSeasons, isOpen]);
 
     const handleAddSeason = () => {
         if (!newName.trim()) return;
-        const newSeason: DraftSeason = {
+
+        const newSeason: LocalDraftSeason = {
             seasonId: null,
+            localId: `new-${Date.now()}-${Math.random()}`,
             name: newName,
             status: Status.INPROGRESS,
             rating: {}
@@ -44,24 +51,16 @@ export const EditSeasonsModal = ({ titleId, isOpen, onClose }: SeasonsModalProps
         setNewName("");
     };
 
-    const handleRemove = (id: number | null) => {
-        setLocalSeasons(prev => prev.filter(s => s.seasonId !== id));
+    const handleRemove = (localId: string) => {
+        setLocalSeasons(prev => prev.filter(s => s.localId !== localId));
     };
 
-    const handleUpdate = (id: number | null, patch: Partial<DraftSeason>) => {
+    const handleUpdate = (localId: string, patch: Partial<LocalDraftSeason>) => {
         setLocalSeasons(prev => prev.map(s =>
-            s.seasonId === id ? { ...s, ...patch } : s
+            s.localId === localId ? { ...s, ...patch } : s
         ));
     };
 
-    const { mutate: syncAll, isPending } = useMutation({
-        mutationFn: () => seasonService.sync(titleId, localSeasons),
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["seasons", titleId] });
-            toast.success("Updated!");
-            onClose();
-        }
-    });
 
     return (
         <Modal
@@ -71,9 +70,7 @@ export const EditSeasonsModal = ({ titleId, isOpen, onClose }: SeasonsModalProps
             title="Manage Seasons"
         >
             <div className="flex flex-col max-h-[80vh] px-1 sm:px-0">
-
                 <div className="flex-1 overflow-y-auto pr-1 sm:pr-3 space-y-5 p-1 custom-scrollbar">
-
                     <div className="sticky top-0 z-20 backdrop-blur-md pb-4 bg-background/5">
                         <div className="flex gap-2 p-1.5 sm:p-2 bg-background-muted/50 rounded-2xl border-2 border-primary/30 shadow-sm focus-within:border-primary/60 transition-all">
                             <input
@@ -106,13 +103,13 @@ export const EditSeasonsModal = ({ titleId, isOpen, onClose }: SeasonsModalProps
                                     Empty List
                                 </div>
                             ) : (
-                                localSeasons.map((season, idx) => (
+                                localSeasons.map((season) => (
                                     <SeasonRow
-                                        key={season.seasonId ?? `new-${idx}`}
+                                        key={season.localId}
                                         season={season}
                                         titleId={titleId}
-                                        onDelete={() => handleRemove(season.seasonId)}
-                                        onUpdate={(patch) => handleUpdate(season.seasonId, patch)}
+                                        onDelete={() => handleRemove(season.localId)}
+                                        onUpdate={(patch) => handleUpdate(season.localId, patch)}
                                     />
                                 ))
                             )}
@@ -125,16 +122,16 @@ export const EditSeasonsModal = ({ titleId, isOpen, onClose }: SeasonsModalProps
                         variant="outline"
                         className="order-2 sm:order-1 text-foreground bg-card/50 border-none w-full sm:flex-1 h-12 rounded-2xl font-bold hover:bg-border/20"
                         onClick={onClose}
-                        disabled={isPending}
+                        disabled={isSyncing}
                     >
                         Cancel
                     </Button>
                     <Button
-                        disabled={isPending}
-                        className="order-1 sm:order-2 w-full sm:flex-[2] h-12 rounded-2xl bg-primary text-background font-black tracking-widest shadow-[0_4px_0_0_#d97706] active:translate-y-[1px] active:shadow-none transition-all"
-                        onClick={() => syncAll()}
+                        className="order-1 sm:order-2 w-full sm:flex-[2] h-12 rounded-2xl bg-primary text-foreground font-black tracking-widest shadow-[0_4px_0_0_#d97706] active:translate-y-[1px] active:shadow-none transition-all"
+                        disabled={isSyncing}
+                        onClick={() => syncSeasons(localSeasons)} 
                     >
-                        {isPending ? "Syncing..." : "Save Changes"}
+                        {isSyncing ? "Syncing..." : "Save Changes"}
                     </Button>
                 </div>
             </div>
