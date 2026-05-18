@@ -10,6 +10,7 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import project_z.demo.enums.TitleStatus;
+import project_z.demo.enums.TitleType;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -20,6 +21,7 @@ public class TitlePatchUpdateDto {
     private JsonNullable<Integer> apiTitleId = JsonNullable.undefined();
     private JsonNullable<String> titleName = JsonNullable.undefined();
     private JsonNullable<TitleStatus> status = JsonNullable.undefined();
+    private JsonNullable<TitleType> titleType = JsonNullable.undefined();
     private JsonNullable<Map<String,Float>> rating = JsonNullable.undefined();
     private JsonNullable<Double> customOrder = JsonNullable.undefined();
     private JsonNullable<String> imageUrl = JsonNullable.undefined();

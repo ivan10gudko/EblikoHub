@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router";
 import {
   StatusSelect,
+  TitleTypeThemes,
   type TitleRecord,
 } from "~/entities/titleRecord";
 import { useUpdateTitleRecord } from "~/entities/titleRecord/hooks/useTitleRecordUpdateMutation";
@@ -29,8 +30,9 @@ export const WatchlistRow = ({ title, isOwn }: WatchlistRowProps) => {
     deleteTitle();
   };
   const DEFAULT_IMAGE_PATH = "/defaultTitleRecordImage.jpg";
+  const themeClasses = title.titleType ? TitleTypeThemes[title.titleType] : "";
   return (
-    <div className="group flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-4 bg-card p-2 rounded-xl border border-border transition-all w-full">
+    <div className={`group flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-4 bg-card p-2 rounded-xl border transition-all duration-300 w-full ${themeClasses}`}>
       <div className="flex items-center flex-1 gap-3 min-w-0">
         {isOwn && (
           <div onPointerDown={(e) => e.stopPropagation()}>
