@@ -7,11 +7,12 @@ import { useSeasonActions, useSeasons, type LocalDraftSeason } from "~/entities/
 import { SeasonRow } from "./SeasonRow";
 interface SeasonsModalProps {
     titleId: number;
+    titleName:string;
     isOpen: boolean;
     onClose: () => void;
 }
 
-export const EditSeasonsModal = ({ titleId, isOpen, onClose }: SeasonsModalProps) => {
+export const EditSeasonsModal = ({ titleId, isOpen, onClose,titleName }: SeasonsModalProps) => {
     const { seasons: initialSeasons, refetch } = useSeasons(titleId);
     const { syncSeasons, isSyncing } = useSeasonActions(titleId, onClose);
 
@@ -77,7 +78,7 @@ export const EditSeasonsModal = ({ titleId, isOpen, onClose }: SeasonsModalProps
             maxWidth="max-w-2xl"
             isOpen={isOpen}
             onClose={handleSaveChanges}
-            title="Manage Seasons"
+            title={`Manage Seasons "${titleName}"`}
         >
             <div className="flex flex-col max-h-[80vh] px-1 sm:px-0">
                 <div className="flex-1 overflow-y-auto pr-1 sm:pr-3 space-y-5 p-1 custom-scrollbar">

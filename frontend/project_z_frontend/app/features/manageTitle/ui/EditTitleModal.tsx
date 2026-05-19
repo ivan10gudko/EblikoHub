@@ -81,7 +81,7 @@ export const EditTitleModal = ({
     <Modal
       isOpen={isOpen}
       onClose={handleBackdropClick}
-      title="Edit Record"
+      title={`Edit "${title.titleName}"`}
       maxWidth="max-w-xl"
     >
       <div className="space-y-8 p-2">

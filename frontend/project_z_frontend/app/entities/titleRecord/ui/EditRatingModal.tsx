@@ -46,7 +46,7 @@ export const EditRatingModal = ({ title, isOpen, onClose }: EditRatingModalProps
     <Modal
       isOpen={isOpen}
       onClose={handleSave} 
-      title="Custom Rating System"
+      title={`Rating "${title.titleName}"`}
       maxWidth="max-w-xl"
     >
       <RatingEditorContent
