@@ -1,5 +1,5 @@
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import {
   StatusSelect,
@@ -16,6 +16,9 @@ interface WatchlistRowProps {
 }
 export const WatchlistRow = ({ title, isOwn }: WatchlistRowProps) => {
   const [tempTitleName, setTempTitleName] = useState(title.titleName);
+  useEffect(() => {
+    setTempTitleName(title.titleName);
+  }, [title.titleName]);
   const navigate = useNavigate();
   const { updateTitle, deleteTitle } = useUpdateTitleRecord(title.titleId);
   const handleImageClick = (e: React.MouseEvent) => {

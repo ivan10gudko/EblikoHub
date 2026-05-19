@@ -60,11 +60,13 @@ export const TitleActionsMenu = ({
         isOpen={isEditOpen}
         onClose={handleCloseEdit}
       />
-      <EditSeasonsModal
-        titleId={title.titleId}
-        isOpen={isSeasonsOpen}
-        onClose={handleCloseSeasons}
-      />
+      {isSeasonsOpen && (
+        <EditSeasonsModal
+          titleId={title.titleId}
+          isOpen={isSeasonsOpen}
+          onClose={handleCloseSeasons}
+        />
+      )}
       <EditRatingModal
         title={title}
         isOpen={isRatingsOpen}

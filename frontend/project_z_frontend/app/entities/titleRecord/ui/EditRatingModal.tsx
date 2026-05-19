@@ -11,7 +11,7 @@ interface EditRatingModalProps {
 }
 
 export const EditRatingModal = ({ title, isOpen, onClose }: EditRatingModalProps) => {
-  const { rate, rateLoading } = useTitleRecordMutation(
+  const { rate } = useTitleRecordMutation(
     title.apiTitleId,
     {
       apiTitleId: title.apiTitleId,
@@ -22,34 +22,39 @@ export const EditRatingModal = ({ title, isOpen, onClose }: EditRatingModalProps
     },
     title
   );
+
   const [localRatings, setLocalRatings] = useState<Rating>(
     title.rating && "overall" in title.rating ? title.rating : { overall: 0 }
   );
 
   useEffect(() => {
-    if (title.rating) {
+    if (isOpen && title.rating) {
       setLocalRatings(title.rating);
     }
-  }, [title.rating]);
+  }, [isOpen, title.rating]);
 
   const handleSave = () => {
-    rate(localRatings);
+    const hasChanges = JSON.stringify(localRatings) !== JSON.stringify(title.rating);
+    
+    if (hasChanges) {
+      rate(localRatings);
+    }
     onClose();
   };
 
   return (
     <Modal
       isOpen={isOpen}
-      onClose={onClose}
+      onClose={handleSave} 
       title="Custom Rating System"
       maxWidth="max-w-xl"
     >
       <RatingEditorContent
         ratings={localRatings}
-        onChange={setLocalRatings}
-        isSaving={rateLoading}
+        onChange={setLocalRatings} 
+        isSaving={false} 
         onSave={handleSave}
-        onCancel={onClose}
+        onCancel={onClose}  
       />
     </Modal>
   );

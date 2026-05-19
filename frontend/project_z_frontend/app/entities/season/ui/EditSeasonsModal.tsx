@@ -3,11 +3,8 @@ import AddIcon from "@mui/icons-material/Add";
 import Modal from "~/shared/ui/Modal/Modal";
 import { Button } from "~/shared/ui/Button";
 import { Status } from "~/shared/types/Status";
-import { seasonService, useSeasonActions, useSeasons, type DraftSeason, type LocalDraftSeason, type Season } from "~/entities/season";
+import { useSeasonActions, useSeasons, type LocalDraftSeason } from "~/entities/season";
 import { SeasonRow } from "./SeasonRow";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import toast from "react-hot-toast";
-
 interface SeasonsModalProps {
     titleId: number;
     isOpen: boolean;
@@ -15,7 +12,7 @@ interface SeasonsModalProps {
 }
 
 export const EditSeasonsModal = ({ titleId, isOpen, onClose }: SeasonsModalProps) => {
-    const { seasons: initialSeasons, isLoading, refetch } = useSeasons(titleId);
+    const { seasons: initialSeasons, refetch } = useSeasons(titleId);
     const { syncSeasons, isSyncing } = useSeasonActions(titleId, onClose);
 
     const [localSeasons, setLocalSeasons] = useState<LocalDraftSeason[]>([]);
@@ -61,12 +58,25 @@ export const EditSeasonsModal = ({ titleId, isOpen, onClose }: SeasonsModalProps
         ));
     };
 
+    const handleSaveChanges = () => {
+        const cleanInitial = (initialSeasons || []).map(({ seasonId, name, status, rating }) => ({ seasonId, name, status, rating }));
+        const cleanLocal = localSeasons.map(({ seasonId, name, status, rating }) => ({ seasonId, name, status, rating }));
+
+        const hasChanges = JSON.stringify(cleanInitial) !== JSON.stringify(cleanLocal);
+
+        if (!hasChanges) {
+            onClose();
+            return;
+        }
+
+        syncSeasons(localSeasons);
+    };
 
     return (
         <Modal
             maxWidth="max-w-2xl"
             isOpen={isOpen}
-            onClose={onClose}
+            onClose={handleSaveChanges}
             title="Manage Seasons"
         >
             <div className="flex flex-col max-h-[80vh] px-1 sm:px-0">
@@ -121,7 +131,7 @@ export const EditSeasonsModal = ({ titleId, isOpen, onClose }: SeasonsModalProps
                     <Button
                         variant="outline"
                         className="order-2 sm:order-1 text-foreground bg-card/50 border-none w-full sm:flex-1 h-12 rounded-2xl font-bold hover:bg-border/20"
-                        onClick={onClose}
+                        onClick={onClose} 
                         disabled={isSyncing}
                     >
                         Cancel
@@ -129,7 +139,7 @@ export const EditSeasonsModal = ({ titleId, isOpen, onClose }: SeasonsModalProps
                     <Button
                         className="order-1 sm:order-2 w-full sm:flex-[2] h-12 rounded-2xl bg-primary text-foreground font-black tracking-widest shadow-[0_4px_0_0_#d97706] active:translate-y-[1px] active:shadow-none transition-all"
                         disabled={isSyncing}
-                        onClick={() => syncSeasons(localSeasons)} 
+                        onClick={handleSaveChanges} 
                     >
                         {isSyncing ? "Syncing..." : "Save Changes"}
                     </Button>

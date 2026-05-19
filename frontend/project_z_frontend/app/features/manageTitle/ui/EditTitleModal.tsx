@@ -22,24 +22,35 @@ export const EditTitleModal = ({
   onClose,
 }: EditTitleModalProps) => {
   const [titleName, setTitleName] = useState(title.titleName);
-  const [imageUrl, setImageUrl] = useState<string | null>(
-    title.imageUrl ?? null,
-  );
+  const [imageUrl, setImageUrl] = useState<string | null>(title.imageUrl ?? null);
   const [status, setStatus] = useState<Status>(title.status);
-  const [rating, setRating] = useState<number | undefined>(
-    title.rating?.overall,
-  );
+  const [rating, setRating] = useState<number | undefined>(title.rating?.overall);
 
   const { updateTitle, isUpdating } = useUpdateTitleRecord(title.titleId);
-  useEffect(() => {
-    if (title.status) {
-      setStatus(title.status);
-    }
-  }, [title.status]);
 
-  const handleSave = () => {
+  useEffect(() => {
+    if (isOpen) {
+      setTitleName(title.titleName);
+      setImageUrl(title.imageUrl ?? null);
+      setStatus(title.status);
+      setRating(title.rating?.overall);
+    }
+  }, [isOpen, title]);
+
+  const handleSave = (shouldCloseAfter = true) => {
     if (!titleName.trim()) {
       toast.error("Title name cannot be empty");
+      return;
+    }
+
+    const hasChanges = 
+      titleName !== title.titleName || 
+      imageUrl !== title.imageUrl || 
+      status !== title.status || 
+      rating !== title.rating?.overall;
+
+    if (!hasChanges) {
+      if (shouldCloseAfter) onClose();
       return;
     }
 
@@ -52,17 +63,24 @@ export const EditTitleModal = ({
       },
       {
         onSuccess: () => {
-          toast.success("Updated successfully");
-          onClose();
+          toast.success("Changes saved automatically");
+          if (shouldCloseAfter) onClose();
         },
+        onError: () => {
+          toast.error("Failed to save changes");
+        }
       },
     );
+  };
+
+  const handleBackdropClick = () => {
+    handleSave(true); 
   };
 
   return (
     <Modal
       isOpen={isOpen}
-      onClose={onClose}
+      onClose={handleBackdropClick}
       title="Edit Record"
       maxWidth="max-w-xl"
     >
@@ -106,12 +124,12 @@ export const EditTitleModal = ({
           <Button
             onClick={onClose}
             variant="outline"
-            className="text-foreground  bg-card border-none flex-1 h-14 rounded-xl font-bold"
+            className="text-foreground bg-card border-none flex-1 h-14 rounded-xl font-bold"
           >
             Cancel
           </Button>
           <Button
-            onClick={handleSave}
+            onClick={() => handleSave(true)}
             disabled={isUpdating}
             className="flex-[2] h-14 rounded-xl bg-primary text-foreground font-black tracking-wide shadow-[0_4px_0_0_#d97706] active:translate-y-[1px] active:shadow-none transition-all disabled:opacity-50"
           >
