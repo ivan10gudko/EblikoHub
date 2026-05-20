@@ -20,19 +20,19 @@ export const RatingEditorContent = ({
     onSave,
     onCancel
 }: RatingEditorContentProps) => {
-
-    const safeRatings: { overall: number;[key: string]: number } =
+    const safeRatings: { overall?: number; [key: string]: number | undefined } =
         (Object.keys(ratings).length === 0)
-            ? { overall: 0 }
-            : ratings as { overall: number;[key: string]: number };
+            ? {}
+            : ratings as { overall?: number; [key: string]: number | undefined };
+
     const customCategories = Object.keys(safeRatings).filter((key) => key !== "overall");
-    const currentOverall = safeRatings.overall || 0;
-    const isOverallMissing = currentOverall === 0;
+    const currentOverall = safeRatings.overall;
+    const isOverallMissing = currentOverall === undefined;
 
     const handleUpdateNumericValue = (key: string, val: number | undefined) => {
         onChange({
             ...safeRatings,
-            [key]: val ?? 0,
+            [key]: val, 
         } as Rating);
     };
 
@@ -54,6 +54,7 @@ export const RatingEditorContent = ({
         delete (newState as any)[key];
         onChange(newState as Rating);
     };
+
     return (
         <div className="flex flex-col max-h-[75vh] sm:max-h-[70vh]">
             <div
@@ -75,9 +76,9 @@ export const RatingEditorContent = ({
 
                         <div className="scale-90 sm:scale-110 origin-left sm:origin-right w-full sm:w-auto flex justify-end">
                             <CompactRate
-                                currentRating={currentOverall || undefined}
+                                currentRating={currentOverall}
                                 onRate={(val) => handleUpdateNumericValue("overall", val)}
-                                onClear={() => handleUpdateNumericValue("overall", 0)}
+                                onClear={() => handleUpdateNumericValue("overall", undefined)}
                             />
                         </div>
                     </div>
@@ -111,7 +112,7 @@ export const RatingEditorContent = ({
                             <CategoryRow
                                 key={key}
                                 categoryKey={key}
-                                value={safeRatings[key]}
+                                value={safeRatings[key] ?? 0}
                                 onRename={handleRenameCategory}
                                 onDelete={handleDeleteCategory}
                                 onRate={(val) => handleUpdateNumericValue(key, val)}

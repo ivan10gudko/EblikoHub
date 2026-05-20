@@ -34,25 +34,28 @@ public class TitleSpecifications {
             Expression<Float> overallValue = cb.max(
                     cb.selectCase()
                             .when(cb.equal(ratings.key(), "overall"), ratings.value())
-                            .otherwise(0f)
+                            .otherwise(-1f) 
                             .as(Float.class));
 
             if ("desc".equalsIgnoreCase(order)) {
                 query.orderBy(
-                        cb.desc(overallValue), 
+                        cb.desc(overallValue),
                         cb.asc(root.get("titleName")),
-                        cb.asc(root.get("id")) 
-                );
+                        cb.asc(root.get("id")));
             } else {
+                Expression<Integer> hasRating = cb.max(
+                        cb.<Integer>selectCase()
+                                .when(cb.equal(ratings.key(), "overall"), 1) 
+                                .otherwise(0) 
+                                .as(Integer.class));
+
                 query.orderBy(
+                        cb.desc(hasRating),   
                         cb.asc(overallValue), 
                         cb.asc(root.get("titleName")),
-                        cb.asc(root.get("id")) 
-                );
+                        cb.asc(root.get("id")));
             }
 
             return null;
         };
-    }
-
-}
+}}
