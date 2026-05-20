@@ -18,7 +18,6 @@ interface WatchlistTableProps {
 export const WatchlistTable = ({ titles, isLoading, isOwn, queryKey }: WatchlistTableProps) => {
   const [searchParams] = useSearchParams();
   const { userId } = useParams<{ userId: string }>();
-  const { search, sortBy, order, status } = useTitleFilterStore();
   
 
   const isCustomOrder = searchParams.get("sortBy") === "customOrder";
@@ -87,10 +86,13 @@ export const WatchlistTable = ({ titles, isLoading, isOwn, queryKey }: Watchlist
                         <div
                           ref={provided.innerRef}
                           {...provided.draggableProps}
-                          {...provided.dragHandleProps}
-                          className={!isDragable ? "cursor-default" : "cursor-grab active:cursor-grabbing"}
+                          className="w-full"
                         >
-                          <WatchlistRow title={title} isOwn={isOwn} />
+                          <WatchlistRow 
+                            title={title} 
+                            isOwn={isOwn} 
+                            dragHandleProps={isDragable ? provided.dragHandleProps : undefined} 
+                          />
                         </div>
                       )}
                     </Draggable>
