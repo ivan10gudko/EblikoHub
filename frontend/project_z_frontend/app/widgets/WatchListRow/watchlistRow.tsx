@@ -74,7 +74,7 @@ export const WatchlistRow = ({ title, isOwn, dragHandleProps }: WatchlistRowProp
                 tempTitleName !== title.titleName &&
                 updateTitle({ titleName: tempTitleName })
               }
-              className="w-2xs max-w-full font-bold text-foreground uppercase text-xs sm:text-sm bg-transparent border-none p-0 h-auto leading-tight focus:ring-0 cursor-text"
+              className="w-full font-bold text-foreground uppercase text-xs sm:text-sm bg-transparent border-none p-0 h-auto leading-tight focus:ring-0 cursor-text"
             />
           ) : (
             <span className="block truncate font-bold text-foreground uppercase text-xs sm:text-sm leading-tight">
