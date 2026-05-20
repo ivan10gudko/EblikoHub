@@ -1,5 +1,6 @@
 import StarRoundedIcon from "@mui/icons-material/StarRounded";
 import AddIcon from "@mui/icons-material/Add";
+import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
 import { Button } from "~/shared/ui/Button";
 import { CompactRate } from "../CompactRate";
 import type { Rating } from "~/shared/types";
@@ -12,6 +13,14 @@ interface RatingEditorContentProps {
     onSave: () => void;
     onCancel: () => void;
 }
+
+const PRESET_CATEGORIES = [
+    { id: "story", label: "Plot" },
+    { id: "art", label: "Graphics" },
+    { id: "characters", label: "Characters" },
+    { id: "enjoyment", label: "Enjoyment" },
+    { id: "fan-service", label: "fan service" }
+];
 
 export const RatingEditorContent = ({
     ratings,
@@ -46,6 +55,11 @@ export const RatingEditorContent = ({
     const handleAddCategory = () => {
         const newKey = `Criteria ${customCategories.length + 1}`;
         onChange({ ...safeRatings, [newKey]: 0 } as Rating);
+    };
+
+    const handleAddPreset = (label: string) => {
+        if (safeRatings[label] !== undefined) return;
+        onChange({ ...safeRatings, [label]: 0 } as Rating);
     };
 
     const handleDeleteCategory = (key: string) => {
@@ -85,26 +99,53 @@ export const RatingEditorContent = ({
                 </div>
 
                 <div className="space-y-4">
-                    <div className="flex justify-between items-center px-2">
-                        <h3 className="text-[10px] sm:text-[12px] font-black uppercase text-muted-foreground tracking-[0.15em] sm:tracking-[0.2em] italic">
-                            Additional Criteria
-                        </h3>
-                        <Button
-                            variant="text-only"
-                            onClick={handleAddCategory}
-                            className="h-7 sm:h-8 text-[10px] sm:text-[11px] gap-1 sm:gap-2 px-3 sm:px-4 bg-primary/10 text-primary hover:bg-primary/20 rounded-xl font-bold transition-all"
-                            disabled={isOverallMissing}
-                        >
-                            <AddIcon sx={{ fontSize: { xs: 18, sm: 24 } }} />
-                            <span className="hidden xs:inline">Add New</span>
-                            <span className="xs:hidden">Add</span>
-                        </Button>
+                    <div className="flex flex-col gap-2 px-2">
+                        <div className="flex justify-between items-center w-full">
+                            <h3 className="text-[10px] sm:text-[12px] font-black uppercase text-muted-foreground tracking-[0.15em] sm:tracking-[0.2em] italic">
+                                Additional Criteria
+                            </h3>
+                            <Button
+                                onClick={handleAddCategory}
+                                className=" h-7 sm:h-8 !text-xl sm:text-[11px] gap-1 sm:gap-2 px-3 sm:px-4 bg-transparent text-primary hover:bg-primary/20 rounded-xl font-bold transition-all"
+                                disabled={isOverallMissing}
+                            >
+                                <AddIcon sx={{ fontSize: { xs: 30, sm: 24 } }} />
+                                <span className="hidden xs:inline">Add Custom</span>
+                                <span className="xs:hidden">Add</span>
+                            </Button>
+                        </div>
+
+                        {!isOverallMissing && (
+                            <div className="flex flex-wrap gap-1.5 pt-1 items-center">
+                                <span className="text-[9px] font-bold uppercase tracking-wider text-muted-foreground/60 mr-1 flex items-center gap-1">
+                                    <AutoAwesomeIcon sx={{ fontSize: 12 }} /> Presets:
+                                </span>
+                                {PRESET_CATEGORIES.map((preset) => {
+                                    const isAdded = safeRatings[preset.label] !== undefined;
+                                    return (
+                                        <Button
+                                            key={preset.id}
+                                            type="button"
+                                            disabled={isAdded}
+                                            onClick={() => handleAddPreset(preset.label)}
+                                            className={`text-[12px] px-2.5 py-1 rounded-lg font-bold border transition-all duration-200 ${
+                                                isAdded
+                                                    ? "bg-transparent border-border text-muted-foreground/40 line-through cursor-not-allowed"
+                                                    : "bg-background-muted hover:bg-primary/10 border-border hover:border-primary/30 text-foreground hover:text-primary active:scale-95"
+                                            }`}
+                                        >
+                                            {preset.label}
+                                        </Button>
+                                    );
+                                })}
+                            </div>
+                        )}
                     </div>
 
                     <div className={`flex flex-col gap-3 sm:gap-4 transition-all duration-300 ${isOverallMissing ? "grayscale opacity-30 pointer-events-none scale-[0.98]" : "opacity-100"}`}>
                         {customCategories.length === 0 && !isOverallMissing && (
                             <div className="text-center p-6 sm:p-8 border-2 border-dashed border-border rounded-2xl text-muted-foreground text-xs sm:text-sm font-medium">
-                                No custom criteria added yet.
+                                No custom criteria added yet. Use presets or add custom ones above.
                             </div>
                         )}
 
