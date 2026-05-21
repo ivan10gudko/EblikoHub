@@ -11,5 +11,4 @@ export { useCreateTitleRecord } from "./hooks/useCreateTitleRecord";
 export type { ManageTitleRecordProps } from "./model/titleRecord";
 
 export { default as StatusSelect } from "./ui/StatusSelect";
-export { EditRatingModal } from "./ui/EditRatingModal";
 export { AnimeSearchDropDownResults } from "./ui/AnimeSearchDropDownResult";

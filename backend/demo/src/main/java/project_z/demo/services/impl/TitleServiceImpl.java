@@ -1,5 +1,7 @@
 package project_z.demo.services.impl;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -23,7 +25,9 @@ import project_z.demo.common.Exceptions.TitleWithThatMalIdAlreadyExistsException
 import project_z.demo.common.QueryParameters.TitleQueryParameters;
 import project_z.demo.dto.TitleDtos.TitleBatchCreateDto;
 import project_z.demo.dto.TitleDtos.TitleDto;
+import project_z.demo.dto.TitleDtos.TitleGetNeighborsRating;
 import project_z.demo.dto.TitleDtos.TitlePatchUpdateDto;
+import project_z.demo.dto.TitleDtos.TitleShortDto;
 import project_z.demo.entity.SeasonEntity;
 import project_z.demo.entity.TitleEntity;
 import project_z.demo.entity.UserEntity;
@@ -128,7 +132,7 @@ public class TitleServiceImpl implements TitleService {
                     patchHelper.updateIfPresent(source.getStatus(), target::setStatus);
                     patchHelper.updateIfPresent(source.getRating(), target::setRating);
                     patchHelper.updateIfPresent(source.getCustomOrder(), target::setCustomOrder);
-                    patchHelper.updateIfPresent(source.getImageUrl(),target::setImageUrl);
+                    patchHelper.updateIfPresent(source.getImageUrl(), target::setImageUrl);
                     return titleRepository.save(target);
                 })
                 .orElseThrow(() -> new ResourceNotFoundException("Title not found"));
@@ -208,4 +212,30 @@ public class TitleServiceImpl implements TitleService {
     public void reindexCustomOrder(UUID userId) {
         titleRepository.reindexNative(userId);
     }
+
+    @Override
+    public List<TitleShortDto> getNeighborsRating(Long titleId, String category, Float currentRating) {
+        TitleEntity currentTitle = titleRepository.findById(titleId)
+                .orElseThrow(() -> new ResourceNotFoundException ("Title not found"));
+
+
+        List<Object[]> upRows = titleRepository.findCloserTitlesUp(titleId, category, currentRating);
+        List<Object[]> downRows = titleRepository.findCloserTitlesDown(titleId, category, currentRating);
+
+        List<TitleShortDto> result = new ArrayList<>();
+
+        List<TitleShortDto> upList = TitleShortDto.fromRows(upRows);
+        Collections.reverse(upList);
+        result.addAll(upList);
+
+        result.add(new TitleShortDto(
+                currentTitle.getTitleId(),
+                currentTitle.getTitleName(),
+                currentRating));
+
+        result.addAll(TitleShortDto.fromRows(downRows));
+
+        return result;
+    }
+
 }

@@ -18,17 +18,21 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import project_z.demo.Mappers.Mapper;
 import project_z.demo.common.QueryParameters.TitleQueryParameters;
 import project_z.demo.dto.TitleDtos.TitleBatchCreateDto;
 import project_z.demo.dto.TitleDtos.TitleDto;
+import project_z.demo.dto.TitleDtos.TitleGetNeighborsRating;
 import project_z.demo.dto.TitleDtos.TitlePatchUpdateDto;
 import project_z.demo.dto.TitleDtos.TitlePositionUpdateDto;
+import project_z.demo.dto.TitleDtos.TitleShortDto;
 import project_z.demo.entity.TitleEntity;
 import project_z.demo.services.TitleService;
 import project_z.demo.services.UserService;
+
 
 @RestController
 @RequestMapping("/api/v1/titles")
@@ -107,6 +111,11 @@ public class TitleController {
                 .collect(Collectors.toList());
 
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+    //@PreAuthorize("hasRole('ADMIN') || @securityService.isTitleOwner(#titleId, #token)")
+    @GetMapping(path = "/{titleId}/getNeighborsRating")
+    public List<TitleShortDto> getNeighborsRating(@PathVariable("titleId") Long titleId, @RequestParam String category, @RequestParam Float currentRating ) {
+        return titleService.getNeighborsRating(titleId, category,currentRating);
     }
 
     @PreAuthorize("hasRole('ADMIN') || @securityService.isTitleOwner(#titleId, #token)")

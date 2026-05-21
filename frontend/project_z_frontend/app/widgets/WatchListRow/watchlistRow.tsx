@@ -7,8 +7,8 @@ import {
   type TitleRecord,
 } from "~/entities/titleRecord";
 import { useUpdateTitleRecord } from "~/entities/titleRecord/hooks/useTitleRecordUpdateMutation";
-import { TitleActionsMenu } from "~/features/manageTitle";
 import { CompactRate } from "~/shared/ui/CompactRate";
+import { TitleActionsMenu } from "../TitleActionsMenu";
 
 interface WatchlistRowProps {
   title: TitleRecord;

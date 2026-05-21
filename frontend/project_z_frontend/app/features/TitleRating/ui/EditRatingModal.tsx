@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import Modal from "~/shared/ui/Modal/Modal";
 import { type TitleRecord, useTitleRecordMutation } from "~/entities/titleRecord";
+import { RatingEditorContent } from "./RatingEditorContent";
 import type { Rating } from "~/shared/types";
-import { RatingEditorContent } from "~/shared/ui/RatingEditorContent";
 
 interface EditRatingModalProps {
   title: TitleRecord;
@@ -50,6 +50,7 @@ export const EditRatingModal = ({ title, isOpen, onClose }: EditRatingModalProps
       maxWidth="max-w-xl"
     >
       <RatingEditorContent
+        titleId={title.titleId}
         ratings={localRatings}
         onChange={setLocalRatings} 
         isSaving={false} 

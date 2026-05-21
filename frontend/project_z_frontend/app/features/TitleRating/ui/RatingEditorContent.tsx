@@ -1,12 +1,15 @@
+import { useState } from "react";
 import StarRoundedIcon from "@mui/icons-material/StarRounded";
 import AddIcon from "@mui/icons-material/Add";
 import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
+import CompareArrowsIcon from "@mui/icons-material/CompareArrows";
 import { Button } from "~/shared/ui/Button";
-import { CompactRate } from "../CompactRate";
-import type { Rating } from "~/shared/types";
+import { CompactRate } from "../../../shared/ui/CompactRate";
 import { CategoryRow } from "./RatingRow";
+import type { Rating } from "~/shared/types";
 
 interface RatingEditorContentProps {
+    titleId: number;
     ratings: Rating;
     onChange: (newRatings: Rating) => void;
     isSaving: boolean;
@@ -23,25 +26,29 @@ const PRESET_CATEGORIES = [
 ];
 
 export const RatingEditorContent = ({
+    titleId,
     ratings,
     onChange,
     isSaving,
     onSave,
     onCancel
 }: RatingEditorContentProps) => {
-    const safeRatings: { overall?: number; [key: string]: number | undefined } =
+    
+
+    const safeRatings: { overall?: number;[key: string]: number | undefined } =
         (Object.keys(ratings).length === 0)
             ? {}
-            : ratings as { overall?: number; [key: string]: number | undefined };
+            : ratings as { overall?: number;[key: string]: number | undefined };
 
     const customCategories = Object.keys(safeRatings).filter((key) => key !== "overall");
     const currentOverall = safeRatings.overall;
     const isOverallMissing = currentOverall === undefined;
-
+    
+    const showComparison = !isOverallMissing ? true : false;
     const handleUpdateNumericValue = (key: string, val: number | undefined) => {
         onChange({
             ...safeRatings,
-            [key]: val, 
+            [key]: val,
         } as Rating);
     };
 
@@ -88,25 +95,27 @@ export const RatingEditorContent = ({
                             </div>
                         </div>
 
-                        <div className="scale-90 sm:scale-110 origin-left sm:origin-right w-full sm:w-auto flex justify-end">
-                            <CompactRate
-                                currentRating={currentOverall}
-                                onRate={(val) => handleUpdateNumericValue("overall", val)}
-                                onClear={() => handleUpdateNumericValue("overall", undefined)}
-                            />
+                        <div className="flex items-center gap-3 w-full sm:w-auto justify-end">
+                            <div className="scale-90 sm:scale-110 origin-right w-full sm:w-auto flex justify-end">
+                                <CompactRate
+                                    currentRating={currentOverall}
+                                    onRate={(val) => handleUpdateNumericValue("overall", val)}
+                                    onClear={() => handleUpdateNumericValue("overall", undefined)}
+                                />
+                            </div>
                         </div>
                     </div>
                 </div>
 
                 <div className="space-y-4">
-                    <div className="flex flex-col gap-2 px-2">
+                    <div className="flex flex-col gap-3 px-2">
                         <div className="flex justify-between items-center w-full">
-                            <h3 className="text-[10px] sm:text-[12px] font-black uppercase text-muted-foreground tracking-[0.15em] sm:tracking-[0.2em] italic">
+                            <h3 className="text-[10px] sm:text-[12px] font-black pl-2 uppercase text-muted-foreground tracking-[0.15em] sm:tracking-[0.2em] italic">
                                 Additional Criteria
                             </h3>
                             <Button
                                 onClick={handleAddCategory}
-                                className=" h-7 sm:h-8 !text-xl sm:text-[11px] gap-1 sm:gap-2 px-3 sm:px-4 bg-transparent text-primary hover:bg-primary/20 rounded-xl font-bold transition-all"
+                                className="h-7 sm:h-8 !text-xl sm:text-[11px] gap-1 sm:gap-2 px-3 sm:px-4 bg-transparent text-primary hover:bg-primary/20 rounded-xl font-bold transition-all"
                                 disabled={isOverallMissing}
                             >
                                 <AddIcon sx={{ fontSize: { xs: 30, sm: 24 } }} />
@@ -114,6 +123,7 @@ export const RatingEditorContent = ({
                                 <span className="xs:hidden">Add</span>
                             </Button>
                         </div>
+
 
                         {!isOverallMissing && (
                             <div className="flex flex-wrap gap-1.5 pt-1 items-center">
@@ -128,11 +138,10 @@ export const RatingEditorContent = ({
                                             type="button"
                                             disabled={isAdded}
                                             onClick={() => handleAddPreset(preset.label)}
-                                            className={`text-[12px] px-2.5 py-1 rounded-lg font-bold border transition-all duration-200 ${
-                                                isAdded
+                                            className={`text-[12px] px-2.5 py-1 rounded-lg font-bold border transition-all duration-200 ${isAdded
                                                     ? "bg-transparent border-border text-muted-foreground/40 line-through cursor-not-allowed"
                                                     : "bg-background-muted hover:bg-primary/10 border-border hover:border-primary/30 text-foreground hover:text-primary active:scale-95"
-                                            }`}
+                                                }`}
                                         >
                                             {preset.label}
                                         </Button>
@@ -154,6 +163,8 @@ export const RatingEditorContent = ({
                                 key={key}
                                 categoryKey={key}
                                 value={safeRatings[key] ?? 0}
+                                titleId={titleId}
+                                showComparison={showComparison}
                                 onRename={handleRenameCategory}
                                 onDelete={handleDeleteCategory}
                                 onRate={(val) => handleUpdateNumericValue(key, val)}

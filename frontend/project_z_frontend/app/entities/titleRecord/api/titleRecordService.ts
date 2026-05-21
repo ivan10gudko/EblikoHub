@@ -1,4 +1,4 @@
-import {type CreateTitleRecord, type TitleParams, type TitleRecord } from "../model/titleRecord"
+import { type CreateTitleRecord, type TitleParams, type TitleRecord, type TitleShortDto } from "../model/titleRecord"
 import type { PageResponse } from "~/shared/types";
 import { apiClient, publicClient } from "~/shared/api";
 import { Status } from "~/shared/types/Status";
@@ -14,20 +14,21 @@ export interface RateOptions extends ActionOptions {
     score: number | Rating; // {} - for delete
 }
 
+
 interface TitleRecordService {
     get(userId: string, params?: TitleParams): Promise<PageResponse<TitleRecord>>;
     post(titleData: CreateTitleRecord): Promise<TitleRecord>;
     put(titleId: number, titleData: TitleRecord): Promise<TitleRecord>;
     patch(titleId: number, titleData: Partial<TitleRecord>): Promise<TitleRecord>;
     delete(titleId: number): Promise<void>;
-    patchCustomOrder(titleId:number,newTitlePosition:number) : Promise<void>;
-    reindexCustomOrder(userId:string) : Promise<void>;
+    patchCustomOrder(titleId: number, newTitlePosition: number): Promise<void>;
+    reindexCustomOrder(userId: string): Promise<void>;
     getWatched(userId: string): Promise<Array<TitleRecord>>;
     getPlanned(userId: string): Promise<Array<TitleRecord>>;
     getByApiTitleId(jikanId: number): Promise<TitleRecord>;
-
+    getNeighborsRating(titleId : number, category:string, currentRating : number): Promise<Array<TitleShortDto>>;
     rate(options: RateOptions): Promise<TitleRecord>;
-    clearRating(options:ActionOptions): Promise<TitleRecord>;
+    clearRating(options: ActionOptions): Promise<TitleRecord>;
     moveToPlanned(options: ActionOptions): Promise<TitleRecord>;
     markAsWatched(options: ActionOptions): Promise<TitleRecord>;
     markAsDropped(options: ActionOptions): Promise<TitleRecord>;
@@ -36,35 +37,45 @@ interface TitleRecordService {
 }
 
 export const titleRecordService: TitleRecordService = {
-    async get(userId,params) {
+    async get(userId, params) {
         const response = await apiClient.get(`/titles/${userId}`, {
             params
         });
-        
+
         return response.data;
     },
-   
+    async getNeighborsRating(titleId,category, currentRating) {
+        const response = await apiClient.get(`/titles/${titleId}/getNeighborsRating`, {
+            params: {
+                category: category,
+                currentRating : currentRating
+                
+            }
+        });
+
+        return response.data;
+    },
     async post(titleData) {
-        const response = await apiClient.post(`/titles`,titleData);
+        const response = await apiClient.post(`/titles`, titleData);
         return response.data;
     },
 
     async put(titleId, titleData) {
-        const response = await apiClient.put(`/titles/${titleId}`,titleData);
-        
+        const response = await apiClient.put(`/titles/${titleId}`, titleData);
+
         return response.data;
     },
 
     async patch(titleId, titleData) {
-        const response = await apiClient.patch(`/titles/${titleId}`,titleData);
-        
+        const response = await apiClient.patch(`/titles/${titleId}`, titleData);
+
         return response.data;
     },
-    async patchCustomOrder(titleId, newTitlePosition){
-        await apiClient.patch(`titles/${titleId}/position`,{ customOrder : newTitlePosition});
-    
+    async patchCustomOrder(titleId, newTitlePosition) {
+        await apiClient.patch(`titles/${titleId}/position`, { customOrder: newTitlePosition });
+
     },
-    async reindexCustomOrder(userId){
+    async reindexCustomOrder(userId) {
         await apiClient.post(`titles/${userId}/reindex`);
     },
     async delete(titleId) {
@@ -93,8 +104,8 @@ export const titleRecordService: TitleRecordService = {
         //try to use title fetched before
         // if not search in database
         const targetId = existingTitle?.titleId;
-        
-    
+
+
         if (targetId) {
             return this.patch(targetId, data);
         }
@@ -113,8 +124,8 @@ export const titleRecordService: TitleRecordService = {
         return this.saveAction({ apiTitleId, data: { rating }, initialData, existingTitle });
     },
 
-    async clearRating({ apiTitleId, initialData, existingTitle }){
-        return this.rate({ apiTitleId, score: {} ,initialData, existingTitle })
+    async clearRating({ apiTitleId, initialData, existingTitle }) {
+        return this.rate({ apiTitleId, score: {}, initialData, existingTitle })
     },
 
     async moveToPlanned(options) {

@@ -18,6 +18,11 @@ export interface TitleParams extends QueryParams {
     search?: string;
 }
 
+export interface TitleShortDto {
+    titleId: number;
+    titleName: string;
+    ratingValue: number;
+}
 export interface CreateTitleRecord extends Omit<TitleRecord, 'titleId' | 'createdAt' | 'customOrder'> { }
 
 export interface ManageTitleRecordProps{
