@@ -1,6 +1,6 @@
 import { type CreateTitleRecord, type TitleParams, type TitleRecord, type TitleShortDto } from "../model/titleRecord"
 import type { PageResponse } from "~/shared/types";
-import { apiClient, publicClient } from "~/shared/api";
+import { apiClient } from "~/shared/api";
 import { Status } from "~/shared/types/Status";
 import type { Rating } from "~/shared/types/Rating";
 
@@ -26,7 +26,7 @@ interface TitleRecordService {
     getWatched(userId: string): Promise<Array<TitleRecord>>;
     getPlanned(userId: string): Promise<Array<TitleRecord>>;
     getByApiTitleId(jikanId: number): Promise<TitleRecord>;
-    getNeighborsRating(titleId : number, category:string, currentRating : number): Promise<Array<TitleShortDto>>;
+    getNeighborsRating(titleId: number, category: string, currentRating: number): Promise<Array<TitleShortDto>>;
     rate(options: RateOptions): Promise<TitleRecord>;
     clearRating(options: ActionOptions): Promise<TitleRecord>;
     moveToPlanned(options: ActionOptions): Promise<TitleRecord>;
@@ -44,12 +44,12 @@ export const titleRecordService: TitleRecordService = {
 
         return response.data;
     },
-    async getNeighborsRating(titleId,category, currentRating) {
+    async getNeighborsRating(titleId, category, currentRating) {
         const response = await apiClient.get(`/titles/${titleId}/getNeighborsRating`, {
             params: {
                 category: category,
-                currentRating : currentRating
-                
+                currentRating: currentRating
+
             }
         });
 

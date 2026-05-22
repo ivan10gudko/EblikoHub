@@ -2,20 +2,17 @@ import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import type { Anime } from "~/entities/title";
 import {
   StatusSelect,
+  TitleType,
   useTitleByApiId,
   type CreateTitleRecord,
 } from "~/entities/titleRecord";
 import { useTitleRecordMutation } from "~/entities/titleRecord/hooks/useTitleRecordMutation";
-import {
-  PageRate,
-  TitleActionsMenu,
-  WatchedButton,
-  WatchlistButton,
-} from "~/features/manageTitle";
+import { PageRate } from "~/features/manageTitle";
 import { Status } from "~/shared/types";
 import { Button } from "~/shared/ui/Button";
 import { ImageWithFallback } from "~/shared/ui/ImageWithFallback";
 import { Sidebar } from "~/shared/ui/Sidebar";
+import { TitleActionsMenu } from "../TitleActionsMenu";
 
 //data.images?.jpg?.large_image_url,//check later if it returns "undefined" or "null"
 interface Props {
@@ -28,6 +25,7 @@ const AnimeSidebar: React.FC<Props> = ({ data }) => {
     titleName: data.title,
     status: Status.WATCHED,
     imageUrl: data.images.jpg.image_url,
+    titleType: TitleType.ANIME,
   };
 
   const { data: titleRecord } = useTitleByApiId(initialData.apiTitleId);
