@@ -4,11 +4,11 @@ import { Select } from "~/shared/ui/Select";
 import type { AnimeCardType } from "~/entities/title";
 import {
   useCreateTitleRecord,
-  type CreateTitleRecord
+  type CreateTitleRecord,
 } from "~/entities/titleRecord";
 import toast from "react-hot-toast";
 import { useState } from "react";
-import { TitleSearch } from "../TitleSearch/titleSearch";
+import { TitleSearch } from "./components/titleSearch";
 import DeleteSweepIcon from "@mui/icons-material/DeleteSweep";
 import { formatRatingInput } from "~/shared/helpers/formatRating";
 import { TitleImageEditor } from "~/features/manageTitle";
@@ -178,4 +178,3 @@ export const AddTitleModal = ({ isOpen, onClose }: AddTitleModalProps) => {
     </Modal>
   );
 };
-
