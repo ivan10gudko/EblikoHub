@@ -15,7 +15,7 @@ const StatusFilter = () => {
   const { status, setStatus } = useTitleFilterStore();
   return (
     <div className="flex flex-col gap-2">
-      <label className="text-sm font-bold text-foreground-muted uppercase px-1">
+      <label className="text-sm font-bold text-foreground uppercase px-1">
         Status
       </label>
       <div className="flex flex-wrap gap-2">

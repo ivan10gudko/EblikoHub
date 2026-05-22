@@ -101,8 +101,9 @@ public class TitleServiceImpl implements TitleService {
     public Page<TitleEntity> findAllByUserId(TitleQueryParameters params, UUID userId) {
         Specification<TitleEntity> spec = Specification
                 .where(TitleSpecifications.belongsToUser(userId))
-                .and(TitleSpecifications.hasStatus(params.getStatus())
-                        .and(TitleSpecifications.hasName(params.getSearch())));
+                .and(TitleSpecifications.hasStatus(params.getStatus()))
+                .and(TitleSpecifications.hasName(params.getSearch()))
+                .and(TitleSpecifications.hasTitleTypes(params.getTypes()));
 
         if ("rating".equals(params.getSortBy())) {
             spec = spec.and(TitleSpecifications.sortByRating(params.getOrder()));
@@ -130,6 +131,7 @@ public class TitleServiceImpl implements TitleService {
                     patchHelper.updateIfPresent(source.getApiTitleId(), target::setApiTitleId);
                     patchHelper.updateIfPresent(source.getTitleName(), target::setTitleName);
                     patchHelper.updateIfPresent(source.getStatus(), target::setStatus);
+                    patchHelper.updateIfPresent(source.getTitleType(), target::setTitleType);
                     patchHelper.updateIfPresent(source.getRating(), target::setRating);
                     patchHelper.updateIfPresent(source.getCustomOrder(), target::setCustomOrder);
                     patchHelper.updateIfPresent(source.getImageUrl(), target::setImageUrl);

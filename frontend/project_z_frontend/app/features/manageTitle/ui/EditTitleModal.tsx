@@ -2,6 +2,7 @@ import Modal from "~/shared/ui/Modal/Modal";
 import { Button } from "~/shared/ui/Button";
 import { Input } from "~/shared/ui/Input";
 import { useEffect, useState } from "react";
+import { TitleType, titleTypeOptions } from "~/entities/titleRecord";
 import type { TitleRecord } from "~/entities/titleRecord";
 import { StatusSelect } from "~/entities/titleRecord";
 import { useUpdateTitleRecord } from "~/entities/titleRecord/hooks/useTitleRecordUpdateMutation";
@@ -9,6 +10,7 @@ import toast from "react-hot-toast";
 import { TitleImageEditor } from "~/features/manageTitle";
 import type { Status } from "~/shared/types/Status";
 import { CompactRate } from "~/shared/ui/CompactRate";
+import { Select } from "~/shared/ui/Select";
 
 interface EditTitleModalProps {
   title: TitleRecord;
@@ -22,9 +24,16 @@ export const EditTitleModal = ({
   onClose,
 }: EditTitleModalProps) => {
   const [titleName, setTitleName] = useState(title.titleName);
-  const [imageUrl, setImageUrl] = useState<string | null>(title.imageUrl ?? null);
+  const [imageUrl, setImageUrl] = useState<string | null>(
+    title.imageUrl ?? null,
+  );
   const [status, setStatus] = useState<Status>(title.status);
-  const [rating, setRating] = useState<number | undefined>(title.rating?.overall);
+  const [rating, setRating] = useState<number | undefined>(
+    title.rating?.overall,
+  );
+  const [titleType, setTitleType] = useState<TitleType>(
+    title.titleType ?? TitleType.ANIME,
+  );
 
   const { updateTitle, isUpdating } = useUpdateTitleRecord(title.titleId);
 
@@ -43,10 +52,10 @@ export const EditTitleModal = ({
       return;
     }
 
-    const hasChanges = 
-      titleName !== title.titleName || 
-      imageUrl !== title.imageUrl || 
-      status !== title.status || 
+    const hasChanges =
+      titleName !== title.titleName ||
+      imageUrl !== title.imageUrl ||
+      status !== title.status ||
       rating !== title.rating?.overall;
 
     if (!hasChanges) {
@@ -60,6 +69,7 @@ export const EditTitleModal = ({
         imageUrl,
         status,
         rating: rating !== undefined ? { overall: rating } : undefined,
+        titleType,
       },
       {
         onSuccess: () => {
@@ -68,13 +78,13 @@ export const EditTitleModal = ({
         },
         onError: () => {
           toast.error("Failed to save changes");
-        }
+        },
       },
     );
   };
 
   const handleBackdropClick = () => {
-    handleSave(true); 
+    handleSave(true);
   };
 
   return (
@@ -97,7 +107,19 @@ export const EditTitleModal = ({
               className="h-12 border-2 p-3 border-border focus:border-primary rounded-xl font-bold"
             />
           </div>
-
+          <div className="w-full space-y-2">
+            <label className="text-xs font-bold tracking-widest text-muted-foreground ml-1 uppercase opacity-70 block">
+              Title Type
+            </label>
+            <div className="w-full sm:max-w-xs">
+              <Select
+                value={titleType}
+                onChange={(val: string) => setTitleType(val as TitleType)}
+                options={[...titleTypeOptions]}
+                className="h-12 border-2 border-border/60 rounded-xl font-bold text-foreground text-sm shadow-sm w-full"
+              />
+            </div>
+          </div>
           <div className="flex flex-col sm:flex-row gap-6">
             <div className="flex-1 space-y-2">
               <StatusSelect

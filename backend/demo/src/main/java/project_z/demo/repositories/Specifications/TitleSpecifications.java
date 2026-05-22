@@ -1,5 +1,6 @@
 package project_z.demo.repositories.Specifications;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.data.jpa.domain.Specification;
@@ -9,6 +10,7 @@ import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.MapJoin;
 import project_z.demo.entity.TitleEntity;
 import project_z.demo.enums.TitleStatus;
+import project_z.demo.enums.TitleType;
 
 public class TitleSpecifications {
     public static Specification<TitleEntity> belongsToUser(UUID userId) {
@@ -23,6 +25,15 @@ public class TitleSpecifications {
         return (root, query, cb) -> (titleName == null || titleName.equals("")) ? null
                 : cb.like(
                         cb.lower(root.get("titleName")), "%" + titleName.toLowerCase() + "%");
+    }
+
+    public static Specification<TitleEntity> hasTitleTypes(List<TitleType> types) {
+        return (root, query, cb) -> {
+            if (types == null || types.isEmpty()) {
+                return null;
+            }
+            return root.get("titleType").in(types);
+        };
     }
 
     public static Specification<TitleEntity> sortByRating(String order) {

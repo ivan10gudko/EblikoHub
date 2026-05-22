@@ -12,20 +12,23 @@ export const WatchListPage = ({ userId }: { userId: string | null }) => {
   const currentSessionUserId = useAuthStore(state => state.userId);
   const isOwn = Boolean(currentSessionUserId && currentSessionUserId === userId);
   const {
-    search, sortBy, order, status,
+    search, sortBy, order, status, types,
     setSearch,
     setSortFromUrl,
     setStatusFromUrl,
-    setOrderFromUrl
+    setOrderFromUrl,
+    setTypesFromUrl
+    
   } = useTitleFilterStore();
 
-  const filters = { search, sortBy, order, status };
+  const filters = { search, sortBy, order, status, types };
 
   useSyncUrl(filters, {
     search: setSearch,
     sortBy: setSortFromUrl,
     status: setStatusFromUrl,
-    order: setOrderFromUrl
+    order: setOrderFromUrl,
+    types: setTypesFromUrl,
   });
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading, queryKey } = useTitlesQuery(userId);
 

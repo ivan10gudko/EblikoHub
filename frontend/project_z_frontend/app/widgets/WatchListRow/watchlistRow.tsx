@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import {
   StatusSelect,
+  TitleTypeThemes,
   type TitleRecord,
 } from "~/entities/titleRecord";
 import { useUpdateTitleRecord } from "~/entities/titleRecord/hooks/useTitleRecordUpdateMutation";
@@ -16,38 +17,46 @@ interface WatchlistRowProps {
   dragHandleProps?: DraggableProvidedDragHandleProps | null;
 }
 
-export const WatchlistRow = ({ title, isOwn, dragHandleProps }: WatchlistRowProps) => {
+export const WatchlistRow = ({
+  title,
+  isOwn,
+  dragHandleProps,
+}: WatchlistRowProps) => {
   const [tempTitleName, setTempTitleName] = useState(title.titleName);
   useEffect(() => {
     setTempTitleName(title.titleName);
   }, [title.titleName]);
-  
+
   const navigate = useNavigate();
   const { updateTitle, deleteTitle } = useUpdateTitleRecord(title.titleId);
-  
+
   const handleImageClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     if (title.apiTitleId) {
       navigate(`/anime/${title.apiTitleId}`);
     }
   };
-  
+
   const handleDelete = (e?: React.MouseEvent) => {
     e?.stopPropagation();
     deleteTitle();
   };
-  
+
   const DEFAULT_IMAGE_PATH = "/defaultTitleRecordImage.jpg";
+  const themeClasses = title.titleType ? TitleTypeThemes[title.titleType] : "";
 
   return (
-    <div className="group flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-4 bg-card p-2 rounded-xl border border-border transition-all w-full">
+    <div
+      className={`group flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-4 bg-card p-2 rounded-xl border transition-all duration-300 w-full ${themeClasses}`}
+    >
       <div className="flex items-center flex-1 gap-3 min-w-0">
-        
-        {isOwn&& dragHandleProps !== null && dragHandleProps !== undefined && (
+        {isOwn && dragHandleProps !== null && dragHandleProps !== undefined && (
           <div
             {...dragHandleProps}
             className={`text-muted-foreground/40 group-hover:text-muted-foreground/70 transition-colors flex items-center justify-center pl-1 h-10 w-6 ${
-              dragHandleProps ? "cursor-grab active:cursor-grabbing" : "cursor-default"
+              dragHandleProps
+                ? "cursor-grab active:cursor-grabbing"
+                : "cursor-default"
             }`}
           >
             <DragIndicatorIcon sx={{ fontSize: 20 }} />
@@ -117,10 +126,7 @@ export const WatchlistRow = ({ title, isOwn, dragHandleProps }: WatchlistRowProp
         </div>
         {isOwn && (
           <div className="flex-shrink-0 ml-1 border-l border-border pl-2">
-            <TitleActionsMenu
-              title={title}
-              onDelete={handleDelete}
-            />
+            <TitleActionsMenu title={title} onDelete={handleDelete} />
           </div>
         )}
       </div>
