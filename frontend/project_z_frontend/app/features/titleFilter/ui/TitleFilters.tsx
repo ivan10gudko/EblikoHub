@@ -5,6 +5,7 @@ import SortControl from "./SortControl";
 import StatusFilter from "./StatusFilter";
 import SearchFilter from "./SearchFilter";
 import {Divider } from '@mui/material';
+import TypeFilter from "./TitleTypeFilter";
 export const TitleFilters = () => {
   const { 
     search, setSearch, 
@@ -21,7 +22,8 @@ return (
       <SortControl />
       
       <StatusFilter />
-
+      
+      <TypeFilter />
       <Divider sx ={{my : 1}}/>
         <Button 
           onClick={reset}

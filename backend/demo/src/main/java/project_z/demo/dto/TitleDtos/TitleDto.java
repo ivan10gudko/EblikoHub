@@ -10,6 +10,7 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import project_z.demo.enums.TitleStatus;
+import project_z.demo.enums.TitleType;
 
 @Data
 @AllArgsConstructor
@@ -23,6 +24,7 @@ public class TitleDto {
     private String titleName;
     private Map<String, Float> rating;
     private TitleStatus status;
+    private TitleType titleType;
     private Double customOrder;
     private String imageUrl;
     private LocalDateTime createdAt;

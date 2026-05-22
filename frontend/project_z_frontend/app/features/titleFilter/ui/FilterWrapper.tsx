@@ -44,7 +44,7 @@ export const FilterResponsiveWrapper = ({ children, title = "Filters" }: FilterR
           ${isOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}
         `}>
           <div className="lg:hidden flex justify-between items-center p-5 border-b border-border bg-background-muted/50">
-            <span className="font-black uppercase tracking-wider text-gray-500 text-xs">{title}</span>
+            <span className="font-black uppercase tracking-wider text-foreground-muted text-xs">{title}</span>
             <button
               className="p-2 hover:bg-background-muted-hover rounded-xl transition-colors text-foreground-muted"
               onClick={close}

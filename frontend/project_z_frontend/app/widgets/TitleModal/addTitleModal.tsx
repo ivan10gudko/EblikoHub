@@ -3,6 +3,8 @@ import { Button } from "~/shared/ui/Button";
 import { Select } from "~/shared/ui/Select";
 import type { AnimeCardType } from "~/entities/title";
 import {
+  TitleType,
+  titleTypeOptions,
   useCreateTitleRecord,
   type CreateTitleRecord,
 } from "~/entities/titleRecord";
@@ -23,13 +25,13 @@ const INITIAL_FORM_DATA: CreateTitleRecord = {
   titleName: "",
   apiTitleId: undefined,
   status: Status.INPROGRESS,
+  titleType: TitleType.ANIME,
   imageUrl: null,
   rating: undefined,
 };
 
 export const AddTitleModal = ({ isOpen, onClose }: AddTitleModalProps) => {
-  const [formData, setFormData] =
-    useState<CreateTitleRecord>(INITIAL_FORM_DATA);
+  const [formData, setFormData] = useState<CreateTitleRecord>(INITIAL_FORM_DATA);
   const { createNewTitleRecord, isCreating } = useCreateTitleRecord();
 
   const handleImport = (anime: AnimeCardType) => {
@@ -40,10 +42,12 @@ export const AddTitleModal = ({ isOpen, onClose }: AddTitleModalProps) => {
       imageUrl: anime.img,
     });
   };
+
   const handleClear = () => {
     setFormData(INITIAL_FORM_DATA);
     toast.success("Form cleared");
   };
+
   const handleSave = () => {
     if (!formData.titleName.trim()) {
       toast.error("Enter name!");
@@ -58,11 +62,12 @@ export const AddTitleModal = ({ isOpen, onClose }: AddTitleModalProps) => {
       },
     });
   };
+
   const handleRatingChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const formatted = formatRatingInput(e.target.value);
 
     if (formatted !== null) {
-      setFormData((prev) => ({
+      setFormData((prev: CreateTitleRecord) => ({
         ...prev,
         rating: {
           ...prev.rating,
@@ -71,8 +76,9 @@ export const AddTitleModal = ({ isOpen, onClose }: AddTitleModalProps) => {
       }));
     }
   };
+
   const handleImageChange = (url: string | null) => {
-    setFormData((prev) => ({ ...prev, imageUrl: url }));
+    setFormData((prev: CreateTitleRecord) => ({ ...prev, imageUrl: url }));
   };
   return (
     <Modal
@@ -112,6 +118,19 @@ export const AddTitleModal = ({ isOpen, onClose }: AddTitleModalProps) => {
               />
             </div>
             <div className="w-full">
+              <div className="space-y-2 mb-5">
+                <label className="text-xs font-bold tracking-widest text-muted-foreground ml-1 uppercase opacity-70">
+                  Title Type
+                </label>
+                <div className="w-auto sm:max-w-xs max-w-full">
+                  <Select
+                    value={formData.titleType}
+                    onChange={(val) => setFormData({ ...formData, titleType: val as TitleType })}
+                    options={[...titleTypeOptions]}
+                    className="h-12 border-2 border-border/60 rounded-xl font-bold text-foreground text-sm shadow-sm w-full"
+                  />
+                </div>
+              </div>
               <div className="flex gap-4 mb-1">
                 <div className="flex-1">
                   <label className="text-xs font-bold tracking-widest text-foreground ml-1 uppercase">
@@ -149,7 +168,8 @@ export const AddTitleModal = ({ isOpen, onClose }: AddTitleModalProps) => {
             </div>
           </div>
         </div>
-        <div className="flex gap-4 pt-6 border-t border-border">
+        <div className="flex flex-col gap-3 pt-6 border-t border-border">
+          <div className="flex gap-4"></div>
           <Button
             onClick={onClose}
             className="flex-1 h-14 rounded-xl bg-card text-foreground !font-bold tracking-wider hover:bg-card transition-all active:scale-95 shadow-sm"
@@ -163,18 +183,16 @@ export const AddTitleModal = ({ isOpen, onClose }: AddTitleModalProps) => {
           >
             {isCreating ? "Saving..." : "Save Title"}
           </Button>
-          <div className="flex justify-center">
-            <Button
-              onClick={handleClear}
-              variant="text-only"
-              className="flex items-center gap-2 text-[10px] tracking-widest text-foreground hover:text-danger transition-colors uppercase py-2 px-4"
-            >
-              <DeleteSweepIcon sx={{ fontSize: 16 }} />
-              Clear Form Data
-            </Button>
-          </div>
         </div>
+        <Button
+          onClick={handleClear}
+          variant="text-only"
+          className="flex items-center gap-2 text-[10px] tracking-widest text-foreground hover:text-danger transition-colors uppercase py-2 px-4"
+        >
+          <DeleteSweepIcon sx={{ fontSize: 16 }} />
+          Clear Form Data
+        </Button>
       </div>
-    </Modal>
+    </Modal >
   );
 };

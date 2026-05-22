@@ -16,7 +16,7 @@ interface SelectProps extends Omit<ComponentProps<"select">, "onChange"> {
 }
 
 const SELECT_CLASSES = {
-    base: "w-full appearance-none rounded-lg border px-4 py-2.5 text-sm outline-none transition-all cursor-pointer disabled:cursor-not-allowed disabled:bg-gray-50 disabled:opacity-70",
+    base: "w-full overflow-hidden appearance-none rounded-lg border px-4 py-2.5 text-sm outline-none transition-all cursor-pointer disabled:cursor-not-allowed disabled:bg-gray-50 disabled:opacity-70",
     error: "border-danger focus:ring-1 focus:ring-danger",
     default: "border-border focus:border-primary focus:ring-1 focus:ring-primary"
 };
