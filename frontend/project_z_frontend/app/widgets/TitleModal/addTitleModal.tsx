@@ -67,7 +67,7 @@ export const AddTitleModal = ({ isOpen, onClose }: AddTitleModalProps) => {
     const formatted = formatRatingInput(e.target.value);
 
     if (formatted !== null) {
-      setFormData((prev: any) => ({
+      setFormData((prev: CreateTitleRecord) => ({
         ...prev,
         rating: {
           ...prev.rating,
@@ -78,7 +78,7 @@ export const AddTitleModal = ({ isOpen, onClose }: AddTitleModalProps) => {
   };
 
   const handleImageChange = (url: string | null) => {
-    setFormData((prev: any) => ({ ...prev, imageUrl: url }));
+    setFormData((prev: CreateTitleRecord) => ({ ...prev, imageUrl: url }));
   };
   return (
     <Modal
