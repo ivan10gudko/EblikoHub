@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.hibernate.annotations.ColumnDefault;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -37,6 +38,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import project_z.demo.enums.TitleStatus;
+import project_z.demo.enums.TitleType;
 
 @EntityListeners(AuditingEntityListener.class)
 @Data
@@ -65,6 +67,11 @@ public class TitleEntity {
 
     @Enumerated(EnumType.STRING)
     private TitleStatus status;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "title_type", nullable = false)
+    @ColumnDefault("'ANIME'") 
+    private TitleType titleType = TitleType.ANIME;
 
     @ManyToOne
     @JoinColumn(name = "user_id")

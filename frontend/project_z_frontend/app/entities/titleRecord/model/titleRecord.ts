@@ -8,14 +8,37 @@ export interface TitleRecord {
     titleName: string,
     rating?: Rating,
     status: Status,
+    titleType : TitleType,
     imageUrl?: string | null,
     customOrder: number,
     createdAt: string,
 }
+export enum TitleType {
+    ANIME = "ANIME",
+    HENTAI = "HENTAI",
+    MANGA = "MANGA",
+    MOVIE = "MOVIE",
+    SERIES = "SERIES"
+}
+export const titleTypeOptions = [
+  { value: TitleType.ANIME, label: "Anime" },
+  { value: TitleType.MANGA, label: "Manga" },
+  { value: TitleType.SERIES, label: "Series" },
+  { value: TitleType.MOVIE, label: "Movie" },
+  { value: TitleType.HENTAI, label: "Hentai" },
+];
+export const TitleTypeThemes: Record<TitleType, string> = {
+  [TitleType.ANIME]: "border-border",
+  [TitleType.MANGA]: "bg-emerald-500/5 border-emerald-500/20 hover:border-emerald-500/40",
+  [TitleType.SERIES]: "bg-purple-500/5 border-purple-500/20 hover:border-purple-500/40",
+  [TitleType.MOVIE]: "bg-orange-500/4 border-amber-500/20 hover:border-amber-500/40",
+  [TitleType.HENTAI]: "bg-rose-500/5 border-rose-500/20 hover:border-rose-500/40",
+};
 
 export interface TitleParams extends QueryParams {
     status?: Status;
     search?: string;
+    types?: TitleType[];
 }
 
 export interface CreateTitleRecord extends Omit<TitleRecord, 'titleId' | 'createdAt' | 'customOrder'> { }
