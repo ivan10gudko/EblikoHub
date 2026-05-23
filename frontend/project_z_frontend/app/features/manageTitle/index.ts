@@ -7,7 +7,5 @@ export { default as RateCardAction } from './ui/RateCardAction';
 export { default as AddToWatchedCardAction } from './ui/AddToWatchedCardAction';
 export { default as AddToWatchlistCardAction } from './ui/AddToWatchlistCardAction';
 export {default as ManagedAnimeCard} from './ui/ManagedAnimeCard';
-export {TitleActionsMenu} from './ui/TitleActionsMenu';
 export {TitleImageEditor} from "./ui/TitleImageEditor";
 export {EditTitleModal} from "./ui/EditTitleModal";
-export {EditRatingModal} from "../../entities/titleRecord/ui/EditRatingModal";

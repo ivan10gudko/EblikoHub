@@ -29,9 +29,8 @@ export const useSeasons = (titleId: number) => {
 
   return {
     seasons: seasons || [],
-    isLoading,
     refetch,
     createSeason: createMutation.mutate,
-    isCreating: createMutation.isPending,
+    isPending: createMutation.isPending || isLoading,
   };
 };

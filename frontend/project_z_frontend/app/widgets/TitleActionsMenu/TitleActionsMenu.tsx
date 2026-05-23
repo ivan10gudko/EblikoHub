@@ -5,13 +5,13 @@ import {
   DeleteDropdownItem,
   DropdownItem,
 } from "~/shared/ui/DropDown/DropDown";
-import { EditTitleModal } from "./EditTitleModal";
+import { EditTitleModal } from "../../features/manageTitle/ui/EditTitleModal";
 import { useState } from "react";
 import type { TitleRecord } from "~/entities/titleRecord";
-import { EditRatingModal } from "~/entities/titleRecord";
 import StarRoundedIcon from "@mui/icons-material/StarRounded";
 import { EditSeasonsModal } from "~/entities/season";
 import ViewListIcon from "@mui/icons-material/ViewList";
+import { EditRatingModal } from "~/features/TitleRating";
 interface TitleActionsMenuProps {
   title: TitleRecord;
   onDelete: () => void;
@@ -60,11 +60,14 @@ export const TitleActionsMenu = ({
         isOpen={isEditOpen}
         onClose={handleCloseEdit}
       />
-      <EditSeasonsModal
-        titleId={title.titleId}
-        isOpen={isSeasonsOpen}
-        onClose={handleCloseSeasons}
-      />
+      {isSeasonsOpen && (
+        <EditSeasonsModal
+          titleId={title.titleId}
+          titleName={title.titleName}
+          isOpen={isSeasonsOpen}
+          onClose={handleCloseSeasons}
+        />
+      )}
       <EditRatingModal
         title={title}
         isOpen={isRatingsOpen}

@@ -2,7 +2,7 @@ import Modal from "~/shared/ui/Modal/Modal";
 import { Button } from "~/shared/ui/Button";
 import { Input } from "~/shared/ui/Input";
 import { useEffect, useState } from "react";
-import { TitleType, titleTypeOptions } from "~/entities/titleRecord"
+import { TitleType, titleTypeOptions } from "~/entities/titleRecord";
 import type { TitleRecord } from "~/entities/titleRecord";
 import { StatusSelect } from "~/entities/titleRecord";
 import { useUpdateTitleRecord } from "~/entities/titleRecord/hooks/useTitleRecordUpdateMutation";
@@ -31,18 +31,36 @@ export const EditTitleModal = ({
   const [rating, setRating] = useState<number | undefined>(
     title.rating?.overall,
   );
-  const [titleType, setTitleType] = useState<TitleType>(title.titleType ?? TitleType.ANIME);
+  const [titleType, setTitleType] = useState<TitleType>(
+    title.titleType ?? TitleType.ANIME,
+  );
 
   const { updateTitle, isUpdating } = useUpdateTitleRecord(title.titleId);
-  useEffect(() => {
-    if (title.status) {
-      setStatus(title.status);
-    }
-  }, [title.status]);
 
-  const handleSave = () => {
+  useEffect(() => {
+    if (isOpen) {
+      setTitleName(title.titleName);
+      setImageUrl(title.imageUrl ?? null);
+      setStatus(title.status);
+      setRating(title.rating?.overall);
+    }
+  }, [isOpen, title]);
+
+  const handleSave = (shouldCloseAfter = true) => {
     if (!titleName.trim()) {
       toast.error("Title name cannot be empty");
+      return;
+    }
+
+    const hasChanges =
+      titleName !== title.titleName ||
+      imageUrl !== title.imageUrl ||
+      status !== title.status ||
+      rating !== title.rating?.overall ||
+      titleType !== title.titleType;
+
+    if (!hasChanges) {
+      if (shouldCloseAfter) onClose();
       return;
     }
 
@@ -56,18 +74,25 @@ export const EditTitleModal = ({
       },
       {
         onSuccess: () => {
-          toast.success("Updated successfully");
-          onClose();
+          toast.success("Changes saved automatically");
+          if (shouldCloseAfter) onClose();
+        },
+        onError: () => {
+          toast.error("Failed to save changes");
         },
       },
     );
   };
 
+  const handleBackdropClick = () => {
+    handleSave(true);
+  };
+
   return (
     <Modal
       isOpen={isOpen}
-      onClose={onClose}
-      title="Edit Record"
+      onClose={handleBackdropClick}
+      title={`Edit "${title.titleName}"`}
       maxWidth="max-w-xl"
     >
       <div className="space-y-8 p-2">
@@ -122,12 +147,12 @@ export const EditTitleModal = ({
           <Button
             onClick={onClose}
             variant="outline"
-            className="text-foreground  bg-card border-none flex-1 h-14 rounded-xl font-bold"
+            className="text-foreground bg-card border-none flex-1 h-14 rounded-xl font-bold"
           >
             Cancel
           </Button>
           <Button
-            onClick={handleSave}
+            onClick={() => handleSave(true)}
             disabled={isUpdating}
             className="flex-[2] h-14 rounded-xl bg-primary text-foreground font-black tracking-wide shadow-[0_4px_0_0_#d97706] active:translate-y-[1px] active:shadow-none transition-all disabled:opacity-50"
           >

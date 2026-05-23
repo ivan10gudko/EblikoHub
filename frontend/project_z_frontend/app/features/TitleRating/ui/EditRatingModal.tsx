@@ -1,8 +1,12 @@
 import { useEffect, useState } from "react";
 import Modal from "~/shared/ui/Modal/Modal";
-import { type TitleRecord, useTitleRecordMutation } from "~/entities/titleRecord";
+import {
+  type TitleRecord,
+  TitleType,
+  useTitleRecordMutation,
+} from "~/entities/titleRecord";
+import { RatingEditorContent } from "./RatingEditorContent";
 import type { Rating } from "~/shared/types";
-import { RatingEditorContent } from "~/shared/ui/RatingEditorContent";
 
 interface EditRatingModalProps {
   title: TitleRecord;
@@ -10,8 +14,12 @@ interface EditRatingModalProps {
   onClose: () => void;
 }
 
-export const EditRatingModal = ({ title, isOpen, onClose }: EditRatingModalProps) => {
-  const { rate, rateLoading } = useTitleRecordMutation(
+export const EditRatingModal = ({
+  title,
+  isOpen,
+  onClose,
+}: EditRatingModalProps) => {
+  const { rate } = useTitleRecordMutation(
     title.apiTitleId,
     {
       apiTitleId: title.apiTitleId,
@@ -19,35 +27,43 @@ export const EditRatingModal = ({ title, isOpen, onClose }: EditRatingModalProps
       status: title.status,
       rating: title.rating,
       imageUrl: title.imageUrl,
+      titleType: title.titleType,
     },
-    title
+    title,
   );
+
   const [localRatings, setLocalRatings] = useState<Rating>(
-    title.rating && "overall" in title.rating ? title.rating : { overall: 0 }
+    title.rating && "overall" in title.rating ? title.rating : { overall: 0 },
   );
 
   useEffect(() => {
-    if (title.rating) {
+    if (isOpen && title.rating) {
       setLocalRatings(title.rating);
     }
-  }, [title.rating]);
+  }, [isOpen, title.rating]);
 
   const handleSave = () => {
-    rate(localRatings);
+    const hasChanges =
+      JSON.stringify(localRatings) !== JSON.stringify(title.rating);
+
+    if (hasChanges) {
+      rate(localRatings);
+    }
     onClose();
   };
 
   return (
     <Modal
       isOpen={isOpen}
-      onClose={onClose}
-      title="Custom Rating System"
+      onClose={handleSave}
+      title={`Rating "${title.titleName}"`}
       maxWidth="max-w-xl"
     >
       <RatingEditorContent
+        titleId={title.titleId}
         ratings={localRatings}
         onChange={setLocalRatings}
-        isSaving={rateLoading}
+        isSaving={false}
         onSave={handleSave}
         onCancel={onClose}
       />
