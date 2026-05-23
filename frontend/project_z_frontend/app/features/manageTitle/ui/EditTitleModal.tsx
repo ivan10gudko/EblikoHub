@@ -56,7 +56,8 @@ export const EditTitleModal = ({
       titleName !== title.titleName ||
       imageUrl !== title.imageUrl ||
       status !== title.status ||
-      rating !== title.rating?.overall;
+      rating !== title.rating?.overall ||
+      titleType !== title.titleType;
 
     if (!hasChanges) {
       if (shouldCloseAfter) onClose();
