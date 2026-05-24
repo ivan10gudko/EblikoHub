@@ -23,6 +23,7 @@ import project_z.demo.Mappers.Mapper;
 import project_z.demo.common.Exceptions.ResourceNotFoundException;
 import project_z.demo.common.Exceptions.TitleWithThatMalIdAlreadyExistsException;
 import project_z.demo.common.QueryParameters.TitleQueryParameters;
+import project_z.demo.dto.TitleDtos.TargetTitleContext;
 import project_z.demo.dto.TitleDtos.TitleBatchCreateDto;
 import project_z.demo.dto.TitleDtos.TitleDto;
 import project_z.demo.dto.TitleDtos.TitleGetNeighborsRating;
@@ -219,10 +220,16 @@ public class TitleServiceImpl implements TitleService {
     public List<TitleShortDto> getNeighborsRating(Long titleId, String category, Float currentRating) {
         TitleEntity currentTitle = titleRepository.findById(titleId)
                 .orElseThrow(() -> new ResourceNotFoundException ("Title not found"));
-
-
-        List<Object[]> upRows = titleRepository.findCloserTitlesUp(titleId, category, currentRating);
-        List<Object[]> downRows = titleRepository.findCloserTitlesDown(titleId, category, currentRating);
+        TargetTitleContext context = new TargetTitleContext(
+                titleId,
+                category,
+                currentRating,
+                currentTitle.getTitleType().toString(),
+                currentTitle.getUser().getUserId()
+        );
+        
+        List<Object[]> upRows = titleRepository.findCloserTitlesUp(context);
+        List<Object[]> downRows = titleRepository.findCloserTitlesDown(context);
 
         List<TitleShortDto> result = new ArrayList<>();
 
