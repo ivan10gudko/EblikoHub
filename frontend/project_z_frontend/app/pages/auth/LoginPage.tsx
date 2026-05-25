@@ -1,8 +1,10 @@
 
+import toast from "react-hot-toast";
 import { useNavigate } from "react-router";
 import type { LoginData } from "~/entities/session";
 import { Separator, SocialMediaBlock, useAuthStore, validateEmail, validatePassword } from "~/features/auth";
 import { useForm } from "~/shared/hooks";
+import { supabase } from "~/shared/lib";
 import { Button } from "~/shared/ui/Button";
 import { Input } from "~/shared/ui/Input";
 
@@ -22,7 +24,7 @@ const LoginPage = () => {
         setErrors,
     } = useForm<LoginData>({
         initialValues: { email: "", password: "" },
-        
+
         validate: (name, value) => {
             switch (name) {
                 case "email":
@@ -43,6 +45,32 @@ const LoginPage = () => {
             }
         },
     });
+    const handleForgotPassword = async () => {
+        const emailValue = formData.email;
+        const emailError = validateEmail(emailValue);
+
+        if (!emailValue.trim() || emailError) {
+            toast.error(emailError || "Please enter a valid email address first!");
+            setErrors((prev) => ({ ...prev, email: emailError || "Required for password reset" }));
+            return;
+        }
+
+        const resetToast = toast.loading("Sending reset link...");
+
+        try {
+            const { error } = await supabase.auth.resetPasswordForEmail(emailValue, {
+                redirectTo: `${window.location.origin}/auth/reset-password`,
+            });
+
+            if (error) {
+                toast.error(error.message, { id: resetToast });
+            } else {
+                toast.success("If an account exists for this email, you will receive a password reset link shortly.", { id: resetToast });
+            }
+        } catch (err) {
+            toast.error("Something went wrong. Please try again.", { id: resetToast });
+        }
+    };
     return (
         <div className="max-w-md w-full bg-background border-border shadow-lg py-8 px-8 rounded font-normal">
             <h2 className="text-primary text-2xl font-medium w-full text-center mb-5">
@@ -81,15 +109,27 @@ const LoginPage = () => {
                     {isLoading ? "Logging in..." : "Login"}
                 </Button>
             </form>
-            <div className="text-sm text-gray-400 mt-4 text-center">
-                Don`t have an account?{"  "}
-                <button
-                    type="button"
-                    className="cursor-pointer text-primary hover:text-primary-hover font-medium bg-transparent border-none p-0 underline-offset-2 hover:underline"
-                    onClick={() => navigate("/auth/signup")}
-                >
-                    Sign Up
-                </button>
+            <div className="items-center flex flex-col">
+                <div className="text-sm text-gray-400 mt-4">
+                    Don`t have an account?{"  "}
+                    <button
+                        type="button"
+                        className="cursor-pointer text-primary hover:text-primary-hover font-medium bg-transparent border-none p-0 underline-offset-2 hover:underline"
+                        onClick={() => navigate("/auth/signup")}
+                    >
+                        Sign Up
+                    </button>
+                </div>
+                <div className="text-sm text-gray-400 mt-4">
+                    Forgot password? {"  "}
+                    <button
+                        type="button"
+                        className="cursor-pointer text-primary hover:text-primary-hover font-medium bg-transparent border-none p-0 underline-offset-2 hover:underline"
+                        onClick={handleForgotPassword} // 
+                    >
+                        Reset
+                    </button>
+                </div>
             </div>
             <Separator> or </Separator>
             <SocialMediaBlock />
