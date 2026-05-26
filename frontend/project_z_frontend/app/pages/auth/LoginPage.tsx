@@ -4,7 +4,7 @@ import { useNavigate } from "react-router";
 import type { LoginData } from "~/entities/session";
 import { Separator, SocialMediaBlock, useAuthStore, validateEmail, validatePassword } from "~/features/auth";
 import { useForm } from "~/shared/hooks";
-import { supabase } from "~/shared/lib";
+import { notify, supabase } from "~/shared/lib";
 import { Button } from "~/shared/ui/Button";
 import { Input } from "~/shared/ui/Input";
 
@@ -50,12 +50,12 @@ const LoginPage = () => {
         const emailError = validateEmail(emailValue);
 
         if (!emailValue.trim() || emailError) {
-            toast.error(emailError || "Please enter a valid email address first!");
+            notify.error(emailError || "Please enter a valid email address first!");
             setErrors((prev) => ({ ...prev, email: emailError || "Required for password reset" }));
             return;
         }
 
-        const resetToast = toast.loading("Sending reset link...");
+        const resetnotify = notify.loading("Sending reset link...");
 
         try {
             const { error } = await supabase.auth.resetPasswordForEmail(emailValue, {
@@ -63,12 +63,12 @@ const LoginPage = () => {
             });
 
             if (error) {
-                toast.error(error.message, { id: resetToast });
+               notify.updateError(resetnotify, error.message);
             } else {
-                toast.success("If an account exists for this email, you will receive a password reset link shortly.", { id: resetToast });
+                notify.updateSuccess(resetnotify,"If an account exists for this email, you will receive a password reset link shortly.");
             }
         } catch (err) {
-            toast.error("Something went wrong. Please try again.", { id: resetToast });
+            notify.error("Something went wrong. Please try again.");
         }
     };
     return (

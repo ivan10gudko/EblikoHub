@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient, type InfiniteData } from "@tanstack/react-query";
-import toast from "react-hot-toast";
 import { titleRecordService, type CreateTitleRecord, type TitleRecord } from "~/entities/titleRecord";
+import { notify } from "~/shared/lib";
 import { getSessionUserId } from "~/shared/lib/supabase";
 import type { PageResponse, Rating } from "~/shared/types";
 import { Status } from "~/shared/types/Status";
@@ -40,7 +40,7 @@ export const useTitleRecordMutation = (apiTitleId: number | undefined, initialDa
         },
         onError: (error: any) => {
             const message = error.response?.data?.message || "Something went wrong";
-            toast.error(message);
+            notify.error(message);
         },
     };
 
@@ -75,14 +75,14 @@ export const useTitleRecordMutation = (apiTitleId: number | undefined, initialDa
         },
         onError: (error: any) => {
             const message = error.response?.data?.message || "Something went wrong";
-            toast.error(message);
+            notify.error(message);
         },
     });
 
     const checkAuthAndRun = async (action: () => void) => {
         const userId = await getSessionUserId();
         if (!userId) {
-            toast.error("Please sign in first to perform this action")
+            notify.error("Please sign in first to perform this action")
             return;
         }
         action();

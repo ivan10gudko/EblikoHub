@@ -3,8 +3,7 @@ import { useNavigate } from "react-router";
 import { Button } from "~/shared/ui/Button";
 import { Input } from "~/shared/ui/Input";
 import { validatePassword } from "~/features/auth";
-import toast from "react-hot-toast";
-import { supabase } from "~/shared/lib";
+import { notify, supabase } from "~/shared/lib";
 
 const ResetPasswordPage = () => {
     const [password, setPassword] = useState("");
@@ -23,12 +22,12 @@ const ResetPasswordPage = () => {
         const passwordError = validatePassword(password);
         if (passwordError) {
             setError(passwordError);
-            toast.error(passwordError);
+            notify.error(passwordError);
             return;
         }
 
         setIsLoading(true);
-        const updateToast = toast.loading("Updating your password...");
+        const toastId = notify.loading("Updating your password...");
 
         try {
 
@@ -37,16 +36,16 @@ const ResetPasswordPage = () => {
             });
 
             if (supabaseError) {
-                toast.error(supabaseError.message, { id: updateToast });
+                notify.updateError(toastId,supabaseError.message);
             } else {
-                toast.success("Password updated successfully! Please log in.", { id: updateToast });
+                notify.updateSuccess( toastId,"Password updated successfully! Please log in.");
 
                 await supabase.auth.signOut();
 
                 navigate("/auth/login");
             }
         } catch (err) {
-            toast.error("An unexpected error occurred. Please try again.", { id: updateToast });
+            notify.updateError(toastId, "An unexpected error occurred. Please try again.");
         } finally {
             setIsLoading(false);
         }

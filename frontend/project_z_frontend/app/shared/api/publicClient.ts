@@ -1,5 +1,5 @@
 import axios from "axios";
-import toast from "react-hot-toast";
+import { notify } from "../lib";
 
 export const publicClient = axios.create({
     baseURL: import.meta.env.VITE_API_URL || '/api/v1',
@@ -16,7 +16,7 @@ publicClient.interceptors.response.use(
     },
     (error) => {
         if (error.response && error.response.status === 402) {
-            toast.error("Something went wrong, try later");
+            notify.error("Something went wrong, try later");
         }
         return Promise.reject(error);
     }

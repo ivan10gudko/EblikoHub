@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient, type InfiniteData } from "@tanstack/react-query";
-import toast from "react-hot-toast";
 import { titleRecordService, type TitleRecord } from "~/entities/titleRecord";
+import { notify } from "~/shared/lib";
 import type { PageResponse } from "~/shared/types";
 
 export const useUpdateTitleRecord = (titleId: number) => {
@@ -31,7 +31,7 @@ export const useUpdateTitleRecord = (titleId: number) => {
       }
     },
     onError: (error: any) => {
-      toast.error(error.response?.data?.message || "Error while updating");
+      notify.error(error.response?.data?.message || "Error while updating");
     }
   });
 
@@ -51,10 +51,10 @@ export const useUpdateTitleRecord = (titleId: number) => {
           };
         }
       );
-      toast.success("deleted!");
+      notify.success("deleted!");
     },
     onError: (error: any) => {
-      toast.error(error.response?.data?.message || "error while deleting");
+      notify.error(error.response?.data?.message || "error while deleting");
     }
   });
 

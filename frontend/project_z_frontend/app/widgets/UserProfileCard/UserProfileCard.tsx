@@ -5,8 +5,8 @@ import { UserAvatar, userService, type UserProfile } from "~/entities/user";
 import { useAuthStore } from "~/features/auth";
 import { Button } from "~/shared/ui/Button";
 import { UserProfileEdit } from "./UserProfileEditCard";
-import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router';
+import { notify } from '~/shared/lib';
 
 export const UserProfileCard = () => {
     const [isEditing, setIsEditing] = useState(false);
@@ -38,10 +38,10 @@ export const UserProfileCard = () => {
     onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: ["user_profile", userId] });
         setIsEditing(false);
-        toast.success("succesfully updated")
+        notify.success("succesfully updated")
     },
     onError: (error) => {
-        toast.error("failed to update profile");
+        notify.error("failed to update profile");
     }
 });
     return (

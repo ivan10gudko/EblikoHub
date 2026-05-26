@@ -6,11 +6,11 @@ import { TitleType, titleTypeOptions } from "~/entities/titleRecord";
 import type { TitleRecord } from "~/entities/titleRecord";
 import { StatusSelect } from "~/entities/titleRecord";
 import { useUpdateTitleRecord } from "~/entities/titleRecord/hooks/useTitleRecordUpdateMutation";
-import toast from "react-hot-toast";
 import { TitleImageEditor } from "~/features/manageTitle";
 import type { Status } from "~/shared/types/Status";
 import { CompactRate } from "~/shared/ui/CompactRate";
 import { Select } from "~/shared/ui/Select";
+import { notify } from "~/shared/lib/notify";
 
 interface EditTitleModalProps {
   title: TitleRecord;
@@ -48,7 +48,7 @@ export const EditTitleModal = ({
 
   const handleSave = (shouldCloseAfter = true) => {
     if (!titleName.trim()) {
-      toast.error("Title name cannot be empty");
+      notify.error("Title name cannot be empty");
       return;
     }
 
@@ -74,11 +74,11 @@ export const EditTitleModal = ({
       },
       {
         onSuccess: () => {
-          toast.success("Changes saved automatically");
+          notify.success("Changes saved automatically");
           if (shouldCloseAfter) onClose();
         },
         onError: () => {
-          toast.error("Failed to save changes");
+          notify.error("Failed to save changes");
         },
       },
     );

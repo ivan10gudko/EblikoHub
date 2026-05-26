@@ -8,13 +8,13 @@ import {
   useCreateTitleRecord,
   type CreateTitleRecord,
 } from "~/entities/titleRecord";
-import toast from "react-hot-toast";
 import { useState } from "react";
 import { TitleSearch } from "./components/titleSearch";
 import DeleteSweepIcon from "@mui/icons-material/DeleteSweep";
 import { formatRatingInput } from "~/shared/helpers/formatRating";
 import { TitleImageEditor } from "~/features/manageTitle";
 import { Status, statusOptions } from "~/shared/types/Status";
+import { notify } from "~/shared/lib";
 
 interface AddTitleModalProps {
   isOpen: boolean;
@@ -45,18 +45,18 @@ export const AddTitleModal = ({ isOpen, onClose }: AddTitleModalProps) => {
 
   const handleClear = () => {
     setFormData(INITIAL_FORM_DATA);
-    toast.success("Form cleared");
+    notify.success("Form cleared");
   };
 
   const handleSave = () => {
     if (!formData.titleName.trim()) {
-      toast.error("Enter name!");
+      notify.error("Enter name!");
       return;
     }
 
     createNewTitleRecord(formData, {
       onSuccess: () => {
-        toast.success("Added!");
+        notify.success("Added!");
         setFormData(INITIAL_FORM_DATA);
         onClose();
       },
