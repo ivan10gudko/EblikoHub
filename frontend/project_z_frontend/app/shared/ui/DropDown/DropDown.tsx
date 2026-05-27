@@ -83,7 +83,7 @@ export const DeleteDropdownItem = ({ onDelete }: { onDelete: () => void }) => {
       variant="danger"
     >
       <DeleteOutlineIcon sx={{ fontSize: 16 }} />
-      <span>{isConfirming ? "Are you sure?" : "Delete"}</span>
+      {isConfirming ? <span className="text-foreground"> Are you sure? </span> : <span>Delete</span>}
     </DropdownItem>
   );
 };
