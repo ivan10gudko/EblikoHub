@@ -26,7 +26,7 @@ interface TitleRecordService {
     getWatched(userId: string): Promise<Array<TitleRecord>>;
     getPlanned(userId: string): Promise<Array<TitleRecord>>;
     getByApiTitleId(jikanId: number): Promise<TitleRecord>;
-    getNeighborsRating(titleId: number, category: string, currentRating: number): Promise<Array<TitleShortDto>>;
+    getSameCriteriaRating(titleId: number, category: string, currentRating: number): Promise<Array<TitleShortDto>>;
     rate(options: RateOptions): Promise<TitleRecord>;
     clearRating(options: ActionOptions): Promise<TitleRecord>;
     moveToPlanned(options: ActionOptions): Promise<TitleRecord>;
@@ -44,8 +44,8 @@ export const titleRecordService: TitleRecordService = {
 
         return response.data;
     },
-    async getNeighborsRating(titleId, category, currentRating) {
-        const response = await apiClient.get(`/titles/${titleId}/getNeighborsRating`, {
+    async getSameCriteriaRating(titleId, category, currentRating) {
+        const response = await apiClient.get(`/titles/${titleId}/getSameCriteriaRating`, {
             params: {
                 category: category,
                 currentRating: currentRating
