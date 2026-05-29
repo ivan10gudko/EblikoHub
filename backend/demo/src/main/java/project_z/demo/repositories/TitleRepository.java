@@ -51,8 +51,12 @@ public interface TitleRepository extends JpaRepository<TitleEntity, Long>,
                             FROM titles t
                             JOIN title_ratings r ON t.title_id = r.title_id
                             WHERE LOWER(r.name) = LOWER(:#{#context.category})
-                              AND t.title_type = :#{#context.titleType}
                               AND t.user_id = :#{#context.userId}
+                              AND (
+                                  (:#{#context.titleType} = 'HENTAI' AND t.title_type = 'HENTAI')
+                                  OR
+                                  (:#{#context.titleType} != 'HENTAI' AND t.title_type != 'HENTAI')
+                              )
                               AND (r.value > :#{#context.currentRating} OR (r.value = :#{#context.currentRating} AND t.title_id > :#{#context.currentId}))
                               AND t.title_id != :#{#context.currentId}
                             ORDER BY r.value ASC, t.title_id ASC
@@ -65,8 +69,12 @@ public interface TitleRepository extends JpaRepository<TitleEntity, Long>,
                             FROM titles t
                             JOIN title_ratings r ON t.title_id = r.title_id
                             WHERE LOWER(r.name) = LOWER(:#{#context.category})
-                              AND t.title_type = :#{#context.titleType}
                               AND t.user_id = :#{#context.userId}
+                              AND (
+                                  (:#{#context.titleType} = 'HENTAI' AND t.title_type = 'HENTAI')
+                                  OR
+                                  (:#{#context.titleType} != 'HENTAI' AND t.title_type != 'HENTAI')
+                              )
                               AND (r.value < :#{#context.currentRating} OR (r.value = :#{#context.currentRating} AND t.title_id < :#{#context.currentId}))
                               AND t.title_id != :#{#context.currentId}
                             ORDER BY r.value DESC, t.title_id DESC

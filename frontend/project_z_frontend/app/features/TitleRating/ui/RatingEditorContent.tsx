@@ -189,9 +189,9 @@ export const RatingEditorContent = ({
           Cancel
         </Button>
         <Button
-          disabled={isOverallMissing || isSaving}
           className="w-full sm:flex-[2] h-12 sm:h-14 rounded-xl bg-primary text-foreground font-black tracking-wide shadow-[0_4px_0_0_#d97706] active:translate-y-[1px] active:shadow-none transition-all disabled:opacity-50"
           onClick={onSave}
+          disabled={isSaving}
         >
           {isSaving ? "Saving..." : "Save Rating"}
         </Button>
