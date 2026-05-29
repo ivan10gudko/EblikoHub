@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import toast from "react-hot-toast";
 import type { CreateSeasonDto, Season } from "../model/season.types";
 import { seasonService } from "../api/SeasonService";
+import { notify } from "~/shared/lib";
 
 export const useSeasons = (titleId: number) => {
   const queryClient = useQueryClient();
@@ -20,10 +20,10 @@ export const useSeasons = (titleId: number) => {
       queryClient.setQueryData<Season[]>(queryKey, (old) =>
         old ? [...old, newSeason] : [newSeason]
       );
-      toast.success("Season added!");
+      notify.success("Season added!");
     },
     onError: (error: any) => {
-      toast.error(error.response?.data?.message || "Failed to add season");
+      notify.error(error.response?.data?.message || "Failed to add season");
     }
   });
 
