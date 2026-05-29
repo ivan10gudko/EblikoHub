@@ -9,26 +9,26 @@ interface CompactRateProps {
   onRate?: (value: number) => void;
   onClear?: () => void;
 }
-
 export const CompactRate = ({
   currentRating,
   onRate,
   onClear,
 }: CompactRateProps) => {
-  const [value, setValue] = useState<string>(currentRating?.toString() || "");
+  const hasRating = currentRating !== undefined && currentRating !== null;
+
+  const [value, setValue] = useState<string>(hasRating ? currentRating.toString() : "");
 
   const isReadOnly = !onRate || !onClear;
 
   useEffect(() => {
-    setValue(currentRating?.toString() || "");
-  }, [currentRating]);
+    setValue(hasRating ? currentRating.toString() : "");
+  }, [currentRating, hasRating]); 
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = e.target.value;
     if (isReadOnly) return;
 
     const formatted = formatRatingInput(val);
-
     if (formatted !== null) {
       setValue(formatted);
     }
@@ -40,6 +40,7 @@ export const CompactRate = ({
       onRate?.(num);
     }
   };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     handleSave();
@@ -56,10 +57,10 @@ export const CompactRate = ({
           onClear?.();
           setValue("");
         }}
-        disabled={currentRating === undefined || isReadOnly}
+        disabled={!hasRating || isReadOnly}
         className={`
           flex items-center justify-center w-8 h-full transition-all rounded-none rounded-l-md
-          ${currentRating !== undefined && !isReadOnly
+          ${hasRating && !isReadOnly
             ? "bg-danger text-background hover:bg-danger-hover border-y border-l border-danger"
             : "bg-background-muted text-foreground-muted border-y border-l border-border cursor-not-allowed"
           }

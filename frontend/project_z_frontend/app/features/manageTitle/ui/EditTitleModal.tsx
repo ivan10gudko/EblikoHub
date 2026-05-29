@@ -11,6 +11,7 @@ import type { Status } from "~/shared/types/Status";
 import { CompactRate } from "~/shared/ui/CompactRate";
 import { Select } from "~/shared/ui/Select";
 import { notify } from "~/shared/lib/notify";
+import type { Rating } from "~/shared/types";
 
 interface EditTitleModalProps {
   title: TitleRecord;
@@ -64,12 +65,24 @@ export const EditTitleModal = ({
       return;
     }
 
+    let finalRating: Partial<Rating> | undefined = undefined;
+
+    if (rating !== undefined) {
+      finalRating = {
+        ...title.rating,
+        overall: rating
+      };
+    } else if (title.rating) {
+      finalRating = { ...title.rating };
+      delete finalRating.overall;
+    }
+
     updateTitle(
       {
         titleName,
         imageUrl,
         status,
-        rating: rating !== undefined ? { overall: rating } : undefined,
+        rating: finalRating as Rating,
         titleType,
       },
       {
@@ -83,7 +96,6 @@ export const EditTitleModal = ({
       },
     );
   };
-
   const handleBackdropClick = () => {
     handleSave(true);
   };
