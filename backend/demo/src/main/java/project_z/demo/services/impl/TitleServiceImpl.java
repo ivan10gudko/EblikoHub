@@ -26,7 +26,6 @@ import project_z.demo.common.QueryParameters.TitleQueryParameters;
 import project_z.demo.dto.TitleDtos.TargetTitleContext;
 import project_z.demo.dto.TitleDtos.TitleBatchCreateDto;
 import project_z.demo.dto.TitleDtos.TitleDto;
-import project_z.demo.dto.TitleDtos.TitleGetNeighborsRating;
 import project_z.demo.dto.TitleDtos.TitlePatchUpdateDto;
 import project_z.demo.dto.TitleDtos.TitleShortDto;
 import project_z.demo.entity.SeasonEntity;
