@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import toast from "react-hot-toast";
 import type { UpdateSeasonDto, Season, DraftSeason } from "../model/season.types";
 import { seasonService } from "../api/SeasonService";
+import { notify } from "~/shared/lib";
 
 export const useSeasonActions = (titleId: number, onClose?: () => void) => {
   const queryClient = useQueryClient();
@@ -14,11 +14,11 @@ export const useSeasonActions = (titleId: number, onClose?: () => void) => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey });
-      toast.success("Updated!");
+      notify.success("Updated!");
       if (onClose) onClose();
     },
     onError: (error: any) => {
-      toast.error(error.response?.data?.message || "Sync failed");
+      notify.error(error.response?.data?.message || "Sync failed");
     }
   });
 
@@ -31,7 +31,7 @@ export const useSeasonActions = (titleId: number, onClose?: () => void) => {
       );
     },
     onError: (error: any) => {
-      toast.error(error.response?.data?.message || "Update failed");
+      notify.error(error.response?.data?.message || "Update failed");
     }
   });
 
@@ -41,10 +41,10 @@ export const useSeasonActions = (titleId: number, onClose?: () => void) => {
       queryClient.setQueryData<Season[]>(queryKey, (old) =>
         old?.filter((s) => s.seasonId !== seasonId)
       );
-      toast.success("Season deleted");
+      notify.success("Season deleted");
     },
     onError: (error: any) => {
-      toast.error(error.response?.data?.message || "Delete failed");
+      notify.error(error.response?.data?.message || "Delete failed");
     }
   });
 

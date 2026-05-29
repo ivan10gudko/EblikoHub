@@ -1,7 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
 import { titleRecordService } from "../api/titleRecordService";
-import { queryClient } from "~/shared/lib";
-import toast from "react-hot-toast";
+import { notify, queryClient } from "~/shared/lib";
 import type { CreateTitleRecord } from "../model/titleRecord";
 export const useCreateTitleRecord = () => {
 
@@ -12,7 +11,7 @@ export const useCreateTitleRecord = () => {
         },
         onError: (error: any) => {
             const message = error.response?.data?.message || "Something went wrong";
-            toast.error(message);
+            notify.error(message);
         }
     });
 

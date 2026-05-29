@@ -1,10 +1,10 @@
 import { useState, useEffect, useRef } from "react";
 import { useQueryClient, type InfiniteData } from "@tanstack/react-query";
-import toast from "react-hot-toast";
 import { titleRecordService, type TitleRecord } from "~/entities/titleRecord";
 import { calculateNewOrder } from "~/shared/helpers";
 import type { PageResponse } from "~/shared/types";
 import { useSearchParams } from "react-router";
+import { notify } from "~/shared/lib";
 
 export const useReorderWatchlist = (titles: TitleRecord[], queryKey: unknown[], userId: string | undefined) => {
   const [searchParams] = useSearchParams();
@@ -71,7 +71,7 @@ export const useReorderWatchlist = (titles: TitleRecord[], queryKey: unknown[], 
       optimisticOrderRef.current = titles.map(t => t.titleId);
       setOptimisticTitles(titles);
       queryClient.invalidateQueries({ queryKey });
-      toast.error("Failed to save position");
+      notify.error("Failed to save position");
     } finally {
       isMutating.current = false;
     }

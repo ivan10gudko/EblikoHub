@@ -21,6 +21,20 @@
   --color-background-muted-hover: var(--background-muted-hover);
   --color-secondary: var(--secondary);
   --color-secondary-hover: var(--secondary-hover);
+
+
+ @keyframes enter {
+    0% { transform: scale(0.9); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+
+  @keyframes leave {
+    0% { transform: scale(1); opacity: 1; }
+    100% { transform: scale(0.9); opacity: 0; }
+  }
+
+  --animate-enter: enter 0.2s ease-out;
+  --animate-leave: leave 0.15s ease-in forwards;
 }
 
 @layer base {
@@ -40,6 +54,7 @@
     --danger-hover: #b12626;
     --success: green;
   }
+
   .dark {
     --background: #0c0b0b;
     --foreground: #ffffff;
