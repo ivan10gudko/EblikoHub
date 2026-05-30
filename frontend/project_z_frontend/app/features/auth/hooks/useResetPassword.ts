@@ -1,7 +1,8 @@
-import { notify, supabase } from "~/shared/lib";
+import { notify } from "~/shared/lib";
 import { validatePassword } from "../utils/validators";
 import { useNavigate } from "react-router";
 import { useState } from "react";
+import { authService } from "~/entities/session";
 
 export const useResetPassword = () => {
     const [password, setPassword] = useState("");
@@ -26,25 +27,21 @@ export const useResetPassword = () => {
 
         setIsLoading(true);
         const updateNotifyId = notify.loading("Updating your password...");
-
         try {
-            const { error: supabaseError } = await supabase.auth.updateUser({
-                password: password,
-            });
+            await authService.updatePassword(password);
 
-            if (supabaseError) {
-                notify.updateError(updateNotifyId, supabaseError.message);
-            } else {
-                notify.updateSuccess(updateNotifyId, "Password updated successfully! Please log in.");
+            notify.updateSuccess(updateNotifyId, "Password updated successfully! Please log in.");
 
-                await supabase.auth.signOut();
-                navigate("/auth/login");
-            }
+            await authService.logout();
+
+            navigate("/auth/login");
         } catch (err) {
-            notify.updateError(updateNotifyId, "An unexpected error occurred. Please try again.");
+            const errorMessage = err instanceof Error ? err.message : "An unexpected error occurred. Please try again.";
+            notify.updateError(updateNotifyId, errorMessage);
         } finally {
             setIsLoading(false);
         }
+
     };
 
     return {
