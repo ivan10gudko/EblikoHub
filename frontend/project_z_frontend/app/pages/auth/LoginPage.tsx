@@ -1,6 +1,5 @@
-import toast from "react-hot-toast";
 import { useNavigate } from "react-router";
-import type { LoginData } from "~/entities/session";
+import { authService, type LoginData } from "~/entities/session";
 import {
   Separator,
   SocialMediaBlock,
@@ -9,6 +8,7 @@ import {
   validatePassword,
 } from "~/features/auth";
 import { useForm } from "~/shared/hooks";
+import { notify } from "~/shared/lib";
 import { Button } from "~/shared/ui/Button";
 import { Input } from "~/shared/ui/Input";
 
@@ -52,7 +52,30 @@ const LoginPage = () => {
       }
     },
   });
+  const handleForgotPassword = async () => {
+    const emailValue = formData.email;
+    const emailError = validateEmail(emailValue);
 
+    if (!emailValue.trim() || emailError) {
+      notify.error(emailError || "Please enter a valid email address first!");
+      setErrors((prev) => ({ ...prev, email: emailError || "Required for password reset" }));
+      return;
+    }
+
+    const resetnotify = notify.loading("Sending reset link...");
+
+    try {
+      await authService.sendPasswordResetEmail(emailValue);
+
+      notify.updateSuccess(
+        resetnotify,
+        "If an account exists for this email, you will receive a password reset link shortly."
+      );
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : "Something went wrong. Please try again.";
+      notify.updateError(resetnotify, errorMessage);
+    }
+  };
   return (
     <div className="max-w-md w-full bg-background border-border shadow-lg py-8 px-8 rounded font-normal">
       <h2 className="text-primary text-2xl font-medium w-full text-center mb-5">
@@ -100,6 +123,16 @@ const LoginPage = () => {
             onClick={() => navigate("/auth/signup")}
           >
             Sign Up
+          </button>
+        </div>
+        <div className="text-sm text-gray-400 mt-4">
+          Forgot password? {"  "}
+          <button
+            type="button"
+            className="cursor-pointer text-primary hover:text-primary-hover font-medium bg-transparent border-none p-0 underline-offset-2 hover:underline"
+            onClick={handleForgotPassword}
+          >
+            Reset
           </button>
         </div>
       </div>

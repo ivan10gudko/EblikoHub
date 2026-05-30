@@ -30,5 +30,6 @@ export default [
         route("login", "./routes/auth.login.tsx"),
         route("signup", "./routes/auth.signup.tsx"),
         route("callback", "./routes/auth.callback.tsx"),
+        route("reset-password", "./routes/auth.resetpassword.tsx"),
     ]),
 ] satisfies RouteConfig;
