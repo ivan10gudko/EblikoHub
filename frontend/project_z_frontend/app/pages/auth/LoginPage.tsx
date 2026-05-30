@@ -1,5 +1,4 @@
 
-import toast from "react-hot-toast";
 import { useNavigate } from "react-router";
 import type { LoginData } from "~/entities/session";
 import { Separator, SocialMediaBlock, useAuthStore, validateEmail, validatePassword } from "~/features/auth";
