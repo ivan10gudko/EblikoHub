@@ -1,3 +1,4 @@
 export {default as LoginPage} from "./LoginPage";
 export {default as SignupPage} from "./SignupPage";
 export {default as AuthCallbackPage} from "./AuthCallbackPage";
+export {default as RestPasswordPage} from "./ResetPasswordPage";
