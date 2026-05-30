@@ -10,6 +10,7 @@ import {
 import { useUpdateTitleRecord } from "~/entities/titleRecord/hooks/useTitleRecordUpdateMutation";
 import { CompactRate } from "~/shared/ui/CompactRate";
 import { TitleActionsMenu } from "../TitleActionsMenu";
+import type { Rating } from "~/shared/types";
 
 interface WatchlistRowProps {
   title: TitleRecord;
@@ -116,11 +117,27 @@ export const WatchlistRow = ({
             currentRating={title.rating?.overall}
             onRate={
               isOwn
-                ? (val) => updateTitle({ rating: { overall: val } })
+                ? (val) =>
+                  updateTitle({
+                    rating: {
+                      ...title.rating,
+                      overall: val,   
+                    },
+                  })
                 : undefined
             }
             onClear={
-              isOwn ? () => updateTitle({ rating: undefined }) : undefined
+              isOwn
+                ? () => {
+                  const updatedRating = title.rating
+                    ? ({ ...title.rating } as Partial<Rating>)
+                    : {};
+
+                  delete updatedRating.overall;
+
+                  updateTitle({ rating: updatedRating as Rating });
+                }
+                : undefined
             }
           />
         </div>

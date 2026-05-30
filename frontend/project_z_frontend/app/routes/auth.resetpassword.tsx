@@ -1,4 +1,5 @@
-import { ResetPasswordPage } from "~/pages/auth";
+import ResetPasswordPage from "~/pages/auth/ResetPasswordPage";
+
 
 
 export default function ResetPasswordRoutes() {

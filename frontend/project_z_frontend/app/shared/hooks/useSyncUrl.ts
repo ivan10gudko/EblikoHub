@@ -14,27 +14,60 @@ export const useSyncUrl = <T extends Record<string, any>>(
 
     useEffect(() => {
         if (isFirstRun.current) {
-            Object.entries(config).forEach(([key, setter]) => {
-                const value = searchParams.get(key);
-                if (value !== null && setter) {
-                    setter(value);
+            const hasUrlParams = Array.from(searchParams.keys()).length > 0;
+
+            if (hasUrlParams) {
+
+                Object.entries(config).forEach(([key, setter]) => {
+                    const value = searchParams.get(key);
+                    if (value !== null && setter) {
+                        setter(value);
+                    }
+                });
+            } else {
+
+                const nextParams = new URLSearchParams();
+                let shouldUpdateUrl = false;
+
+                Object.entries(storeValues).forEach(([key, val]) => {
+                    const isArray = Array.isArray(val);
+                    const isValid = isArray ? val.length > 0 : (val !== undefined && val !== null && val !== '' && val !== 'All');
+                    
+                    if (isValid) {
+                        nextParams.set(key, isArray ? val.join(',') : String(val));
+                        shouldUpdateUrl = true;
+                    }
+                });
+
+                if (shouldUpdateUrl) {
+                    setSearchParams(nextParams, { replace: true });
                 }
-            });
+            }
             isFirstRun.current = false;
         }
-    }, []); 
+    }, [searchParams, config]); 
 
-    const valuesString = JSON.stringify(storeValues);
+    const valuesDependencies = Object.entries(storeValues)
+        .map(([k, v]) => `${k}:${Array.isArray(v) ? v.join(',') : v}`)
+        .join('|');
 
     useEffect(() => {
+        if (isFirstRun.current) return; 
+
         const nextParams = new URLSearchParams(window.location.search);
         let changed = false;
 
         Object.entries(storeValues).forEach(([key, val]) => {
             const current = nextParams.get(key);
             
-            const isValidValue = val !== undefined && val !== null && val !== '' && val !== 'All';
-            const stringVal = isValidValue ? String(val) : '';
+            const isArray = Array.isArray(val);
+            const isValidValue = isArray 
+                ? val.length > 0 
+                : val !== undefined && val !== null && val !== '' && val !== 'All';
+
+            const stringVal = isValidValue 
+                ? (isArray ? val.join(',') : String(val)) 
+                : '';
 
             if (isValidValue) {
                 if (current !== stringVal) {
@@ -52,5 +85,5 @@ export const useSyncUrl = <T extends Record<string, any>>(
         if (changed) {
             setSearchParams(nextParams, { replace: true });
         }
-    }, [valuesString, setSearchParams]);
+    }, [valuesDependencies, setSearchParams]);
 };

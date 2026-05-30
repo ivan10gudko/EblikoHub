@@ -8,7 +8,7 @@ import {
   validatePassword,
 } from "~/features/auth";
 import { useForm } from "~/shared/hooks";
-import { notify, supabase } from "~/shared/lib";
+import { notify } from "~/shared/lib";
 import { Button } from "~/shared/ui/Button";
 import { Input } from "~/shared/ui/Input";
 
