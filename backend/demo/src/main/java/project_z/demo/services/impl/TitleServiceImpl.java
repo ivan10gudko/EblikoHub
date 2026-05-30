@@ -26,7 +26,6 @@ import project_z.demo.common.QueryParameters.TitleQueryParameters;
 import project_z.demo.dto.TitleDtos.TargetTitleContext;
 import project_z.demo.dto.TitleDtos.TitleBatchCreateDto;
 import project_z.demo.dto.TitleDtos.TitleDto;
-import project_z.demo.dto.TitleDtos.TitleGetNeighborsRating;
 import project_z.demo.dto.TitleDtos.TitlePatchUpdateDto;
 import project_z.demo.dto.TitleDtos.TitleShortDto;
 import project_z.demo.entity.SeasonEntity;
@@ -228,23 +227,9 @@ public class TitleServiceImpl implements TitleService {
                 currentTitle.getUser().getUserId()
         );
         
-        List<Object[]> upRows = titleRepository.findCloserTitlesUp(context);
-        List<Object[]> downRows = titleRepository.findCloserTitlesDown(context);
+        List<Object[]> rows = titleRepository.findAllTitlesInLeaderboard(context);
 
-        List<TitleShortDto> result = new ArrayList<>();
-
-        List<TitleShortDto> upList = TitleShortDto.fromRows(upRows);
-        Collections.reverse(upList);
-        result.addAll(upList);
-
-        result.add(new TitleShortDto(
-                currentTitle.getTitleId(),
-                currentTitle.getTitleName(),
-                currentRating));
-
-        result.addAll(TitleShortDto.fromRows(downRows));
-
-        return result;
+        return TitleShortDto.fromRows(rows);
     }
 
 }

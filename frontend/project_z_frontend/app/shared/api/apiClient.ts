@@ -1,6 +1,5 @@
 import axios, { AxiosError } from "axios";
-import { supabase } from "../lib";
-import toast from "react-hot-toast";
+import { notify, supabase } from "../lib";
 
 export const apiClient = axios.create({
     baseURL: import.meta.env.VITE_API_URL || '/api/v1',
@@ -32,7 +31,7 @@ apiClient.interceptors.response.use(
     },
     (error) => {
         if (error.response && error.response.status === 402) {
-            toast.error("Something went wrong, try later");
+            notify.error("Something went wrong, try later");
         }
         return Promise.reject(error);
     }

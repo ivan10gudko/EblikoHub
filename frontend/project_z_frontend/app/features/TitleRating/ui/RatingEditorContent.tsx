@@ -77,10 +77,6 @@ export const RatingEditorContent = ({
     <div className="flex flex-col max-h-[75vh] sm:max-h-[70vh]">
       <div
         className="flex-1 overflow-y-auto pr-1 sm:pr-3 space-y-6 sm:space-y-8 p-1 sm:p-2 custom-scrollbar"
-        style={{
-          scrollbarWidth: "thin",
-          scrollbarColor: "var(--background-muted) transparent",
-        }}
       >
         <div className="space-y-3">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-3 sm:p-4 bg-background-muted/50 rounded-2xl border-2 border-primary/20 sticky top-0 z-10 backdrop-blur-md gap-3 sm:gap-0">
@@ -189,9 +185,9 @@ export const RatingEditorContent = ({
           Cancel
         </Button>
         <Button
-          disabled={isOverallMissing || isSaving}
           className="w-full sm:flex-[2] h-12 sm:h-14 rounded-xl bg-primary text-foreground font-black tracking-wide shadow-[0_4px_0_0_#d97706] active:translate-y-[1px] active:shadow-none transition-all disabled:opacity-50"
           onClick={onSave}
+          disabled={isSaving}
         >
           {isSaving ? "Saving..." : "Save Rating"}
         </Button>

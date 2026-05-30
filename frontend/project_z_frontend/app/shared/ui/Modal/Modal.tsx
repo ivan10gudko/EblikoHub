@@ -14,7 +14,10 @@ interface ModalProps {
 
 const Modal = ({ children, title, isOpen, onClose, maxWidth = "max-w-lg", className = "" }: ModalProps) => {
     const modalRef = useRef<HTMLDivElement>(null);
+    const mouseDownOnOverlayRef = useRef<boolean>(false);
+
     const DEFAULT_STYLES = "relative bg-background w-full rounded-3xl shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200 mt-10 mb-10";
+    
     const handleEsc = useCallback((e: KeyboardEvent) => {
         if (e.key === "Escape") onClose();
     }, [onClose]);
@@ -30,12 +33,28 @@ const Modal = ({ children, title, isOpen, onClose, maxWidth = "max-w-lg", classN
         };
     }, [isOpen, handleEsc]);
 
+    const handleOverlayMouseDown = (e: React.MouseEvent) => {
+        if (e.target === e.currentTarget) {
+            mouseDownOnOverlayRef.current = true;
+        } else {
+            mouseDownOnOverlayRef.current = false;
+        }
+    };
+
+    const handleOverlayMouseUp = (e: React.MouseEvent) => {
+        if (e.target === e.currentTarget && mouseDownOnOverlayRef.current) {
+            onClose();
+        }
+        mouseDownOnOverlayRef.current = false;
+    };
+
     if (!isOpen) return null;
 
     return createPortal(
         <div
             className="fixed inset-0 z-[100] flex items-start justify-center overflow-y-auto bg-foreground-muted/20 backdrop-blur-[2px] p-4 md:p-16"
-            onClick={onClose}
+            onMouseDown={handleOverlayMouseDown}
+            onMouseUp={handleOverlayMouseUp}
         >
             <div
                 ref={modalRef}
@@ -44,7 +63,6 @@ const Modal = ({ children, title, isOpen, onClose, maxWidth = "max-w-lg", classN
                     ${className} 
                     ${maxWidth}
                     `}
-                onClick={(e) => e.stopPropagation()}
             >
                 <div className="flex items-center justify-between p-5 border-b border-border">
                     {title ? (

@@ -25,7 +25,6 @@ import project_z.demo.Mappers.Mapper;
 import project_z.demo.common.QueryParameters.TitleQueryParameters;
 import project_z.demo.dto.TitleDtos.TitleBatchCreateDto;
 import project_z.demo.dto.TitleDtos.TitleDto;
-import project_z.demo.dto.TitleDtos.TitleGetNeighborsRating;
 import project_z.demo.dto.TitleDtos.TitlePatchUpdateDto;
 import project_z.demo.dto.TitleDtos.TitlePositionUpdateDto;
 import project_z.demo.dto.TitleDtos.TitleShortDto;
@@ -113,7 +112,7 @@ public class TitleController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
     //@PreAuthorize("hasRole('ADMIN') || @securityService.isTitleOwner(#titleId, #token)")
-    @GetMapping(path = "/{titleId}/getNeighborsRating")
+    @GetMapping(path = "/{titleId}/getSameCriteriaRating")
     public List<TitleShortDto> getNeighborsRating(@PathVariable("titleId") Long titleId, @RequestParam String category, @RequestParam Float currentRating ) {
         return titleService.getNeighborsRating(titleId, category,currentRating);
     }
