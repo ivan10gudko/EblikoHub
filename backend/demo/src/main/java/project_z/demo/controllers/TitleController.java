@@ -23,11 +23,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import project_z.demo.Mappers.Mapper;
 import project_z.demo.common.QueryParameters.TitleQueryParameters;
+import project_z.demo.dto.TitleDtos.SameCriteriaRatingResponse;
 import project_z.demo.dto.TitleDtos.TitleBatchCreateDto;
 import project_z.demo.dto.TitleDtos.TitleDto;
 import project_z.demo.dto.TitleDtos.TitlePatchUpdateDto;
 import project_z.demo.dto.TitleDtos.TitlePositionUpdateDto;
-import project_z.demo.dto.TitleDtos.TitleShortDto;
 import project_z.demo.entity.TitleEntity;
 import project_z.demo.security.JwtService;
 import project_z.demo.services.TitleService;
@@ -138,9 +138,8 @@ public class TitleController {
     // @PreAuthorize("hasRole('ADMIN') || @securityService.isTitleOwner(#titleId,
     // #token)")
     @GetMapping(path = "/{titleId}/getSameCriteriaRating")
-    public List<TitleShortDto> getNeighborsRating(@PathVariable("titleId") Long titleId, @RequestParam String category,
-            @RequestParam Float currentRating) {
-        return titleService.getNeighborsRating(titleId, category, currentRating);
+    public SameCriteriaRatingResponse getNeighborsRating(@PathVariable("titleId") Long titleId, @RequestParam String category, @RequestParam Float currentRating ) {
+        return titleService.getNeighborsRating(titleId, category,currentRating);
     }
 
     @PreAuthorize("hasRole('ADMIN') || @securityService.isTitleOwner(#titleId, #token)")

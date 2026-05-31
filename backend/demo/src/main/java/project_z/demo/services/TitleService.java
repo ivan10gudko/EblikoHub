@@ -7,31 +7,46 @@ import java.util.UUID;
 import org.springframework.data.domain.Page;
 
 import project_z.demo.common.QueryParameters.TitleQueryParameters;
+import project_z.demo.dto.TitleDtos.SameCriteriaRatingResponse;
 import project_z.demo.dto.TitleDtos.TitleBatchCreateDto;
 import project_z.demo.dto.TitleDtos.TitleDto;
 import project_z.demo.dto.TitleDtos.TitlePatchUpdateDto;
-import project_z.demo.dto.TitleDtos.TitleShortDto;
 import project_z.demo.entity.SeasonEntity;
 import project_z.demo.entity.TitleEntity;
 
 public interface TitleService {
-    TitleEntity createTitle(TitleEntity title );
+    TitleEntity createTitle(TitleEntity title);
+
     void batchCreateTitle(TitleBatchCreateDto titles, String token);
+
     List<TitleEntity> findAll();
+
     Optional<TitleEntity> findOne(Long titleId);
-    boolean isExists (Long titleId);
+
+    boolean isExists(Long titleId);
+
     TitleEntity partialUpdate(Long titleId, TitlePatchUpdateDto titleEntity);
+
     void deleteById(Long id);
+
     TitleEntity addTitle(TitleEntity titleEntity, String token);
+
     List<TitleEntity> getWatchedList(UUID userid);
+
     List<TitleEntity> getWatchList(UUID userid);
+
     TitleEntity addSeason(SeasonEntity seasonEntity, TitleEntity titleEntity);
+
     TitleEntity findUserTitleByMalId(Integer titleMalId, String token);
+
     List<TitleEntity> findAllByMalIdInUserRooms(Integer titleMalId, String token);
+
     Page<TitleEntity> findAllByUserId(TitleQueryParameters parameters, UUID userId);
+
     void titlePositionUpdate(Double newPosition, Long titleId);
+
     void reindexCustomOrder(UUID userId);
-    List<TitleShortDto> getNeighborsRating(Long titleId, String category, Float currentRating);
     TitleDto pinTitle(Long titleId, UUID userId);
     void unpin(UUID userId);
+    SameCriteriaRatingResponse getNeighborsRating(Long titleId, String category, Float currentRating);
 }
