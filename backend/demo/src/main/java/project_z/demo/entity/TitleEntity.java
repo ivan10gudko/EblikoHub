@@ -88,6 +88,10 @@ public class TitleEntity {
     @Column(name = "image_url")
     private String imageUrl;
 
+    @Column(name = "is_pinned")
+    @Builder.Default
+    private boolean isPinned = false;
+
     @CreatedDate
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;

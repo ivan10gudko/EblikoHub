@@ -9,6 +9,7 @@ import org.springframework.data.domain.Page;
 import project_z.demo.common.QueryParameters.TitleQueryParameters;
 import project_z.demo.dto.TitleDtos.SameCriteriaRatingResponse;
 import project_z.demo.dto.TitleDtos.TitleBatchCreateDto;
+import project_z.demo.dto.TitleDtos.TitleDto;
 import project_z.demo.dto.TitleDtos.TitlePatchUpdateDto;
 import project_z.demo.entity.SeasonEntity;
 import project_z.demo.entity.TitleEntity;
@@ -45,6 +46,7 @@ public interface TitleService {
     void titlePositionUpdate(Double newPosition, Long titleId);
 
     void reindexCustomOrder(UUID userId);
-
+    TitleDto pinTitle(Long titleId, UUID userId);
+    void unpin(UUID userId);
     SameCriteriaRatingResponse getNeighborsRating(Long titleId, String category, Float currentRating);
 }

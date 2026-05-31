@@ -26,6 +26,8 @@ interface TitleRecordService {
     getWatched(userId: string): Promise<Array<TitleRecord>>;
     getPlanned(userId: string): Promise<Array<TitleRecord>>;
     getByApiTitleId(jikanId: number): Promise<TitleRecord>;
+    pinTitle(titleId : number) : Promise<TitleRecord>;
+    unpin() : Promise<void>;
     getSameCriteriaRating(titleId: number, category: string, currentRating: number): Promise<SameCriteriaRating>;
     rate(options: RateOptions): Promise<TitleRecord>;
     clearRating(options: ActionOptions): Promise<TitleRecord>;
@@ -54,6 +56,13 @@ export const titleRecordService: TitleRecordService = {
         });
 
         return response.data;
+    },
+    async pinTitle(titleId){
+        const response = await apiClient.post(`/titles/${titleId}/pinTitle`);
+        return response.data;
+    },
+    async unpin(){
+        await apiClient.post("/titles/unpin");
     },
     async post(titleData) {
         const response = await apiClient.post(`/titles`, titleData);

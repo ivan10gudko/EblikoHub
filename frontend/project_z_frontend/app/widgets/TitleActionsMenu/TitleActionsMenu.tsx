@@ -14,11 +14,14 @@ import ViewListIcon from "@mui/icons-material/ViewList";
 import { EditRatingModal } from "~/features/TitleRating";
 interface TitleActionsMenuProps {
   title: TitleRecord;
-  onDelete: () => void;
+  isOwn: boolean
+  onDelete?: () => void;
+
 }
 
 export const TitleActionsMenu = ({
   title,
+  isOwn,
   onDelete,
 }: TitleActionsMenuProps) => {
   const [isEditOpen, setIsEditOpen] = useState(false);
@@ -38,10 +41,8 @@ export const TitleActionsMenu = ({
           </div>
         }
       >
-        <DropdownItem onClick={() => setIsEditOpen(true)}>
-          <EditIcon sx={{ fontSize: 16 }} />
-          Edit Record
-        </DropdownItem>
+        {isOwn ? <DropdownItem onClick={() => setIsEditOpen(true)}> <EditIcon sx={{ fontSize: 16 }} /> Edit Record </DropdownItem>
+          : <></>}
         <DropdownItem onClick={() => setIsRatingsOpen(true)}>
           <StarRoundedIcon sx={{ fontSize: 16 }} />
           Rating
@@ -51,8 +52,7 @@ export const TitleActionsMenu = ({
           Seasons
         </DropdownItem>
         <div className="h-px bg-border my-1" />
-
-        <DeleteDropdownItem onDelete={onDelete} />
+        {onDelete ? <DeleteDropdownItem onDelete={onDelete} /> : <></>}
       </Dropdown>
 
       <EditTitleModal

@@ -3,7 +3,7 @@ import StarRoundedIcon from "@mui/icons-material/StarRounded";
 import AddIcon from "@mui/icons-material/Add";
 import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
 import CompareArrowsIcon from "@mui/icons-material/CompareArrows";
-import CalculateIcon from "@mui/icons-material/Calculate"; // Обов'язково додаємо імпорт
+import CalculateIcon from "@mui/icons-material/Calculate";
 import { Button } from "~/shared/ui/Button";
 import { CompactRate } from "../../../shared/ui/CompactRate";
 import { CategoryRow } from "./RatingRow";
