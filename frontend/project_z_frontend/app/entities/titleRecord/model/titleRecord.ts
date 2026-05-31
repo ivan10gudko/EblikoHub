@@ -20,6 +20,7 @@ export enum TitleType {
     MOVIE = "MOVIE",
     SERIES = "SERIES"
 }
+
 export const titleTypeOptions = [
     { value: TitleType.ANIME, label: "Anime" },
     { value: TitleType.MANGA, label: "Manga" },
@@ -51,4 +52,8 @@ export interface CreateTitleRecord extends Omit<TitleRecord, 'titleId' | 'create
 export interface ManageTitleRecordProps {
     initialData: CreateTitleRecord;
     titleRecord: TitleRecord | null;
+}
+export interface SameCriteriaRating{
+    titles : Array<TitleShortDto>;
+    avgRating : number;
 }

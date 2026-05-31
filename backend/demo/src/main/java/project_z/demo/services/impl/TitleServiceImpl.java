@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -23,6 +24,7 @@ import project_z.demo.Mappers.Mapper;
 import project_z.demo.common.Exceptions.ResourceNotFoundException;
 import project_z.demo.common.Exceptions.TitleWithThatMalIdAlreadyExistsException;
 import project_z.demo.common.QueryParameters.TitleQueryParameters;
+import project_z.demo.dto.TitleDtos.SameCriteriaRatingResponse;
 import project_z.demo.dto.TitleDtos.TargetTitleContext;
 import project_z.demo.dto.TitleDtos.TitleBatchCreateDto;
 import project_z.demo.dto.TitleDtos.TitleDto;
@@ -216,20 +218,29 @@ public class TitleServiceImpl implements TitleService {
     }
 
     @Override
-    public List<TitleShortDto> getNeighborsRating(Long titleId, String category, Float currentRating) {
+    public SameCriteriaRatingResponse getNeighborsRating(Long titleId, String category, Float currentRating) {
         TitleEntity currentTitle = titleRepository.findById(titleId)
-                .orElseThrow(() -> new ResourceNotFoundException ("Title not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Title not found"));
         TargetTitleContext context = new TargetTitleContext(
                 titleId,
                 category,
                 currentRating,
                 currentTitle.getTitleType().toString(),
-                currentTitle.getUser().getUserId()
-        );
-        
+                currentTitle.getUser().getUserId());
+
         List<Object[]> rows = titleRepository.findAllTitlesInLeaderboard(context);
 
-        return TitleShortDto.fromRows(rows);
+        List<TitleShortDto> titles = TitleShortDto.fromRows(rows);
+        Float ratingSum = 0.0f;
+        for (TitleShortDto title : titles) {
+            ratingSum += title.getRatingValue();
+
+        }
+        Float avg = titles.isEmpty() ? 0.0f : (ratingSum / titles.size());
+
+        return new SameCriteriaRatingResponse(
+                titles,
+                avg);
     }
 
 }

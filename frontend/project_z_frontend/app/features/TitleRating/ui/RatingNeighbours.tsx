@@ -13,7 +13,8 @@ interface RatingNeighborsProps {
 export const RatingNeighborsContent = ({ titleId, category, ratingValue, onClose }: RatingNeighborsProps) => {
   const [neighbors, setNeighbors] = useState<TitleShortDto[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  
+  const [averageRating, setAverageRating] = useState(Number);
+
   const containerRef = useRef<HTMLDivElement>(null);
   const currentItemRef = useRef<HTMLDivElement>(null);
 
@@ -25,7 +26,8 @@ export const RatingNeighborsContent = ({ titleId, category, ratingValue, onClose
       .getSameCriteriaRating(titleId, category, ratingValue)
       .then((data) => {
         if (isMounted) {
-          setNeighbors(data);
+          setNeighbors(data.titles);
+          setAverageRating(data.avgRating)
         }
       })
       .catch((err) => {
@@ -46,10 +48,10 @@ export const RatingNeighborsContent = ({ titleId, category, ratingValue, onClose
     if (!isLoading && neighbors.length > 0 && currentItemRef.current && containerRef.current) {
       const timeoutId = setTimeout(() => {
         currentItemRef.current?.scrollIntoView({
-          behavior: "smooth", 
-          block: "center",   
+          behavior: "smooth",
+          block: "center",
         });
-      }, 80); 
+      }, 80);
 
       return () => clearTimeout(timeoutId);
     }
@@ -57,10 +59,15 @@ export const RatingNeighborsContent = ({ titleId, category, ratingValue, onClose
 
   return (
     <div className="flex flex-col gap-2 p-3 bg-card border border-border rounded-xl shadow-2xl w-full min-w-[240px] sm:min-w-[280px] max-w-[320px] md:max-w-[350px]">
-      <div className="flex items-center justify-between border-b border-border/60 pb-1.5">
-        <span className="text-[10px] font-black uppercase tracking-wider text-muted-foreground/80 truncate max-w-[80%]">
-          Live Comparison ({category})
-        </span>
+      <div className="flex items-center justify-between border-b border-border/60 pb-2 mb-2 gap-4">
+        <div className="flex flex-col gap-0.5 min-w-0">
+          <span className="text-[10px] font-black uppercase tracking-wider text-muted-foreground/80 truncate">
+            Live Comparison ({category})
+          </span>
+          <span className="text-[11px] font-bold text-foreground/90 truncate flex items-center gap-1">
+            Average rating: <span className="text-primary font-black">{Number(averageRating).toFixed(2)}</span>
+          </span>
+        </div>
         {onClose && (
           <button
             type="button"
@@ -81,8 +88,8 @@ export const RatingNeighborsContent = ({ titleId, category, ratingValue, onClose
           No records found
         </div>
       ) : (
-        <div 
-          ref={containerRef} 
+        <div
+          ref={containerRef}
           className="flex flex-col gap-0.5 max-h-[285px] overflow-y-auto overflow-x-hidden pr-1 custom-scrollbar scroll-smooth"
         >
           {neighbors.map((item) => {
@@ -92,11 +99,10 @@ export const RatingNeighborsContent = ({ titleId, category, ratingValue, onClose
               <div
                 key={item.titleId}
                 ref={isCurrent ? currentItemRef : null}
-                className={`flex items-center justify-between px-2.5 py-1.5 rounded-md transition-all text-xs ${
-                  isCurrent
-                    ? "bg-primary/20 border border-primary/40 font-black text-primary shadow-sm"
-                    : "text-foreground/90 font-semibold hover:bg-border/30"
-                }`}
+                className={`flex items-center justify-between px-2.5 py-1.5 rounded-md transition-all text-xs ${isCurrent
+                  ? "bg-primary/20 border border-primary/40 font-black text-primary shadow-sm"
+                  : "text-foreground/90 font-semibold hover:bg-border/30"
+                  }`}
               >
                 <span className="truncate max-w-[160px] sm:max-w-[200px] md:max-w-[230px] flex items-center gap-1">
                   {isCurrent && <span className="text-primary text-[10px]">➜</span>}

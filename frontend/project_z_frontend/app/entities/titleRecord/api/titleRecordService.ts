@@ -1,4 +1,4 @@
-import { type CreateTitleRecord, type TitleParams, type TitleRecord, type TitleShortDto } from "../model/titleRecord"
+import { type CreateTitleRecord, type SameCriteriaRating, type TitleParams, type TitleRecord, type TitleShortDto } from "../model/titleRecord"
 import type { PageResponse } from "~/shared/types";
 import { apiClient } from "~/shared/api";
 import { Status } from "~/shared/types/Status";
@@ -26,7 +26,7 @@ interface TitleRecordService {
     getWatched(userId: string): Promise<Array<TitleRecord>>;
     getPlanned(userId: string): Promise<Array<TitleRecord>>;
     getByApiTitleId(jikanId: number): Promise<TitleRecord>;
-    getSameCriteriaRating(titleId: number, category: string, currentRating: number): Promise<Array<TitleShortDto>>;
+    getSameCriteriaRating(titleId: number, category: string, currentRating: number): Promise<SameCriteriaRating>;
     rate(options: RateOptions): Promise<TitleRecord>;
     clearRating(options: ActionOptions): Promise<TitleRecord>;
     moveToPlanned(options: ActionOptions): Promise<TitleRecord>;
