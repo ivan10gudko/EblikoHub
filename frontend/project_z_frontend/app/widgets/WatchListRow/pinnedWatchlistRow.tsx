@@ -5,6 +5,7 @@ import { useUpdateTitleRecord } from "~/entities/titleRecord/hooks/useTitleRecor
 import { CompactRate } from "~/shared/ui/CompactRate";
 import { TitleActionsMenu } from "../TitleActionsMenu";
 import type { Rating } from "~/shared/types";
+import { useState } from "react";
 
 interface PinnedWatchlistRowProps {
     title: TitleRecord;
@@ -13,7 +14,7 @@ interface PinnedWatchlistRowProps {
 
 export const PinnedWatchlistRow = ({ title, isOwn }: PinnedWatchlistRowProps) => {
     const navigate = useNavigate();
-
+     const [tempTitleName, setTempTitleName] = useState(title.titleName);
     const { unpinTitle, deleteTitle, updateTitle } = useUpdateTitleRecord(title.titleId);
 
     const handleImageClick = (e: React.MouseEvent) => {
@@ -57,9 +58,23 @@ export const PinnedWatchlistRow = ({ title, isOwn }: PinnedWatchlistRowProps) =>
                 </div>
 
                 <div className="flex-1 min-w-0">
-                    <span className="block truncate font-black text-foreground uppercase text-xs sm:text-sm tracking-wide">
-                        {title.titleName}
-                    </span>
+                    {isOwn ? (
+                        <input
+                            name="Title name"
+                            type="text"
+                            value={tempTitleName}
+                            onChange={(e) => setTempTitleName(e.target.value)}
+                            onBlur={() =>
+                                tempTitleName !== title.titleName &&
+                                updateTitle({ titleName: tempTitleName })
+                            }
+                            className="w-full font-bold text-foreground uppercase text-xs sm:text-sm bg-transparent border-none p-0 h-auto leading-tight focus:ring-0 cursor-text"
+                        />
+                    ) : (
+                        <span className="block truncate font-bold text-foreground uppercase text-xs sm:text-sm leading-tight">
+                            {title.titleName}
+                        </span>
+                    )}
                 </div>
             </div>
 
