@@ -4,21 +4,21 @@ import { WatchlistRow } from "../WatchListRow/watchlistRow";
 import { useParams, useSearchParams } from "react-router";
 import AddIcon from "@mui/icons-material/Add";
 import { useReorderWatchlist } from "~/entities/titleRecord/hooks/useReorderWatchlist";
-import { useTitleFilterStore } from "~/features/titleFilter/store/titleFilter.store";
 import { useMemo, useState } from "react";
 import { Button } from "~/shared/ui/Button";
 import { WatchlistSkeleton } from "./WatchlistTableSkeleton";
 import { AddTitleModal } from "../TitleModal";
+import { PinnedWatchlistRow } from "../WatchListRow/pinnedWatchlistRow";
 interface WatchlistTableProps {
   titles: TitleRecord[];
   isLoading?: boolean;
   isOwn: boolean;
-  queryKey:unknown[];
+  queryKey: unknown[];
 }
 export const WatchlistTable = ({ titles, isLoading, isOwn, queryKey }: WatchlistTableProps) => {
   const [searchParams] = useSearchParams();
   const { userId } = useParams<{ userId: string }>();
-  
+
 
   const isCustomOrder = searchParams.get("sortBy") === "customOrder";
   const isFiltered = !!searchParams.get("search") || !!searchParams.get("status");
@@ -26,6 +26,12 @@ export const WatchlistTable = ({ titles, isLoading, isOwn, queryKey }: Watchlist
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const { reorder, optimisticTitles } = useReorderWatchlist(titles, queryKey, userId);
+  const { pinnedTitle, regularTitles } = useMemo(() => {
+    const pinned = optimisticTitles.find((t) => t.pinned);
+
+    const regular = optimisticTitles.filter((t) => !t.pinned);
+    return { pinnedTitle: pinned, regularTitles: regular };
+  }, [optimisticTitles]);
 
   const onDragEnd = (result: DropResult) => {
     const { source, destination } = result;
@@ -66,7 +72,12 @@ export const WatchlistTable = ({ titles, isLoading, isOwn, queryKey }: Watchlist
               </span>
             </Button>
           )}
-
+          {pinnedTitle && (
+            <PinnedWatchlistRow
+              title={pinnedTitle}
+              isOwn={isOwn}
+            />
+          )}
           <DragDropContext onDragEnd={onDragEnd}>
             <Droppable droppableId="watchlist">
               {(provided) => (
@@ -75,7 +86,7 @@ export const WatchlistTable = ({ titles, isLoading, isOwn, queryKey }: Watchlist
                   ref={provided.innerRef}
                   className="flex flex-col gap-2 w-full"
                 >
-                  {optimisticTitles.map((title, index) => (
+                  {regularTitles.map((title, index) => (
                     <Draggable
                       key={String(title.titleId)}
                       draggableId={String(title.titleId)}
@@ -88,10 +99,10 @@ export const WatchlistTable = ({ titles, isLoading, isOwn, queryKey }: Watchlist
                           {...provided.draggableProps}
                           className="w-full"
                         >
-                          <WatchlistRow 
-                            title={title} 
-                            isOwn={isOwn} 
-                            dragHandleProps={isDragable ? provided.dragHandleProps : undefined} 
+                          <WatchlistRow
+                            title={title}
+                            isOwn={isOwn}
+                            dragHandleProps={isDragable ? provided.dragHandleProps : undefined}
                           />
                         </div>
                       )}

@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page;
 
 import project_z.demo.common.QueryParameters.TitleQueryParameters;
 import project_z.demo.dto.TitleDtos.TitleBatchCreateDto;
+import project_z.demo.dto.TitleDtos.TitleDto;
 import project_z.demo.dto.TitleDtos.TitlePatchUpdateDto;
 import project_z.demo.dto.TitleDtos.TitleShortDto;
 import project_z.demo.entity.SeasonEntity;
@@ -31,4 +32,6 @@ public interface TitleService {
     void titlePositionUpdate(Double newPosition, Long titleId);
     void reindexCustomOrder(UUID userId);
     List<TitleShortDto> getNeighborsRating(Long titleId, String category, Float currentRating);
+    TitleDto pinTitle(Long titleId, UUID userId);
+    void unpin(UUID userId);
 }

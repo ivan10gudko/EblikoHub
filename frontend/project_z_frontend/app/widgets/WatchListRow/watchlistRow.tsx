@@ -1,6 +1,7 @@
 import type { DraggableProvidedDragHandleProps } from "@hello-pangea/dnd";
 import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
 import { useEffect, useState } from "react";
+import PushPinIcon from "@mui/icons-material/PushPin";
 import { useNavigate } from "react-router";
 import {
   StatusSelect,
@@ -29,7 +30,7 @@ export const WatchlistRow = ({
   }, [title.titleName]);
 
   const navigate = useNavigate();
-  const { updateTitle, deleteTitle } = useUpdateTitleRecord(title.titleId);
+  const { pinTitle, updateTitle, deleteTitle } = useUpdateTitleRecord(title.titleId);
 
   const handleImageClick = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -37,7 +38,6 @@ export const WatchlistRow = ({
       navigate(`/anime/${title.apiTitleId}`);
     }
   };
-
   const handleDelete = (e?: React.MouseEvent) => {
     e?.stopPropagation();
     deleteTitle();
@@ -48,22 +48,35 @@ export const WatchlistRow = ({
 
   return (
     <div
-      className={`group flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-4 bg-card p-2 rounded-xl border transition-all duration-300 w-full ${themeClasses}`}
+      className={`group/row flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-4 bg-card p-2 rounded-xl border transition-all duration-300 w-full ${themeClasses} ${title.pinned ? "border-primary/30" : ""
+        }`}
     >
       <div className="flex items-center flex-1 gap-3 min-w-0">
-        {isOwn && dragHandleProps !== null && dragHandleProps !== undefined && (
+        {isOwn && !title.pinned && dragHandleProps !== null && dragHandleProps !== undefined && (
           <div
             {...dragHandleProps}
-            className={`text-muted-foreground/40 group-hover:text-muted-foreground/70 transition-colors flex items-center justify-center pl-1 h-10 w-6 ${
-              dragHandleProps
-                ? "cursor-grab active:cursor-grabbing"
-                : "cursor-default"
-            }`}
+            className={`text-muted-foreground/40 group-hover/row:text-muted-foreground/70 transition-colors flex items-center justify-center pl-1 h-10 w-6 ${dragHandleProps
+              ? "cursor-grab active:cursor-grabbing"
+              : "cursor-default"
+              }`}
           >
             <DragIndicatorIcon sx={{ fontSize: 20 }} />
           </div>
         )}
 
+        {isOwn && (
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              pinTitle(); 
+            }}
+            className="flex items-center justify-center h-10 w-6 text-muted-foreground/20 group-hover/row:text-muted-foreground/60 hover:!text-primary opacity-100 sm:opacity-0 md:group-hover/row:opacity-100 transition-all duration-200 cursor-pointer pl-1"
+            title="Pin title to the top"
+          >
+            <PushPinIcon sx={{ fontSize: 16 }} className="-rotate-45 group-hover/row:rotate-0 transition-transform duration-200" />
+          </button>
+        )}
         <div className="relative h-10 w-16 flex-shrink-0 transition-transform duration-500 hover:scale-[3.0] hover:z-10 cursor-pointer">
           <img
             src={title.imageUrl || DEFAULT_IMAGE_PATH}
@@ -121,7 +134,7 @@ export const WatchlistRow = ({
                   updateTitle({
                     rating: {
                       ...title.rating,
-                      overall: val,   
+                      overall: val,
                     },
                   })
                 : undefined

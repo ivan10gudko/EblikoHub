@@ -2,7 +2,6 @@ import { useState } from "react";
 import StarRoundedIcon from "@mui/icons-material/StarRounded";
 import AddIcon from "@mui/icons-material/Add";
 import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
-import CompareArrowsIcon from "@mui/icons-material/CompareArrows";
 import { Button } from "~/shared/ui/Button";
 import { CompactRate } from "../../../shared/ui/CompactRate";
 import { CategoryRow } from "./RatingRow";

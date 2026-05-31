@@ -7,9 +7,9 @@ export const useUpdateTitleRecord = (titleId: number) => {
   const queryClient = useQueryClient();
 
   const updateMutation = useMutation({
-    mutationFn: (updates: Partial<TitleRecord>) => 
+    mutationFn: (updates: Partial<TitleRecord>) =>
       titleRecordService.patch(titleId, updates),
-    
+
     onSuccess: (updatedRecord: TitleRecord) => {
       queryClient.setQueriesData<InfiniteData<PageResponse<TitleRecord>>>(
         { queryKey: ['titles'] },
@@ -32,6 +32,70 @@ export const useUpdateTitleRecord = (titleId: number) => {
     },
     onError: (error: any) => {
       notify.error(error.response?.data?.message || "Error while updating");
+    }
+  });
+  const pinMutation = useMutation({
+    mutationFn: () => titleRecordService.pinTitle(titleId),
+
+    onSuccess: (updatedRecord: TitleRecord) => {
+      queryClient.setQueriesData<InfiniteData<PageResponse<TitleRecord>>>(
+        { queryKey: ['titles'] },
+        (oldData) => {
+          if (!oldData) return oldData;
+          return {
+            ...oldData,
+            pages: oldData.pages.map((page) => ({
+              ...page,
+              content: page.content.map((item) => {
+                if (item.titleId === updatedRecord.titleId) {
+                  return { ...item, pinned: true };
+                }
+                if (item.pinned) {
+                  return { ...item, pinned: false };
+                }
+                return item;
+              }),
+            })),
+          };
+        }
+      );
+
+      if (updatedRecord?.apiTitleId) {
+        queryClient.setQueryData(['titleRecord', updatedRecord.apiTitleId], { ...updatedRecord, pinned: true });
+      }
+
+      notify.success("Pinned to top!");
+    },
+    onError: (error: any) => {
+      notify.error(error.response?.data?.message || "Error while pinning");
+    }
+  });
+
+ const unpinMutation = useMutation({
+  mutationFn: () => {
+    return titleRecordService.unpin();
+  },
+    onSuccess: () => {
+      queryClient.setQueriesData<InfiniteData<PageResponse<TitleRecord>>>(
+        { queryKey: ['titles'] },
+        (oldData) => {
+          if (!oldData) return oldData;
+          return {
+            ...oldData,
+            pages: oldData.pages.map((page) => ({
+              ...page,
+              content: page.content.map((item) => {
+                return { ...item, pinned: false };
+              }),
+            })),
+          };
+        }
+      );
+
+      notify.success("Unpinned!");
+    },
+    onError: (error: any) => {
+      notify.error(error.response?.data?.message || "Error while unpinning");
     }
   });
 
@@ -62,6 +126,10 @@ export const useUpdateTitleRecord = (titleId: number) => {
     updateTitle: updateMutation.mutate,
     isUpdating: updateMutation.isPending,
     deleteTitle: deleteMutation.mutate,
-    isDeleting: deleteMutation.isPending
+    isDeleting: deleteMutation.isPending,
+    pinTitle: pinMutation.mutate,
+    isPinning: pinMutation.isPending,
+    unpinTitle: () => unpinMutation.mutate(),
+    isUnpinning: unpinMutation.isPending
   };
 };

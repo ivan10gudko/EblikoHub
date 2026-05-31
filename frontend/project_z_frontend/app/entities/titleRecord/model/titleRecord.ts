@@ -11,6 +11,7 @@ export interface TitleRecord {
     titleType: TitleType,
     imageUrl?: string | null,
     customOrder: number,
+    pinned : boolean
     createdAt: string,
 }
 export enum TitleType {
