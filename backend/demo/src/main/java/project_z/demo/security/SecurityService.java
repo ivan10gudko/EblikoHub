@@ -5,6 +5,8 @@ import java.util.UUID;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
+import project_z.demo.enums.FriendshipStatus;
+import project_z.demo.repositories.FriendshipRepository;
 import project_z.demo.repositories.RoomRepository;
 import project_z.demo.repositories.SeasonRepository;
 import project_z.demo.repositories.TitleRepository;
@@ -17,6 +19,7 @@ public class SecurityService {
     private final RoomRepository roomRepository;
     private final SeasonRepository seasonRepository;
     private final JwtService jwtService;
+    private final FriendshipRepository friendshipRepository;
 
     public boolean isTitleOwner(Long titleId, String token) {
         String currentUserId = jwtService.extractUsername(token).toString();
@@ -25,24 +28,44 @@ public class SecurityService {
                 .map(title -> title.getUser().getUserId().toString().equals(currentUserId))
                 .orElse(false);
     }
+
     public boolean isRoomOwner(Long roomId, String token) {
         String currentUserId = jwtService.extractUsername(token).toString();
 
         return roomRepository.findById(roomId)
-                .map(room ->room.getOwner().getUserId().toString().equals(currentUserId))
+                .map(room -> room.getOwner().getUserId().toString().equals(currentUserId))
                 .orElse(false);
     }
-    public boolean isSeasonOwner(Long seasonId, String token){
+
+    public boolean isFriendshipMember(String token, UUID friendshipId) {
+        UUID currentUserId = jwtService.extractUsername(token);
+
+        return friendshipRepository.findById(friendshipId)
+                .map(item -> item.getReceiver().getUserId().equals(currentUserId)
+                        || item.getSender().getUserId().equals(currentUserId))
+                .orElse(false);
+    }
+
+    public boolean canAcceptFriendRequest(String token, UUID senderId) {
+        UUID currentUserId = jwtService.extractUsername(token);
+
+        return friendshipRepository.existsBySenderUserIdAndReceiverUserIdAndStatus(
+                senderId, currentUserId, FriendshipStatus.PENDING);
+    }
+
+    public boolean isSeasonOwner(Long seasonId, String token) {
         String currentUserId = jwtService.extractUsername(token).toString();
 
         return seasonRepository.findById(seasonId)
                 .map(season -> season.getTitle().getUser().getUserId().toString().equals(currentUserId))
                 .orElse(false);
     }
+
     public boolean isUserOwner(UUID userId, String token) {
         String currentUserId = jwtService.extractUsername(token).toString();
         return userId.toString().equals(currentUserId);
     }
+
     public boolean hasRole(UUID userId, String role) {
         String userRole = jwtService.extractRole(userId);
         return userRole != null && userRole.equalsIgnoreCase(role);
