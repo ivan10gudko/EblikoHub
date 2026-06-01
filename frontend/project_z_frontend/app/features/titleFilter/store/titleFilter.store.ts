@@ -81,7 +81,6 @@ export const useTitleFilterStore = create<TitleFilterState>()(
             name: 'watchlist-filters-storage', 
             storage: createJSONStorage(() => localStorage),
             partialize: (state) => ({
-                search: state.search,
                 sortBy: state.sortBy,
                 order: state.order,
                 status: state.status,

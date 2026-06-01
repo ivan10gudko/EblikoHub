@@ -56,10 +56,9 @@ export const UserProfileSidebar = ({ isOpen, onClose }: SidebarProps) => {
                             to="/profile"
                             onClick={onClose}
                             className={({ isActive }) =>
-                                `flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 ${
-                                    isActive
-                                        ? "bg-primary text-background shadow-sm"
-                                        : "text-card hover:bg-background-muted hover:text-foreground"
+                                `flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 ${isActive
+                                    ? "bg-primary text-background shadow-sm"
+                                    : "text-card hover:bg-background-muted hover:text-foreground"
                                 }`
                             }
                         >
@@ -67,7 +66,7 @@ export const UserProfileSidebar = ({ isOpen, onClose }: SidebarProps) => {
                             <span className="text-xl">Profile</span>
                         </NavLink>
                     </nav>
-
+                    
                     <div className="mt-auto pt-4">
                         <Divider sx={{ mb: 2 }} />
                         <Button
