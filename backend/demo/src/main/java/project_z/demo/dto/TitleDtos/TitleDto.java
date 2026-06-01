@@ -3,6 +3,8 @@ package project_z.demo.dto.TitleDtos;
 import java.time.LocalDateTime;
 import java.util.Map;
 
+import org.hibernate.event.internal.ProxyVisitor;
+
 import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -27,5 +29,6 @@ public class TitleDto {
     private TitleType titleType;
     private Double customOrder;
     private String imageUrl;
+    private boolean isPinned;
     private LocalDateTime createdAt;
 }

@@ -8,6 +8,7 @@ import org.springframework.data.jpa.domain.Specification;
 import jakarta.persistence.criteria.Expression;
 import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.MapJoin;
+import jakarta.persistence.criteria.Order;
 import project_z.demo.entity.TitleEntity;
 import project_z.demo.enums.TitleStatus;
 import project_z.demo.enums.TitleType;
@@ -38,35 +39,46 @@ public class TitleSpecifications {
 
     public static Specification<TitleEntity> sortByRating(String order) {
         return (root, query, cb) -> {
+            if (query.getResultType() == Long.class || query.getResultType() == long.class) {
+                return null;
+            }
             MapJoin<TitleEntity, String, Float> ratings = root.joinMap("rating", JoinType.LEFT);
+
 
             query.groupBy(root.get("id"));
 
             Expression<Float> overallValue = cb.max(
                     cb.selectCase()
                             .when(cb.equal(ratings.key(), "overall"), ratings.value())
-                            .otherwise(-1f) 
+                            .otherwise(-1f)
                             .as(Float.class));
 
+
+            Order pinnedOrder = cb.desc(root.get("isPinned"));
+
             if ("desc".equalsIgnoreCase(order)) {
+
                 query.orderBy(
+                        pinnedOrder,
                         cb.desc(overallValue),
                         cb.asc(root.get("titleName")),
                         cb.asc(root.get("id")));
             } else {
                 Expression<Integer> hasRating = cb.max(
                         cb.<Integer>selectCase()
-                                .when(cb.equal(ratings.key(), "overall"), 1) 
-                                .otherwise(0) 
+                                .when(cb.equal(ratings.key(), "overall"), 1)
+                                .otherwise(0)
                                 .as(Integer.class));
 
                 query.orderBy(
-                        cb.desc(hasRating),   
-                        cb.asc(overallValue), 
+                        pinnedOrder,
+                        cb.desc(hasRating),
+                        cb.asc(overallValue),
                         cb.asc(root.get("titleName")),
                         cb.asc(root.get("id")));
             }
 
             return null;
         };
-}}
+    }
+}

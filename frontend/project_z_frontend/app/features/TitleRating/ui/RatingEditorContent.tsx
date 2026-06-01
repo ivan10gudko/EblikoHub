@@ -3,6 +3,7 @@ import StarRoundedIcon from "@mui/icons-material/StarRounded";
 import AddIcon from "@mui/icons-material/Add";
 import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
 import CompareArrowsIcon from "@mui/icons-material/CompareArrows";
+import CalculateIcon from "@mui/icons-material/Calculate";
 import { Button } from "~/shared/ui/Button";
 import { CompactRate } from "../../../shared/ui/CompactRate";
 import { CategoryRow } from "./RatingRow";
@@ -40,14 +41,27 @@ export const RatingEditorContent = ({
   );
   const currentOverall = safeRatings.overall;
   const isOverallMissing = currentOverall === undefined;
+  const showComparison = !isOverallMissing;
 
-  const showComparison = !isOverallMissing ? true : false;
   const handleUpdateNumericValue = (key: string, val: number | undefined) => {
     onChange({
       ...safeRatings,
       [key]: val,
     } as Rating);
   };
+
+  const calculateAverage = (): string => {
+    const activeValues = customCategories
+      .map((key) => safeRatings[key])
+      .filter((val): val is number => typeof val === "number" && val > 0);
+
+    if (activeValues.length === 0) return "0.0";
+
+    const sum = activeValues.reduce((acc, current) => acc + current, 0);
+    return (sum / activeValues.length).toFixed(1);
+  };
+
+  const avgRating = calculateAverage();
 
   const handleRenameCategory = (oldKey: string, newKey: string) => {
     if (!newKey || newKey === "overall" || safeRatings[newKey] !== undefined)
@@ -75,9 +89,8 @@ export const RatingEditorContent = ({
 
   return (
     <div className="flex flex-col max-h-[75vh] sm:max-h-[70vh]">
-      <div
-        className="flex-1 overflow-y-auto pr-1 sm:pr-3 space-y-6 sm:space-y-8 p-1 sm:p-2 custom-scrollbar"
-      >
+      <div className="flex-1 overflow-y-auto pr-1 sm:pr-3 space-y-6 sm:space-y-8 p-1 sm:p-2 custom-scrollbar">
+        
         <div className="space-y-3">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-3 sm:p-4 bg-background-muted/50 rounded-2xl border-2 border-primary/20 sticky top-0 z-10 backdrop-blur-md gap-3 sm:gap-0">
             <div className="flex items-center gap-3 text-primary">
@@ -103,7 +116,6 @@ export const RatingEditorContent = ({
             </div>
           </div>
         </div>
-
         <div className="space-y-4">
           <div className="flex flex-col gap-3 px-2">
             <div className="flex justify-between items-center w-full">
@@ -122,39 +134,54 @@ export const RatingEditorContent = ({
             </div>
 
             {!isOverallMissing && (
-              <div className="flex flex-wrap gap-1.5 pt-1 items-center">
-                <span className="text-[9px] font-bold uppercase tracking-wider text-muted-foreground/60 mr-1 flex items-center gap-1">
-                  <AutoAwesomeIcon sx={{ fontSize: 12 }} /> Presets:
-                </span>
-                {PRESET_CATEGORIES.map((preset) => {
-                  const isAdded = safeRatings[preset.label] !== undefined;
-                  return (
-                    <Button
-                      key={preset.id}
-                      type="button"
-                      disabled={isAdded}
-                      onClick={() => handleAddPreset(preset.label)}
-                      className={`text-[12px] px-2.5 py-1 rounded-lg font-bold border transition-all duration-200 ${
-                        isAdded
-                          ? "bg-transparent border-border text-muted-foreground/40 line-through cursor-not-allowed"
-                          : "bg-background-muted hover:bg-primary/10 border-border hover:border-primary/30 text-foreground hover:text-primary active:scale-95"
-                      }`}
-                    >
-                      {preset.label}
-                    </Button>
-                  );
-                })}
+              <div className="space-y-3">
+                <div className="flex flex-wrap gap-1.5 pt-1 items-center">
+                  <span className="text-[9px] font-bold uppercase tracking-wider text-muted-foreground/60 mr-1 flex items-center gap-1">
+                    <AutoAwesomeIcon sx={{ fontSize: 12 }} /> Presets:
+                  </span>
+                  {PRESET_CATEGORIES.map((preset) => {
+                    const isAdded = safeRatings[preset.label] !== undefined;
+                    return (
+                      <Button
+                        key={preset.id}
+                        type="button"
+                        disabled={isAdded}
+                        onClick={() => handleAddPreset(preset.label)}
+                        className={`text-[12px] px-2.5 py-1 rounded-lg font-bold border transition-all duration-200 ${
+                          isAdded
+                            ? "bg-transparent border-border text-muted-foreground/40 line-through cursor-not-allowed"
+                            : "bg-background-muted hover:bg-primary/10 border-border hover:border-primary/30 text-foreground hover:text-primary active:scale-95"
+                        }`}
+                      >
+                        {preset.label}
+                      </Button>
+                    );
+                  })}
+                </div>
+
+                <div className="flex items-center gap-2 px-2 py-1.5 bg-primary/5 rounded-xl border border-primary/10 w-fit">
+                  <CalculateIcon className="text-foreground/60 text-sm sm:text-base " />
+                  <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
+                    Criteria Avg:
+                  </span>
+                  <span className="text-xs sm:text-sm font-black text-primary bg-primary/10 px-2 py-0.5 rounded-md">
+                    {avgRating}
+                  </span>
+                </div>
               </div>
             )}
           </div>
 
           <div
-            className={`flex flex-col gap-3 sm:gap-4 transition-all duration-300 ${isOverallMissing ? "grayscale opacity-30 pointer-events-none scale-[0.98]" : "opacity-100"}`}
+            className={`flex flex-col gap-3 sm:gap-4 transition-all duration-300 ${
+              isOverallMissing
+                ? "grayscale opacity-30 pointer-events-none scale-[0.98]"
+                : "opacity-100"
+            }`}
           >
             {customCategories.length === 0 && !isOverallMissing && (
               <div className="text-center p-6 sm:p-8 border-2 border-dashed border-border rounded-2xl text-muted-foreground text-xs sm:text-sm font-medium">
-                No custom criteria added yet. Use presets or add custom ones
-                above.
+                No custom criteria added yet. Use presets or add custom ones above.
               </div>
             )}
 

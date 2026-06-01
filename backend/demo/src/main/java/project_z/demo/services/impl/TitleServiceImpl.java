@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -23,6 +24,7 @@ import project_z.demo.Mappers.Mapper;
 import project_z.demo.common.Exceptions.ResourceNotFoundException;
 import project_z.demo.common.Exceptions.TitleWithThatMalIdAlreadyExistsException;
 import project_z.demo.common.QueryParameters.TitleQueryParameters;
+import project_z.demo.dto.TitleDtos.SameCriteriaRatingResponse;
 import project_z.demo.dto.TitleDtos.TargetTitleContext;
 import project_z.demo.dto.TitleDtos.TitleBatchCreateDto;
 import project_z.demo.dto.TitleDtos.TitleDto;
@@ -38,6 +40,7 @@ import project_z.demo.repositories.UserRepository;
 import project_z.demo.security.JwtService;
 import project_z.demo.services.SeasonService;
 import project_z.demo.services.TitleService;
+import org.springframework.data.domain.Sort;
 
 @Service
 public class TitleServiceImpl implements TitleService {
@@ -105,17 +108,20 @@ public class TitleServiceImpl implements TitleService {
                 .and(TitleSpecifications.hasName(params.getSearch()))
                 .and(TitleSpecifications.hasTitleTypes(params.getTypes()));
 
+        Pageable pageable = PagingHelper.toPageable(params);
+        Pageable finalPageable;
+
         if ("rating".equals(params.getSortBy())) {
             spec = spec.and(TitleSpecifications.sortByRating(params.getOrder()));
+
+            finalPageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.unsorted());
+        } else {
+
+            Sort finalSort = Sort.by(Sort.Direction.DESC, "isPinned").and(pageable.getSort());
+            finalPageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), finalSort);
         }
 
-        Pageable pageable = PagingHelper.toPageable(params);
-
-        if ("rating".equals(params.getSortBy())) {
-            pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
-        }
-
-        return titleRepository.findAll(spec, pageable);
+        return titleRepository.findAll(spec, finalPageable);
     }
 
     @Override
@@ -216,20 +222,48 @@ public class TitleServiceImpl implements TitleService {
     }
 
     @Override
-    public List<TitleShortDto> getNeighborsRating(Long titleId, String category, Float currentRating) {
+    public SameCriteriaRatingResponse getNeighborsRating(Long titleId, String category, Float currentRating) {
         TitleEntity currentTitle = titleRepository.findById(titleId)
-                .orElseThrow(() -> new ResourceNotFoundException ("Title not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Title not found"));
         TargetTitleContext context = new TargetTitleContext(
                 titleId,
                 category,
                 currentRating,
                 currentTitle.getTitleType().toString(),
-                currentTitle.getUser().getUserId()
-        );
-        
+                currentTitle.getUser().getUserId());
+
         List<Object[]> rows = titleRepository.findAllTitlesInLeaderboard(context);
 
-        return TitleShortDto.fromRows(rows);
+        List<TitleShortDto> titles = TitleShortDto.fromRows(rows);
+        Float ratingSum = 0.0f;
+        for (TitleShortDto title : titles) {
+            ratingSum += title.getRatingValue();
+
+        }
+        Float avg = titles.isEmpty() ? 0.0f : (ratingSum / titles.size());
+
+        return new SameCriteriaRatingResponse(
+                titles,
+                avg);
     }
 
+    @Override
+    @Transactional
+    public TitleDto pinTitle(Long titleId, UUID userId) {
+
+        titleRepository.unpinAllTitlesForUser(userId);
+
+        TitleEntity title = titleRepository.findById(titleId)
+                .orElseThrow(() -> new ResourceNotFoundException("Title not found with id: " + titleId));
+
+        title.setPinned(true);
+        TitleEntity savedTitle = titleRepository.save(title);
+
+        return titleMapper.mapTo(savedTitle);
+    }
+
+    @Override
+    public void unpin(UUID userId){
+        titleRepository.unpinAllTitlesForUser(userId);
+    }
 }

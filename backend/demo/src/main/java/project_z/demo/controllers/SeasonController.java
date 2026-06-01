@@ -84,10 +84,11 @@ public class SeasonController {
 
         return new ResponseEntity<>(seasonMapper.mapTo(saved), HttpStatus.OK);
     }
-
+    @PreAuthorize("hasRole('ADMIN') || @securityService.isTitleOwner(#titleId, #token)")
     @PutMapping("/{titleId}/sync")
     public List<SeasonDto> syncSeasons(
             @PathVariable Long titleId,
+            @RequestHeader("Authorization") String token,
             @RequestBody List<SeasonDto> dtos) {
         return seasonService.batchUpdate(titleId, dtos);
     }

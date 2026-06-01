@@ -23,15 +23,15 @@ import org.springframework.web.bind.annotation.RestController;
 
 import project_z.demo.Mappers.Mapper;
 import project_z.demo.common.QueryParameters.TitleQueryParameters;
+import project_z.demo.dto.TitleDtos.SameCriteriaRatingResponse;
 import project_z.demo.dto.TitleDtos.TitleBatchCreateDto;
 import project_z.demo.dto.TitleDtos.TitleDto;
 import project_z.demo.dto.TitleDtos.TitlePatchUpdateDto;
 import project_z.demo.dto.TitleDtos.TitlePositionUpdateDto;
-import project_z.demo.dto.TitleDtos.TitleShortDto;
 import project_z.demo.entity.TitleEntity;
+import project_z.demo.security.JwtService;
 import project_z.demo.services.TitleService;
 import project_z.demo.services.UserService;
-
 
 @RestController
 @RequestMapping("/api/v1/titles")
@@ -44,6 +44,8 @@ public class TitleController {
     private TitleService titleService;
     @Autowired
     private UserService userService;
+    @Autowired
+    private JwtService jwtService;
 
     @PostMapping
     public ResponseEntity<TitleDto> createTitle(
@@ -61,14 +63,35 @@ public class TitleController {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
-    @PreAuthorize("hasRole('ADMIN') || @securityService.isUserOwner(#userId, #token)")
     @PostMapping("/{userId}/reindex")
     public ResponseEntity<Void> reindex(@PathVariable("userId") UUID userId,
             @RequestHeader("Authorization") String token) {
         titleService.reindexCustomOrder(userId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
+    @PreAuthorize("hasRole('ADMIN') || @securityService.isTitleOwner(#titleId, #token)")
+    @PostMapping(path = "/{titleId}/pinTitle")
+    public ResponseEntity<?> pinTitle(
+            @PathVariable("titleId") Long titleId,
+            @RequestHeader("Authorization") String token
+    ) {
 
+        UUID userId = jwtService.extractUsername(token);
+
+
+        TitleDto updatedTitle = titleService.pinTitle(titleId, userId);
+        return new ResponseEntity<>(updatedTitle, HttpStatus.OK);
+    }
+    
+    @PostMapping(path = "/unpin")
+    public ResponseEntity<Void> unpin(@RequestHeader("Authorization") String token) {
+        
+        UUID userId = jwtService.extractUsername(token);
+        titleService.unpin(userId);
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+    
     @GetMapping("/{userId}")
     public Page<TitleDto> getTitleListByUserId(@PathVariable("userId") UUID userId, TitleQueryParameters params) {
         Page<TitleEntity> entitiesPage = titleService.findAllByUserId(params, userId);
@@ -111,9 +134,11 @@ public class TitleController {
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
-    //@PreAuthorize("hasRole('ADMIN') || @securityService.isTitleOwner(#titleId, #token)")
+
+    // @PreAuthorize("hasRole('ADMIN') || @securityService.isTitleOwner(#titleId,
+    // #token)")
     @GetMapping(path = "/{titleId}/getSameCriteriaRating")
-    public List<TitleShortDto> getNeighborsRating(@PathVariable("titleId") Long titleId, @RequestParam String category, @RequestParam Float currentRating ) {
+    public SameCriteriaRatingResponse getNeighborsRating(@PathVariable("titleId") Long titleId, @RequestParam String category, @RequestParam Float currentRating ) {
         return titleService.getNeighborsRating(titleId, category,currentRating);
     }
 
