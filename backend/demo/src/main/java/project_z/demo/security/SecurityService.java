@@ -40,17 +40,17 @@ public class SecurityService {
     public boolean isFriendshipMember(String token, UUID friendshipId) {
         UUID currentUserId = jwtService.extractUsername(token);
 
-        return friendshipRepository.findById(friendshipId)
-                .map(item -> item.getReceiver().getUserId().equals(currentUserId)
-                        || item.getSender().getUserId().equals(currentUserId))
-                .orElse(false);
+        return friendshipRepository.isUserMemberOfFriendship(friendshipId, currentUserId);
     }
 
     public boolean canAcceptFriendRequest(String token, UUID senderId) {
         UUID currentUserId = jwtService.extractUsername(token);
 
-        return friendshipRepository.existsBySenderUserIdAndReceiverUserIdAndStatus(
+        boolean b = friendshipRepository.existsBySenderUserIdAndReceiverUserIdAndStatus(
                 senderId, currentUserId, FriendshipStatus.PENDING);
+
+        System.out.println(b);
+        return b;
     }
 
     public boolean isSeasonOwner(Long seasonId, String token) {

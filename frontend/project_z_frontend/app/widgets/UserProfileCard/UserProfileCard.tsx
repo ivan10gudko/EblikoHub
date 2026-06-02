@@ -1,49 +1,52 @@
 import EditIcon from '@mui/icons-material/Edit';
 import { useMutation, useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import { UserAvatar, userService, type UserProfile } from "~/entities/user";
+import { UserAvatar, userService } from "~/entities/user";
 import { useAuthStore } from "~/features/auth";
 import { Button } from "~/shared/ui/Button";
 import { UserProfileEdit } from "./UserProfileEditCard";
-import { useNavigate } from 'react-router';
 import { notify } from '~/shared/lib';
 
-export const UserProfileCard = () => {
-    const [isEditing, setIsEditing] = useState(false);
-    const { userId } = useAuthStore();
-    const queryClient = useQueryClient();
-    const navigate = useNavigate()
+interface UserProfileCardProps {
+    userId: string;
+}
 
+export const UserProfileCard = ({ userId }: UserProfileCardProps) => {
+    const [isEditing, setIsEditing] = useState(false);
+    const { userId: currentUserId } = useAuthStore();
+    const queryClient = useQueryClient();
+
+    const isOwn = currentUserId === userId;
 
     const { data: user } = useSuspenseQuery({
         queryKey: ["user_profile", userId],
-        queryFn: () => userService.getUser(userId!),
+        queryFn: () => userService.getUser(userId),
     });
 
-    
     const updateMutation = useMutation({
-    mutationFn: async ({ profileData, avatarFile }: { 
-        profileData: { name: string; description: string }, 
-        avatarFile: File | null 
-    }) => {
-        const updateTextPromise = userService.updateUser(user.userId, profileData);
+        mutationFn: async ({ profileData, avatarFile }: { 
+            profileData: { name: string; description: string }, 
+            avatarFile: File | null 
+        }) => {
+            const updateTextPromise = userService.updateUser(user.userId, profileData);
 
-        if (avatarFile) {
-            const updatePhotoPromise = userService.uploadAvatar(user.userId, avatarFile);
-            return Promise.all([updateTextPromise, updatePhotoPromise]);
+            if (avatarFile) {
+                const updatePhotoPromise = userService.uploadAvatar(user.userId, avatarFile);
+                return Promise.all([updateTextPromise, updatePhotoPromise]);
+            }
+
+            return updateTextPromise;
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["user_profile", userId] });
+            setIsEditing(false);
+            notify.success("Successfully updated");
+        },
+        onError: () => {
+            notify.error("Failed to update profile");
         }
+    });
 
-        return updateTextPromise;
-    },
-    onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ["user_profile", userId] });
-        setIsEditing(false);
-        notify.success("succesfully updated")
-    },
-    onError: (error) => {
-        notify.error("failed to update profile");
-    }
-});
     return (
         <div className="bg-background rounded-3xl shadow-sm border border-border p-8 flex flex-col gap-6 relative overflow-hidden">
             <div className="absolute top-0 left-0 w-full h-1.5 bg-primary" />
@@ -56,12 +59,14 @@ export const UserProfileCard = () => {
                             <h1 className="text-3xl font-black text-foreground tracking-tight">{user.name}</h1>
                             <span className="text-lg text-primary font-mono">@{user.nameTag}</span>
                         </div>
-                        <Button
-                            onClick={() => setIsEditing(true)} 
-                            className="bg-background-muted hover:bg-background-muted-hover text-card hover:text-primary-hover p-3 rounded-2xl transition-all"
-                        >
-                            <EditIcon className='text-primary'/>
-                        </Button>
+                        {isOwn && (
+                            <Button
+                                onClick={() => setIsEditing(true)} 
+                                className="bg-background-muted hover:bg-background-muted-hover text-card hover:text-primary-hover p-3 rounded-2xl transition-all"
+                            >
+                                <EditIcon className='text-primary'/>
+                            </Button>
+                        )}
                     </div>
                     
                     <div className="h-[1px] bg-background-muted w-full" />
@@ -76,7 +81,7 @@ export const UserProfileCard = () => {
                     onSave={(data, file) => updateMutation.mutate({ 
                         profileData: data, 
                         avatarFile: file 
-                        })}
+                    })}
                     onCancel={() => setIsEditing(false)}
                     isPending={updateMutation.isPending}
                 />

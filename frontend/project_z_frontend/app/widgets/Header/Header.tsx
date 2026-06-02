@@ -45,7 +45,7 @@ const Header = () => {
                     <NavLink to="/rooms" className={({ isActive }) => isActive ? "text-primary font-bold" : "hover:text-primary transition-colors"}>Rooms</NavLink>
                     <NavLink to={watchlistPath} className="hover:text-primary transition-colors">Watchlist</NavLink>
                     {isAuth ? (
-                        <NavLink to="/profile">
+                        <NavLink to={`/profile/${userId}`}>
                             <AccountCircleIcon fontSize="large" className="text-foreground/80 hover:text-primary transition-colors" />
                         </NavLink>
                     ) : (
@@ -86,7 +86,7 @@ const Header = () => {
 
                         <div className="pb-10">
                             {isAuth ? (
-                                <NavLink to="/profile" onClick={() => setBurgerMenuOpen(false)} className={burgerLinkStyle}>
+                                <NavLink to={`/profile/${userId}`} onClick={() => setBurgerMenuOpen(false)} className={burgerLinkStyle}>
                                     <PersonIcon className="text-primary" />
                                     <span className="font-semibold text-lg text-foreground">Profile Settings</span>
                                 </NavLink>

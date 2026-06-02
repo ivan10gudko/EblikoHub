@@ -1,6 +1,7 @@
 import { apiClient, publicClient } from "~/shared/api";
-import type { CreateUserProfile, UpdateUserProfile, UserProfile } from "../model/user.types";
+import type { CreateUserProfile, UpdateUserProfile, UserParams, UserProfile } from "../model/user.types";
 import { generateFallbackName } from "../lib/generateFallbackName";
+import type { PageResponse } from "~/shared/types";
 
 
 export const userService = {
@@ -44,5 +45,17 @@ export const userService = {
             },
             });
         
+    },
+    searchByNameTag: async (nameTag: string): Promise<UserProfile> => {
+        const response = await apiClient.get<UserProfile>(`/users/${nameTag}/nameTag`);
+        return response.data;
+    },
+
+    searchByName: async (name: string, params: UserParams = { page: 0, limit: 10 }): Promise<PageResponse<UserProfile>> => {
+        const response = await apiClient.get<PageResponse<UserProfile>>(`/users/name/${name}`, {
+            params: params 
+        });
+        
+        return response.data;
     },
 };

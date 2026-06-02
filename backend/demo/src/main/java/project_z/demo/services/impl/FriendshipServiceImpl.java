@@ -3,7 +3,9 @@ package project_z.demo.services.impl;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,8 +15,11 @@ import project_z.demo.Mappers.Mapper;
 import project_z.demo.common.Exceptions.FriendshipConflictException;
 import project_z.demo.common.Exceptions.ResourceNotFoundException;
 import project_z.demo.common.Exceptions.SelfFriendRequestException;
+import project_z.demo.dto.FriendshipDtos.FriendRequestDto;
+import project_z.demo.dto.FriendshipDtos.FriendshipCountsDto;
 import project_z.demo.dto.FriendshipDtos.FriendshipDetailsDto;
 import project_z.demo.dto.FriendshipDtos.FriendshipPartialUpdateDto;
+import project_z.demo.dto.UserDtos.UserDto;
 import project_z.demo.entity.FriendshipEntity;
 import project_z.demo.entity.UserEntity;
 import project_z.demo.enums.FriendshipStatus;
@@ -30,6 +35,7 @@ public class FriendshipServiceImpl implements FriendshipService {
     private final FriendshipRepository friendshipRepository;
     private final UserRepository userRepository;
     private final Mapper<FriendshipEntity, FriendshipDetailsDto> friendshipMapper;
+    private final Mapper<UserEntity, UserDto> userMapper;
 
     @Override
     @Transactional
@@ -49,9 +55,38 @@ public class FriendshipServiceImpl implements FriendshipService {
     @Override
     @Transactional(readOnly = true)
     public List<UserEntity> findFriendsByUserId(UUID userId) {
-        List<UserEntity> friends = friendshipRepository.findFriendsByUserId(userId);
+        Sort sortByName = Sort.by(Sort.Direction.ASC, "name");
+        return friendshipRepository.findFriendsByUserId(userId, sortByName);
+    }
 
-        return friends;
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<FriendRequestDto> findPendingFriendRequestsByUserId(UUID userId) {
+        List<FriendshipEntity> friends = friendshipRepository.findByReceiverUserIdAndStatus(userId,
+                FriendshipStatus.PENDING);
+
+        return friends.stream().map(item -> {
+            UserEntity sender = item.getSender();
+            UserDto senderDto = userMapper.mapTo(sender);
+            
+            return new FriendRequestDto(item.getFriendshipId(), senderDto);
+        }).collect(Collectors.toList());
+    }
+
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<FriendRequestDto> findSentFriendRequestsByUserId(UUID userId) {
+        List<FriendshipEntity> sentFriendships = friendshipRepository.findBySenderUserIdAndStatus(userId,
+                FriendshipStatus.PENDING);
+
+        return sentFriendships.stream().map(friendship -> {
+            UserEntity receiver = friendship.getReceiver();
+            UserDto receiverDto = userMapper.mapTo(receiver);
+            
+            return new FriendRequestDto(friendship.getFriendshipId(), receiverDto);
+        }).collect(Collectors.toList());
     }
 
     @Override
@@ -83,7 +118,7 @@ public class FriendshipServiceImpl implements FriendshipService {
         }
 
         Optional<FriendshipEntity> existingFriendship = friendshipRepository
-                .findBySenderUserIdAndReceiverUserId(senderId, receiverId) 
+                .findBySenderUserIdAndReceiverUserId(senderId, receiverId)
                 .or(() -> friendshipRepository.findBySenderUserIdAndReceiverUserId(receiverId, senderId));
 
         if (existingFriendship.isPresent()) {
@@ -98,20 +133,17 @@ public class FriendshipServiceImpl implements FriendshipService {
             }
 
             if (friendship.getStatus() == FriendshipStatus.REJECTED) {
-
                 if (friendship.getReceiver().getUserId().equals(senderId)) {
                     friendship.setSender(userRepository.findById(senderId).orElseThrow());
                     friendship.setReceiver(userRepository.findById(receiverId).orElseThrow());
                     friendship.setStatus(FriendshipStatus.PENDING);
                     friendshipRepository.save(friendship);
-                    return; 
+                    return;
                 } else {
-
                     throw new FriendshipConflictException("Your previous friend request was rejected by this user.");
                 }
             }
         }
-
 
         UserEntity sender = userRepository.findById(senderId)
                 .orElseThrow(() -> new ResourceNotFoundException("Sender not found."));
@@ -148,4 +180,19 @@ public class FriendshipServiceImpl implements FriendshipService {
         friendship.setStatus(FriendshipStatus.REJECTED);
         friendshipRepository.save(friendship);
     }
+
+    @Override
+@Transactional(readOnly = true)
+public FriendshipCountsDto getUserFriendshipStats(UUID userId) {
+    
+    long friendsCount = friendshipRepository.countBySenderUserIdAndStatusOrReceiverUserIdAndStatus(
+            userId, FriendshipStatus.ACCEPTED, userId, FriendshipStatus.ACCEPTED
+    );
+
+    long pendingCount = friendshipRepository.countByReceiverUserIdAndStatus(userId, FriendshipStatus.PENDING);
+
+    long sentCount = friendshipRepository.countBySenderUserIdAndStatus(userId, FriendshipStatus.PENDING);
+
+    return new FriendshipCountsDto(friendsCount, pendingCount, sentCount);
+}
 }

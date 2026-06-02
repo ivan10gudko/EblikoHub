@@ -11,8 +11,9 @@ export default [
     
         index("./routes/home.tsx"),
         route("watchlist/:userId", "./routes/watchlist.$userId.tsx"),
+        route("user/:userId/friends", "./routes/friends.tsx"),
         layout("./routes/_protected.tsx",[
-            route("profile", "./routes/profile.tsx"),
+            route("profile/:userId", "./routes/profile.tsx"),
 
             ...prefix("rooms", [
                 index("./routes/rooms._index.tsx"),     // /rooms

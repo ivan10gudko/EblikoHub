@@ -20,6 +20,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import project_z.demo.Mappers.Mapper;
+import project_z.demo.dto.FriendshipDtos.FriendRequestDto;
+import project_z.demo.dto.FriendshipDtos.FriendshipCountsDto;
 import project_z.demo.dto.FriendshipDtos.FriendshipDetailsDto;
 import project_z.demo.dto.FriendshipDtos.FriendshipPartialUpdateDto;
 import project_z.demo.dto.UserDtos.UserDto;
@@ -59,7 +61,7 @@ public class FriendshipController {
     @PutMapping("/accept/{senderId}")
     public ResponseEntity<Void> acceptFriendRequest(
             @RequestHeader("Authorization") String token,
-            @PathVariable("senderId") UUID senderId) {
+            @PathVariable("senderId")  UUID senderId) {
 
         UUID receiverId = jwtService.extractUsername(token);
         friendshipService.acceptFriendRequest(receiverId, senderId);
@@ -70,7 +72,7 @@ public class FriendshipController {
     @PreAuthorize("hasRole('ADMIN') || @securityService.canAcceptFriendRequest(#token, #senderId)")
     @PutMapping("/reject/{senderId}")
     public ResponseEntity<Void> rejectFriendRequest(
-            @RequestHeader("Authorization") String token,
+            @RequestHeader("Authorization")  String token,
             @PathVariable("senderId") UUID senderId) {
 
         UUID receiverId = jwtService.extractUsername(token);
@@ -94,6 +96,22 @@ public class FriendshipController {
     public ResponseEntity<FriendshipDetailsDto> getFriendshipById(@PathVariable("id") UUID id) {
         FriendshipDetailsDto dto = friendshipService.findOne(id);
         return new ResponseEntity<>(dto, HttpStatus.OK);
+    }
+
+    @GetMapping("/{userId}/receivedPending")
+    public List<FriendRequestDto> getReceivedPendingRequestsByUserId(@PathVariable("userId") UUID userId) {
+        return friendshipService.findPendingFriendRequestsByUserId(userId);
+    }
+
+    @GetMapping("/{userId}/sentPending")
+    public List<FriendRequestDto> getSentPendingRequestsByUserId(@PathVariable("userId") UUID userId) {
+        return friendshipService.findSentFriendRequestsByUserId(userId);
+    }
+
+    @GetMapping("/{userId}/stats")
+    public ResponseEntity<FriendshipCountsDto> getUserFriendshipStats(@PathVariable("userId") UUID userId) {
+        FriendshipCountsDto stats = friendshipService.getUserFriendshipStats(userId);
+        return new ResponseEntity<>(stats, HttpStatus.OK);
     }
 
     @PreAuthorize("hasRole('ADMIN')")

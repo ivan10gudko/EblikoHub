@@ -5,6 +5,8 @@ import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 
+import project_z.demo.dto.FriendshipDtos.FriendRequestDto;
+import project_z.demo.dto.FriendshipDtos.FriendshipCountsDto;
 import project_z.demo.dto.FriendshipDtos.FriendshipDetailsDto;
 import project_z.demo.dto.FriendshipDtos.FriendshipPartialUpdateDto;
 import project_z.demo.entity.FriendshipEntity;
@@ -20,4 +22,7 @@ public interface FriendshipService {
     void sendFriendRequest(UUID senderId, UUID receiverId);
     void acceptFriendRequest(UUID receiverId, UUID senderId);
     void rejectFriendRequest(UUID receiverId, UUID senderId);
+    List<FriendRequestDto> findPendingFriendRequestsByUserId(UUID userId);
+    List<FriendRequestDto> findSentFriendRequestsByUserId(UUID userId);
+    FriendshipCountsDto getUserFriendshipStats(UUID userId);
 }
