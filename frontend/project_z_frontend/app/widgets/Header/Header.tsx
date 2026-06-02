@@ -69,7 +69,7 @@ const Header = () => {
                         className="w-full max-w-sm flex flex-col gap-3"
                         onClick={(e) => e.stopPropagation()} 
                     >
-                        <NavLink to="/rooms" onClick={() => setBurgerMenuOpen(false)} className={burgerLinkStyle}>
+                        <NavLink to="/" onClick={() => setBurgerMenuOpen(false)} className={burgerLinkStyle}>
                             <WhatshotIcon className="text-primary group-hover:animate-pulse" />
                             <span className="font-semibold text-lg text-foreground">Popular</span>
                         </NavLink>
