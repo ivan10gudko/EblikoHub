@@ -9,6 +9,13 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import { IconButton, Divider } from "@mui/material";
 import { Sidebar } from "~/shared/ui/Sidebar";
 
+
+const getLinkClass = (isActive: boolean) =>
+    `flex items-center gap-4 px-5 py-3.5 rounded-xl font-medium transition-all duration-300 border backdrop-blur-sm ${isActive
+        ? "bg-primary text-background border-primary shadow-[0_0_14px_rgba(251,146,6,0.35)] font-bold translate-x-1"
+        : "text-foreground/80 border-border/40 bg-background-muted/20 hover:bg-background-muted/60 hover:text-foreground hover:border-primary/50 hover:translate-x-1"
+    }`;
+
 interface SidebarProps {
     isOpen: boolean;
     onClose: () => void;
@@ -26,19 +33,8 @@ export const UserProfileSidebar = ({ isOpen, onClose, userId }: SidebarProps) =>
         onClose();
     };
 
-    const linkClass = ({ isActive }: { isActive: boolean }) =>
-        `flex items-center gap-4 px-5 py-3.5 rounded-xl font-medium transition-all duration-300 border backdrop-blur-sm ${isActive
-            ? "bg-primary text-background border-primary shadow-[0_0_14px_rgba(251,146,6,0.35)] font-bold translate-x-1"
-            : "text-foreground/80 border-border/40 bg-background-muted/20 hover:bg-background-muted/60 hover:text-foreground hover:border-primary/50 hover:translate-x-1"
-        }`;
 
     const mobileLinkStyle = "flex items-center gap-4 w-full p-4 rounded-2xl bg-background-muted border border-border/50 hover:border-primary/50 hover:scale-[1.02] transition-all duration-200 active:scale-95";
-    const mobileLinkClass = ({ isActive }: { isActive: boolean }) =>
-        `flex items-center gap-4 w-full p-4 rounded-2xl transition-all duration-200 active:scale-95 
-    ${isActive
-            ? "bg-primary/10 border-primary/70 border"
-            : "bg-background-muted border border-border/50 hover:border-primary/50 hover:scale-[1.02]"
-        }`;
     return (
         <>
             <div
@@ -55,18 +51,20 @@ export const UserProfileSidebar = ({ isOpen, onClose, userId }: SidebarProps) =>
                     <NavLink
                         to={`/profile/${userId}`}
                         onClick={onClose}
-                        className={mobileLinkClass}
+                        className={({ isActive }) => getLinkClass(isActive)}
                     >
                         <PersonOutlineIcon className="text-primary" />
                         <span className="font-semibold text-lg text-foreground">Profile</span>
                     </NavLink>
 
-                    <NavLink to={`/watchlist/${userId}`} onClick={onClose} className={mobileLinkClass}>
+                    <NavLink to={`/watchlist/${userId}`} onClick={onClose}
+                        className={({ isActive }) => getLinkClass(isActive)}>
                         <FormatListBulletedIcon className="text-primary" />
                         <span className="font-semibold text-lg text-foreground">Watchlist</span>
                     </NavLink>
 
-                    <NavLink to={`/user/${userId}/friends`} onClick={onClose} className={mobileLinkClass}>
+                    <NavLink to={`/user/${userId}/friends`} onClick={onClose}
+                        className={({ isActive }) => getLinkClass(isActive)}>
                         <PeopleOutlineIcon className="text-primary" />
                         <span className="font-semibold text-lg text-foreground">Friends</span>
                     </NavLink>
@@ -92,17 +90,20 @@ export const UserProfileSidebar = ({ isOpen, onClose, userId }: SidebarProps) =>
             >
                 <div className="flex flex-col h-full p-5 gap-2">
                     <nav className="flex flex-col gap-3.5">
-                        <NavLink to={`/profile/${userId}`} onClick={onClose} className={linkClass}>
+                        <NavLink to={`/profile/${userId}`} onClick={onClose}
+                            className={({ isActive }) => getLinkClass(isActive)}>
                             <PersonOutlineIcon className="scale-110 opacity-90" />
                             <span className="text-lg tracking-wide">Profile</span>
                         </NavLink>
 
-                        <NavLink to={`/watchlist/${userId}`} onClick={onClose} className={linkClass}>
+                        <NavLink to={`/watchlist/${userId}`} onClick={onClose}
+                            className={({ isActive }) => getLinkClass(isActive)}>
                             <FormatListBulletedIcon className="text-primary scale-110 opacity-90" />
                             <span className="text-lg tracking-wide">Watchlist</span>
                         </NavLink>
 
-                        <NavLink to={`/user/${userId}/friends`} onClick={onClose} className={linkClass}>
+                        <NavLink to={`/user/${userId}/friends`} onClick={onClose}
+                            className={({ isActive }) => getLinkClass(isActive)}>
                             <PeopleOutlineIcon className="text-primary scale-110 opacity-90" />
                             <span className="text-lg tracking-wide">Friends</span>
                         </NavLink>

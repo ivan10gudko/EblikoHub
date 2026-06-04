@@ -1,10 +1,10 @@
-import type { PendingFriendRequest } from "../../types/friends.types";
+import type { FriendActionType, PendingFriendRequest } from "../../types/friends.types";
 import { FriendCard } from "../FriendCard";
 
 interface SentInvitesTabProps {
     sentRequests: PendingFriendRequest[];
     isPendingAction: boolean;
-    onAction: (actionType: "delete" | "accept" | "reject" | "send", id: string) => void;
+    onAction: (actionType: FriendActionType, id: string) => void; 
 }
 
 export const SentInvitesTab = ({ 

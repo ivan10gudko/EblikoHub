@@ -1,1 +1,0 @@
-export {FriendsPage} from "./Friends";

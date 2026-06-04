@@ -5,3 +5,7 @@ export type TabType = "friends" | "add" | "pending" | "sent";
 export interface PendingFriendRequest extends UserProfile {
     friendshipId?: string;
 }
+
+export type FriendActionType = "delete" | "accept" | "reject" | "send";
+
+export type FriendCardVariant = "friends" | "add" | "pending" | "sent" | "readonly";

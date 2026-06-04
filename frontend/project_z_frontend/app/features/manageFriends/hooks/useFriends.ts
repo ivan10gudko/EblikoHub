@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { notify } from "~/shared/lib";
 import { friendshipService } from "~/entities/friendship/api/friendshipService";
+import type { FriendActionType } from "../types/friends.types";
 
 
 const getErrorMessage = (error: any, defaultMessage: string): string => {
@@ -91,11 +92,19 @@ export const useFriends = (userId: string, activeTab: string) => {
         rejectRequestMutation.isPending ||
         deleteFriendshipMutation.isPending;
 
-    const handleFriendAction = (actionType: "delete" | "accept" | "reject" | "send", id: string) => {
-        if (actionType === "delete") deleteFriendshipMutation.mutate(id);
-        if (actionType === "accept") acceptRequestMutation.mutate(id);
-        if (actionType === "reject") rejectRequestMutation.mutate(id);
-        if (actionType === "send") sendRequestMutation.mutate(id);
+    const handleFriendAction = (actionType: FriendActionType, id: string) => {
+        const mutations = {
+            delete: deleteFriendshipMutation,
+            accept: acceptRequestMutation,
+            reject: rejectRequestMutation,
+            send: sendRequestMutation,
+        };
+
+        const mutation = mutations[actionType];
+
+        if (mutation) {
+            mutation.mutate(id);
+        }
     };
 
     return {

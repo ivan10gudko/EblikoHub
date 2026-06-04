@@ -6,16 +6,16 @@ import CheckIcon from "@mui/icons-material/Check";
 import ClearIcon from "@mui/icons-material/Clear";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import PersonAddDisabledIcon from "@mui/icons-material/PersonAddDisabled";
+import type { FriendActionType, FriendCardVariant } from "../types/friends.types";
 
 interface FriendCardProps {
     user: UserProfile & { friendshipId?: string };
-    variant: "friends" | "add" | "pending" | "sent" | "readonly";
-    onAction?: (actionType: "delete" | "accept" | "reject" | "send", id: string) => void;
+    variant: FriendCardVariant;
+    onAction?: (actionType: FriendActionType, id: string) => void;
     isPendingAction?: boolean;
 }
 export const FriendCard = ({ user, variant, onAction, isPendingAction }: FriendCardProps) => {
     return (
-        // Додано: flex-col на мобільних, md:flex-row на десктопах
         <div className="flex flex-col md:flex-row items-stretch md:items-center gap-4 p-4 rounded-xl bg-background-muted/20 border border-border/40 hover:border-secondary/50 hover:bg-background-muted/40 transition-all duration-300 group">
 
             <Link
@@ -36,7 +36,6 @@ export const FriendCard = ({ user, variant, onAction, isPendingAction }: FriendC
                 </div>
             </Link>
 
-            {/* Додано: border-t для візуального розділення на мобільних */}
             <div className="flex items-center gap-2 shrink-0 md:border-0 border-t border-border/20 pt-4 md:pt-0">
                 {variant === "friends" && (
                     <Button

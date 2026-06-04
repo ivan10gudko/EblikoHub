@@ -2,12 +2,13 @@ import { useState, useEffect } from "react";
 import { FriendCard } from "../FriendCard";
 import { useUserSearch } from "~/entities/user/hooks/useUserSearch";
 import { InfiniteScrollLoader } from "~/shared/ui/infinityScroll";
+import type { FriendActionType } from "../../types/friends.types";
 
 
 interface AddFriendTabProps {
     searchQuery: string;
     isPendingAction: boolean;
-    onAction: (actionType: "delete" | "accept" | "reject" | "send", id: string) => void;
+    onAction: (actionType: FriendActionType, id: string) => void; 
 }
 
 export const AddFriendTab = ({ 
@@ -25,10 +26,7 @@ export const AddFriendTab = ({
     if (!searchQuery.trim()) {
         return (
             <div className="flex flex-col gap-4">
-                <p className="text-sm text-foreground bg-background-muted/20 p-4 rounded-xl border border-border/30">
-                    Enter your friend's exact username or global name tag above to instantly dispatch an invitation.
-                </p>
-                <p className="text-foreground-muted text-center py-8 text-sm font-medium">
+                <p className="text-foreground text-center py-8 text-md font-medium">
                     Use the search bar above to trigger global matchmaking. 
                     <span className="text-primary block mt-1">(@nameTag to find a person by exact nameTag)</span>
                 </p>

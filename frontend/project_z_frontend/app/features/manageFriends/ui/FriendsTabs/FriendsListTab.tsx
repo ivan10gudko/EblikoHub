@@ -1,12 +1,13 @@
 
 import type { UserProfile } from "~/entities/user";
 import { FriendCard } from "../FriendCard";
+import type { FriendActionType, FriendCardVariant } from "../../types/friends.types";
 
 interface FriendsListTabProps {
     friends: (UserProfile & { friendshipId?: string })[];
     isPendingAction: boolean;
-    onAction?: (actionType: "delete" | "accept" | "reject" | "send", id: string) => void;
-    variant?: "friends" | "add" | "pending" | "sent" | "readonly"; 
+    onAction?: (actionType: FriendActionType, id: string) => void;
+    variant?: FriendCardVariant; 
 }
 
 export const FriendsListTab = ({ 
