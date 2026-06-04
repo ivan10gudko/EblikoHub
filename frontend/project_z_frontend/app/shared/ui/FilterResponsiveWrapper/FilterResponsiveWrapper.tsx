@@ -1,4 +1,4 @@
-
+// app/shared/ui/FilterResponsiveWrapper.tsx
 import FilterListIcon from '@mui/icons-material/FilterList';
 import CloseIcon from '@mui/icons-material/Close';
 import { Button } from "~/shared/ui/Button";
@@ -6,10 +6,15 @@ import { useState, type ReactNode } from 'react';
 
 interface FilterResponsiveWrapperProps {
   children: ReactNode;
-  title?: string;
+  pageTitle: string;       
+  filterTitle?: string;    
 }
 
-export const FilterResponsiveWrapper = ({ children, title = "Filters" }: FilterResponsiveWrapperProps) => {
+export const FilterResponsiveWrapper = ({ 
+  children, 
+  pageTitle, 
+  filterTitle = "Filters" 
+}: FilterResponsiveWrapperProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const close = () => setIsOpen(false);
 
@@ -17,7 +22,7 @@ export const FilterResponsiveWrapper = ({ children, title = "Filters" }: FilterR
     <>
       <div className="lg:hidden flex items-center justify-between gap-4 mb-6 px-2">
         <h1 className="text-2xl font-black text-foreground tracking-tight">
-          Your Watchlist
+          {pageTitle}
         </h1>
         <Button
           onClick={() => setIsOpen(true)}
@@ -44,7 +49,9 @@ export const FilterResponsiveWrapper = ({ children, title = "Filters" }: FilterR
           ${isOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}
         `}>
           <div className="lg:hidden flex justify-between items-center p-5 border-b border-border bg-background-muted/50">
-            <span className="font-black uppercase tracking-wider text-foreground-muted text-xs">{title}</span>
+            <span className="font-black uppercase tracking-wider text-foreground-muted text-xs">
+              {filterTitle}
+            </span>
             <button
               className="p-2 hover:bg-background-muted-hover rounded-xl transition-colors text-foreground-muted"
               onClick={close}

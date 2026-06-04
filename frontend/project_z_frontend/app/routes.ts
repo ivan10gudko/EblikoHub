@@ -15,8 +15,8 @@ export default [
             route("profile", "./routes/profile.tsx"),
 
             ...prefix("rooms", [
-                index("./routes/rooms._index.tsx"),     // /rooms
-                route(":id", "./routes/rooms.$id.tsx"), // /rooms/:id
+                route(":userId","./routes/rooms._index.tsx"),     // /rooms
+                route(":userId/:id", "./routes/rooms.$id.tsx"), // /rooms/:id
             ]),
         ]),
 

@@ -57,18 +57,35 @@ public class RoomServiceImpl implements RoomService {
     @Override
     public Page<RoomShortDto> getRoomsByUserId(UUID userId, RoomQueryParameters queryParameters) {
 
-        Specification<RoomEntity> spec = Specification.where(RoomSpecifications.hasMember(userId));
         Pageable pageable = PagingHelper.toPageable(queryParameters);
-        Pageable finalPageable = pageable;
+        Page<RoomEntity> roomsPage;
 
-        if ("memberCount".equals(queryParameters.getSortBy())) {
-            spec = spec.and(RoomSpecifications.sortByMembersCount(queryParameters.getOrder()));
-            finalPageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.unsorted());
+        String sortBy = queryParameters.getSortBy();
+
+
+        if ("memberCount".equals(sortBy) || "membersCount".equals(sortBy)) {
+
+
+            Pageable nativePageable = PageRequest.of(
+                    pageable.getPageNumber(),
+                    pageable.getPageSize(),
+                    Sort.unsorted());
+
+            roomsPage = "asc".equalsIgnoreCase(queryParameters.getOrder())
+                    ? roomRepository.findAllByMemberCountAsc(userId, nativePageable)
+                    : roomRepository.findAllByMemberCountDesc(userId, nativePageable);
+        } else {
+
+            Specification<RoomEntity> spec = Specification.where(RoomSpecifications.hasMember(userId));
+            roomsPage = roomRepository.findAll(spec, pageable);
         }
-        Page<RoomEntity> rooms = roomRepository.findAll(spec, finalPageable);
-        return rooms.map(roomShortMapper::mapTo);
-    }
 
+        if (roomsPage.isEmpty()) {
+            return Page.empty(pageable);
+        }
+
+        return roomsPage.map(roomShortMapper::mapTo);
+    }
 
     @Override
     public RoomEntity partialUpdate(Long id, RoomEntity source) {
@@ -150,7 +167,7 @@ public class RoomServiceImpl implements RoomService {
 
         boolean isMember = room.getMembers().stream()
                 .anyMatch(user -> user.getUserId().equals(userId));
-        
+
         if (!isMember && !room.getOwner().getUserId().equals(userId)) {
             throw new IllegalArgumentException("You are not a member of this room");
         }
