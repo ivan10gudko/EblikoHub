@@ -69,13 +69,6 @@ public class RoomServiceImpl implements RoomService {
         return rooms.map(roomShortMapper::mapTo);
     }
 
-    @Override
-    public List<RoomEntity> findAll() {
-        return StreamSupport.stream(
-                roomRepository.findAll().spliterator(),
-                false)
-                .collect(Collectors.toList());
-    }
 
     @Override
     public RoomEntity partialUpdate(Long id, RoomEntity source) {
