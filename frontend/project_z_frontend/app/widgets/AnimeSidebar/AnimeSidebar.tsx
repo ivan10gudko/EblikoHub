@@ -26,6 +26,7 @@ const AnimeSidebar: React.FC<Props> = ({ data }) => {
     status: Status.WATCHED,
     imageUrl: data.images.jpg.image_url,
     titleType: TitleType.ANIME,
+    pinned:false,
   };
 
   const { data: titleRecord } = useTitleByApiId(initialData.apiTitleId);
@@ -57,7 +58,7 @@ const AnimeSidebar: React.FC<Props> = ({ data }) => {
 
           {titleRecord && (
             <div className="flex-shrink-0 border-l border-border pl-1">
-              <TitleActionsMenu title={titleRecord} onDelete={handleDelete} />
+              <TitleActionsMenu title={titleRecord} onDelete={handleDelete} isOwn={true} />
             </div>
           )}
         </div>
