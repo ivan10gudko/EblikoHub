@@ -41,8 +41,12 @@ export const TitleActionsMenu = ({
           </div>
         }
       >
-        {isOwn ? <DropdownItem onClick={() => setIsEditOpen(true)}> <EditIcon sx={{ fontSize: 16 }} /> Edit Record </DropdownItem>
-          : <></>}
+        {isOwn && (
+          <DropdownItem onClick={() => setIsEditOpen(true)}>
+            <EditIcon sx={{ fontSize: 16 }} /> Edit Record
+          </DropdownItem>
+        )}
+        
         <DropdownItem onClick={() => setIsRatingsOpen(true)}>
           <StarRoundedIcon sx={{ fontSize: 16 }} />
           Rating
