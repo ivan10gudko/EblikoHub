@@ -1,6 +1,6 @@
 import type { QueryParams } from "~/shared/types";
 
-export interface UserShort {
+export interface RoomMember {
     userId: string;
     name: string;
     nameTag: string;
@@ -10,14 +10,14 @@ export interface UserShort {
 export interface Room {
     roomId: number;
     roomName: string;
-    owner: string; 
-    members: UserShort[];
+    owner: string;
+    members: RoomMember[];
     createdAt: string;
 }
 
 export interface RoomCreateDto {
     roomName: string;
-    members: string[]; 
+    members: string[];
 }
 
 export interface RoomShort {
@@ -28,6 +28,6 @@ export interface RoomShort {
 }
 
 
-export interface RoomQueryParameters extends QueryParams{
-    search?:string;
+export interface RoomQueryParameters extends QueryParams {
+    search?: string;
 }
