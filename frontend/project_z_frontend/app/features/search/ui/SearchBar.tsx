@@ -1,8 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import SearchIcon from "@mui/icons-material/Search";
 import CircularProgress from "@mui/material/CircularProgress";
+
 interface SearchBarProps {
   onSearch: (query: string) => void;
+  onChange?: (value: string) => void;
+  debounceMs?: number; 
   isLoading?: boolean;
   placeholder?: string;
   minLength?: number;
@@ -11,8 +14,10 @@ interface SearchBarProps {
   clearOnSubmit?: boolean;
 }
 
-const SearchBar: React.FC<SearchBarProps> = ({
+export const SearchBar: React.FC<SearchBarProps> = ({
   onSearch,
+  onChange,
+  debounceMs,
   isLoading = false,
   placeholder = "Search...",
   minLength = 2,
@@ -22,6 +27,33 @@ const SearchBar: React.FC<SearchBarProps> = ({
 }) => {
   const [value, setValue] = useState<string>(initialValue);
   const [error, setError] = useState<string | null>(null);
+  
+  const inputRef = useRef<HTMLInputElement>(null);
+  const onSearchRef = useRef(onSearch);
+
+  useEffect(() => {
+    onSearchRef.current = onSearch;
+  }, [onSearch]);
+
+  useEffect(() => {
+    if (debounceMs === undefined) return;
+
+    const trimmedValue = value.trim();
+
+    const handler = setTimeout(() => {
+      if (trimmedValue.length >= minLength) {
+        setError(null);
+        onSearchRef.current(trimmedValue);
+      } else if (trimmedValue.length > 0) {
+        setError(`Length should be at least ${minLength}`);
+      } else {
+        setError(null);
+        onSearchRef.current("");
+      }
+    }, debounceMs);
+
+    return () => clearTimeout(handler);
+  }, [value, debounceMs, minLength]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -29,7 +61,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
 
     if (trimmedValue && trimmedValue.length >= minLength) {
       setError(null);
-      onSearch(trimmedValue);
+      onSearchRef.current(trimmedValue);
     } else {
       setError(`Length should be at least ${minLength}`);
     }
@@ -37,7 +69,9 @@ const SearchBar: React.FC<SearchBarProps> = ({
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setValue(e.target.value);
+    const newValue = e.target.value;
+    setValue(newValue);
+    if (onChange) onChange(newValue); 
     if (error) setError(null);
   };
 
@@ -47,13 +81,15 @@ const SearchBar: React.FC<SearchBarProps> = ({
       className={`relative border-foreground-muted border w-full max-w-md flex-1 rounded-lg flex items-center min-w-[100px] ${className}`}
     >
       <input
+        ref={inputRef}
         name="Search Input"
         type="search"
         placeholder={placeholder}
-        className="border-none outline-none p-2 rounded-l-lg w-full bg-transparent placeholder:text-muted-foreground placeholder:opacity-100"
+        className="border-none outline-none p-2 rounded-l-lg w-full bg-transparent placeholder:text-muted-foreground placeholder:opacity-100 text-foreground focus:outline-none"
         value={value}
         onChange={handleChange}
-        disabled={isLoading}
+        disabled={false} 
+        autoComplete="off"
       />
 
       {error && (
@@ -64,9 +100,9 @@ const SearchBar: React.FC<SearchBarProps> = ({
 
       <button
         type="submit"
-        className="px-3 py-2 hover:bg-background-muted transition-colors rounded-r-lg flex items-center justify-center min-w-[48px]"
+        className="px-3 py-2 hover:bg-background-muted transition-colors rounded-r-lg flex items-center justify-center min-w-[48px] text-foreground"
         aria-label="Search"
-        disabled={isLoading}
+        disabled={isLoading} 
       >
         {isLoading ? (
           <CircularProgress size={20} color="inherit" />

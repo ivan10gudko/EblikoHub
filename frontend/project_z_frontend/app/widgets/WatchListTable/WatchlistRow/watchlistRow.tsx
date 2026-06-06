@@ -38,7 +38,6 @@ export const WatchlistRow = ({ title, dragHandleProps }: WatchlistRowProps) => {
       }`}
     >
       <div className="flex items-center flex-1 gap-3 min-w-0">
-        {/* Індікатор сортування (завжди рендериться, якщо не запінено) */}
         {!title.pinned && dragHandleProps && (
           <div
             {...dragHandleProps}
@@ -48,7 +47,6 @@ export const WatchlistRow = ({ title, dragHandleProps }: WatchlistRowProps) => {
           </div>
         )}
 
-        {/* Кнопка закріплення */}
         <button
           type="button"
           onClick={(e) => {
@@ -70,7 +68,6 @@ export const WatchlistRow = ({ title, dragHandleProps }: WatchlistRowProps) => {
           />
         </div>
 
-        {/* Завжди інтерактивний інпут назви */}
         <div className="flex-1 min-w-0">
           <input
             name="Title name"
@@ -84,7 +81,6 @@ export const WatchlistRow = ({ title, dragHandleProps }: WatchlistRowProps) => {
       </div>
 
       <div className="flex items-center justify-between sm:justify-end gap-3 sm:w-auto mt-2 sm:mt-0">
-        {/* Інтерактивний вибір статусу */}
         <div className="flex-shrink-0 w-32 sm:w-40">
           <StatusSelect
             variant="page"
@@ -94,7 +90,6 @@ export const WatchlistRow = ({ title, dragHandleProps }: WatchlistRowProps) => {
           />
         </div>
 
-        {/* Інтерактивний рейтинг */}
         <div>
           <CompactRate
             currentRating={title.rating?.overall}

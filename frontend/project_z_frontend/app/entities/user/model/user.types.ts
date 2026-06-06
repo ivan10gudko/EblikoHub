@@ -1,3 +1,5 @@
+import type { QueryParams } from "~/shared/types";
+
 export interface UserProfile{
     userId: string;
     name: string;
@@ -16,4 +18,7 @@ export interface CreateUserProfile{
 export interface UpdateUserProfile{
     name: string;
     description?: string;
+}
+export interface UserParams extends QueryParams{
+
 }
