@@ -12,11 +12,13 @@ import { Logo, LogoImg } from "~/shared/ui/Logo";
 import { SearchBar } from "~/features/search";
 import { useAuthStore } from "~/features/auth";
 import { ThemeToggle } from "~/features/theme/ui/ThemeToggle";
+import { useUser } from "~/entities/user";
+import { HeaderAvatar } from "~/features/auth/ui/HeadAvatar";
 
 const Header = () => {
     const { isAuth, userId } = useAuthStore();
     const [burgerMenuOpen, setBurgerMenuOpen] = useState<boolean>(false);
-
+    const { data: profile, isLoading } = useUser(userId);
     const navigate = useNavigate();
     const navigation = useNavigation();
     const isNavigating = navigation.state === "loading";
@@ -42,11 +44,15 @@ const Header = () => {
 
                 <nav className="hidden sm:flex gap-6 items-center">
                     <SearchBar isLoading={isNavigating} onSearch={handleMainSearch} className="w-56" />
-                    <NavLink to="/rooms" className={({ isActive }) => isActive ? "text-primary font-bold" : "hover:text-primary transition-colors"}>Rooms</NavLink>
+                    <NavLink to={`/rooms/${userId}`} className={({ isActive }) => isActive ? "text-primary font-bold" : "hover:text-primary transition-colors"}>Rooms</NavLink>
                     <NavLink to={watchlistPath} className="hover:text-primary transition-colors">Watchlist</NavLink>
                     {isAuth ? (
-                        <NavLink to="/profile">
-                            <AccountCircleIcon fontSize="large" className="text-foreground/80 hover:text-primary transition-colors" />
+                        <NavLink to={`/profile/${userId}`}>
+                            <HeaderAvatar
+                                src={profile?.img}
+                                name={profile?.name || "User"}
+                                className="w-10 h-10"
+                            />
                         </NavLink>
                     ) : (
                         <NavLink to="auth/signup" className="bg-primary text-primary-foreground py-2 px-4 rounded-xl font-bold hover:brightness-110 transition-all">Sign up</NavLink>
@@ -67,9 +73,9 @@ const Header = () => {
                 >
                     <nav
                         className="w-full max-w-sm flex flex-col gap-3"
-                        onClick={(e) => e.stopPropagation()} 
+                        onClick={(e) => e.stopPropagation()}
                     >
-                        <NavLink to="/rooms" onClick={() => setBurgerMenuOpen(false)} className={burgerLinkStyle}>
+                        <NavLink to="/" onClick={() => setBurgerMenuOpen(false)} className={burgerLinkStyle}>
                             <WhatshotIcon className="text-primary group-hover:animate-pulse" />
                             <span className="font-semibold text-lg text-foreground">Popular</span>
                         </NavLink>
@@ -86,7 +92,7 @@ const Header = () => {
 
                         <div className="pb-10">
                             {isAuth ? (
-                                <NavLink to="/profile" onClick={() => setBurgerMenuOpen(false)} className={burgerLinkStyle}>
+                                <NavLink to={`/profile/${userId}`} onClick={() => setBurgerMenuOpen(false)} className={burgerLinkStyle}>
                                     <PersonIcon className="text-primary" />
                                     <span className="font-semibold text-lg text-foreground">Profile Settings</span>
                                 </NavLink>

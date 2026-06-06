@@ -44,7 +44,6 @@ public class TitleSpecifications {
             }
             MapJoin<TitleEntity, String, Float> ratings = root.joinMap("rating", JoinType.LEFT);
 
-
             query.groupBy(root.get("id"));
 
             Expression<Float> overallValue = cb.max(
@@ -52,7 +51,6 @@ public class TitleSpecifications {
                             .when(cb.equal(ratings.key(), "overall"), ratings.value())
                             .otherwise(-1f)
                             .as(Float.class));
-
 
             Order pinnedOrder = cb.desc(root.get("isPinned"));
 
@@ -76,6 +74,51 @@ public class TitleSpecifications {
                         cb.asc(overallValue),
                         cb.asc(root.get("titleName")),
                         cb.asc(root.get("id")));
+            }
+
+            return null;
+        };
+    }
+
+    public static Specification<TitleEntity> sortByAvgRating(String order) {
+        return (root, query, cb) -> {
+            // Захист від COUNT-запиту пагінації.
+            if (query.getResultType() == Long.class || query.getResultType() == long.class) {
+                return null;
+            }
+
+            // 1. Створюємо Correlated Subquery до таблиці рейтингів
+            jakarta.persistence.criteria.Subquery<Double> subquery = query.subquery(Double.class);
+            jakarta.persistence.criteria.Root<TitleEntity> subRoot = subquery.correlate(root);
+            MapJoin<TitleEntity, String, Float> ratings = subRoot.joinMap("rating", JoinType.LEFT);
+
+            subquery.select(cb.avg(ratings.value()))
+                    .where(cb.notEqual(ratings.key(), "overall"));
+
+            // 2. Дефолтний пріоритет для закріплених
+            jakarta.persistence.criteria.Order pinnedOrder = cb.desc(root.get("isPinned"));
+
+            // 3. Обходимо відсутність .nullsLast() через cb.coalesce на рівні бази даних
+            if ("desc".equalsIgnoreCase(order)) {
+                // Якщо NULL (немає оцінок) -> даємо -1.0, щоб вони впали вниз списку DESC
+                jakarta.persistence.criteria.Expression<Double> avgWithCoalesce = cb.coalesce(subquery, -1.0);
+
+                query.orderBy(
+                        pinnedOrder,
+                        cb.desc(avgWithCoalesce),
+                        cb.asc(root.get("titleName")),
+                        cb.asc(root.get("titleId")) // Виправив на titleId з твоєї сутності
+                );
+            } else {
+                // Якщо NULL (немає оцінок) -> даємо 99.0, щоб вони впали вниз списку ASC
+                jakarta.persistence.criteria.Expression<Double> avgWithCoalesce = cb.coalesce(subquery, 99.0);
+
+                query.orderBy(
+                        pinnedOrder,
+                        cb.asc(avgWithCoalesce),
+                        cb.asc(root.get("titleName")),
+                        cb.asc(root.get("titleId")) // Виправив на titleId з твоєї сутності
+                );
             }
 
             return null;

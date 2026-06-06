@@ -1,8 +1,7 @@
 package project_z.demo.controllers;
-import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -21,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import lombok.RequiredArgsConstructor;
 import project_z.demo.Mappers.Mapper;
+import project_z.demo.common.QueryParameters.UserQueryParameters;
 import project_z.demo.dto.UserDtos.UserDto;
 import project_z.demo.dto.UserDtos.UserPostDto;
 import project_z.demo.dto.UserDtos.UserUpdateDto;
@@ -61,6 +61,7 @@ public class UserController {
         return new ResponseEntity<> (userMapper.mapTo(foundUser), HttpStatus.OK);
             
     }
+    
     @GetMapping(path = "/{nameTag}/nameTag")
     public UserDto findUsersByNameTag(@PathVariable("nameTag") String nameTag) {
         UserEntity foundUser = userService.findByNameTag(nameTag).orElseThrow(
@@ -79,12 +80,13 @@ public class UserController {
     }
     
     @GetMapping(path = "/name/{name}")
-    public ResponseEntity<List<UserDto>> findUsersByName(@PathVariable("name")String name) {
-        List<UserDto> response = userService.findByName(name).stream().map(userMapper::mapTo).collect(Collectors.toList());
-        if(response.isEmpty()){
-            return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
+    public ResponseEntity<Page<UserDto>> findUsersByName(@PathVariable("name")String name, UserQueryParameters userQueryParameters) {
+        Page<UserEntity> entitys = userService.findByName(name, userQueryParameters);
+        Page<UserDto> res = entitys.map(userMapper::mapTo);
+        if(res.isEmpty()){
+            return new ResponseEntity<>(res, HttpStatus.NO_CONTENT);
         }
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return new ResponseEntity<>(res, HttpStatus.OK);
     }
     
     @PreAuthorize("hasRole('ADMIN') || @securityService.isUserOwner(#id, #token)")

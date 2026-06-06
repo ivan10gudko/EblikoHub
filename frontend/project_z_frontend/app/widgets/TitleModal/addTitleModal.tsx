@@ -28,6 +28,7 @@ const INITIAL_FORM_DATA: CreateTitleRecord = {
   titleType: TitleType.ANIME,
   imageUrl: null,
   rating: undefined,
+  pinned:false,
 };
 
 export const AddTitleModal = ({ isOpen, onClose }: AddTitleModalProps) => {

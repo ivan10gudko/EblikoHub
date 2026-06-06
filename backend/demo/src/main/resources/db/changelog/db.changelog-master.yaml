@@ -1,0 +1,6 @@
+databaseChangeLog:
+  - changeSet:
+      id: 000-initial-empty-changelog
+      author: project_z
+      changes:
+        - note: "init master migration file"

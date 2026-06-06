@@ -13,6 +13,7 @@ export interface TitleRecord {
     customOrder: number,
     pinned : boolean
     createdAt: string,
+    avgRating?: number;
 }
 export enum TitleType {
     ANIME = "ANIME",
@@ -48,6 +49,7 @@ export interface TitleShortDto {
     titleName: string;
     ratingValue: number;
 }
+
 export interface CreateTitleRecord extends Omit<TitleRecord, 'titleId' | 'createdAt' | 'customOrder'> { }
 
 export interface ManageTitleRecordProps {

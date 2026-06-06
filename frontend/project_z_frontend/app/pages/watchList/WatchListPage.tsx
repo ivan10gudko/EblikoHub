@@ -3,8 +3,9 @@ import { useAuthStore } from "~/features/auth";
 import { TitleFilters } from "~/features/titleFilter";
 import { useTitlesQuery } from "~/features/titleFilter/hooks/useTitlesQuery";
 import { useTitleFilterStore } from "~/features/titleFilter/store/titleFilter.store";
-import { FilterResponsiveWrapper } from "~/features/titleFilter/ui/FilterWrapper";
+
 import { useSyncUrl } from "~/shared/hooks";
+import { FilterResponsiveWrapper } from "~/shared/ui/FilterResponsiveWrapper";
 import { InfiniteScrollLoader } from "~/shared/ui/infinityScroll";
 import { WatchlistTable } from "~/widgets/WatchListTable";
 
@@ -41,7 +42,7 @@ export const WatchListPage = ({ userId }: { userId: string | null }) => {
   return (
     <div className="flex flex-col lg:flex-row gap-6 p-4 sm:p-8 max-w-[1400px] mx-auto min-h-screen bg-background-muted/30">
 
-      <FilterResponsiveWrapper>
+      <FilterResponsiveWrapper pageTitle="Watchlist filters">
         <TitleFilters />
       </FilterResponsiveWrapper>
 
