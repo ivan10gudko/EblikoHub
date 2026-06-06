@@ -42,7 +42,7 @@ const Header = () => {
 
                 <nav className="hidden sm:flex gap-6 items-center">
                     <SearchBar isLoading={isNavigating} onSearch={handleMainSearch} className="w-56" />
-                    <NavLink to="/rooms" className={({ isActive }) => isActive ? "text-primary font-bold" : "hover:text-primary transition-colors"}>Rooms</NavLink>
+                    <NavLink to={`/rooms/${userId}`} className={({ isActive }) => isActive ? "text-primary font-bold" : "hover:text-primary transition-colors"}>Rooms</NavLink>
                     <NavLink to={watchlistPath} className="hover:text-primary transition-colors">Watchlist</NavLink>
                     {isAuth ? (
                         <NavLink to={`/profile/${userId}`}>

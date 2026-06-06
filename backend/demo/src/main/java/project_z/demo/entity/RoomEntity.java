@@ -30,13 +30,16 @@ import lombok.Setter;
 @Table(name="rooms")
 public class RoomEntity {
     @Id
-    @Column(name = "id")
+    @Column(name = "room_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long roomId;
+    
     private String roomName;
+
     @ManyToOne
     @JoinColumn(name = "owner_id")
     private UserEntity owner; 
+
     @Builder.Default
     @ManyToMany
     @JoinTable(
@@ -45,6 +48,7 @@ public class RoomEntity {
         inverseJoinColumns = @JoinColumn(name = "user_id")
     )
     private List<UserEntity> members = new ArrayList<>();
+
     @CreatedDate
     @Column(nullable=false, updatable=false)
     private LocalDateTime createdAt;
