@@ -101,27 +101,41 @@ public class TitleServiceImpl implements TitleService {
     }
 
     @Override
-    public Page<TitleEntity> findAllByUserId(TitleQueryParameters params, UUID userId) {
+    public Page<TitleDto> findAllByUserId(TitleQueryParameters params, UUID userId) {
+        Pageable pageable = PagingHelper.toPageable(params);
+
         Specification<TitleEntity> spec = Specification
                 .where(TitleSpecifications.belongsToUser(userId))
                 .and(TitleSpecifications.hasStatus(params.getStatus()))
                 .and(TitleSpecifications.hasName(params.getSearch()))
                 .and(TitleSpecifications.hasTitleTypes(params.getTypes()));
 
-        Pageable pageable = PagingHelper.toPageable(params);
         Pageable finalPageable;
+        boolean isAvgSort = "avgRating".equals(params.getSortBy());
 
-        if ("rating".equals(params.getSortBy())) {
+        if (isAvgSort) {
+            spec = spec.and(TitleSpecifications.sortByAvgRating(params.getOrder()));
+            finalPageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.unsorted());
+        } else if ("rating".equals(params.getSortBy())) {
             spec = spec.and(TitleSpecifications.sortByRating(params.getOrder()));
-
             finalPageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.unsorted());
         } else {
-
             Sort finalSort = Sort.by(Sort.Direction.DESC, "isPinned").and(pageable.getSort());
             finalPageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), finalSort);
         }
 
-        return titleRepository.findAll(spec, finalPageable);
+        Page<TitleEntity> titlesPage = titleRepository.findAll(spec, finalPageable);
+
+        return titlesPage.map(title -> {
+            TitleDto dto = titleMapper.mapTo(title);
+
+            if (isAvgSort) {
+                Double avg = title.getAvgRating();
+                dto.setAvgRating(avg != null ? avg : 0.0);
+            }
+
+            return dto;
+        });
     }
 
     @Override
@@ -263,7 +277,7 @@ public class TitleServiceImpl implements TitleService {
     }
 
     @Override
-    public void unpin(UUID userId){
+    public void unpin(UUID userId) {
         titleRepository.unpinAllTitlesForUser(userId);
     }
 }

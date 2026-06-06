@@ -3,6 +3,7 @@ import { TitleTypeThemes, type TitleRecord } from "~/entities/titleRecord";
 import { CompactRate } from "~/shared/ui/CompactRate";
 import { TitleActionsMenu } from "../../TitleActionsMenu";
 import { Status, statusColorConfig } from "~/shared/types/Status"; // Додано імпорт статусів
+import { useTitleFilterStore, type TitleSortType } from "~/features/titleFilter/store/titleFilter.store";
 
 interface PinnedWatchlistRowReadOnlyProps {
   title: TitleRecord;
@@ -18,6 +19,9 @@ export const PinnedWatchlistRowReadOnly = ({ title }: PinnedWatchlistRowReadOnly
 
   const DEFAULT_IMAGE_PATH = "/defaultTitleRecordImage.jpg";
   const themeClasses = title.titleType ? TitleTypeThemes[title.titleType] : "";
+
+  const sortBy = useTitleFilterStore((state) => state.sortBy);
+  const isAvgView = sortBy === "avgRating" as TitleSortType;
 
   const currentStatus = (title?.status as Status) || Status.DEFAULT;
   const config = statusColorConfig[currentStatus];
@@ -69,7 +73,7 @@ export const PinnedWatchlistRowReadOnly = ({ title }: PinnedWatchlistRowReadOnly
         </div>
 
         <div className="pointer-events-none opacity-90 flex-shrink-0">
-          <CompactRate currentRating={title.rating?.overall} />
+          <CompactRate currentRating={title.rating?.overall} avgRating={title.avgRating} isAvgView={isAvgView}  />
         </div>
 
         <div className="flex-shrink-0 ml-1 border-l border-border pl-2">

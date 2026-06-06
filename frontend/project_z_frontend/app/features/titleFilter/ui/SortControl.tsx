@@ -11,6 +11,7 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
     { label: "Date Added", value: "createdAt" },
     { label: "Status", value: "status" },
     {label: "Custom Order", value: "customOrder"},
+    {label: "AverageRating", value: "avgRating"},
   ];
 
  const SortControl = () => {
