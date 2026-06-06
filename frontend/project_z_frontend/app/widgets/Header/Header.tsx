@@ -12,11 +12,13 @@ import { Logo, LogoImg } from "~/shared/ui/Logo";
 import { SearchBar } from "~/features/search";
 import { useAuthStore } from "~/features/auth";
 import { ThemeToggle } from "~/features/theme/ui/ThemeToggle";
+import { useUser } from "~/entities/user";
+import { HeaderAvatar } from "~/features/auth/ui/HeadAvatar";
 
 const Header = () => {
     const { isAuth, userId } = useAuthStore();
     const [burgerMenuOpen, setBurgerMenuOpen] = useState<boolean>(false);
-
+    const { data: profile, isLoading } = useUser(userId);
     const navigate = useNavigate();
     const navigation = useNavigation();
     const isNavigating = navigation.state === "loading";
@@ -46,7 +48,11 @@ const Header = () => {
                     <NavLink to={watchlistPath} className="hover:text-primary transition-colors">Watchlist</NavLink>
                     {isAuth ? (
                         <NavLink to={`/profile/${userId}`}>
-                            <AccountCircleIcon fontSize="large" className="text-foreground/80 hover:text-primary transition-colors" />
+                            <HeaderAvatar
+                                src={profile?.img}
+                                name={profile?.name || "User"}
+                                className="w-10 h-10"
+                            />
                         </NavLink>
                     ) : (
                         <NavLink to="auth/signup" className="bg-primary text-primary-foreground py-2 px-4 rounded-xl font-bold hover:brightness-110 transition-all">Sign up</NavLink>
@@ -67,7 +73,7 @@ const Header = () => {
                 >
                     <nav
                         className="w-full max-w-sm flex flex-col gap-3"
-                        onClick={(e) => e.stopPropagation()} 
+                        onClick={(e) => e.stopPropagation()}
                     >
                         <NavLink to="/" onClick={() => setBurgerMenuOpen(false)} className={burgerLinkStyle}>
                             <WhatshotIcon className="text-primary group-hover:animate-pulse" />
