@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { create } from 'zustand';
 import { authService, type RegisterData } from '~/entities/session';
-import { generateFallbackName, userService, type CreateUserProfile } from '~/entities/user'; // UserProfile більше не потрібен тут
+import { generateFallbackName, userService, type CreateUserProfile } from '~/entities/user';
 import { getErrorMessage } from '~/shared/utils/getErrorMessage';
 
 interface AuthState {

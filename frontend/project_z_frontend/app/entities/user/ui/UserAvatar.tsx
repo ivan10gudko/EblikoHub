@@ -13,7 +13,7 @@ const sizes = {
 
 export const UserAvatar = ({ src, name, size = "md" }: UserAvatarProps) => {
     return (
-        <div className={`${sizes[size]} rounded-full overflow-hidden bg-background-muted border`}>
+        <div className={`${sizes[size]} rounded-full overflow-hidden bg-background-muted`}>
             {src ? (
                 <img src={src} alt={name} className="w-full h-full object-cover" />
             ) : (
