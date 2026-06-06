@@ -5,14 +5,19 @@ import { Button } from "~/shared/ui/Button";
 import { formatRatingInput } from "~/shared/helpers/formatRating";
 
 interface CompactRateProps {
-  currentRating?: number;
-  onRate?: (value: number) => void;
+  currentRating?: number | null;
+  avgRating?: number | null;
+  isAvgView?: boolean;
+  onRate?: (val: number) => void;
   onClear?: () => void;
 }
+
 export const CompactRate = ({
   currentRating,
+  avgRating,
+  isAvgView,
   onRate,
-  onClear,
+  onClear
 }: CompactRateProps) => {
   const hasRating = currentRating !== undefined && currentRating !== null;
 
@@ -22,7 +27,7 @@ export const CompactRate = ({
 
   useEffect(() => {
     setValue(hasRating ? currentRating.toString() : "");
-  }, [currentRating, hasRating]); 
+  }, [currentRating, hasRating]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = e.target.value;
@@ -45,6 +50,24 @@ export const CompactRate = ({
     e.preventDefault();
     handleSave();
   };
+
+  if (isAvgView) {
+    return (
+      <div className="flex items-center h-[34px] w-[88px] bg-transparent border border-border rounded-md px-2 justify-between">
+        <span className={`text-md font-bold ${avgRating ? "text-primary" : "text-primary"}`}>
+          {avgRating ? avgRating.toFixed(1) : "—"}
+        </span>
+
+        {currentRating !== undefined && currentRating !== null ? (
+          <span className="text-md text-foreground line-through decoration-foreground-muted/60">
+            {currentRating}
+          </span>
+        ) : (
+          <span className="text-[10px] text-foreground">—</span>
+        )}
+      </div>
+    );
+  }
 
   return (
     <form

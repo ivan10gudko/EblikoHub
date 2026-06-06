@@ -3,7 +3,7 @@ package project_z.demo.dto.TitleDtos;
 import java.time.LocalDateTime;
 import java.util.Map;
 
-import org.hibernate.event.internal.ProxyVisitor;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
@@ -20,7 +20,6 @@ import project_z.demo.enums.TitleType;
 @Builder
 @Getter
 public class TitleDto {
-    @Id
     private Long titleId;
     private Integer apiTitleId;
     private String titleName;
@@ -31,4 +30,7 @@ public class TitleDto {
     private String imageUrl;
     private boolean isPinned;
     private LocalDateTime createdAt;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private Double avgRating;
 }

@@ -94,8 +94,8 @@ public class TitleController {
     
     @GetMapping("/{userId}")
     public Page<TitleDto> getTitleListByUserId(@PathVariable("userId") UUID userId, TitleQueryParameters params) {
-        Page<TitleEntity> entitiesPage = titleService.findAllByUserId(params, userId);
-        return entitiesPage.map(titleMapper::mapTo);
+        Page<TitleDto> res = titleService.findAllByUserId(params, userId);
+        return res;
     }
 
     @GetMapping(path = "/mal/{titleMalId}")

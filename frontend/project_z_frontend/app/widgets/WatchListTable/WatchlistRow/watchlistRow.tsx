@@ -8,6 +8,7 @@ import { useUpdateTitleRecord } from "~/entities/titleRecord/hooks/useTitleRecor
 import { CompactRate } from "~/shared/ui/CompactRate";
 import { TitleActionsMenu } from "../../TitleActionsMenu";
 import type { Rating } from "~/shared/types";
+import { useTitleFilterStore, type TitleSortType } from "~/features/titleFilter/store/titleFilter.store";
 
 interface WatchlistRowProps {
   title: TitleRecord;
@@ -18,7 +19,8 @@ export const WatchlistRow = ({ title, dragHandleProps }: WatchlistRowProps) => {
   const navigate = useNavigate();
   const [tempTitleName, setTempTitleName] = useState(title.titleName);
   const { pinTitle, updateTitle, deleteTitle } = useUpdateTitleRecord(title.titleId);
-
+  const sortBy = useTitleFilterStore((state) => state.sortBy);
+  const isAvgView = sortBy === "avgRating" as TitleSortType;
   useEffect(() => {
     setTempTitleName(title.titleName);
   }, [title.titleName]);
@@ -92,7 +94,9 @@ export const WatchlistRow = ({ title, dragHandleProps }: WatchlistRowProps) => {
 
         <div>
           <CompactRate
+           isAvgView={isAvgView}
             currentRating={title.rating?.overall}
+            avgRating={title.avgRating}
             onRate={(val) =>
               updateTitle({
                 rating: {

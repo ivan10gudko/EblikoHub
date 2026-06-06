@@ -13,6 +13,7 @@ export interface TitleRecord {
     customOrder: number,
     pinned : boolean
     createdAt: string,
+    avgRating?: number;
 }
 export enum TitleType {
     ANIME = "ANIME",

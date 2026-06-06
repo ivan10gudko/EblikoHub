@@ -6,6 +6,7 @@ import { useUpdateTitleRecord } from "~/entities/titleRecord/hooks/useTitleRecor
 import { CompactRate } from "~/shared/ui/CompactRate";
 import { TitleActionsMenu } from "../../TitleActionsMenu";
 import type { Rating } from "~/shared/types";
+import { useTitleFilterStore, type TitleSortType } from "~/features/titleFilter/store/titleFilter.store";
 
 interface PinnedWatchlistRowProps {
   title: TitleRecord;
@@ -15,7 +16,8 @@ export const PinnedWatchlistRow = ({ title }: PinnedWatchlistRowProps) => {
   const navigate = useNavigate();
   const [tempTitleName, setTempTitleName] = useState(title.titleName);
   const { unpinTitle, deleteTitle, updateTitle } = useUpdateTitleRecord(title.titleId);
-
+  const sortBy = useTitleFilterStore((state) => state.sortBy);
+  const isAvgView = sortBy === "avgRating" as TitleSortType;
   const handleImageClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     if (title.apiTitleId) navigate(`/anime/${title.apiTitleId}`);
@@ -78,6 +80,8 @@ export const PinnedWatchlistRow = ({ title }: PinnedWatchlistRowProps) => {
 
         <div>
           <CompactRate
+            avgRating={title.avgRating}
+            isAvgView={isAvgView}
             currentRating={title.rating?.overall}
             onRate={(val) =>
               updateTitle({
