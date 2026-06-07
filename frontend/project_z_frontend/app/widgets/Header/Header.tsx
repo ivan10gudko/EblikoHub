@@ -80,7 +80,7 @@ const Header = () => {
                             <span className="font-semibold text-lg text-foreground">Popular</span>
                         </NavLink>
 
-                        <NavLink to="/rooms" onClick={() => setBurgerMenuOpen(false)} className={burgerLinkStyle}>
+                        <NavLink to={`/rooms/${userId}`} onClick={() => setBurgerMenuOpen(false)} className={burgerLinkStyle}>
                             <MeetingRoomIcon className="text-primary" />
                             <span className="font-semibold text-lg text-foreground">Rooms</span>
                         </NavLink>

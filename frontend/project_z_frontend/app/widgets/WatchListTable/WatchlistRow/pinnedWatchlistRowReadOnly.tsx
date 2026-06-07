@@ -34,7 +34,7 @@ export const PinnedWatchlistRowReadOnly = ({ title }: PinnedWatchlistRowReadOnly
         Pinned Title
       </div>
 
-      <div className="flex items-center flex-1 gap-3 min-w-0 overflow-hidden max-w-full">
+      <div className="flex items-center flex-1 gap-3 min-w-0 max-w-full">
         <div className="relative h-10 w-16 flex-shrink-0 transition-transform duration-500 hover:scale-[3.0] hover:z-10 cursor-pointer">
           <img
             src={title.imageUrl || DEFAULT_IMAGE_PATH}
