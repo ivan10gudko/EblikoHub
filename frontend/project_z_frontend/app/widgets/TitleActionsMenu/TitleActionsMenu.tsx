@@ -70,12 +70,14 @@ export const TitleActionsMenu = ({
           titleName={title.titleName}
           isOpen={isSeasonsOpen}
           onClose={handleCloseSeasons}
+          isOwn={isOwn}
         />
       )}
       <EditRatingModal
         title={title}
         isOpen={isRatingsOpen}
         onClose={handleCloseRatings}
+        isOwn={isOwn}
       />
     </>
   );

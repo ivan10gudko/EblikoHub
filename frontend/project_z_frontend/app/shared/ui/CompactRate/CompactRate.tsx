@@ -10,20 +10,21 @@ interface CompactRateProps {
   isAvgView?: boolean;
   onRate?: (val: number) => void;
   onClear?: () => void;
+  isOwn?: boolean;
 }
-
 export const CompactRate = ({
   currentRating,
   avgRating,
   isAvgView,
   onRate,
-  onClear
+  onClear,
+  isOwn = true,
 }: CompactRateProps) => {
   const hasRating = currentRating !== undefined && currentRating !== null;
 
   const [value, setValue] = useState<string>(hasRating ? currentRating.toString() : "");
 
-  const isReadOnly = !onRate || !onClear;
+  const isReadOnly = !onRate || !onClear || !isOwn;
 
   useEffect(() => {
     setValue(hasRating ? currentRating.toString() : "");

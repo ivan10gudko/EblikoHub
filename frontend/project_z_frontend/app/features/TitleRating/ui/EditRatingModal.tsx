@@ -12,22 +12,25 @@ interface EditRatingModalProps {
   title: TitleRecord;
   isOpen: boolean;
   onClose: () => void;
+  isOwn: boolean;
 }
 
 export const EditRatingModal = ({
   title,
   isOpen,
   onClose,
+  isOwn,
 }: EditRatingModalProps) => {
   const { rate } = useTitleRecordMutation(
-    title.apiTitleId,
+    title.apiTitleId ?? 0,
     {
-      apiTitleId: title.apiTitleId,
+      apiTitleId: title.apiTitleId ?? 0,
       titleName: title.titleName,
       status: title.status,
       rating: title.rating,
       imageUrl: title.imageUrl,
       titleType: title.titleType,
+      pinned: title.pinned ?? false,
     },
     title,
   );
@@ -55,7 +58,7 @@ export const EditRatingModal = ({
   return (
     <Modal
       isOpen={isOpen}
-      onClose={handleSave}
+      onClose={isOwn ? handleSave : onClose} 
       title={`Rating "${title.titleName}"`}
       maxWidth="max-w-xl"
     >
@@ -66,6 +69,7 @@ export const EditRatingModal = ({
         isSaving={false}
         onSave={handleSave}
         onCancel={onClose}
+        isOwn={isOwn} 
       />
     </Modal>
   );
