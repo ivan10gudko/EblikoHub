@@ -17,12 +17,10 @@ import project_z.demo.entity.RoomEntity;
 public interface RoomService {
 RoomEntity save(RoomEntity roomEntity);
 Page<RoomShortDto> getRoomsByUserId(UUID userId, RoomQueryParameters queryParameters);
-RoomEntity partialUpdate(Long id, RoomEntity source);
 boolean isExists(Long id);
-Optional<RoomEntity> findOne(Long titleId);
+RoomDto findOne(Long titleId);
 void deleteById(Long id);
-RoomEntity addMembersToRoom(Long roomId, List<UUID> userIds);
-void deleteMembers(Long roomId, List<UUID> userIds);
 RoomDto createRoom(String token, RoomCreateDto dto);
-void leaveRoom(UUID userId, Long roomId);
+RoomDto pinRoom(Long roomId, UUID userId);
+void unpin(UUID userId);
 }

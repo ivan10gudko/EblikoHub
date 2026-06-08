@@ -12,5 +12,7 @@ public class RoomShortDto {
     private Long roomId;
     private String roomName;
     private UUID ownerId;
+    private boolean isPinned;
+    private String imageUrl;
     private long usersCount;
 }

@@ -1,6 +1,6 @@
 package project_z.demo.enums;
 
-public enum FriendshipStatus {
+public enum RequestStatus {
     PENDING,
     ACCEPTED,
     REJECTED

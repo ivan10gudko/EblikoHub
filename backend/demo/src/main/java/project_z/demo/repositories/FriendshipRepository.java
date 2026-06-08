@@ -12,7 +12,8 @@ import org.springframework.stereotype.Repository;
 
 import project_z.demo.entity.FriendshipEntity;
 import project_z.demo.entity.UserEntity;
-import project_z.demo.enums.FriendshipStatus;
+import project_z.demo.enums.RequestStatus;
+
 
 @Repository
 public interface FriendshipRepository extends JpaRepository<FriendshipEntity, UUID> {
@@ -27,9 +28,9 @@ public interface FriendshipRepository extends JpaRepository<FriendshipEntity, UU
     List<UserEntity> findFriendsByUserId(@Param("userId") UUID userId, Sort sort);
 
     Optional<FriendshipEntity> findBySenderUserIdAndReceiverUserIdAndStatus(
-            UUID senderId, UUID receiverId, FriendshipStatus status);
+            UUID senderId, UUID receiverId, RequestStatus status);
 
-    boolean existsBySenderUserIdAndReceiverUserIdAndStatus(UUID senderId, UUID receiverId, FriendshipStatus status);
+    boolean existsBySenderUserIdAndReceiverUserIdAndStatus(UUID senderId, UUID receiverId, RequestStatus status);
 
     Optional<FriendshipEntity> findBySenderUserIdAndReceiverUserId(UUID senderId, UUID receiverId);
 
@@ -39,11 +40,11 @@ public interface FriendshipRepository extends JpaRepository<FriendshipEntity, UU
                 AND f.status = :status
             """)
     List<FriendshipEntity> findAllByUserIdAndStatus(@Param("userId") UUID userId,
-            @Param("status") FriendshipStatus status);
+            @Param("status") RequestStatus status);
 
-    List<FriendshipEntity> findByReceiverUserIdAndStatus(UUID receiverId, FriendshipStatus status);
+    List<FriendshipEntity> findByReceiverUserIdAndStatus(UUID receiverId, RequestStatus status);
 
-    List<FriendshipEntity> findBySenderUserIdAndStatus(UUID senderId, FriendshipStatus status);
+    List<FriendshipEntity> findBySenderUserIdAndStatus(UUID senderId, RequestStatus status);
 
     @Query("""
                 SELECT COUNT(f) > 0 FROM FriendshipEntity f
@@ -53,10 +54,10 @@ public interface FriendshipRepository extends JpaRepository<FriendshipEntity, UU
     boolean isUserMemberOfFriendship(@Param("friendshipId") UUID friendshipId, @Param("userId") UUID userId);
 
     long countBySenderUserIdAndStatusOrReceiverUserIdAndStatus(
-            UUID senderId, FriendshipStatus status1, UUID receiverId, FriendshipStatus status2);
+            UUID senderId, RequestStatus status1, UUID receiverId, RequestStatus status2);
 
-    long countByReceiverUserIdAndStatus(UUID receiverId, FriendshipStatus status);
+    long countByReceiverUserIdAndStatus(UUID receiverId, RequestStatus status);
 
-    long countBySenderUserIdAndStatus(UUID senderId, FriendshipStatus status);
+    long countBySenderUserIdAndStatus(UUID senderId, RequestStatus status);
 
 }

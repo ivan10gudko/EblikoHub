@@ -24,5 +24,8 @@ public class RoomDto {
     private String roomName;
     private UUID owner;
     private List<UserShortDto> members;
+    private String imageUrl;
+    private boolean isPinned;
     private LocalDateTime createdAt;
+    
 }

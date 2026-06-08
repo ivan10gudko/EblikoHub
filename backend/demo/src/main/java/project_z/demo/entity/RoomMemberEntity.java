@@ -13,33 +13,46 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import project_z.demo.enums.RequestStatus;
+import project_z.demo.enums.RequestType;
 
 @Data
 @Entity
+@Table(name = "room_members", uniqueConstraints = {
+    @UniqueConstraint(columnNames = {"room_id", "user_id"})
+})
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "friendships")
-public class FriendshipEntity {
+public class RoomMemberEntity {
+
     @Id
-    @GeneratedValue(strategy=GenerationType.UUID)
-    private UUID friendshipId;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
+
+    @ManyToOne
+    @JoinColumn(name = "room_id", nullable = false)
+    private RoomEntity room;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private UserEntity receiver;
 
     @ManyToOne
     @JoinColumn(name = "sender_id", nullable = false)
     private UserEntity sender;
-    
-    @ManyToOne
-    @JoinColumn(name = "receiver_id", nullable = false)
-    private UserEntity receiver;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private RequestStatus status;
 
-    @Column(name = "created_at", nullable = false, updatable = false)
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private RequestType type;
+
+    @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 }

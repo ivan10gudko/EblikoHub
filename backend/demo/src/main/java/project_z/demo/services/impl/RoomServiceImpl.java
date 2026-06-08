@@ -25,7 +25,9 @@ import project_z.demo.common.QueryParameters.RoomQueryParameters;
 import project_z.demo.dto.RoomDtos.RoomCreateDto;
 import project_z.demo.dto.RoomDtos.RoomDto;
 import project_z.demo.dto.RoomDtos.RoomShortDto;
+import project_z.demo.dto.TitleDtos.TitleDto;
 import project_z.demo.entity.RoomEntity;
+import project_z.demo.entity.TitleEntity;
 import project_z.demo.entity.UserEntity;
 import project_z.demo.repositories.RoomRepository;
 import project_z.demo.repositories.Specifications.RoomSpecifications;
@@ -62,9 +64,7 @@ public class RoomServiceImpl implements RoomService {
 
         String sortBy = queryParameters.getSortBy();
 
-
         if ("memberCount".equals(sortBy) || "membersCount".equals(sortBy)) {
-
 
             Pageable nativePageable = PageRequest.of(
                     pageable.getPageNumber(),
@@ -88,52 +88,20 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
-    public RoomEntity partialUpdate(Long id, RoomEntity source) {
-        return roomRepository.findById(id)
-                .map(target -> {
-                    beanUtilsHelper.copyNonNullProperties(source, target);
-                    return roomRepository.save(target);
-                })
-                .orElseThrow(() -> new RuntimeException("User not found"));
-    }
-
-    @Override
     public boolean isExists(Long id) {
         return roomRepository.existsById(id);
     }
 
     @Override
-    public Optional<RoomEntity> findOne(Long id) {
-        return roomRepository.findById(id);
+    public RoomDto findOne(Long id) {
+        RoomEntity room = roomRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Room not found"));
+        return roomMapper.mapTo(room);
     }
 
     @Override
     public void deleteById(Long Id) {
         roomRepository.deleteById(Id);
-    }
-
-    @Override
-    @Transactional
-    public RoomEntity addMembersToRoom(Long roomId, List<UUID> userIds) {
-        RoomEntity roomEntity = roomRepository.findById(roomId).orElseThrow(
-                () -> new RuntimeException("Room not found"));
-        List<UserEntity> users = StreamSupport
-                .stream(userRepository.findAllById(userIds).spliterator(), false)
-                .collect(Collectors.toList());
-        List<UserEntity> newUsers = users
-                .stream().filter(u -> !roomEntity.getMembers().contains(u))
-                .collect(Collectors.toList());
-        roomEntity.getMembers().addAll(newUsers);
-        return roomRepository.save(roomEntity);
-    }
-
-    @Override
-    public void deleteMembers(Long roomId, List<UUID> userIds) {
-        RoomEntity roomEntity = roomRepository.findById(roomId).orElseThrow(
-                () -> new RuntimeException("Room not found"));
-
-        roomEntity.getMembers().removeIf(user -> userIds.contains(user.getUserId()));
-        roomRepository.save(roomEntity);
     }
 
     @Override
@@ -160,23 +128,21 @@ public class RoomServiceImpl implements RoomService {
 
     @Override
     @Transactional
-    public void leaveRoom(UUID userId, Long roomId) {
+    public RoomDto pinRoom(Long roomId, UUID userId) {
+
+        roomRepository.unpinAllTitlesForUser(userId);
 
         RoomEntity room = roomRepository.findById(roomId)
-                .orElseThrow(() -> new ResourceNotFoundException("Room not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Title not found with id: " + roomId));
 
-        boolean isMember = room.getMembers().stream()
-                .anyMatch(user -> user.getUserId().equals(userId));
+        room.setPinned(true);
+        RoomEntity savedTitle = roomRepository.save(room);
 
-        if (!isMember && !room.getOwner().getUserId().equals(userId)) {
-            throw new IllegalArgumentException("You are not a member of this room");
-        }
+        return roomMapper.mapTo(savedTitle);
+    }
 
-        if (room.getOwner().getUserId().equals(userId)) {
-            roomRepository.delete(room);
-        } else {
-            room.getMembers().removeIf(user -> user.getUserId().equals(userId));
-            roomRepository.save(room);
-        }
+    @Override
+    public void unpin(UUID userId) {
+        roomRepository.unpinAllTitlesForUser(userId);
     }
 }
