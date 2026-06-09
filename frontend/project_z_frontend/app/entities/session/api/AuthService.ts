@@ -4,6 +4,10 @@ import type { Providers } from "../model/session.types";
 
 export const authService = {
 
+    getSession: async () => {
+        return await supabase.auth.getSession();
+    },
+
     signUp: async (email: string, password: string) => {
         const { data, error } = await supabase.auth.signUp({
             email,

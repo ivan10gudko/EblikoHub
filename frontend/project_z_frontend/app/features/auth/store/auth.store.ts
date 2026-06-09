@@ -14,6 +14,7 @@ interface AuthState {
     signUpWithEmail: (data: RegisterData & { password: string }) => Promise<void>;
     syncOAuthUser: (supabaseId: string, fallbackData?: Partial<RegisterData>) => Promise<void>;
     restoreSession: (supabaseId: string | null) => Promise<void>;
+    updatePassword: (password: string) => Promise<void>;
     logout: () => Promise<void>;
     clearError: () => void;
 }
@@ -29,19 +30,19 @@ export const useAuthStore = create<AuthState>()((set) => ({
         set({ isLoading: true, error: null });
         try {
             const { user: supabaseUser } = await authService.login(email, password);
-            
+
             if (!supabaseUser) throw new Error("Supabase login error");
 
             try {
                 const userProfile = await userService.getUser(supabaseUser.id);
                 set({ userId: userProfile.userId, isAuth: true, isLoading: false });
-            
+
             } catch (backendError: unknown) {
-                
+
                 if (axios.isAxiosError(backendError) && backendError.response?.status === 404) {
                     try {
                         const newProfile = await userService.createFallbackUser(supabaseUser.id)
-                        
+
                         set({ userId: newProfile.userId, isAuth: true, isLoading: false });
                     } catch (healError: unknown) {
                         set({ error: getErrorMessage(healError, "Critical profile restoration error"), isLoading: false });
@@ -62,7 +63,7 @@ export const useAuthStore = create<AuthState>()((set) => ({
         set({ isLoading: true, error: null });
         try {
             const { user: supabaseUser } = await authService.signUp(data.email, data.password);
-            
+
             if (!supabaseUser) throw new Error("Supabase sign up error");
 
             try {
@@ -76,12 +77,12 @@ export const useAuthStore = create<AuthState>()((set) => ({
                 set({ userId: userProfile.userId, isAuth: true, isLoading: false });
             } catch (backendError: unknown) {
                 await authService.logout();
-                
+
                 const errorMsg = getErrorMessage(
-                    backendError, 
+                    backendError,
                     "User not found. Try to sign up again, to restore session"
                 );
-                
+
                 set({ error: errorMsg, isLoading: false });
                 throw backendError;
             }
@@ -95,7 +96,7 @@ export const useAuthStore = create<AuthState>()((set) => ({
         set({ isLoading: true, error: null });
         try {
             const userProfile = await userService.getUser(supabaseId);
-            
+
             set({ userId: userProfile.userId, isAuth: true, isLoading: false });
         } catch (error: unknown) {
             if (axios.isAxiosError(error) && error.response?.status === 404 && fallbackData) {
@@ -146,6 +147,20 @@ export const useAuthStore = create<AuthState>()((set) => ({
             set({ userId: null, isAuth: false, error: "Session restore failed", isLoading: false });
         }
     },
+
+    updatePassword: async (password: string) => {
+        set({ isLoading: true, error: null });
+        try {
+            await authService.updatePassword(password);
+            await authService.logout();
+
+            set({ userId: null, isAuth: false, isLoading: false });
+        } catch (error) {
+            set({ error: getErrorMessage(error, "Password update error"), isLoading: false });
+            throw error;
+        }
+    },
+
 
     clearError: () => set({ error: null })
 }));
