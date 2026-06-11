@@ -12,16 +12,20 @@ export default [
         index("./routes/home.tsx"),
         route("watchlist/:userId", "./routes/watchlist.$userId.tsx"),
 
-        layout("./routes/friends/friends.tsx", [
-            route("user/:userId/friends", "./routes/friends/friends.index.tsx"),
-            route("user/:userId/friends/add", "./routes/friends/friends.add.tsx"),
-            route("user/:userId/friends/pending", "./routes/friends/friends.pending.tsx"),
-            route("user/:userId/friends/sent", "./routes/friends/friends.sent.tsx"),
+        route("profile/:userId/friends", "./routes/friends/friends.tsx", [
+            index("./routes/friends/friends.index.tsx"),
+            route("add", "./routes/friends/friends.add.tsx"),
+            route("pending", "./routes/friends/friends.pending.tsx"),
+            route("sent", "./routes/friends/friends.sent.tsx"),
         ]),
 
         layout("./routes/_protected.tsx", [
-            route("profile/:userId", "./routes/profile.tsx"),
 
+            route("profile", "./routes/_profile.tsx", [
+                index("./routes/profile._index.tsx"),
+                route(":userId/settings", "./routes/profile.settings.tsx"),
+                route(":userId", "./routes/profile.$userId.tsx"),
+            ]),
             ...prefix("rooms", [
                 route(":userId", "./routes/rooms._index.tsx"),     // /rooms
                 route(":userId/:id", "./routes/rooms.$id.tsx"), // /rooms/:id

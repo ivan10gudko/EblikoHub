@@ -58,7 +58,7 @@ export const FriendsSidebar = ({
           translate="no"
         >
           <NavLink
-            to={`/user/${userId}/friends`}
+            to={`/profile/${userId}/friends`}
             end
             onClick={onClose}
             className={({ isActive }) => getLinkClass(isActive)}
@@ -85,7 +85,7 @@ export const FriendsSidebar = ({
           {!isReadOnly && (
             <>
               <NavLink
-                to={`/user/${userId}/friends/add`}
+                to={`add`}
                 onClick={onClose}
                 className={({ isActive }) => getLinkClass(isActive)}
               >
@@ -104,7 +104,7 @@ export const FriendsSidebar = ({
               </NavLink>
 
               <NavLink
-                to={`/user/${userId}/friends/pending`}
+                to={`pending`}
                 onClick={onClose}
                 className={({ isActive }) => getLinkClass(isActive)}
               >
@@ -130,7 +130,7 @@ export const FriendsSidebar = ({
               </NavLink>
 
               <NavLink
-                to={`/user/${userId}/friends/sent`}
+                to={`sent`}
                 onClick={onClose}
                 className={({ isActive }) => getLinkClass(isActive)}
               >
@@ -171,11 +171,11 @@ export const FriendsSidebar = ({
         </nav>
       </div>
 
-      {/* ДЕСКТОПНА ВЕРСІЯ (СТАТИЧНИЙ САЙДБАР) */}
+      {/* desktop version (static sidebar) */}
       <Sidebar className=" hidden md:flex flex-col p-5 gap-3 h-fit shrink-0 backdrop-blur-md rounded-3xl md:min-h-[calc(100vh-64px)] w-80">
         <nav className="flex flex-col gap-3.5" translate="no">
           <NavLink
-            to={`/user/${userId}/friends`}
+            to={`/profile/${userId}/friends`}
             end
             className={({ isActive }) => getLinkClass(isActive)}
           >
@@ -201,7 +201,7 @@ export const FriendsSidebar = ({
           {!isReadOnly && (
             <>
               <NavLink
-                to={`/user/${userId}/friends/add`}
+                to={`add`}
                 className={({ isActive }) => getLinkClass(isActive)}
               >
                 {({ isActive }) => (
@@ -219,7 +219,7 @@ export const FriendsSidebar = ({
               </NavLink>
 
               <NavLink
-                to={`/user/${userId}/friends/pending`}
+                to={`pending`}
                 className={({ isActive }) => getLinkClass(isActive)}
               >
                 {({ isActive }) => (
@@ -244,7 +244,7 @@ export const FriendsSidebar = ({
               </NavLink>
 
               <NavLink
-                to={`/user/${userId}/friends/sent`}
+                to={`sent`}
                 className={({ isActive }) => getLinkClass(isActive)}
               >
                 {({ isActive }) => (
