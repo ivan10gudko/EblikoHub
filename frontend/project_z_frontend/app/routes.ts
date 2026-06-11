@@ -11,7 +11,7 @@ export default [
 
         index("./routes/home.tsx"),
         route("watchlist/:userId", "./routes/watchlist.$userId.tsx"),
-        
+
         layout("./routes/friends/friends.tsx", [
             route("user/:userId/friends", "./routes/friends/friends.index.tsx"),
             route("user/:userId/friends/add", "./routes/friends/friends.add.tsx"),
@@ -23,7 +23,7 @@ export default [
             route("profile/:userId", "./routes/profile.tsx"),
 
             ...prefix("rooms", [
-                route(":userId","./routes/rooms._index.tsx"),     // /rooms
+                route(":userId", "./routes/rooms._index.tsx"),     // /rooms
                 route(":userId/:id", "./routes/rooms.$id.tsx"), // /rooms/:id
             ]),
         ]),
@@ -39,5 +39,6 @@ export default [
         route("signup", "./routes/auth.signup.tsx"),
         route("callback", "./routes/auth.callback.tsx"),
         route("reset-password", "./routes/auth.resetpassword.tsx"),
+        route("login/reset-password/sent", "./routes/auth.resetpasswordsent.tsx"),
     ]),
 ] satisfies RouteConfig;

@@ -2,6 +2,7 @@ import { notify } from "~/shared/lib";
 import { validateEmail } from "../utils/validators";
 import { authService } from "~/entities/session/api/AuthService";
 import type { LoginData } from "~/entities/session/model/session.types";
+import { useNavigate } from "react-router";
 
 export const useForgotPassword = ({
   formData,
@@ -12,6 +13,8 @@ export const useForgotPassword = ({
     value: React.SetStateAction<Partial<Record<keyof LoginData, string>>>,
   ) => void;
 }) => {
+  const navigate = useNavigate();
+
   const handleForgotPassword = async () => {
     const emailValue = formData.email;
     const emailError = validateEmail(emailValue);
@@ -30,10 +33,8 @@ export const useForgotPassword = ({
     try {
       await authService.sendPasswordResetEmail(emailValue);
 
-      notify.updateSuccess(
-        resetnotify,
-        "If an account exists for this email, you will receive a password reset link shortly.",
-      );
+      navigate("reset-password/sent");
+      notify.updateSuccess(resetnotify, "Reset link sent! Check your email.");
     } catch (error) {
       const errorMessage =
         error instanceof Error
