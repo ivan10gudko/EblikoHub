@@ -61,7 +61,6 @@ export const SeasonRow = ({ season, titleId, onDelete, onUpdate, isOwn }: Season
                 
                 <div className="w-full max-w-[140px] sm:w-32 flex items-center">
                     {!isOwn ? (
-                        /* Ідеальна копія кастомного Select (Картинка 2) */
                         <div className={`h-9 px-3 flex items-center gap-2 w-max select-none pointer-events-none rounded-xl border text-[11px] font-bold tracking-wide transition-all
                             bg-transparent border-current/30 ${config.color}`}
                         >

@@ -115,7 +115,7 @@ export const ReadonlyRatingContent = ({
       <div className="pt-4 mt-4 border-t border-border">
         <button
           type="button"
-          className="w-full h-12 sm:h-14 rounded-xl bg-card hover:bg-background-muted text-foreground border border-border font-bold transition-all"
+          className="w-full h-12 sm:h-14 rounded-xl bg-card hover:bg-background-muted text-foreground border border-border font-bold transition-all cursor-pointer"
           onClick={onCancel}
         >
           Close

@@ -2,7 +2,7 @@ import { useNavigate } from "react-router";
 import { TitleTypeThemes, type TitleRecord } from "~/entities/titleRecord";
 import { CompactRate } from "~/shared/ui/CompactRate";
 import { TitleActionsMenu } from "../../TitleActionsMenu";
-import { Status, statusColorConfig } from "~/shared/types/Status";
+import { Status, statusColorConfig, statusOptions } from "~/shared/types/Status";
 import { useTitleFilterStore, type TitleSortType } from "~/features/titleFilter/store/titleFilter.store";
 
 interface WatchlistRowReadOnlyProps {
@@ -22,6 +22,7 @@ export const WatchlistRowReadOnly = ({ title }: WatchlistRowReadOnlyProps) => {
   const isAvgView = sortBy === "avgRating" as TitleSortType;
   const currentStatus = (title?.status as Status) || Status.DEFAULT;
   const config = statusColorConfig[currentStatus];
+  const label = statusOptions.find(item => item.value === currentStatus)?.label ?? "DEFAULT";
 
   return (
     <div
@@ -54,14 +55,9 @@ export const WatchlistRowReadOnly = ({ title }: WatchlistRowReadOnlyProps) => {
           )}
 
           <span
-            className={`transition-all select-none capitalize ${currentStatus !== Status.DEFAULT ? config.color : "text-foreground-muted"
-              }`}
+            className={`transition-all select-none capitalize ${config.color}`}
           >
-            {title.status === "INPROGRESS"
-              ? "In Progress"
-              : title.status === "WATCHED"
-                ? "Watched"
-                : (title.status || "No Status")}
+            {label}
           </span>
         </div>
 

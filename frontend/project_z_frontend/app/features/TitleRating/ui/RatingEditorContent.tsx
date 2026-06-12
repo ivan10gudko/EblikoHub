@@ -91,7 +91,6 @@ export const RatingEditorContent = ({
       <div className="flex-1 overflow-y-auto pr-1 sm:pr-3 p-1 sm:p-2 custom-scrollbar">
         <div className="space-y-6 sm:space-y-8">
 
-          {/* Блок Overall Score */}
           <div className="space-y-3">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-3 sm:p-4 rounded-2xl sticky top-0 z-10 backdrop-blur-md gap-3 sm:gap-0 transition-all bg-background-muted/50 border-2 border-primary/20">
               <div className="flex items-center gap-3 text-primary">
@@ -119,7 +118,6 @@ export const RatingEditorContent = ({
             </div>
           </div>
 
-          {/* Додаткові критерії та Пресети */}
           <div className="space-y-4">
             <div className="flex flex-col gap-3 px-2">
               <div className="flex justify-between items-center w-full">
@@ -176,7 +174,6 @@ export const RatingEditorContent = ({
               )}
             </div>
 
-            {/* Список критеріїв */}
             <div
               className={`flex flex-col gap-3 sm:gap-4 transition-all duration-300 ${
                 isOverallMissing
@@ -210,7 +207,6 @@ export const RatingEditorContent = ({
         </div>
       </div>
 
-      {/* Нижні кнопки дій */}
       <div className="flex flex-col-reverse sm:flex-row gap-2 sm:gap-3 pt-4 sm:pt-6 mt-4 border-t border-border">
         <Button
           variant="outline"
