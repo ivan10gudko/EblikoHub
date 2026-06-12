@@ -3,6 +3,7 @@ import { type DraftSeason, type Season } from "~/entities/season";
 import SeasonStatusSelect from "./SeasonStatusSelect";
 import { SeasonActionsMenu } from "./SeasonActionsMenu";
 import { CompactRate } from "~/shared/ui/CompactRate";
+import { Status, statusColorConfig } from "~/shared/types/Status";
 
 interface SeasonRowProps {
     season: Season | DraftSeason;
@@ -20,16 +21,23 @@ export const SeasonRow = ({ season, titleId, onDelete, onUpdate, isOwn }: Season
     }, [season.name]);
 
     const handleNameBlur = () => {
-        if (localName !== season.name && localName.trim()) {
+        if (localName !== season.name && localName.trim() && isOwn) {
             onUpdate({ name: localName });
         }
     };
 
     const getStatusLabel = (status?: string) => {
-        if (status === "WATCHING" || status === "IN_PROGRESS") return "In Progress";
-        if (status === "COMPLETED") return "Completed";
+        if (status === "WATCHING" || status === "IN_PROGRESS" || status === "INPROGRESS") {
+            return "In Progress";
+        }
+        if (status === "COMPLETED" || status === "WATCHED") return "Watched";
+        if (status === "DROPPED") return "Dropped";
+        if (status === "PLANNED") return "Planned";
         return status || "In Progress";
     };
+
+    const currentStatus = (season?.status as Status) || Status.DEFAULT;
+    const config = statusColorConfig[currentStatus] || { color: "text-foreground-muted", dot: "bg-muted" };
 
     return (
         <div className={`group flex flex-col sm:flex-row sm:items-center gap-3 bg-card/50 p-3 rounded-2xl border transition-all ${
@@ -39,13 +47,13 @@ export const SeasonRow = ({ season, titleId, onDelete, onUpdate, isOwn }: Season
             <div className="flex-1 min-w-0">
                 <input
                     value={localName}
-                    onChange={(e) => setLocalName(e.target.value)}
+                    onChange={(e) => isOwn && setLocalName(e.target.value)}
                     onBlur={handleNameBlur}
-                    disabled={!!isOwn}
-                    className={`w-auto bg-transparent border-none p-0 font-bold uppercase text-[13px] sm:text-[14px] tracking-wide focus:ring-0 transition-colors truncate ${
-                        isOwn ? "focus:text-primary cursor-text" : "cursor-default text-foreground/80"
+                    disabled={!isOwn} 
+                    className={`w-full bg-transparent border-none p-0 font-bold uppercase text-[13px] sm:text-[14px] tracking-wide focus:ring-0 transition-colors truncate ${
+                        isOwn ? "focus:text-primary cursor-text" : "cursor-default text-foreground/75 select-none"
                     }`}
-                    placeholder="Season name..."
+                    placeholder={isOwn ? "Season name..." : ""}
                 />
             </div>
 
@@ -53,8 +61,11 @@ export const SeasonRow = ({ season, titleId, onDelete, onUpdate, isOwn }: Season
                 
                 <div className="w-full max-w-[140px] sm:w-32 flex items-center">
                     {!isOwn ? (
-                        <div className="h-9 px-3 bg-[#1c1c1c] border border-neutral-800/60 rounded-xl flex items-center text-[11px] font-black text-neutral-400 gap-2 w-max select-none pointer-events-none uppercase tracking-wide">
-                            <span className="h-1.5 w-1.5 rounded-full bg-orange-500 shrink-0" />
+                        /* Ідеальна копія кастомного Select (Картинка 2) */
+                        <div className={`h-9 px-3 flex items-center gap-2 w-max select-none pointer-events-none rounded-xl border text-[11px] font-bold tracking-wide transition-all
+                            bg-transparent border-current/30 ${config.color}`}
+                        >
+                            <span className="h-1.5 w-1.5 rounded-full shrink-0 bg-current" />
                             {getStatusLabel(season.status)}
                         </div>
                     ) : (
@@ -71,9 +82,7 @@ export const SeasonRow = ({ season, titleId, onDelete, onUpdate, isOwn }: Season
                 <div className="flex items-center gap-1">
                     <div className="scale-90 sm:scale-100 origin-right">
                         {!isOwn ? (
-                             <CompactRate
-                                currentRating={season.rating?.overall}
-                            />
+                             <CompactRate currentRating={season.rating?.overall} />
                         ) : (
                             <CompactRate
                                 currentRating={season.rating?.overall}

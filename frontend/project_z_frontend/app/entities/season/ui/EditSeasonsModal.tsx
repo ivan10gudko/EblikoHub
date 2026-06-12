@@ -38,7 +38,7 @@ export const EditSeasonsModal = ({ titleId, isOpen, onClose, titleName, isOwn }:
     }, [initialSeasons, isOpen]);
 
     const handleAddSeason = () => {
-        if (!newName.trim()) return;
+        if (!newName.trim() || !isOwn) return;
 
         const newSeason: LocalDraftSeason = {
             seasonId: null,
@@ -52,16 +52,23 @@ export const EditSeasonsModal = ({ titleId, isOpen, onClose, titleName, isOwn }:
     };
 
     const handleRemove = (localId: string) => {
+        if (!isOwn) return;
         setLocalSeasons(prev => prev.filter(s => s.localId !== localId));
     };
 
     const handleUpdate = (localId: string, patch: Partial<LocalDraftSeason>) => {
+        if (!isOwn) return;
         setLocalSeasons(prev => prev.map(s =>
             s.localId === localId ? { ...s, ...patch } : s
         ));
     };
 
     const handleSaveChanges = () => {
+        if (!isOwn) {
+            onClose();
+            return;
+        }
+
         const cleanInitial = (initialSeasons || []).map(({ seasonId, name, status, rating }) => ({ seasonId, name, status, rating }));
         const cleanLocal = localSeasons.map(({ seasonId, name, status, rating }) => ({ seasonId, name, status, rating }));
 
@@ -107,7 +114,7 @@ export const EditSeasonsModal = ({ titleId, isOpen, onClose, titleName, isOwn }:
                     ) : (
                         <div className="pt-2" />
                     )}
-                    <div className={!isOwn ? "pointer-events-none opacity-95 select-none space-y-5" : "space-y-5"}>
+                    <div className={!isOwn ? "pointer-events-none opacity-80 select-none space-y-5" : "space-y-5"}>
                         <div className="space-y-3">
                             <div className="flex justify-between items-center px-1">
                                 <h3 className="text-[10px] font-black uppercase text-muted-foreground tracking-[0.2em] italic opacity-70">
@@ -159,7 +166,7 @@ export const EditSeasonsModal = ({ titleId, isOpen, onClose, titleName, isOwn }:
                     ) : (
                         <Button
                             variant="outline"
-                            className="text-foreground bg-card/50 border border-border/50 w-full h-12 rounded-2xl font-bold hover:bg-border/20 transition-all"
+                            className="text-foreground bg-card/50 border border-border/50 w-full h-12 rounded-2xl font-bold hover:bg-border/20 transition-all cursor-pointer"
                             onClick={onClose}
                         >
                             Close
