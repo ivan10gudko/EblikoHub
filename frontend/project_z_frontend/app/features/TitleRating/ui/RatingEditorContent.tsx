@@ -77,7 +77,7 @@ export const RatingEditorContent = ({
 
   const handleAddPreset = (label: string) => {
     if (safeRatings[label] !== undefined) return;
-    onChange({ ...safeRatings, ...{ [label]: 0 } } as Rating);
+    onChange({ ...safeRatings, [label]: 0 } as Rating);
   };
 
   const handleDeleteCategory = (key: string) => {

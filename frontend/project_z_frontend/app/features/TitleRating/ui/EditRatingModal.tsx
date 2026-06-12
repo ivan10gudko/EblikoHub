@@ -19,15 +19,15 @@ export const EditRatingModal = ({
   isOwn,
 }: EditRatingModalProps) => {
   const { rate } = useTitleRecordMutation(
-    title.apiTitleId ?? 0,
+    title.apiTitleId,
     {
-      apiTitleId: title.apiTitleId ?? 0,
+      apiTitleId: title.apiTitleId,
       titleName: title.titleName,
       status: title.status,
       rating: title.rating,
       imageUrl: title.imageUrl,
       titleType: title.titleType,
-      pinned: title.pinned ?? false,
+      pinned: title.pinned,
     },
     title,
   );
