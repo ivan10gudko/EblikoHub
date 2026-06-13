@@ -23,18 +23,27 @@ import project_z.demo.repositories.RoomMemberRepository;
 import project_z.demo.repositories.RoomRepository;
 import project_z.demo.repositories.UserRepository;
 import project_z.demo.services.RoomMemberService;
+
 @Service
 public class RoomMemberServiceImpl implements RoomMemberService {
-    @Autowired
-    private RoomMemberRepository roomMemberRepository;
-    @Autowired
-    private RoomRepository roomRepository;
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private Mapper<RoomMemberEntity, RoomMemberDto> memberMapper;
-    @Autowired
-    private Mapper<UserEntity, UserShortDto> userMapper;
+    private final RoomMemberRepository roomMemberRepository;
+    private final RoomRepository roomRepository;
+    private final UserRepository userRepository;
+    private final Mapper<RoomMemberEntity, RoomMemberDto> memberMapper;
+    private final Mapper<UserEntity, UserShortDto> userMapper;
+
+    public RoomMemberServiceImpl(
+            RoomMemberRepository roomMemberRepository,
+            RoomRepository roomRepository,
+            UserRepository userRepository,
+            Mapper<RoomMemberEntity, RoomMemberDto> memberMapper,
+            Mapper<UserEntity, UserShortDto> userMapper) {
+        this.roomMemberRepository = roomMemberRepository;
+        this.roomRepository = roomRepository;
+        this.userRepository = userRepository;
+        this.memberMapper = memberMapper;
+        this.userMapper = userMapper;
+    }
 
     @Override
     @Transactional

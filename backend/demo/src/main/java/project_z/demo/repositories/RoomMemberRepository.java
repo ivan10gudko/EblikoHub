@@ -21,4 +21,6 @@ public interface RoomMemberRepository extends JpaRepository<RoomMemberEntity, UU
     List<RoomMemberEntity> findByRoomRoomIdAndTypeAndStatus(Long roomId, RequestType type, RequestStatus status);
 
     List<RoomMemberEntity> findByReceiverUserIdAndTypeAndStatus(UUID userId, RequestType type, RequestStatus status);
+
+    List<RoomMemberEntity> findByReceiver_UserId(UUID receiverId);
 }
