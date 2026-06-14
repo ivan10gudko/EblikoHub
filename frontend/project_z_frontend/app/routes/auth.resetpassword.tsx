@@ -1,7 +1,5 @@
-import ResetPasswordPage from "~/pages/auth/ResetPasswordPage";
-
-
+import { ResetPasswordForm } from "~/features/auth";
 
 export default function ResetPasswordRoutes() {
-    return <ResetPasswordPage/>;
+  return <ResetPasswordForm />;
 }
