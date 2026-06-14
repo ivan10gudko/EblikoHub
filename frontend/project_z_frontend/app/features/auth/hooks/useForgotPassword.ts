@@ -3,6 +3,7 @@ import { validateEmail } from "../utils/validators";
 import { authService } from "~/entities/session/api/AuthService";
 import type { LoginData } from "~/entities/session/model/session.types";
 import { useNavigate } from "react-router";
+import { getErrorMessage } from "~/shared/utils/getErrorMessage";
 
 export const useForgotPassword = ({
   formData,
@@ -36,11 +37,8 @@ export const useForgotPassword = ({
       navigate("reset-password/sent");
       notify.updateSuccess(resetnotify, "Reset link sent! Check your email.");
     } catch (error) {
-      const errorMessage =
-        error instanceof Error
-          ? error.message
-          : "Something went wrong. Please try again.";
-      notify.updateError(resetnotify, errorMessage);
+
+      notify.updateError(resetnotify, getErrorMessage(error, "Something went wrong. Please try again."));
     }
   };
 

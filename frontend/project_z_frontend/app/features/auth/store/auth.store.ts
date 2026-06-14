@@ -15,6 +15,7 @@ interface AuthState {
     syncOAuthUser: (supabaseId: string, fallbackData?: Partial<RegisterData>) => Promise<void>;
     restoreSession: (supabaseId: string | null) => Promise<void>;
     updatePassword: (password: string) => Promise<void>;
+    changePassword: (currentPassword: string, newPassword: string) => Promise<void>;
     logout: () => Promise<void>;
     clearError: () => void;
 }
@@ -153,6 +154,18 @@ export const useAuthStore = create<AuthState>()((set) => ({
         try {
             await authService.updatePassword(password);
             await authService.logout();
+
+            set({ userId: null, isAuth: false, isLoading: false });
+        } catch (error) {
+            set({ error: getErrorMessage(error, "Password update error"), isLoading: false });
+            throw error;
+        }
+    },
+
+    changePassword: async (currentPassword: string, newPassword: string) => {
+        set({ isLoading: true, error: null });
+        try {
+            await authService.changePassword(currentPassword, newPassword);
 
             set({ userId: null, isAuth: false, isLoading: false });
         } catch (error) {

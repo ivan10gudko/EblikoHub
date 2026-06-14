@@ -1,7 +1,6 @@
-import { redirect, useParams } from "react-router";
-import { useAuthStore } from "~/features/auth/store/auth.store";
-import type { Route } from "./+types/profile.settings";
+import { Outlet, redirect, useParams } from "react-router";
 import { ensureAuthenticated } from "~/features/auth/model/ensureAuthenticated";
+import type { Route } from "./+types/profile._settings";
 
 export async function clientLoader({ params }: Route.LoaderArgs) {
   const currentUserId = await ensureAuthenticated();
@@ -19,5 +18,9 @@ export async function clientLoader({ params }: Route.LoaderArgs) {
 }
 
 export default function ProfileSettingsRoute() {
-  return <div>User settings</div>;
+  return (
+    <main className="max-w-3xl mx-auto p-4 md:p-10 bg-background rounded-2xl w-full">
+      <Outlet />
+    </main>
+  );
 }

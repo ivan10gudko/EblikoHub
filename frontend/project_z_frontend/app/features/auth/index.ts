@@ -6,6 +6,10 @@ export { default as LoginForm } from './ui/LoginForm';
 export { default as SignupForm } from './ui/SignupForm';
 export { default as ResetPasswordForm } from './ui/ResetPasswordForm';
 export { default as ResetPasswordMessage } from './ui/ResetPasswordMessage';
+export { default as ChangePasswordForm } from './ui/ChangePasswordForm';
+export { default as ForgotPasswordForm } from './ui/ForgotPasswordForm';
+
+export { default as LogoutButton } from './ui/LogoutButton';
 
 export { ensureAuthenticated } from './model/ensureAuthenticated';
 export { useResetPassword } from "./hooks/useResetPassword";

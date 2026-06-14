@@ -23,8 +23,12 @@ export default [
 
             route("profile", "./routes/_profile.tsx", [
                 index("./routes/profile._index.tsx"),
-                route(":userId/settings", "./routes/profile.settings.tsx"),
                 route(":userId", "./routes/profile.$userId.tsx"),
+
+                route(":userId/settings", "./routes/profile._settings.tsx", [
+                    index("./routes/profile.settings._index.tsx"),
+                    route("change-password", "./routes/profile.settings.change-password.tsx"),
+                ]),
             ]),
             ...prefix("rooms", [
                 route(":userId", "./routes/rooms._index.tsx"),     // /rooms
@@ -43,6 +47,7 @@ export default [
         route("signup", "./routes/auth.signup.tsx"),
         route("callback", "./routes/auth.callback.tsx"),
         route("reset-password", "./routes/auth.resetpassword.tsx"),
+        route("forgot-password", "./routes/auth.forgotpassword.tsx"),
         route("login/reset-password/sent", "./routes/auth.resetpasswordsent.tsx"),
     ]),
 ] satisfies RouteConfig;

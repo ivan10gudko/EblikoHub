@@ -1,13 +1,12 @@
-import { useNavigate, NavLink } from "react-router";
 import { useAuthStore } from "~/features/auth";
-import { Button } from "~/shared/ui/Button";
 import SettingsIcon from "@mui/icons-material/Settings";
 import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
 import FormatListBulletedIcon from "@mui/icons-material/FormatListBulleted";
 import PeopleOutlineIcon from "@mui/icons-material/PeopleOutline";
-import LogoutIcon from "@mui/icons-material/Logout";
 import { Divider } from "@mui/material";
 import { Sidebar } from "~/shared/ui/Sidebar";
+import LogoutButton from "~/features/auth/ui/LogoutButton";
+import { NavLink } from "react-router";
 
 const getLinkClass = (isActive: boolean) =>
   `flex items-center gap-4 px-5 py-3.5 rounded-xl font-medium transition-all duration-300 border backdrop-blur-sm ${
@@ -27,16 +26,9 @@ export const UserProfileSidebar = ({
   onClose,
   userId,
 }: SidebarProps) => {
-  const { logout, userId: currentUserId } = useAuthStore();
+  const { userId: currentUserId } = useAuthStore();
 
-  const navigate = useNavigate();
   const isOwn = currentUserId === userId;
-
-  const handleLogout = async () => {
-    await logout();
-    navigate("/auth/login");
-    onClose();
-  };
 
   const mobileLinkStyle =
     "flex items-center gap-4 w-full p-4 rounded-2xl bg-background-muted border border-border/50 hover:border-primary/50 hover:scale-[1.02] transition-all duration-200 active:scale-95";
@@ -103,13 +95,7 @@ export const UserProfileSidebar = ({
 
           {isOwn && (
             <div className="pb-10 mt-4">
-              <button
-                onClick={handleLogout}
-                className={`${mobileLinkStyle} border-danger/40 bg-danger/5 text-danger hover:bg-danger/10 hover:border-danger/60 w-full`}
-              >
-                <LogoutIcon fontSize="small" className="rotate-180" />
-                <span className="font-semibold text-lg">Log Out</span>
-              </button>
+              <LogoutButton clickFallback={onClose} />
             </div>
           )}
         </nav>
@@ -165,14 +151,7 @@ export const UserProfileSidebar = ({
           {isOwn && (
             <div className="mt-auto pt-4">
               <Divider sx={{ borderColor: "rgba(255,255,255,0.08)", mb: 3 }} />
-              <Button
-                variant="outline"
-                className="w-full justify-start gap-4 py-3.5 px-5 border-danger/40 bg-danger/5 text-danger hover:bg-danger hover:text-white hover:border-danger transition-all duration-300 rounded-xl font-medium shadow-sm"
-                onClick={handleLogout}
-              >
-                <LogoutIcon fontSize="small" className="rotate-180" />
-                <span className="text-base tracking-wide">Log Out</span>
-              </Button>
+              <LogoutButton clickFallback={onClose} />
             </div>
           )}
         </div>
