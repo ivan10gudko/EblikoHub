@@ -43,11 +43,7 @@ const PROFILE_SETTING_MENU: SettingItem[] = [
   },
   {
     id: "logout",
-    render: () => (
-      <div className="[]">
-        <LogoutButton />
-      </div>
-    ),
+    render: () => <LogoutButton classname="rounded-none! border-none py-4" />, //! import will be removed, after providing tailwind merge
     group: "Security",
   },
   {
@@ -76,7 +72,7 @@ const ProfileSettingPage = () => {
               {group.label}
             </h3>
 
-            <div className="flex flex-col gap-4 divide-y divide-foreground/20">
+            <div className="flex flex-col divide-y divide-foreground/20">
               {PROFILE_SETTING_MENU.filter(
                 (item) => item.group === group.label,
               ).map((item) => {
@@ -93,7 +89,7 @@ const ProfileSettingPage = () => {
                     <Link
                       key={item.id}
                       to={item.href}
-                      className="flex items-center gap-3 px-4 py-2 hover:bg-primary/10 transition-colors"
+                      className="flex items-center gap-3 px-4 py-4 hover:bg-primary/10 transition-colors"
                     >
                       {item.icon && (
                         <span className="text-foreground/70">{item.icon}</span>

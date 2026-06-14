@@ -8,6 +8,46 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import CloseIcon from "@mui/icons-material/Close";
 import { Button } from "~/shared/ui/Button";
 
+type CountKey = "friendsCount" | "pendingCount" | "sentCount";
+
+const NAV_LINKS = [
+  {
+    key: "friends",
+    label: "Your Friends",
+    getPath: (id: string) => `/profile/${id}/friends`,
+    end: true,
+    isPrivate: false,
+    Icon: PeopleIcon,
+    countKey: "friendsCount" as CountKey,
+  },
+  {
+    key: "add",
+    label: "Add a Friend",
+    getPath: () => `add`,
+    end: false,
+    isPrivate: true,
+    Icon: PersonAddAlt1Icon,
+  },
+  {
+    key: "pending",
+    label: "Pending Invites",
+    getPath: () => `pending`,
+    end: false,
+    isPrivate: true,
+    Icon: MarkEmailUnreadIcon,
+    countKey: "pendingCount" as CountKey,
+  },
+  {
+    key: "sent",
+    label: "Sent Requests",
+    getPath: () => `sent`,
+    end: false,
+    isPrivate: true,
+    Icon: OutboxIcon,
+    countKey: "sentCount" as CountKey,
+  },
+];
+
 const getLinkClass = (isActive: boolean) =>
   `flex items-center gap-4 px-5 py-3.5 rounded-xl font-medium transition-all duration-300 border backdrop-blur-sm w-full ${
     isActive
@@ -21,8 +61,8 @@ interface FriendsSidebarProps {
   sentCount?: number;
   isReadOnly?: boolean;
   userId: string;
-  isOpen: boolean; // Додано для контролю шторки
-  onClose: () => void; // Додано для закриття меню
+  isOpen: boolean;
+  onClose: () => void;
 }
 
 export const FriendsSidebar = ({
@@ -36,13 +76,24 @@ export const FriendsSidebar = ({
 }: FriendsSidebarProps) => {
   const navigate = useNavigate();
 
+  const counts: Record<CountKey, number> = {
+    friendsCount,
+    pendingCount,
+    sentCount,
+  };
+
+  const visibleLinks = NAV_LINKS.filter(
+    (link) => !link.isPrivate || !isReadOnly,
+  );
+
   return (
     <>
       <div
-        className={`fixed inset-0 bg-card/60 backdrop-blur-xl z-100 transition-all duration-300 flex justify-center p-6 pt-[70px] md:min-h-[calc(100vh-64px)] md:mt-0 mt-[70px]
-                    md:hidden
-                    ${isOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none translate-y-4"}
-                `}
+        className={`fixed inset-0 bg-card/60 backdrop-blur-xl z-100 transition-all duration-300 flex justify-center p-6 pt-[70px] md:min-h-[calc(100vh-64px)] md:mt-0 mt-[70px] md:hidden ${
+          isOpen
+            ? "opacity-100 pointer-events-auto"
+            : "opacity-0 pointer-events-none translate-y-4"
+        }`}
         onClick={onClose}
       >
         <Button
@@ -53,107 +104,43 @@ export const FriendsSidebar = ({
           <CloseIcon className="text-primary/70 scale-110 opacity-90" />
         </Button>
         <nav
-          className=" w-full max-w-sm flex flex-col gap-3"
+          className="w-full max-w-sm flex flex-col gap-3"
           onClick={(e) => e.stopPropagation()}
           translate="no"
         >
-          <NavLink
-            to={`/profile/${userId}/friends`}
-            end
-            onClick={onClose}
-            className={({ isActive }) => getLinkClass(isActive)}
-          >
-            {({ isActive }) => (
-              <span className="flex items-center gap-4 w-full">
-                <PeopleIcon
-                  className={
-                    isActive
-                      ? "scale-110 opacity-90"
-                      : "text-primary scale-110 opacity-90"
-                  }
-                />
-                <span className="text-lg tracking-wide">Your Friends</span>
-                <span
-                  className={`ml-auto text-xs font-black w-6 h-6 flex items-center justify-center rounded-full ${isActive ? "bg-background/20 text-background" : "bg-background-muted text-foreground border-border/40"}`}
-                >
-                  {friendsCount}
+          {visibleLinks.map(({ key, label, getPath, end, Icon, countKey }) => (
+            <NavLink
+              key={key}
+              to={getPath(userId)}
+              end={end}
+              onClick={onClose}
+              className={({ isActive }) => getLinkClass(isActive)}
+            >
+              {({ isActive }) => (
+                <span className="flex items-center gap-4 w-full">
+                  <Icon
+                    className={
+                      isActive
+                        ? "scale-110 opacity-90"
+                        : "text-primary scale-110 opacity-90"
+                    }
+                  />
+                  <span className="text-lg tracking-wide">{label}</span>
+                  {countKey && (
+                    <span
+                      className={`ml-auto text-xs font-black w-6 h-6 flex items-center justify-center rounded-full ${
+                        isActive
+                          ? "bg-background/20 text-background"
+                          : "bg-background-muted text-foreground border-border/40"
+                      }`}
+                    >
+                      {counts[countKey]}
+                    </span>
+                  )}
                 </span>
-              </span>
-            )}
-          </NavLink>
-
-          {!isReadOnly && (
-            <>
-              <NavLink
-                to={`add`}
-                onClick={onClose}
-                className={({ isActive }) => getLinkClass(isActive)}
-              >
-                {({ isActive }) => (
-                  <span className="flex items-center gap-4 w-full">
-                    <PersonAddAlt1Icon
-                      className={
-                        isActive
-                          ? "scale-110 opacity-90"
-                          : "text-primary scale-110 opacity-90"
-                      }
-                    />
-                    <span className="text-lg tracking-wide">Add a Friend</span>
-                  </span>
-                )}
-              </NavLink>
-
-              <NavLink
-                to={`pending`}
-                onClick={onClose}
-                className={({ isActive }) => getLinkClass(isActive)}
-              >
-                {({ isActive }) => (
-                  <span className="flex items-center gap-4 w-full">
-                    <MarkEmailUnreadIcon
-                      className={
-                        isActive
-                          ? "scale-110 opacity-90"
-                          : "text-primary scale-110 opacity-90"
-                      }
-                    />
-                    <span className="text-lg tracking-wide">
-                      Pending Invites
-                    </span>
-                    <span
-                      className={`ml-auto text-xs font-black w-6 h-6 flex items-center justify-center rounded-full ${isActive ? "bg-background/20 text-background" : "bg-background-muted text-foreground border-border/60"}`}
-                    >
-                      {pendingCount}
-                    </span>
-                  </span>
-                )}
-              </NavLink>
-
-              <NavLink
-                to={`sent`}
-                onClick={onClose}
-                className={({ isActive }) => getLinkClass(isActive)}
-              >
-                {({ isActive }) => (
-                  <span className="flex items-center gap-4 w-full">
-                    <OutboxIcon
-                      className={
-                        isActive
-                          ? "scale-110 opacity-90"
-                          : "text-primary scale-110 opacity-90"
-                      }
-                    />
-                    <span className="text-lg tracking-wide">Sent Requests</span>
-                    <span
-                      className={`ml-auto text-xs font-black w-6 h-6 flex items-center justify-center rounded-full ${isActive ? "bg-background/20 text-background" : "bg-background-muted text-foreground border-border/40"}`}
-                    >
-                      {sentCount}
-                    </span>
-                  </span>
-                )}
-              </NavLink>
-            </>
-          )}
+              )}
+            </NavLink>
+          ))}
 
           <button
             type="button"
@@ -171,102 +158,40 @@ export const FriendsSidebar = ({
         </nav>
       </div>
 
-      {/* desktop version (static sidebar) */}
-      <Sidebar className=" hidden md:flex flex-col p-5 gap-3 h-fit shrink-0 backdrop-blur-md rounded-3xl md:min-h-[calc(100vh-64px)] w-80">
+      <Sidebar className="hidden md:flex flex-col p-5 gap-3 h-fit shrink-0 backdrop-blur-md rounded-3xl md:min-h-[calc(100vh-64px)] w-80">
         <nav className="flex flex-col gap-3.5" translate="no">
-          <NavLink
-            to={`/profile/${userId}/friends`}
-            end
-            className={({ isActive }) => getLinkClass(isActive)}
-          >
-            {({ isActive }) => (
-              <span className="flex items-center gap-4 w-full">
-                <PeopleIcon
-                  className={
-                    isActive
-                      ? "scale-110 opacity-90"
-                      : "text-primary scale-110 opacity-90"
-                  }
-                />
-                <span className="text-lg tracking-wide">Your Friends</span>
-                <span
-                  className={`ml-auto text-xs font-black w-6 h-6 flex items-center justify-center rounded-full ${isActive ? "bg-background/20 text-background" : "bg-background-muted text-foreground border-border/40"}`}
-                >
-                  {friendsCount}
+          {visibleLinks.map(({ key, label, getPath, end, Icon, countKey }) => (
+            <NavLink
+              key={key}
+              to={getPath(userId)}
+              end={end}
+              className={({ isActive }) => getLinkClass(isActive)}
+            >
+              {({ isActive }) => (
+                <span className="flex items-center gap-4 w-full">
+                  <Icon
+                    className={
+                      isActive
+                        ? "scale-110 opacity-90"
+                        : "text-primary scale-110 opacity-90"
+                    }
+                  />
+                  <span className="text-lg tracking-wide">{label}</span>
+                  {countKey && (
+                    <span
+                      className={`ml-auto text-xs font-black w-6 h-6 flex items-center justify-center rounded-full ${
+                        isActive
+                          ? "bg-background/20 text-background"
+                          : "bg-background-muted text-foreground border-border/40"
+                      }`}
+                    >
+                      {counts[countKey]}
+                    </span>
+                  )}
                 </span>
-              </span>
-            )}
-          </NavLink>
-
-          {!isReadOnly && (
-            <>
-              <NavLink
-                to={`add`}
-                className={({ isActive }) => getLinkClass(isActive)}
-              >
-                {({ isActive }) => (
-                  <span className="flex items-center gap-4 w-full">
-                    <PersonAddAlt1Icon
-                      className={
-                        isActive
-                          ? "scale-110 opacity-90"
-                          : "text-primary scale-110 opacity-90"
-                      }
-                    />
-                    <span className="text-lg tracking-wide">Add a Friend</span>
-                  </span>
-                )}
-              </NavLink>
-
-              <NavLink
-                to={`pending`}
-                className={({ isActive }) => getLinkClass(isActive)}
-              >
-                {({ isActive }) => (
-                  <span className="flex items-center gap-4 w-full">
-                    <MarkEmailUnreadIcon
-                      className={
-                        isActive
-                          ? "scale-110 opacity-90"
-                          : "text-primary scale-110 opacity-90"
-                      }
-                    />
-                    <span className="text-lg tracking-wide">
-                      Pending Invites
-                    </span>
-                    <span
-                      className={`ml-auto text-xs font-black w-6 h-6 flex items-center justify-center rounded-full ${isActive ? "bg-background/20 text-background" : "bg-background-muted text-foreground border-border/60"}`}
-                    >
-                      {pendingCount}
-                    </span>
-                  </span>
-                )}
-              </NavLink>
-
-              <NavLink
-                to={`sent`}
-                className={({ isActive }) => getLinkClass(isActive)}
-              >
-                {({ isActive }) => (
-                  <span className="flex items-center gap-4 w-full">
-                    <OutboxIcon
-                      className={
-                        isActive
-                          ? "scale-110 opacity-90"
-                          : "text-primary scale-110 opacity-90"
-                      }
-                    />
-                    <span className="text-lg tracking-wide">Sent Requests</span>
-                    <span
-                      className={`ml-auto text-xs font-black w-6 h-6 flex items-center justify-center rounded-full ${isActive ? "bg-background/20 text-background" : "bg-background-muted text-foreground border-border/40"}`}
-                    >
-                      {sentCount}
-                    </span>
-                  </span>
-                )}
-              </NavLink>
-            </>
-          )}
+              )}
+            </NavLink>
+          ))}
 
           <button
             type="button"

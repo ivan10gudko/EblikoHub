@@ -8,6 +8,41 @@ import { Sidebar } from "~/shared/ui/Sidebar";
 import LogoutButton from "~/features/auth/ui/LogoutButton";
 import { NavLink } from "react-router";
 
+const NAV_LINKS = [
+  {
+    key: "profile",
+    label: "Profile",
+    getPath: (id: string) => `/profile/${id}`,
+    Icon: PersonOutlineIcon,
+    end: true,
+    isPrivate: false,
+  },
+  {
+    key: "watchlist",
+    label: "Watchlist",
+    getPath: (id: string) => `/watchlist/${id}`,
+    Icon: FormatListBulletedIcon,
+    end: false,
+    isPrivate: false,
+  },
+  {
+    key: "friends",
+    label: "Friends",
+    getPath: (id: string) => `${id}/friends`,
+    Icon: PeopleOutlineIcon,
+    end: false,
+    isPrivate: false,
+  },
+  {
+    key: "settings",
+    label: "Settings",
+    getPath: (id: string) => `${id}/settings`,
+    Icon: SettingsIcon,
+    end: false,
+    isPrivate: true,
+  },
+];
+
 const getLinkClass = (isActive: boolean) =>
   `flex items-center gap-4 px-5 py-3.5 rounded-xl font-medium transition-all duration-300 border backdrop-blur-sm ${
     isActive
@@ -27,71 +62,38 @@ export const UserProfileSidebar = ({
   userId,
 }: SidebarProps) => {
   const { userId: currentUserId } = useAuthStore();
-
   const isOwn = currentUserId === userId;
 
-  const mobileLinkStyle =
-    "flex items-center gap-4 w-full p-4 rounded-2xl bg-background-muted border border-border/50 hover:border-primary/50 hover:scale-[1.02] transition-all duration-200 active:scale-95";
+  const visibleLinks = NAV_LINKS.filter((link) => !link.isPrivate || isOwn);
 
   return (
     <>
       <div
-        className={`fixed inset-0 bg-card/60 backdrop-blur-xl z-[999] transition-all duration-300 flex justify-center p-6 pt-[93px]  md:min-h-[calc(100vh-64px)] md:mt-0 mt-[93px]
-                    md:hidden
-                    ${isOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none translate-y-4"}
-                `}
+        className={`fixed inset-0 bg-card/60 backdrop-blur-xl z-[999] transition-all duration-300 flex justify-center p-6 pt-[93px] md:min-h-[calc(100vh-64px)] md:mt-0 mt-[93px] md:hidden ${
+          isOpen
+            ? "opacity-100 pointer-events-auto"
+            : "opacity-0 pointer-events-none translate-y-4"
+        }`}
         onClick={onClose}
       >
         <nav
           className="w-full max-w-sm flex flex-col gap-3"
           onClick={(e) => e.stopPropagation()}
         >
-          <NavLink
-            to={`/profile/${userId}`}
-            end
-            onClick={onClose}
-            className={({ isActive }) => getLinkClass(isActive)}
-          >
-            <PersonOutlineIcon className="text-primary" />
-            <span className="font-semibold text-lg text-foreground">
-              Profile
-            </span>
-          </NavLink>
-
-          <NavLink
-            to={`/watchlist/${userId}`}
-            onClick={onClose}
-            className={({ isActive }) => getLinkClass(isActive)}
-          >
-            <FormatListBulletedIcon className="text-primary" />
-            <span className="font-semibold text-lg text-foreground">
-              Watchlist
-            </span>
-          </NavLink>
-
-          <NavLink
-            to={`${userId}/friends`}
-            onClick={onClose}
-            className={({ isActive }) => getLinkClass(isActive)}
-          >
-            <PeopleOutlineIcon className="text-primary" />
-            <span className="font-semibold text-lg text-foreground">
-              Friends
-            </span>
-          </NavLink>
-
-          {isOwn && (
+          {visibleLinks.map(({ key, label, getPath, Icon, end }) => (
             <NavLink
-              to={`${userId}/settings`}
+              key={key}
+              to={getPath(userId)}
+              end={end}
               onClick={onClose}
               className={({ isActive }) => getLinkClass(isActive)}
             >
-              <SettingsIcon className="text-primary" />
+              <Icon className="text-primary" />
               <span className="font-semibold text-lg text-foreground">
-                Settings
+                {label}
               </span>
             </NavLink>
-          )}
+          ))}
 
           {isOwn && (
             <div className="pb-10 mt-4">
@@ -101,51 +103,21 @@ export const UserProfileSidebar = ({
         </nav>
       </div>
 
-      <Sidebar
-        className="hidden md:flex flex-col fixed inset-y-0 left-0 z-50 w-72 bg-background/95 border-r border-border/60
-                    shadow-2xl backdrop-blur-md rounded-none
-                    md:relative md:min-h-[calc(100vh-64px)] md:z-auto md:rounded-3xl md:shadow-none"
-      >
+      <Sidebar className="hidden md:flex flex-col fixed inset-y-0 left-0 z-50 w-72 bg-background/95 border-r border-border/60 shadow-2xl backdrop-blur-md rounded-none md:relative md:min-h-[calc(100vh-64px)] md:z-auto md:rounded-3xl md:shadow-none">
         <div className="flex flex-col h-full p-5 gap-2">
           <nav className="flex flex-col gap-3.5">
-            <NavLink
-              to={`/profile/${userId}`}
-              end
-              onClick={onClose}
-              className={({ isActive }) => getLinkClass(isActive)}
-            >
-              <PersonOutlineIcon className="scale-110 opacity-90 text-primary" />
-              <span className="text-lg tracking-wide">Profile</span>
-            </NavLink>
-
-            <NavLink
-              to={`/watchlist/${userId}`}
-              onClick={onClose}
-              className={({ isActive }) => getLinkClass(isActive)}
-            >
-              <FormatListBulletedIcon className="text-primary scale-110 opacity-90" />
-              <span className="text-lg tracking-wide">Watchlist</span>
-            </NavLink>
-
-            <NavLink
-              to={`${userId}/friends`}
-              onClick={onClose}
-              className={({ isActive }) => getLinkClass(isActive)}
-            >
-              <PeopleOutlineIcon className="text-primary scale-110 opacity-90" />
-              <span className="text-lg tracking-wide">Friends</span>
-            </NavLink>
-
-            {isOwn && (
+            {visibleLinks.map(({ key, label, getPath, Icon, end }) => (
               <NavLink
-                to={`${userId}/settings`}
+                key={key}
+                to={getPath(userId)}
+                end={end}
                 onClick={onClose}
                 className={({ isActive }) => getLinkClass(isActive)}
               >
-                <SettingsIcon className="text-primary" />
-                <span className="text-lg tracking-wide">Settings</span>
+                <Icon className="text-primary scale-110 opacity-90" />
+                <span className="text-lg tracking-wide">{label}</span>
               </NavLink>
-            )}
+            ))}
           </nav>
 
           {isOwn && (

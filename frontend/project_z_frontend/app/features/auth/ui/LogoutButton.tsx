@@ -2,8 +2,11 @@ import { Button } from "~/shared/ui/Button";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { useAuthStore } from "../store/auth.store";
 import { useNavigate } from "react-router";
-
-const LogoutButton = ({ clickFallback }: { clickFallback?: () => void }) => {
+interface LogoutButtonProps {
+  clickFallback?: () => void;
+  classname?: string;
+}
+const LogoutButton = ({ clickFallback, classname }: LogoutButtonProps) => {
   const { logout } = useAuthStore();
   const navigate = useNavigate();
 
@@ -12,11 +15,13 @@ const LogoutButton = ({ clickFallback }: { clickFallback?: () => void }) => {
     navigate("/auth/login");
     if (clickFallback) clickFallback();
   };
+  const baseClassName =
+    "w-full justify-start gap-4 py-3.5 px-5 border-danger/40 bg-danger/5 text-danger hover:bg-danger hover:text-white hover:border-danger transition-all duration-300 rounded-xl font-medium shadow-sm";
 
   return (
     <Button
       variant="outline"
-      className="w-full justify-start gap-4 py-3.5 px-5 border-danger/40 bg-danger/5 text-danger hover:bg-danger hover:text-white hover:border-danger transition-all duration-300 rounded-xl font-medium shadow-sm"
+      className={`${baseClassName} ${classname}`}
       onClick={handleLogout}
     >
       <LogoutIcon fontSize="small" className="rotate-180" />
