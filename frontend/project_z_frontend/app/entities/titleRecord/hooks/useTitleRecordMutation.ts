@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient, type InfiniteData } from "@tanstack/react-query";
 import { titleRecordService, type CreateTitleRecord, type TitleRecord } from "~/entities/titleRecord";
+import { updateInfiniteQuery } from "~/shared/helpers/updateInfinityQuery";
 import { notify } from "~/shared/lib";
 import { getSessionUserId } from "~/shared/lib/supabase";
 import type { PageResponse, Rating } from "~/shared/types";
@@ -15,23 +16,17 @@ export const useTitleRecordMutation = (apiTitleId: number | undefined, initialDa
 
     const mutationConfig = {
         onSuccess: (updatedRecord: TitleRecord | null) => {
-            queryClient.setQueryData(queryKey, updatedRecord);
             if (updatedRecord) {
                 queryClient.setQueriesData<InfiniteData<PageResponse<TitleRecord>>>(
                     { queryKey: ['titles'] },
-                    (oldData) => {
-                        if (!oldData) return oldData;
-
-                        return {
-                            ...oldData,
-                            pages: oldData.pages.map((page) => ({
-                                ...page,
-                                content: page.content.map((item) =>
-                                    item.titleId === updatedRecord.titleId ? updatedRecord : item
-                                ),
-                            })),
-                        };
-                    }
+                    (oldData) => updateInfiniteQuery(
+                        oldData,
+                        (page) => page.content,
+                        (page, newContent) => ({ ...page, content: newContent }),
+                        (allItems) => allItems.map(item =>
+                            item.titleId === updatedRecord!.titleId ? updatedRecord : item
+                        )
+                    )
                 );
             }
         },

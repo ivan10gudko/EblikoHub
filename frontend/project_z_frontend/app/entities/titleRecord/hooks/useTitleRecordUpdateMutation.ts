@@ -1,69 +1,45 @@
 import { useMutation, useQueryClient, type InfiniteData } from "@tanstack/react-query";
 import { titleRecordService, type TitleRecord } from "~/entities/titleRecord";
+import { updateInfiniteQuery } from "~/shared/helpers/updateInfinityQuery";
 import { notify } from "~/shared/lib";
 import type { PageResponse } from "~/shared/types";
 
 export const useUpdateTitleRecord = (titleId: number) => {
   const queryClient = useQueryClient();
 
+  const updateTitlesCache = (updater: (content: TitleRecord[]) => TitleRecord[]) => {
+    queryClient.setQueriesData<InfiniteData<PageResponse<TitleRecord>>>(
+      { queryKey: ['titles'] },
+      (oldData) => updateInfiniteQuery(
+        oldData,
+        (page) => page.content, 
+        (page, newContent) => ({ ...page, content: newContent }),
+        updater 
+      )
+    );
+  };
   const updateMutation = useMutation({
-    mutationFn: (updates: Partial<TitleRecord>) =>
-      titleRecordService.patch(titleId, updates),
-
+    mutationFn: (updates: Partial<TitleRecord>) => titleRecordService.patch(titleId, updates),
     onSuccess: (updatedRecord: TitleRecord) => {
-      queryClient.setQueriesData<InfiniteData<PageResponse<TitleRecord>>>(
-        { queryKey: ['titles'] },
-        (oldData) => {
-          if (!oldData) return oldData;
-          return {
-            ...oldData,
-            pages: oldData.pages.map((page) => ({
-              ...page,
-              content: page.content.map((item) =>
-                item.titleId === updatedRecord.titleId ? updatedRecord : item
-              ),
-            })),
-          };
-        }
+      updateTitlesCache((content) =>
+        content.map(item => item.titleId === updatedRecord.titleId ? updatedRecord : item)
       );
-      if (updatedRecord?.apiTitleId) {
-        queryClient.setQueryData(['titleRecord', updatedRecord.apiTitleId], updatedRecord);
-      }
-    },
-    onError: (error: any) => {
-      notify.error(error.response?.data?.message || "Error while updating");
     }
   });
+
   const pinMutation = useMutation({
     mutationFn: () => titleRecordService.pinTitle(titleId),
-
     onSuccess: (updatedRecord: TitleRecord) => {
-      queryClient.setQueriesData<InfiniteData<PageResponse<TitleRecord>>>(
-        { queryKey: ['titles'] },
-        (oldData) => {
-          if (!oldData) return oldData;
-          return {
-            ...oldData,
-            pages: oldData.pages.map((page) => ({
-              ...page,
-              content: page.content.map((item) => {
-                if (item.titleId === updatedRecord.titleId) {
-                  return { ...item, pinned: true };
-                }
-                if (item.pinned) {
-                  return { ...item, pinned: false };
-                }
-                return item;
-              }),
-            })),
-          };
-        }
+      updateTitlesCache((content) =>
+        content.map((item) => ({
+          ...item,
+          pinned: item.titleId === updatedRecord.titleId
+        }))
       );
 
       if (updatedRecord?.apiTitleId) {
         queryClient.setQueryData(['titleRecord', updatedRecord.apiTitleId], { ...updatedRecord, pinned: true });
       }
-
       notify.success("Pinned to top!");
     },
     onError: (error: any) => {
@@ -71,27 +47,12 @@ export const useUpdateTitleRecord = (titleId: number) => {
     }
   });
 
- const unpinMutation = useMutation({
-  mutationFn: () => {
-    return titleRecordService.unpin();
-  },
+  const unpinMutation = useMutation({
+    mutationFn: () => titleRecordService.unpin(),
     onSuccess: () => {
-      queryClient.setQueriesData<InfiniteData<PageResponse<TitleRecord>>>(
-        { queryKey: ['titles'] },
-        (oldData) => {
-          if (!oldData) return oldData;
-          return {
-            ...oldData,
-            pages: oldData.pages.map((page) => ({
-              ...page,
-              content: page.content.map((item) => {
-                return { ...item, pinned: false };
-              }),
-            })),
-          };
-        }
+      updateTitlesCache((content) =>
+        content.map((item) => ({ ...item, pinned: false }))
       );
-
       notify.success("Unpinned!");
     },
     onError: (error: any) => {
@@ -102,23 +63,9 @@ export const useUpdateTitleRecord = (titleId: number) => {
   const deleteMutation = useMutation({
     mutationFn: () => titleRecordService.delete(titleId),
     onSuccess: () => {
-      queryClient.setQueriesData<InfiniteData<PageResponse<TitleRecord>>>(
-        { queryKey: ['titles'] },
-        (oldData) => {
-          if (!oldData) return oldData;
-          return {
-            ...oldData,
-            pages: oldData.pages.map((page) => ({
-              ...page,
-              content: page.content.filter((item) => item.titleId !== titleId),
-            })),
-          };
-        }
+      updateTitlesCache((content) =>
+        content.filter(item => item.titleId !== titleId)
       );
-      notify.success("deleted!");
-    },
-    onError: (error: any) => {
-      notify.error(error.response?.data?.message || "error while deleting");
     }
   });
 
