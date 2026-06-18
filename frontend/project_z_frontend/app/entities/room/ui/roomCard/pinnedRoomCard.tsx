@@ -10,6 +10,10 @@ interface RoomCardProps {
 const DEFAULT_IMAGE_PATH = "/defaultTitleRecordImage.jpg";
 export const PinnedRoomCard = ({ room, onClick }: RoomCardProps) => {
     const { unpinRoom, isPending } = useRoomActions(room.roomId);
+    const handleUnpin = (e: React.MouseEvent) => {
+        e.stopPropagation();
+        unpinRoom();
+    };
 
     return (
         <div onClick={onClick} className="group flex flex-col w-full rounded-2xl border-2 border-primary bg-card shadow-lg shadow-primary/10 transition-all cursor-pointer">
@@ -23,15 +27,15 @@ export const PinnedRoomCard = ({ room, onClick }: RoomCardProps) => {
                 <div className="flex justify-between items-center">
 
                     <div className="flex items-center gap-1.5 text-foreground text-sm font-medium">
-                        <GroupIcon sx={{ fontSize: 18, color: 'var(--primary)' }} />
+                        <GroupIcon className="text-sm text-foreground" />
                         <span className="text-primary">{room.usersCount} members</span>
                     </div>
                     <button
-                        onClick={(e) => { e.stopPropagation(); unpinRoom(); }}
+                        onClick={handleUnpin}
                         disabled={isPending}
                         className="flex items-center justify-center p-1 rounded-lg hover:bg-background-muted transition-colors"
                     >
-                        <PushPinIcon sx={{ color: 'var(--foreground)', fontSize: 18 }} />
+                        <PushPinIcon className="text-sm text-foreground" />
                     </button>
                 </div>
             </div>
