@@ -1,4 +1,5 @@
 package project_z.demo.controllers;
+
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,12 +23,14 @@ import project_z.demo.dto.RoomDtos.RoomDto;
 import project_z.demo.dto.RoomDtos.RoomShortDto;
 import project_z.demo.entity.RoomEntity;
 import project_z.demo.security.JwtService;
+import project_z.demo.services.RoomMemberService;
 import project_z.demo.services.RoomService;
 import project_z.demo.services.UserService;
 
 @RestController
 @RequestMapping("/api/v1/rooms")
 public class RoomController {
+    private final RoomMemberService roomMemberService;
     @Autowired
     private RoomService roomService;
     @Autowired
@@ -37,9 +40,13 @@ public class RoomController {
     @Autowired
     private JwtService jwtService;
 
+    RoomController(RoomMemberService roomMemberService) {
+        this.roomMemberService = roomMemberService;
+    }
+
     @GetMapping("/{roomId}")
     public ResponseEntity<RoomDto> getRoomById(@PathVariable("roomId") Long roomId) {
-        return new ResponseEntity<>( roomService.findOne(roomId) , HttpStatus.OK);
+        return new ResponseEntity<>(roomService.findOne(roomId), HttpStatus.OK);
     }
 
     @GetMapping("/user/{id}")
@@ -49,7 +56,6 @@ public class RoomController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-
     @PostMapping
     public ResponseEntity<RoomDto> createRoom(@RequestBody RoomCreateDto roomDto,
             @RequestHeader("Authorization") String token) {
@@ -57,27 +63,20 @@ public class RoomController {
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
-    @PreAuthorize("hasRole('ADMIN') || @securityService.isRoomOwner(#roomId, #token)")
-    @PostMapping(path = "/{roomId}/pinRoom")
-    public ResponseEntity<RoomDto> pinRoom(
-            @PathVariable("roomId") Long roomId,
-            @RequestHeader("Authorization") String token
-    ) {
-
+    @PostMapping("/{roomId}/pin")
+    public ResponseEntity<Void> pinRoom(
+            @PathVariable Long roomId,
+            @RequestHeader("Authorization") String token) {
         UUID userId = jwtService.extractUsername(token);
-
-
-        RoomDto updatedRoom = roomService.pinRoom(roomId, userId);
-        return new ResponseEntity<>(updatedRoom, HttpStatus.OK);
+        roomMemberService.pinRoom(roomId, userId);
+        return ResponseEntity.ok().build();
     }
-    
-    @PostMapping(path = "/unpin")
-    public ResponseEntity<Void> unpin(@RequestHeader("Authorization") String token) {
-        
-        UUID userId = jwtService.extractUsername(token);
-        roomService.unpin(userId);
 
-        return new ResponseEntity<>(HttpStatus.OK);
+    @PostMapping("/unpin")
+    public ResponseEntity<Void> unpinAll(@RequestHeader("Authorization") String token) {
+        UUID userId = jwtService.extractUsername(token);
+        roomMemberService.unpinAll(userId);
+        return ResponseEntity.ok().build();
     }
 
     @PreAuthorize("hasRole('ADMIN') || @securityService.isRoomOwner(#id, #token)")

@@ -21,6 +21,4 @@ boolean isExists(Long id);
 RoomDto findOne(Long titleId);
 void deleteById(Long id);
 RoomDto createRoom(String token, RoomCreateDto dto);
-RoomDto pinRoom(Long roomId, UUID userId);
-void unpin(UUID userId);
 }

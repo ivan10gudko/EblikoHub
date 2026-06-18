@@ -129,4 +129,19 @@ public class RoomMemberServiceImpl implements RoomMemberService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
+    public void pinRoom(Long roomId, UUID userId) {
+        roomMemberRepository.unpinAllForUser(userId);
+
+        RoomMemberEntity member = roomMemberRepository.findByRoomRoomIdAndReceiverUserId(roomId, userId)
+                .orElseThrow(() -> new ResourceNotFoundException("You are not a member of this group"));
+
+        member.setPinned(true);
+        roomMemberRepository.save(member);
+    }
+
+    @Transactional
+    public void unpinAll(UUID userId) {
+        roomMemberRepository.unpinAllForUser(userId);
+    }
 }

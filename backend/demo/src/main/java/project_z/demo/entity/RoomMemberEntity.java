@@ -15,6 +15,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import project_z.demo.enums.RequestStatus;
@@ -53,6 +54,9 @@ public class RoomMemberEntity {
     @Column(nullable = false)
     private RequestType type;
 
+    @Column(name = "is_pinned")
+    private boolean isPinned = false;
+    
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 }

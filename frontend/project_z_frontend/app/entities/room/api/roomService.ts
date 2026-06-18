@@ -12,6 +12,8 @@ interface RoomService {
     deleteMembers(id: number, userIds: string[]): Promise<void>;
     leave(id: number): Promise<void>;
     delete(id: number): Promise<void>;
+    pinRoom(roomId: number): Promise<RoomShort>;
+    unpin(): Promise<void>;
 }
 
 export const roomService: RoomService = {
@@ -52,8 +54,18 @@ export const roomService: RoomService = {
     async leave(id) {
         await apiClient.post(`/rooms/${id}/leave`);
     },
+    
+    async pinRoom(roomId) {
+        const { data } = await apiClient.post<RoomShort>(`/rooms/${roomId}/pin`);
+        return data;
+    },
+
+    async unpin() {
+        await apiClient.post(`/rooms/unpin`);
+    },
 
     async delete(id) {
         await apiClient.delete(`/rooms/${id}`);
     }
+
 };

@@ -2,6 +2,7 @@ package project_z.demo.services.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collector;
@@ -64,34 +65,32 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
-    public Page<RoomShortDto> getRoomsByUserId(UUID userId, RoomQueryParameters queryParameters) {
+    public Page<RoomShortDto> getRoomsByUserId(UUID userId, RoomQueryParameters params) {
+        Specification<RoomEntity> spec = Specification
+                .where(RoomSpecifications.hasMember(userId))
+                .and(RoomSpecifications.hasNameLike(params.getSearch()))
+                .and(RoomSpecifications.sortByPinnedThenUser(userId, params.getSortBy(), params.getOrder()));
 
-        Pageable pageable = PagingHelper.toPageable(queryParameters);
-        Page<RoomEntity> roomsPage;
+        Pageable pageable = PageRequest.of(params.getPage(), params.getLimit(), Sort.unsorted());
 
-        String sortBy = queryParameters.getSortBy();
+        Page<RoomEntity> roomPage = roomRepository.findAll(spec, pageable);
 
-        if ("memberCount".equals(sortBy) || "membersCount".equals(sortBy)) {
+        List<Long> roomIds = roomPage.getContent().stream()
+                .map(RoomEntity::getRoomId)
+                .toList();
 
-            Pageable nativePageable = PageRequest.of(
-                    pageable.getPageNumber(),
-                    pageable.getPageSize(),
-                    Sort.unsorted());
+        Map<Long, Boolean> pinnedByRoomId = roomIds.isEmpty()
+                ? Map.of()
+                : roomMemberRepository.findByRoomRoomIdInAndReceiverUserId(roomIds, userId).stream()
+                        .collect(Collectors.toMap(
+                                m -> m.getRoom().getRoomId(),
+                                RoomMemberEntity::isPinned));
 
-            roomsPage = "asc".equalsIgnoreCase(queryParameters.getOrder())
-                    ? roomRepository.findAllByMemberCountAsc(userId, nativePageable)
-                    : roomRepository.findAllByMemberCountDesc(userId, nativePageable);
-        } else {
-
-            Specification<RoomEntity> spec = Specification.where(RoomSpecifications.hasMember(userId));
-            roomsPage = roomRepository.findAll(spec, pageable);
-        }
-
-        if (roomsPage.isEmpty()) {
-            return Page.empty(pageable);
-        }
-
-        return roomsPage.map(roomShortMapper::mapTo);
+        return roomPage.map(room -> {
+            RoomShortDto dto = roomShortMapper.mapTo(room);
+            dto.setPinned(pinnedByRoomId.getOrDefault(room.getRoomId(), false));
+            return dto;
+        });
     }
 
     @Override
@@ -145,23 +144,4 @@ public class RoomServiceImpl implements RoomService {
         return roomMapper.mapTo(savedRoom);
     }
 
-    @Override
-    @Transactional
-    public RoomDto pinRoom(Long roomId, UUID userId) {
-
-        roomRepository.unpinAllTitlesForUser(userId);
-
-        RoomEntity room = roomRepository.findById(roomId)
-                .orElseThrow(() -> new ResourceNotFoundException("Title not found with id: " + roomId));
-
-        room.setPinned(true);
-        RoomEntity savedTitle = roomRepository.save(room);
-
-        return roomMapper.mapTo(savedTitle);
-    }
-
-    @Override
-    public void unpin(UUID userId) {
-        roomRepository.unpinAllTitlesForUser(userId);
-    }
 }

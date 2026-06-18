@@ -18,4 +18,6 @@ public interface RoomMemberService {
     List<UserShortDto> getAcceptedMembers(Long roomId);
     List<RoomMemberDto> getRequests(Long roomId, RequestStatus status, RequestType type);
     List<RoomMemberDto> getRequestsByUserId(UUID userId, RequestStatus status, RequestType type);
+    void pinRoom(Long roomId, UUID userId);
+    void unpinAll(UUID userId);
 }

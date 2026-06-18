@@ -23,6 +23,8 @@ export interface RoomCreateDto {
 export interface RoomShort {
     roomId: number;
     roomName: string;
+    imageUrl: string;
+    isPinned:boolean;
     ownerId: string;
     usersCount: number;
 }

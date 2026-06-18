@@ -1,7 +1,10 @@
 package project_z.demo.entity;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.hibernate.annotations.Formula;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -23,6 +26,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
 @EntityListeners(AuditingEntityListener.class)
 @Setter
 @Getter
@@ -30,18 +34,18 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Table(name="rooms")
+@Table(name = "rooms")
 public class RoomEntity {
     @Id
     @Column(name = "room_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long roomId;
-    
+
     private String roomName;
 
     @ManyToOne
     @JoinColumn(name = "owner_id")
-    private UserEntity owner; 
+    private UserEntity owner;
 
     @Builder.Default
     @OneToMany(mappedBy = "room", cascade = CascadeType.ALL)
@@ -49,12 +53,11 @@ public class RoomEntity {
 
     @Column(name = "image_url")
     private String imageUrl;
-    
-    @Column(name = "is_pinned")
-    @Builder.Default
-    private boolean isPinned = false;
 
     @CreatedDate
-    @Column(nullable=false, updatable=false)
+    @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
+
+    @Formula("(SELECT COUNT(*) FROM room_members m WHERE m.room_id = room_id AND m.status = 'ACCEPTED')")
+    private Long memberCount;
 }

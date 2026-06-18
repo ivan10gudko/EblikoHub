@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import project_z.demo.dto.RoomDtos.RoomDto;
 import project_z.demo.dto.RoomMemberDtos.RoomMemberDto;
 import project_z.demo.dto.UserDtos.UserShortDto;
 import project_z.demo.entity.RoomMemberEntity;
