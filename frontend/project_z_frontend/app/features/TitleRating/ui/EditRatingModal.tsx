@@ -28,6 +28,7 @@ export const EditRatingModal = ({
       rating: title.rating,
       imageUrl: title.imageUrl,
       titleType: title.titleType,
+      pinned:title.pinned,
     },
     title,
   );

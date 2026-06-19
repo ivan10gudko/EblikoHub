@@ -5,7 +5,7 @@ import java.util.UUID;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
-import project_z.demo.enums.FriendshipStatus;
+import project_z.demo.enums.RequestStatus;
 import project_z.demo.repositories.FriendshipRepository;
 import project_z.demo.repositories.RoomRepository;
 import project_z.demo.repositories.SeasonRepository;
@@ -47,7 +47,7 @@ public class SecurityService {
         UUID currentUserId = jwtService.extractUsername(token);
 
         boolean b = friendshipRepository.existsBySenderUserIdAndReceiverUserIdAndStatus(
-                senderId, currentUserId, FriendshipStatus.PENDING);
+                senderId, currentUserId, RequestStatus.PENDING);
 
         System.out.println(b);
         return b;

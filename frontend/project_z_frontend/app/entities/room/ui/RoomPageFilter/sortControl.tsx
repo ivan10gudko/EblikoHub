@@ -8,7 +8,7 @@ import { useRoomFilterStore, type RoomSortType } from "../../store/rooms.store";
 const sortOptions = [
     { label: "Name", value: "roomName" },
     { label: "Date Created", value: "createdAt" },
-    { label: "Members", value: "membersCount" },
+    { label: "Members", value: "memberCount" },
 ];
 
 export const RoomSort = () => {

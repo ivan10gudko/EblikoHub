@@ -16,7 +16,7 @@ import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import project_z.demo.enums.FriendshipStatus;
+import project_z.demo.enums.RequestStatus;
 
 @Data
 @Entity
@@ -38,8 +38,8 @@ public class FriendshipEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private FriendshipStatus status;
+    private RequestStatus status;
 
-
+    @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 }

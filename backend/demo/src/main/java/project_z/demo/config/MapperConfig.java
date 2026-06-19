@@ -27,6 +27,8 @@ public class MapperConfig {
                     .map(RoomEntity::getMembers, RoomShortDto::setUsersCount);
 
             m.map(src -> src.getOwner().getUserId(), RoomShortDto::setOwnerId);
+
+            
         });
 
         return mapper;

@@ -11,6 +11,7 @@ import { AddTitleModal } from "../TitleModal";
 import { PinnedWatchlistRow } from "./WatchlistRow/pinnedWatchlistRow";
 import { PinnedWatchlistRowReadOnly } from "./WatchlistRow/pinnedWatchlistRowReadOnly";
 import { WatchlistRowReadOnly } from "./WatchlistRow/WatchlistRowReadOnly";
+import { AddNewButton } from "~/shared/ui/AddNewButton";
 interface WatchlistTableProps {
   titles: TitleRecord[];
   isLoading?: boolean;
@@ -44,21 +45,7 @@ export const WatchlistTable = ({ titles, isLoading, isOwn, queryKey }: Watchlist
 
   if (titles.length === 0) {
     return (
-      <div className="flex flex-col gap-2 w-full">
-        <div className="flex flex-col items-center justify-center p-12 bg-background-muted rounded-3xl border-2 border-dashed border-border">
-          <p className="text-foreground font-medium mb-4">Watchlist is empty</p>
-          {isOwn && (
-            <Button
-              onClick={() => setIsModalOpen(true)}
-              className="flex items-center gap-2 bg-primary hover:bg-primary-hover text-foreground px-6 py-2 rounded-xl transition-all"
-            >
-              <AddIcon />
-              <span>Add your first title</span>
-            </Button>
-          )}
-        </div>
-        <AddTitleModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
-      </div>
+      <AddNewButton onClick={() => setIsModalOpen(true)} placeholder="title" />
     );
   }
   if (!isOwn) {
@@ -77,18 +64,7 @@ export const WatchlistTable = ({ titles, isLoading, isOwn, queryKey }: Watchlist
 
   return (
     <div className="flex flex-col gap-2 w-full">
-      <Button
-        variant="outline"
-        onClick={() => setIsModalOpen(true)}
-        className="group flex items-center justify-center gap-3 w-full py-3 bg-background-muted hover:bg-background-muted-hover border-2 border-dashed border-border hover:border-primary rounded-2xl transition-all duration-200 mb-2"
-      >
-        <div className="flex items-center justify-center w-8 h-8 bg-background group-hover:bg-primary-hover rounded-full shadow-sm transition-colors">
-          <AddIcon className="text-foreground group-hover:text-background transition-colors" sx={{ fontSize: 20 }} />
-        </div>
-        <span className="font-bold text-foreground group-hover:text-primary-hover transition-colors">
-          Add new title
-        </span>
-      </Button>
+      <AddNewButton onClick={() => setIsModalOpen(true)} placeholder="title" />
 
       {pinnedTitle && <PinnedWatchlistRow title={pinnedTitle} />}
 
