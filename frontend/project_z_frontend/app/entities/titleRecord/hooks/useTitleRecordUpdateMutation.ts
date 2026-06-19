@@ -10,14 +10,15 @@ export const useUpdateTitleRecord = (titleId: number) => {
   const updateTitlesCache = (updater: (content: TitleRecord[]) => TitleRecord[]) => {
     queryClient.setQueriesData<InfiniteData<PageResponse<TitleRecord>>>(
       { queryKey: ['titles'] },
-      (oldData) => updateInfiniteQuery(
+      (oldData) => updateInfiniteQuery({
         oldData,
-        (page) => page.content, 
-        (page, newContent) => ({ ...page, content: newContent }),
-        updater 
-      )
+        getContent: (page) => page.content,
+        setContent: (page, newContent) => ({ ...page, content: newContent }),
+        updater
+      })
     );
   };
+
   const updateMutation = useMutation({
     mutationFn: (updates: Partial<TitleRecord>) => titleRecordService.patch(titleId, updates),
     onSuccess: (updatedRecord: TitleRecord) => {

@@ -2,12 +2,17 @@ import type { InfiniteData } from "@tanstack/react-query";
 
 
 
-export const updateInfiniteQuery = <TPage, TItem>(
-    oldData: InfiniteData<TPage> | undefined,
-    getContent: (page: TPage) => TItem[],
-    setContent: (page: TPage, newContent: TItem[]) => TPage,
-    updater: (content: TItem[]) => TItem[]
-): InfiniteData<TPage> | undefined => {
+export const updateInfiniteQuery = <TPage, TItem>({
+    oldData,
+    getContent,
+    setContent,
+    updater
+}: {
+    oldData: InfiniteData<TPage> | undefined;
+    getContent: (page: TPage) => TItem[];
+    setContent: (page: TPage, newContent: TItem[]) => TPage;
+    updater: (allItems: TItem[]) => TItem[];
+}): InfiniteData<TPage> | undefined => {
     if (!oldData) return oldData;
 
     const allItems = oldData.pages.flatMap((p) => getContent(p));

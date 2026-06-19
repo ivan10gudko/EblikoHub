@@ -4,6 +4,8 @@ import type { RoomShort } from "~/entities/room/model/room.types";
 import type { PageResponse } from "~/shared/types";
 import { notify } from "~/shared/lib";
 import { updateInfiniteQuery } from "~/shared/helpers/updateInfinityQuery";
+
+
 export const useRoomActions = (roomId: number) => {
   const queryClient = useQueryClient();
   const queryKey = ['rooms'];
@@ -23,10 +25,15 @@ export const useRoomActions = (roomId: number) => {
       notify.error("Something went wrong");
     }
   };
-  
+
   const updateRoomCache = (updater: (content: RoomShort[]) => RoomShort[]) => {
-    queryClient.setQueryData<InfiniteData<PageResponse<RoomShort>>>(queryKey, (old) =>
-      updateInfiniteQuery(old, (p) => p.content, (p, c) => ({ ...p, content: c }), updater)
+    queryClient.setQueryData<InfiniteData<PageResponse<RoomShort>>>(queryKey, (oldData) =>
+      updateInfiniteQuery({
+        oldData,
+        getContent: (page) => page.content,
+        setContent: (page, newContent) => ({ ...page, content: newContent }),
+        updater
+      })
     );
   };
 
@@ -36,7 +43,11 @@ export const useRoomActions = (roomId: number) => {
     onMutate: async () => {
       await queryClient.cancelQueries({ queryKey });
       const previousData = queryClient.getQueryData<InfiniteData<PageResponse<RoomShort>>>(queryKey);
-      updateRoomCache((c) => c.map(r => ({ ...r, isPinned: r.roomId === roomId })));
+
+      updateRoomCache((content) =>
+        content.map(r => ({ ...r, isPinned: r.roomId === roomId }))
+      );
+
       return { previousData };
     }
   });
@@ -47,7 +58,11 @@ export const useRoomActions = (roomId: number) => {
     onMutate: async () => {
       await queryClient.cancelQueries({ queryKey });
       const previousData = queryClient.getQueryData<InfiniteData<PageResponse<RoomShort>>>(queryKey);
-      updateRoomCache((c) => c.map(r => ({ ...r, isPinned: false })));
+
+      updateRoomCache((content) =>
+        content.map(r => ({ ...r, isPinned: false }))
+      );
+
       return { previousData };
     }
   });

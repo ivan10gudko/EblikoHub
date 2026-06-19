@@ -12,7 +12,6 @@ export const useReorderWatchlist = (titles: TitleRecord[], queryKey: unknown[], 
   const queryClient = useQueryClient();
   const [optimisticTitles, setOptimisticTitles] = useState<TitleRecord[]>(titles);
   const isMutating = useRef(false);
-  const optimisticOrderRef = useRef<number[]>(titles.map(t => t.titleId));
 
   useEffect(() => {
     if (isMutating.current) return;
@@ -21,7 +20,6 @@ export const useReorderWatchlist = (titles: TitleRecord[], queryKey: unknown[], 
       (t, i, arr) => arr.findIndex(x => x.titleId === t.titleId) === i
     );
     setOptimisticTitles(unique);
-    optimisticOrderRef.current = unique.map(t => t.titleId);
   }, [titles]);
 
   const reorder = async (sourceIndex: number, destinationIndex: number) => {
@@ -39,35 +37,33 @@ export const useReorderWatchlist = (titles: TitleRecord[], queryKey: unknown[], 
       await queryClient.invalidateQueries({ queryKey });
       return;
     }
-    moved.customOrder = newOrderValue;
+
     isMutating.current = true;
-    optimisticOrderRef.current = reordered.map(t => t.titleId);
     setOptimisticTitles(reordered);
 
     queryClient.setQueryData<InfiniteData<PageResponse<TitleRecord>>>(
       queryKey,
-      (oldData) => updateInfiniteQuery(
+      (oldData) => updateInfiniteQuery({
         oldData,
-        (page) => page.content, // Як дістати
-        (page, newContent) => ({ ...page, content: newContent }), // Як вставити
-        (allItems) => {
+        getContent: (page) => page.content,
+        setContent: (page, newContent) => ({ ...page, content: newContent }),
+        updater: (allItems) => {
           const movedItemIndex = allItems.findIndex(item => item.titleId === movedTitleId);
           if (movedItemIndex === -1) return allItems;
 
           const [movedItem] = allItems.splice(movedItemIndex, 1);
-          const reordered = [...allItems];
-          reordered.splice(destinationIndex, 0, { ...movedItem, customOrder: newOrderValue });
-          return reordered;
+          const nextReordered = [...allItems];
+          nextReordered.splice(destinationIndex, 0, { ...movedItem, customOrder: newOrderValue });
+          return nextReordered;
         }
-      )
+      })
     );
 
     try {
       await titleRecordService.patchCustomOrder(movedTitleId, newOrderValue);
     } catch {
-      optimisticOrderRef.current = titles.map(t => t.titleId);
       setOptimisticTitles(titles);
-      queryClient.invalidateQueries({ queryKey });
+      await queryClient.invalidateQueries({ queryKey });
       notify.error("Failed to save position");
     } finally {
       isMutating.current = false;

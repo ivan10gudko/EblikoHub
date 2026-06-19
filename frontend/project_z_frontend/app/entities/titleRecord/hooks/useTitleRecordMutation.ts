@@ -19,14 +19,14 @@ export const useTitleRecordMutation = (apiTitleId: number | undefined, initialDa
             if (updatedRecord) {
                 queryClient.setQueriesData<InfiniteData<PageResponse<TitleRecord>>>(
                     { queryKey: ['titles'] },
-                    (oldData) => updateInfiniteQuery(
+                    (oldData) => updateInfiniteQuery({
                         oldData,
-                        (page) => page.content,
-                        (page, newContent) => ({ ...page, content: newContent }),
-                        (allItems) => allItems.map(item =>
-                            item.titleId === updatedRecord!.titleId ? updatedRecord : item
+                        getContent: (page) => page.content,
+                        setContent: (page, newContent) => ({ ...page, content: newContent }),
+                        updater: (allItems) => allItems.map(item =>
+                            item.titleId === updatedRecord.titleId ? updatedRecord : item
                         )
-                    )
+                    })
                 );
             }
         },
