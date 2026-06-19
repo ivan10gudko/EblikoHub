@@ -51,7 +51,7 @@ const Header = () => {
             className="w-56"
           />
           <NavLink
-            to={`/rooms/${userId}`}
+            to={`/rooms/user/${userId}`}
             className={({ isActive }) =>
               isActive
                 ? "text-primary font-bold"
@@ -118,7 +118,7 @@ const Header = () => {
             </NavLink>
 
             <NavLink
-              to={`/rooms/${userId}`}
+              to={`/rooms/user/${userId}`}
               onClick={() => setBurgerMenuOpen(false)}
               className={burgerLinkStyle}
             >

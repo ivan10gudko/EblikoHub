@@ -4,7 +4,7 @@ import DarkModeIcon from "@mui/icons-material/DarkMode";
 import { useEffect } from "react";
 import { useThemeStore } from "../store/theme.store";
 interface ThemeToggleProps {
-  label: boolean;
+  label?: boolean;
 }
 export const ThemeToggle = ({ label = false }: ThemeToggleProps) => {
   const { theme, toggleTheme } = useThemeStore();
