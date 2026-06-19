@@ -28,7 +28,7 @@ export const WatchlistRowReadOnly = ({ title }: WatchlistRowReadOnlyProps) => {
       className={`flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-4 bg-card p-2 rounded-xl border transition-all duration-300 w-full min-w-0 ${themeClasses} ${title.pinned ? "border-primary/30" : ""
         }`}
     >
-      <div className="flex items-center flex-1 gap-3 min-w-0 overflow-hidden max-w-full">
+      <div className="flex items-center flex-1 gap-3 min-w-0 max-w-full">
         <div className="relative h-10 w-16 flex-shrink-0 transition-transform duration-500 hover:scale-[3.0] hover:z-10 cursor-pointer">
           <img
             src={title.imageUrl || "/defaultTitleRecordImage.jpg"}
