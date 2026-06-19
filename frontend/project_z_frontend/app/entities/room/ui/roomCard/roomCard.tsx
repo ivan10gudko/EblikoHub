@@ -2,7 +2,13 @@ import PushPinIcon from '@mui/icons-material/PushPin';
 import GroupIcon from '@mui/icons-material/Group';
 import type { RoomShort } from "~/entities/room/model/room.types";
 import { useRoomActions } from '../../hooks/useRoomActions';
-
+import { Dropdown } from '~/shared/ui/DropDown';
+import { DropdownItem } from '~/shared/ui/DropDown/DropDown';
+import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
+import { useRoomModalStore } from '../../store/roomModal.store';
+import { RoomActionsMenu } from '../roomActoinsMenu';
 interface RoomCardProps {
     room: RoomShort;
     onClick?: () => void;
@@ -26,18 +32,22 @@ export const RoomCard = ({ room, onClick }: RoomCardProps) => {
                 <h3 className="text-lg font-bold text-foreground truncate">{room.roomName}</h3>
 
                 <div className="flex items-center justify-between text-foreground-muted text-sm">
-
                     <div className="flex items-center gap-1.5">
-                        <GroupIcon className="text-sm text-foreground"/>
+                        <GroupIcon className="text-sm text-foreground" />
                         <span>{room.usersCount} members</span>
                     </div>
-                    <button
-                        onClick={handlePin}
-                        disabled={isPending}
-                        className="flex items-center justify-center p-1 rounded-lg hover:bg-background-muted transition-colors"
-                    >
-                        <PushPinIcon  className="text-sm text-foreground" />
-                    </button>
+
+                    <div className="flex items-center gap-1 opacity-100 sm:opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                        <button
+                            onClick={handlePin}
+                            disabled={isPending}
+                            className="flex items-center justify-center p-1 rounded-lg hover:bg-background-muted transition-colors"
+                        >
+                            <PushPinIcon className="text-sm text-foreground" />
+                        </button>
+
+                        <RoomActionsMenu room={room} />
+                    </div>
                 </div>
             </div>
         </div>

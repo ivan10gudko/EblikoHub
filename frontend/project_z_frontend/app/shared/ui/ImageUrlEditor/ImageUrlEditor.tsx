@@ -12,7 +12,7 @@ interface TitleImageEditorProps {
 
 const DEFAULT_IMAGE_PATH = "/defaultTitleRecordImage.jpg";
 
-export const TitleImageEditor = ({
+export const ImageUrlEditor = ({
   imageUrl,
   onImageChange,
   defaultImage = DEFAULT_IMAGE_PATH,
@@ -74,7 +74,7 @@ export const TitleImageEditor = ({
         <div className="flex items-center justify-between px-1">
           <label className="text-xs tracking-[0.2em] text-foreground flex items-center gap-2">
             <LinkIcon sx={{ fontSize: 14 }} className="text-primary" />
-            Poster Source URL
+            Source URL
           </label>
           {tempUrl && (
             <span

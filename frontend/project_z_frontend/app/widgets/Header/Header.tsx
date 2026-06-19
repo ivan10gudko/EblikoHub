@@ -44,7 +44,7 @@ const Header = () => {
 
                 <nav className="hidden sm:flex gap-6 items-center">
                     <SearchBar isLoading={isNavigating} onSearch={handleMainSearch} className="w-56" />
-                    <NavLink to={`/rooms/${userId}`} className={({ isActive }) => isActive ? "text-primary font-bold" : "hover:text-primary transition-colors"}>Rooms</NavLink>
+                    <NavLink to={`/rooms/user/${userId}`} className={({ isActive }) => isActive ? "text-primary font-bold" : "hover:text-primary transition-colors"}>Rooms</NavLink>
                     <NavLink to={watchlistPath} className="hover:text-primary transition-colors">Watchlist</NavLink>
                     {isAuth ? (
                         <NavLink to={`/profile/${userId}`}>
@@ -80,7 +80,7 @@ const Header = () => {
                             <span className="font-semibold text-lg text-foreground">Popular</span>
                         </NavLink>
 
-                        <NavLink to="/rooms" onClick={() => setBurgerMenuOpen(false)} className={burgerLinkStyle}>
+                        <NavLink to={`/rooms/user/${userId}`} onClick={() => setBurgerMenuOpen(false)} className={burgerLinkStyle}>
                             <MeetingRoomIcon className="text-primary" />
                             <span className="font-semibold text-lg text-foreground">Rooms</span>
                         </NavLink>

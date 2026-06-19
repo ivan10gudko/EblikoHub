@@ -42,21 +42,31 @@ export const TitleActionsMenu = ({
         }
       >
         {isOwn && (
-          <DropdownItem onClick={() => setIsEditOpen(true)}>
-            <EditIcon sx={{ fontSize: 16 }} /> Edit Record
+          <DropdownItem
+            onClick={() => setIsEditOpen(true)}
+            icon={<EditIcon sx={{ fontSize: 16 }} />}
+          >
+            Edit Record
           </DropdownItem>
         )}
-        
-        <DropdownItem onClick={() => setIsRatingsOpen(true)}>
-          <StarRoundedIcon sx={{ fontSize: 16 }} />
+
+        <DropdownItem
+          onClick={() => setIsRatingsOpen(true)}
+          icon={<StarRoundedIcon sx={{ fontSize: 16 }} />}
+        >
           Rating
         </DropdownItem>
-        <DropdownItem onClick={() => setIsSeasonsOpen(true)}>
-          <ViewListIcon sx={{ fontSize: 16 }} />
+
+        <DropdownItem
+          onClick={() => setIsSeasonsOpen(true)}
+          icon={<ViewListIcon sx={{ fontSize: 16 }} />}
+        >
           Seasons
         </DropdownItem>
+
         <div className="h-px bg-border my-1" />
-        {onDelete ? <DeleteDropdownItem onDelete={onDelete} /> : <></>}
+
+        {onDelete && <DeleteDropdownItem onDelete={onDelete} />}
       </Dropdown>
 
       <EditTitleModal

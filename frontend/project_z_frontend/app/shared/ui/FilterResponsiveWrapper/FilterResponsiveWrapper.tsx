@@ -7,12 +7,15 @@ interface FilterResponsiveWrapperProps {
   children: ReactNode;
   pageTitle: string;
   filterTitle?: string;
+  modal?: ReactNode;
+  actionButton?: ReactNode;
 }
 
 export const FilterResponsiveWrapper = ({
   children,
   pageTitle,
   filterTitle = "Filters",
+  actionButton,
 }: FilterResponsiveWrapperProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const close = () => setIsOpen(false);
@@ -51,20 +54,25 @@ export const FilterResponsiveWrapper = ({
           ${isOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}
         `}
         >
-          <div className="lg:hidden flex justify-between items-center p-5 border-b border-border bg-background-muted/50">
-            <span className="font-black uppercase tracking-wider text-foreground-muted text-xs">
-              {filterTitle}
-            </span>
-            <button
-              className="p-2 hover:bg-background-muted-hover rounded-xl transition-colors text-foreground-muted"
-              onClick={close}
-            >
-              <CloseIcon />
-            </button>
-          </div>
+          <div className="p-5 lg:p-0 lg:h-auto overflow-y-auto lg:overflow-visible flex flex-col gap-6">
+            <div className="lg:hidden flex justify-between items-center pt-25 p-5 border-b border-border bg-transparent">
+              <span className="font-black uppercase tracking-wider text-foreground text-xl">
+                {filterTitle}
+              </span>
+              <button
+                className="p-2 hover:bg-background-muted-hover rounded-xl transition-colors text-foreground"
+                onClick={close}
+              >
+                <CloseIcon />
+              </button>
+            </div>
+            <div>{children}</div>
 
-          <div className="p-5 lg:p-0 h-[calc(100%-70px)] lg:h-auto overflow-y-auto lg:overflow-visible">
-            {children}
+            {actionButton && (
+              <div className="px-5 lg:px-0 mt-auto pb-5">
+                {actionButton}
+              </div>
+            )}
           </div>
         </div>
       </aside>

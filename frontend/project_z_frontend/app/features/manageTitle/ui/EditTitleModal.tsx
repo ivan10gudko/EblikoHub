@@ -6,12 +6,12 @@ import { TitleType, titleTypeOptions } from "~/entities/titleRecord";
 import type { TitleRecord } from "~/entities/titleRecord";
 import { StatusSelect } from "~/entities/titleRecord";
 import { useUpdateTitleRecord } from "~/entities/titleRecord/hooks/useTitleRecordUpdateMutation";
-import { TitleImageEditor } from "~/features/manageTitle";
 import type { Status } from "~/shared/types/Status";
 import { CompactRate } from "~/shared/ui/CompactRate";
 import { Select } from "~/shared/ui/Select";
 import { notify } from "~/shared/lib/notify";
 import type { Rating } from "~/shared/types";
+import { ImageUrlEditor } from "~/shared/ui/ImageUrlEditor";
 
 interface EditTitleModalProps {
   title: TitleRecord;
@@ -108,7 +108,7 @@ export const EditTitleModal = ({
       maxWidth="max-w-xl"
     >
       <div className="space-y-8 p-2">
-        <TitleImageEditor imageUrl={imageUrl} onImageChange={setImageUrl} />
+        <ImageUrlEditor imageUrl={imageUrl} onImageChange={setImageUrl} />
 
         <div className="space-y-6">
           <div className="space-y-2">

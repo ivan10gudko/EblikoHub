@@ -17,6 +17,7 @@ export interface Room {
 
 export interface RoomCreateDto {
     roomName: string;
+    imageUrl:string | null;
     members: string[];
 }
 
@@ -25,7 +26,7 @@ export interface RoomShort {
     roomName: string;
     imageUrl: string;
     isPinned:boolean;
-    ownerId: string;
+    isOwner:boolean;
     usersCount: number;
 }
 

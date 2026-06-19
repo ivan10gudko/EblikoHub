@@ -89,6 +89,7 @@ public class RoomServiceImpl implements RoomService {
         return roomPage.map(room -> {
             RoomShortDto dto = roomShortMapper.mapTo(room);
             dto.setPinned(pinnedByRoomId.getOrDefault(room.getRoomId(), false));
+            dto.setOwner(room.getOwner().getUserId().equals(userId));
             return dto;
         });
     }
@@ -114,20 +115,32 @@ public class RoomServiceImpl implements RoomService {
         UUID ownerId = jwtService.extractUsername(token);
         UserEntity owner = userRepository.findById(ownerId)
                 .orElseThrow(() -> new ResourceNotFoundException("Owner not found"));
-
         RoomEntity roomEntity = RoomEntity.builder()
                 .roomName(dto.getRoomName())
                 .owner(owner)
                 .build();
         RoomEntity savedRoom = roomRepository.save(roomEntity);
 
-        if (dto.getMembers() != null) {
-            Iterable<UserEntity> membersIterable = userRepository.findAllById(dto.getMembers());
-            List<UserEntity> members = new ArrayList<>();
-            members = StreamSupport.stream(membersIterable.spliterator(), false)
+        List<RoomMemberEntity> memberEntities = new ArrayList<>();
 
+        RoomMemberEntity ownerMember = new RoomMemberEntity();
+        ownerMember.setRoom(savedRoom);
+        ownerMember.setReceiver(owner);
+        ownerMember.setSender(owner);
+        ownerMember.setStatus(RequestStatus.ACCEPTED);
+        ownerMember.setType(RequestType.OWNER);
+        memberEntities.add(ownerMember);
+
+        if (dto.getMembers() != null) {
+            List<UUID> memberIds = dto.getMembers().stream()
+                    .filter(id -> !id.equals(ownerId))
                     .collect(Collectors.toList());
-            List<RoomMemberEntity> memberEntities = members.stream().map(user -> {
+
+            List<UserEntity> members = StreamSupport
+                    .stream(userRepository.findAllById(memberIds).spliterator(), false)
+                    .collect(Collectors.toList());
+
+            List<RoomMemberEntity> inviteEntities = members.stream().map(user -> {
                 RoomMemberEntity member = new RoomMemberEntity();
                 member.setRoom(savedRoom);
                 member.setReceiver(user);
@@ -137,9 +150,11 @@ public class RoomServiceImpl implements RoomService {
                 return member;
             }).collect(Collectors.toList());
 
-            roomMemberRepository.saveAll(memberEntities);
-            savedRoom.setMembers(memberEntities);
+            memberEntities.addAll(inviteEntities);
         }
+
+        roomMemberRepository.saveAll(memberEntities);
+        savedRoom.setMembers(memberEntities);
 
         return roomMapper.mapTo(savedRoom);
     }
