@@ -60,3 +60,10 @@ export interface SameCriteriaRating{
     titles : Array<TitleShortDto>;
     avgRating : number;
 }
+export const TitleTypeOptionsColors: Record<TitleType, string> = {
+    [TitleType.ANIME]: "text-foreground",
+    [TitleType.MANGA]: "text-green-500",
+    [TitleType.SERIES]: "text-blue-500",
+    [TitleType.MOVIE]: "text-amber-500",
+    [TitleType.HENTAI]: "text-red-500",
+};

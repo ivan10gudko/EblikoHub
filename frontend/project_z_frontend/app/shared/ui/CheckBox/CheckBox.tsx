@@ -6,6 +6,7 @@ interface CheckboxProps extends Omit<ComponentProps<"input">, "onChange" | "valu
     onChange: (checked: boolean) => void;
     error?: string;
     themeVariant?: "light" | "dark";
+    labelClassName?: string;
 }
 
 const CHECKBOX_CLASSES = {
@@ -21,6 +22,7 @@ export const Checkbox: React.FC<CheckboxProps> = ({
     themeVariant = "light",
     className = "",
     error,
+    labelClassName = "",
     disabled,
     ...props
 }) => {
@@ -58,7 +60,7 @@ export const Checkbox: React.FC<CheckboxProps> = ({
                         ${checkboxClasses}
                     `}
                 >
-                   
+
                     <svg
                         className={`h-3.5 w-3.5 stroke-[#121212] stroke-[3.5] fill-none transition-all duration-200 ${checked ? "opacity-100 scale-100" : "opacity-0 scale-75"
                             }`}
@@ -73,13 +75,14 @@ export const Checkbox: React.FC<CheckboxProps> = ({
                 </div>
 
                 {label && (
-                    <span
-                        className={`text-sm font-medium leading-5 transition-colors peer-disabled:opacity-50 ${checkboxClasses.includes('text-') ? '' : "text-foreground"
-                            }`}
-                    >
-                        {label}
-                    </span>
-                )}
+    <span
+        className={`text-sm font-medium leading-5 transition-colors peer-disabled:opacity-50 ${labelClassName} ${
+            // Якщо ми явно передали labelClassName, то дефолтний колір text-foreground взагалі НЕ ставимо
+            labelClassName ? '' : "text-foreground"
+        }`}
+    >
+        {label}
+    </span>)}
             </label>
 
             {error && (
