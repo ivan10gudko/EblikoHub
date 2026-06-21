@@ -99,17 +99,19 @@ export const RatingNeighborsContent = ({ titleId, category, ratingValue, onClose
               <div
                 key={item.titleId}
                 ref={isCurrent ? currentItemRef : null}
-                className={`flex items-center justify-between px-2.5 py-1.5 rounded-md transition-all text-xs ${isCurrent
+                className={`flex items-center justify-between px-2.5 py-1.5 rounded-md transition-all text-xs gap-2 ${isCurrent
                   ? "bg-primary/20 border border-primary/40 font-black text-primary shadow-sm"
                   : "text-foreground/90 font-semibold hover:bg-border/30"
                   }`}
               >
-                <span className="truncate max-w-[160px] sm:max-w-[200px] md:max-w-[230px] flex items-center gap-1">
-                  {isCurrent && <span className="text-primary text-[10px]">➜</span>}
-                  {item.titleName}
+                
+                <span className="truncate flex items-center gap-1 flex-1 min-w-0">
+                  {isCurrent && <span className="text-primary text-[10px] flex-shrink-0">➜</span>}
+                  <span className="truncate">{item.titleName}</span>
                 </span>
 
-                <span className={`font-mono text-[11px] ${isCurrent ? "text-primary font-bold" : "text-foreground/70"}`}>
+                
+                <span className={`font-mono text-[11px] pl-4 flex-shrink-0 ${isCurrent ? "text-primary font-bold" : "text-foreground/70"}`}>
                   {item.ratingValue !== undefined && item.ratingValue !== null
                     ? item.ratingValue.toFixed(1)
                     : "0.0"}
