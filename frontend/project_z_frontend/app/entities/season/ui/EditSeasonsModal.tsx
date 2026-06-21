@@ -28,12 +28,14 @@ export const EditSeasonsModal = ({ titleId, isOpen, onClose, titleName, isOwn }:
     }, [isOpen, refetch]);
 
     useEffect(() => {
-        if (initialSeasons && isOpen) {
+        if (Array.isArray(initialSeasons) && isOpen) {
             const mapped = initialSeasons.map((s) => ({
                 ...s,
                 localId: s.seasonId ? String(s.seasonId) : `existing-${Math.random()}`
             }));
             setLocalSeasons(mapped);
+        } else if (!initialSeasons && isOpen) {
+            setLocalSeasons([]);
         }
     }, [initialSeasons, isOpen]);
 
@@ -68,9 +70,8 @@ export const EditSeasonsModal = ({ titleId, isOpen, onClose, titleName, isOwn }:
             onClose();
             return;
         }
-
         const cleanInitial = (initialSeasons || []).map(({ seasonId, name, status, rating }) => ({ seasonId, name, status, rating }));
-        const cleanLocal = localSeasons.map(({ seasonId, name, status, rating }) => ({ seasonId, name, status, rating }));
+        const cleanLocal = (localSeasons || []).map(({ seasonId, name, status, rating }) => ({ seasonId, name, status, rating }));
 
         const hasChanges = JSON.stringify(cleanInitial) !== JSON.stringify(cleanLocal);
 
@@ -123,7 +124,7 @@ export const EditSeasonsModal = ({ titleId, isOpen, onClose, titleName, isOwn }:
                             </div>
 
                             <div className="flex flex-col gap-3 pb-4">
-                                {localSeasons.length === 0 ? (
+                                {!localSeasons || localSeasons.length === 0 ? (
                                     <div className="text-center py-10 border-2 border-dashed border-border/20 rounded-3xl text-muted-foreground text-[11px] font-bold uppercase tracking-widest">
                                         Empty List
                                     </div>
