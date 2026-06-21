@@ -1,7 +1,7 @@
 import { UserSearchDropdown, UserShortRow, type UserProfile } from "~/entities/user";
-import { SearchBar } from "~/features/search";
 import { Button } from "~/shared/ui/Button";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
+import SearchBar from "~/shared/ui/SearchBar";
 interface MembersStepProps {
     addedUsers: UserProfile[];
     onSearch: (query: string) => void;

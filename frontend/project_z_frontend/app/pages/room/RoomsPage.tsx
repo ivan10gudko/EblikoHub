@@ -5,19 +5,18 @@ import {
   RoomFilters,
   RoomListGrid,
   useRoomFilterStore,
-  useRoomModalStore,
   useRoomsQuery,
 } from "~/entities/room";
 import { useMemo, useState } from "react";
 
 import { Button } from "~/shared/ui/Button";
 import { RoomModalManager } from "~/features/manageRooms";
+import { useRoomModal } from "~/features/manageRooms/ui/hooks/useRoomModal";
 
 
 export default function RoomsPage({ userId }: { userId: string | null }) {
   const { search, sortBy, order, setSearch, setSortFromUrl, setOrderFromUrl } =
     useRoomFilterStore();
-
   const filters = { search, sortBy, order };
 
   useSyncUrl(filters, {
@@ -25,7 +24,7 @@ export default function RoomsPage({ userId }: { userId: string | null }) {
     sortBy: setSortFromUrl,
     order: setOrderFromUrl,
   });
-  const { open } = useRoomModalStore();
+  const { open } = useRoomModal();
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
     useRoomsQuery(userId ?? null);
 
@@ -36,13 +35,16 @@ export default function RoomsPage({ userId }: { userId: string | null }) {
     );
   }, [data]);
 
+  const handleOpenAdd = () => {
+    open('add', '1');
+  };
   return (
     <div className="flex flex-col lg:flex-row gap-6 p-4 sm:p-8 max-w-[1400px] mx-auto min-h-screen bg-background-muted/30">
       <FilterResponsiveWrapper
         pageTitle="My Rooms"
         actionButton={
           <Button
-            onClick={() => open('add')}
+            onClick={handleOpenAdd}
             className="w-full flex items-center justify-center gap-2 bg-primary text-foreground py-3 rounded-xl"
           >
             <span>+ Add New Room</span>

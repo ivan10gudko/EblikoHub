@@ -9,6 +9,11 @@ export interface PaginationMeta {
         per_page: number;
     };
 }
+export interface SearchResponse<T> {
+    data: T[];
+    pagination: PaginationMeta;
+}
+
 //for our back
 export interface PageResponse<T> {
     content: T[];

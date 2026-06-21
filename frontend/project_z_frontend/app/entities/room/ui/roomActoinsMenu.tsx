@@ -1,10 +1,8 @@
 
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
-import EditIcon from "@mui/icons-material/Edit";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import { Dropdown } from '~/shared/ui/DropDown';
 import { DropdownItem } from '~/shared/ui/DropDown/DropDown';
-import { useRoomModalStore } from "../store/roomModal.store";
 import type { RoomShort } from "../model/room.types";
 import { useLeaveOrDeleteRoomMutation } from "../hooks/useLeaveOrDeleteRoomMutation";
 import { useState } from "react";
@@ -12,7 +10,6 @@ interface RoomActionsMenuProps {
     room: RoomShort;
 }
 export const RoomActionsMenu = ({ room }: RoomActionsMenuProps) => {
-  const { open } = useRoomModalStore();
   const { mutate: handleAction } = useLeaveOrDeleteRoomMutation(room.roomId, room.isOwner);
   const [isConfirming, setIsConfirming] = useState(false);
 
