@@ -14,31 +14,31 @@ export interface Anime {
             small_image_url?: string | null;
             medium_image_url?: string | null;
             maximum_image_url?: string | null;
-            };
         };
-        approved: boolean;
-        titles: Title[];
-        title: string;
-        title_english?: string | null;
-        title_japanese?: string | null;
-        type?: string | null;
-        source?: string | null;
-        episodes?: number | null;
-        status?: string | null;
-        airing?: boolean;
-        duration?: string | null;
-        rating?: string | null;
-        score?: number | null;
-        scored_by?: number | null;
-        rank?: number | null;
-        popularity?: number | null;
-        members?: number | null;
-        favorites?: number | null;
-        synopsis?: string | null;
-        year?: number | null;
-        genres: Genre[];
-        themes:Genre[];
-        [index:string]:any;
+    };
+    approved: boolean;
+    titles: Title[];
+    title: string;
+    title_english?: string | null;
+    title_japanese?: string | null;
+    type?: string | null;
+    source?: string | null;
+    episodes?: number | null;
+    status?: string | null;
+    airing?: boolean;
+    duration?: string | null;
+    rating?: string | null;
+    score?: number | null;
+    scored_by?: number | null;
+    rank?: number | null;
+    popularity?: number | null;
+    members?: number | null;
+    favorites?: number | null;
+    synopsis?: string | null;
+    year?: number | null;
+    genres: Genre[];
+    themes: Genre[];
+    [index: string]: any;
 }
 
 export interface Genre {
@@ -59,15 +59,15 @@ export interface ImageSet {
     large_image_url?: string | null;
 }
 
-export interface AnimeCardType{
+export interface AnimeCardType {
     id: number;
     title: string;
-    score:number;
+    score: number;
     img: string;
     year: number;
-    episodes:number;
+    episodes: number;
     genres: Array<Genre>,
-    airing:boolean,
+    airing: boolean,
 }
 
 
