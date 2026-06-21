@@ -22,15 +22,12 @@ const StatusFilter = () => {
         {statusOptions.map((opt) => {
           const isActive = status === opt.value || (opt.value === undefined && status === undefined);
 
-          // 1. Колір тексту, який ОСТАЄТЬСЯ ЗАВЖДИ. 
-          // Замість text-white ставимо text-foreground, щоб адаптувався під тему сайту.
           let textColor = "text-foreground"; 
           if (opt.value === Status.INPROGRESS) textColor = "text-amber-500";
           if (opt.value === Status.PLANNED)     textColor = "text-blue-500";
           if (opt.value === Status.WATCHED)     textColor = "text-green-500";
           if (opt.value === Status.DROPPED)     textColor = "text-red-500";
 
-          // 2. Колір ФОНУ та ТІНІ, який вмикається ТІЛЬКИ коли кнопка активна
           let activeBgAndShadow = "";
           if (isActive) {
             switch (opt.value) {
@@ -47,7 +44,6 @@ const StatusFilter = () => {
                 activeBgAndShadow = "bg-red-500/10 shadow-xs shadow-red-500/30";
                 break;
               default:
-                // Для активної кнопки "All" робимо фон primary і інвертуємо текст на білій темі (якщо треба)
                 activeBgAndShadow = "bg-primary !text-background shadow-xs shadow-yellow-100";
                 break;
             }
