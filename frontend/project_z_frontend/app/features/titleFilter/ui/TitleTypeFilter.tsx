@@ -1,6 +1,9 @@
 import React from "react";
 import { useTitleFilterStore } from "../store/titleFilter.store";
-import { titleTypeOptions, TitleTypeOptionsColors } from "~/entities/titleRecord"; // Додав імпорт TitleTypeOptionsColors
+import {
+  titleTypeOptions,
+  TitleTypeOptionsColors,
+} from "~/entities/titleRecord";
 import Checkbox from "~/shared/ui/CheckBox/CheckBox";
 
 const TypeFilter = () => {
@@ -13,7 +16,6 @@ const TypeFilter = () => {
       </label>
       <div className="flex flex-col gap-2.5 pl-1">
         {titleTypeOptions.map((opt) => {
-          // Отримуємо колір для поточного типу (наприклад, "text-emerald-500")
           const colorClass = TitleTypeOptionsColors[opt.value];
 
           return (
@@ -22,7 +24,7 @@ const TypeFilter = () => {
               label={opt.label}
               checked={types.includes(opt.value)}
               onChange={() => toggleType(opt.value)}
-              labelClassName={TitleTypeOptionsColors[opt.value]} // <- Передаємо колір суто для тексту
+              labelClassName={TitleTypeOptionsColors[opt.value]}
               className="transition-all duration-150 font-medium"
             />
           );
@@ -32,4 +34,4 @@ const TypeFilter = () => {
   );
 };
 
-export default TypeFilter; // Виправив описку з "TypeFilte"
+export default TypeFilter;
