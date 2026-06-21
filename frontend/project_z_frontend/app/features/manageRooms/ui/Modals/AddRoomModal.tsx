@@ -7,9 +7,10 @@ import { Button } from "~/shared/ui/Button";
 import { ImageUrlEditor } from "~/shared/ui/ImageUrlEditor";
 import { Input } from "~/shared/ui/Input";
 import Modal from "~/shared/ui/Modal/Modal";
-import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import { ModalFooter } from "~/shared/ui/Modal";
 import { useRoomMutation } from "~/entities/room";
+import { RoomInfoStep } from "./addRoomModalComponents/RoomInfoStep";
+import { MembersStep } from "./addRoomModalComponents/RoomMembersStep";
 
 interface AddRoomModalProps {
     isOpen: boolean;
@@ -23,6 +24,7 @@ export const AddRoomModal = ({ isOpen, onClose }: AddRoomModalProps) => {
         imageUrl: null,
     });
     const [searchQuery, setSearchQuery] = useState("");
+    const [step, setStep] = useState(1);
     const { searchResults, isLoading } = useUserSearch(searchQuery);
     const { createRoom, isCreating } = useRoomMutation();
     const [addedUsers, setAddedUsers] = useState<UserProfile[]>([]);
@@ -36,6 +38,15 @@ export const AddRoomModal = ({ isOpen, onClose }: AddRoomModalProps) => {
             }
         });
     };
+    const renderFooter = () => (
+        <ModalFooter
+            onCancel={step === 1 ? onClose : () => setStep(1)}
+            cancelLabel={step === 1 ? "Cancel" : "Back"}
+            onSave={step === 1 ? () => setStep(2) : handleSave}
+            isSaving={isCreating}
+            saveLabel={step === 1 ? "Next" : "Create Room"}
+        />
+    );
 
     const handleSelectUser = (user: UserProfile) => {
         if (!addedUsers.find(u => u.userId === user.userId)) {
@@ -49,67 +60,24 @@ export const AddRoomModal = ({ isOpen, onClose }: AddRoomModalProps) => {
         setFormData(prev => ({ ...prev, members: prev.members.filter(id => id !== userId) }));
     };
 
-    return (
-        <Modal isOpen={isOpen} onClose={onClose} title="Create New Room" maxWidth="max-w-4xl">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8 p-3 md:p-6">
-
-                <div className="space-y-4 md:space-y-6 overflow-y-auto custom-scrollbar">
-                    <ImageUrlEditor
-                        imageUrl={formData.imageUrl}
-                        onImageChange={(url) => setFormData(prev => ({ ...prev, imageUrl: url }))}
+        return (
+        <Modal isOpen={isOpen} onClose={onClose} title={`Create New Room (${step}/2)`} maxWidth="max-w-4xl">
+            <div className="p-3 md:p-6 min-h-[400px]">
+                {step === 1 ? (
+                    <RoomInfoStep formData={formData} setFormData={setFormData} />
+                ) : (
+                    <MembersStep
+                        addedUsers={addedUsers}
+                        onSearch={setSearchQuery}
+                        searchResults={searchResults}
+                        onSelect={handleSelectUser}
+                        onRemove={handleRemoveUser}
+                        isLoading={isLoading}
                     />
-
-                    <Input
-                        value={formData.roomName}
-                        onChange={(val) => setFormData(prev => ({ ...prev, roomName: val }))}
-                        placeholder="Enter room name..."
-                    />
-
-                    <div className="relative">
-                        <SearchBar
-                            onSearch={setSearchQuery}
-                            onChange={setSearchQuery}
-                            placeholder="Search users..."
-                            className="bg-card w-full"
-                        />
-                        {searchQuery && (
-                            <UserSearchDropdown
-                                results={searchResults}
-                                onSelect={handleSelectUser}
-                                onClose={() => setSearchQuery("")}
-                                isLoading ={isLoading}
-                            />
-                        )}
-                    </div>
-                </div>
-
-                <div className="bg-background-muted/30 rounded-xl p-3 md:p-4 border border-border">
-                    <h4 className="text-[10px] md:text-xs font-bold uppercase text-muted-foreground mb-3">
-                        Added Members ({addedUsers.length})
-                    </h4>
-
-                    <div className="space-y-2 max-h-[200px] md:max-h-[300px] overflow-y-auto custom-scrollbar">
-                        {addedUsers.length === 0 ? (
-                            <p className="text-xs text-muted-foreground italic text-center py-4">No users added yet</p>
-                        ) : (
-                            addedUsers.map(user => (
-                                <UserShortRow key={user.userId} user={user} action={
-                                    <Button onClick={() => handleRemoveUser(user.userId)} className="text-danger p-1">
-                                        <DeleteOutlineIcon fontSize="small" />
-                                    </Button>
-                                } />
-                            ))
-                        )}
-                    </div>
-                </div>
+                )}
             </div>
 
-            <ModalFooter
-                onCancel={onClose}
-                onSave={handleSave}
-                isSaving={isCreating}
-                saveLabel="Create Room"
-            />
+            {renderFooter()}
         </Modal>
     );
 };

@@ -1,6 +1,6 @@
 import { Button } from "~/shared/ui/Button";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
-import SearchOffIcon from "@mui/icons-material/SearchOff"; // Додаємо іконку для порожнього стану
+import SearchOffIcon from "@mui/icons-material/SearchOff";
 import type { UserProfile } from "../model/user.types";
 import { UserAvatar } from "./UserAvatar";
 

@@ -32,6 +32,40 @@ const Header = () => {
   const burgerLinkStyle =
     "flex items-center gap-4 w-full p-4 rounded-2xl bg-background-muted border border-border/50 hover:border-primary/50 hover:scale-[1.02] transition-all duration-200 active:scale-95 group";
 
+  const burgerNavItems = [
+    {
+      to: "/",
+      label: "Popular",
+      icon: <WhatshotIcon className="text-primary" />,
+      variant: "link"
+    },
+    {
+      to: `/rooms/user/${userId}`,
+      label: "Rooms",
+      icon: <MeetingRoomIcon className="text-primary" />,
+      variant: "link",
+      activeStyle: "text-primary font-bold",
+      defaultStyle: "hover:text-primary transition-colors"
+    },
+    {
+      to: watchlistPath,
+      label: "Watchlist",
+      icon: <FormatListBulletedIcon className="text-primary" />,
+      variant: "link",
+      defaultStyle: "hover:text-primary transition-colors"
+    },
+  ];
+
+  const profileItem = isAuth
+    ? { to: `/profile/${userId}`, label: "Profile Settings", icon: <PersonIcon className="text-primary" />, variant: "link" }
+    : { to: "auth", label: "Sign In", icon: null, variant: "button" };
+
+  const allBurgerItems = [...burgerNavItems, profileItem];
+
+  const desctopNavLinks = [
+    { to: `/rooms/user/${userId}`, label: "Rooms", activeStyle: "text-primary font-bold", defaultStyle: "hover:text-primary transition-colors" },
+    { to: watchlistPath, label: "Watchlist", defaultStyle: "hover:text-primary transition-colors" },
+  ];
   return (
     <header className="py-4 px-6 md:px-14 lg:px-24 w-full border-b flex justify-between items-center bg-background/80 backdrop-blur-md sticky top-0 z-[1000]">
       <NavLink to="/" className="flex items-center gap-2">
@@ -50,22 +84,17 @@ const Header = () => {
             onSearch={handleMainSearch}
             className="w-56"
           />
-          <NavLink
-            to={`/rooms/user/${userId}`}
-            className={({ isActive }) =>
-              isActive
-                ? "text-primary font-bold"
-                : "hover:text-primary transition-colors"
-            }
-          >
-            Rooms
-          </NavLink>
-          <NavLink
-            to={watchlistPath}
-            className="hover:text-primary transition-colors"
-          >
-            Watchlist
-          </NavLink>
+          {desctopNavLinks.map((item) => (
+            <NavLink
+              key={item.label}
+              to={item.to}
+              className={({ isActive }) =>
+                isActive && item.activeStyle ? item.activeStyle : item.defaultStyle
+              }
+            >
+              {item.label}
+            </NavLink>
+          ))}
           {isAuth ? (
             <NavLink to={`/profile/${userId}`}>
               <HeaderAvatar
@@ -95,72 +124,32 @@ const Header = () => {
         </div>
 
         <div
-          className={`fixed w-full h-screen inset-0 top-[73px] bg-card/60 backdrop-blur-xl z-[999] transition-all duration-300 flex justify-center p-6 ${
-            burgerMenuOpen
-              ? "opacity-100 pointer-events-auto"
-              : "opacity-0 pointer-events-none translate-y-4"
-          }`}
+          className={`fixed w-full h-screen inset-0 top-[73px] bg-card/60 backdrop-blur-xl z-[999] transition-all duration-300 flex justify-center p-6 ${burgerMenuOpen
+            ? "opacity-100 pointer-events-auto"
+            : "opacity-0 pointer-events-none translate-y-4"
+            }`}
           onClick={() => setBurgerMenuOpen(false)}
         >
           <nav
             className="w-full max-w-sm flex flex-col gap-3"
             onClick={(e) => e.stopPropagation()}
           >
-            <NavLink
-              to="/"
-              onClick={() => setBurgerMenuOpen(false)}
-              className={burgerLinkStyle}
-            >
-              <WhatshotIcon className="text-primary group-hover:animate-pulse" />
-              <span className="font-semibold text-lg text-foreground">
-                Popular
-              </span>
-            </NavLink>
-
-            <NavLink
-              to={`/rooms/user/${userId}`}
-              onClick={() => setBurgerMenuOpen(false)}
-              className={burgerLinkStyle}
-            >
-              <MeetingRoomIcon className="text-primary" />
-              <span className="font-semibold text-lg text-foreground">
-                Rooms
-              </span>
-            </NavLink>
-
-            <NavLink
-              to={watchlistPath}
-              onClick={() => setBurgerMenuOpen(false)}
-              className={burgerLinkStyle}
-            >
-              <FormatListBulletedIcon className="text-primary" />
-              <span className="font-semibold text-lg text-foreground">
-                Watchlist
-              </span>
-            </NavLink>
-
-            <div className="pb-10">
-              {isAuth ? (
-                <NavLink
-                  to={`/profile/${userId}`}
-                  onClick={() => setBurgerMenuOpen(false)}
-                  className={burgerLinkStyle}
-                >
-                  <PersonIcon className="text-primary" />
-                  <span className="font-semibold text-lg text-foreground">
-                    Profile Settings
-                  </span>
-                </NavLink>
-              ) : (
-                <NavLink
-                  to="auth"
-                  onClick={() => setBurgerMenuOpen(false)}
-                  className="flex justify-center w-full bg-primary text-primary-foreground py-4 rounded-2xl font-bold text-xl shadow-lg shadow-primary/20"
-                >
-                  Sign In
-                </NavLink>
-              )}
-            </div>
+            {allBurgerItems.map((item) => (
+              <NavLink
+                key={item.label}
+                to={item.to}
+                onClick={() => setBurgerMenuOpen(false)}
+                className={item.variant === "button"
+                  ? "flex justify-center w-full bg-primary text-primary-foreground py-4 rounded-2xl font-bold text-xl shadow-lg shadow-primary/20"
+                  : burgerLinkStyle
+                }
+              >
+                {item.icon}
+                <span className="font-semibold text-lg text-foreground">
+                  {item.label}
+                </span>
+              </NavLink>
+            ))}
           </nav>
         </div>
       </div>

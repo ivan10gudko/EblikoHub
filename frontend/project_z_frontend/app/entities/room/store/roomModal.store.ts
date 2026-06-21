@@ -2,8 +2,8 @@ import { create } from 'zustand';
 
 type ModalState = {
   activeRoomId: number | null;
-  type: 'edit' | 'delete' | 'add' |null;
-  open: (type: 'edit' | 'delete' |'add' , roomId?: number) => void;
+  type: 'edit' | 'delete' | 'add' | null;
+  open: (type: 'edit' | 'delete' | 'add', roomId?: number) => void;
   close: () => void;
 };
 

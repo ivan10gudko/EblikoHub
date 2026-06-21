@@ -3,3 +3,4 @@ export {Status,statusOptions,statusColorConfig} from "./Status";
 export type {Rating} from "./Rating";
 export {RequestStatus} from "./RequestStatus";
 export type {RequestType} from "./RequestType";
+export type {ModalType} from "./ModalType";
