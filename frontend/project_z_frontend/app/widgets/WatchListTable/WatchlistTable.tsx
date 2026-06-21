@@ -12,12 +12,14 @@ import { PinnedWatchlistRow } from "./WatchlistRow/pinnedWatchlistRow";
 import { PinnedWatchlistRowReadOnly } from "./WatchlistRow/pinnedWatchlistRowReadOnly";
 import { WatchlistRowReadOnly } from "./WatchlistRow/WatchlistRowReadOnly";
 import { AddNewButton } from "~/shared/ui/AddNewButton";
+
 interface WatchlistTableProps {
   titles: TitleRecord[];
   isLoading?: boolean;
   isOwn: boolean;
   queryKey: unknown[];
 }
+
 export const WatchlistTable = ({ titles, isLoading, isOwn, queryKey }: WatchlistTableProps) => {
   const [searchParams] = useSearchParams();
   const { userId } = useParams<{ userId: string }>();
@@ -26,6 +28,9 @@ export const WatchlistTable = ({ titles, isLoading, isOwn, queryKey }: Watchlist
   const isFiltered = !!searchParams.get("search") || !!searchParams.get("status");
   const isDragable = isCustomOrder && !isFiltered;
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  
+  const showNumber = !isDragable;
 
   const { reorder, optimisticTitles } = useReorderWatchlist(titles, queryKey, userId);
 
@@ -48,20 +53,28 @@ export const WatchlistTable = ({ titles, isLoading, isOwn, queryKey }: Watchlist
       <AddNewButton onClick={() => setIsModalOpen(true)} placeholder="title" />
     );
   }
+
+ 
   if (!isOwn) {
     return (
       <div className="flex flex-col gap-2 w-full">
         {pinnedTitle && <PinnedWatchlistRowReadOnly title={pinnedTitle} />}
 
         <div className="flex flex-col gap-2 w-full">
-          {regularTitles.map((title) => (
-            <WatchlistRowReadOnly key={String(title.titleId)} title={title} />
+          {regularTitles.map((title, index) => (
+            <WatchlistRowReadOnly 
+              key={String(title.titleId)} 
+              title={title} 
+              index={index}
+              showNumber={showNumber}
+            />
           ))}
         </div>
       </div>
     );
   }
 
+  
   return (
     <div className="flex flex-col gap-2 w-full">
       <AddNewButton onClick={() => setIsModalOpen(true)} placeholder="title" />
@@ -87,10 +100,13 @@ export const WatchlistTable = ({ titles, isLoading, isOwn, queryKey }: Watchlist
                     <div
                       ref={provided.innerRef}
                       {...provided.draggableProps}
+                      style={provided.draggableProps.style as React.CSSProperties} // <- ТУТ ВИПРАВЛЕНО ЕРОР
                       className="w-full"
                     >
                       <WatchlistRow
                         title={title}
+                        index={index}
+                        showNumber={showNumber}
                         dragHandleProps={isDragable ? provided.dragHandleProps : undefined}
                       />
                     </div>
