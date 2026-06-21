@@ -1,14 +1,10 @@
 import { useState } from "react";
 import type { RoomCreateDto } from "~/entities/room/model/room.types";
-import { UserSearchDropdown, UserShortRow, type UserProfile } from "~/entities/user";
+import {type UserProfile } from "~/entities/user";
 import { useUserSearch } from "~/entities/user/hooks/useUserSearch";
-import { SearchBar } from "~/features/search";
-import { Button } from "~/shared/ui/Button";
-import { ImageUrlEditor } from "~/shared/ui/ImageUrlEditor";
-import { Input } from "~/shared/ui/Input";
 import Modal from "~/shared/ui/Modal/Modal";
 import { ModalFooter } from "~/shared/ui/Modal";
-import { useRoomMutation } from "~/entities/room";
+import { useRoomModalStore, useRoomMutation } from "~/entities/room";
 import { RoomInfoStep } from "./addRoomModalComponents/RoomInfoStep";
 import { MembersStep } from "./addRoomModalComponents/RoomMembersStep";
 
@@ -24,7 +20,7 @@ export const AddRoomModal = ({ isOpen, onClose }: AddRoomModalProps) => {
         imageUrl: null,
     });
     const [searchQuery, setSearchQuery] = useState("");
-    const [step, setStep] = useState(1);
+    const { step, setStep } = useRoomModalStore();
     const { searchResults, isLoading } = useUserSearch(searchQuery);
     const { createRoom, isCreating } = useRoomMutation();
     const [addedUsers, setAddedUsers] = useState<UserProfile[]>([]);

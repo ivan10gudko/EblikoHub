@@ -2,7 +2,7 @@ import { useRoomActions } from "../../hooks/useRoomActions";
 import type { RoomShort } from "../../model/room.types";
 import PushPinIcon from '@mui/icons-material/PushPin';
 import GroupIcon from '@mui/icons-material/Group';
-import { RoomActionsMenu } from '../roomActoinsMenu'; // Імпортуємо меню дій
+import { RoomActionsMenu } from '../roomActoinsMenu';
 
 interface RoomCardProps {
     room: RoomShort;
@@ -18,8 +18,8 @@ export const PinnedRoomCard = ({ room, onClick }: RoomCardProps) => {
     };
 
     return (
-        <div onClick={onClick} className="group flex flex-col w-full rounded-2xl border-2 border-primary bg-card shadow-lg shadow-primary/10 transition-all cursor-pointer">
-            <div className="relative h-40 w-full overflow-hidden hover:scale-[1.3] hover:z-10 duration-500 rounded-t-2xl transition-transform hover:translate-y-5">
+        <div onClick={onClick} className="group flex flex-col w-full rounded-b-2xl border-2 border-primary bg-card shadow-lg shadow-primary/10 transition-all cursor-pointer">
+            <div className="relative h-40 w-full overflow-hidden hover:scale-[1.3] hover:z-10 duration-500 transition-transform hover:translate-y-5">
                 <img src={room.imageUrl || DEFAULT_IMAGE_PATH} alt={room.roomName} className="w-full h-full object-cover" />
             </div>
             

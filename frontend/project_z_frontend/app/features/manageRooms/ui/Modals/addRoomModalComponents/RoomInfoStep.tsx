@@ -10,6 +10,7 @@ interface RoomInfoStepProps {
 export const RoomInfoStep = ({ formData, setFormData }: RoomInfoStepProps) => (
     <div className="space-y-6">
         <ImageUrlEditor
+            variant="landscape"
             imageUrl={formData.imageUrl}
             onImageChange={(url) => setFormData((prev: any) => ({ ...prev, imageUrl: url }))}
         />

@@ -2,12 +2,6 @@ import PushPinIcon from '@mui/icons-material/PushPin';
 import GroupIcon from '@mui/icons-material/Group';
 import type { RoomShort } from "~/entities/room/model/room.types";
 import { useRoomActions } from '../../hooks/useRoomActions';
-import { Dropdown } from '~/shared/ui/DropDown';
-import { DropdownItem } from '~/shared/ui/DropDown/DropDown';
-import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
-import { useRoomModalStore } from '../../store/roomModal.store';
 import { RoomActionsMenu } from '../roomActoinsMenu';
 interface RoomCardProps {
     room: RoomShort;
@@ -24,7 +18,7 @@ export const RoomCard = ({ room, onClick }: RoomCardProps) => {
     };
 
     return (
-        <div onClick={onClick} className="group flex flex-col w-full rounded-2xl border border-border bg-card transition-all hover:border-primary cursor-pointer">
+        <div onClick={onClick} className="group flex flex-col w-full rounded-b-2xl border border-border bg-card transition-all hover:border-primary cursor-pointer">
             <div className="relative h-40 w-full overflow-hidden hover:scale-[1.3] hover:z-10 duration-500 transition-transform hover:translate-y-5 ">
                 <img src={room.imageUrl || DEFAULT_IMAGE_PATH} alt={room.roomName} className="w-full h-full object-cover" />
             </div>
