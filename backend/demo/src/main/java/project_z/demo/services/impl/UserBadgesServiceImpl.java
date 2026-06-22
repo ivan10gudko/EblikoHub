@@ -14,10 +14,9 @@ import project_z.demo.enums.UserAboutType;
 import project_z.demo.repositories.UserBadgesRepository;
 import project_z.demo.services.UserBadgesService;
 
-
 @Service
 @RequiredArgsConstructor
-public class UserBadgesServiceImpl implements UserBadgesService{
+public class UserBadgesServiceImpl implements UserBadgesService {
 
     private final UserBadgesRepository userBadgesRepository;
     private final Mapper<UserBadgesEntity, UserBadgesDetailsDto> userBadgesMapper;
@@ -26,6 +25,15 @@ public class UserBadgesServiceImpl implements UserBadgesService{
     @Transactional(readOnly = true)
     public List<UserBadgesDetailsDto> findUsersByBadgeType(UserAboutType type) {
         return userBadgesRepository.findByType(type)
+                .stream()
+                .map(userBadgesMapper::mapTo)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<UserBadgesDetailsDto> findAll() {
+        return userBadgesRepository.findAll()
                 .stream()
                 .map(userBadgesMapper::mapTo)
                 .collect(Collectors.toList());

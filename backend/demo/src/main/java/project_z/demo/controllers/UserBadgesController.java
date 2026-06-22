@@ -20,11 +20,18 @@ public class UserBadgesController {
 
     private final UserBadgesService userBadgesService;
 
-    @GetMapping
+    @GetMapping(path ="/type")
     public ResponseEntity<List<UserBadgesDetailsDto>> getUsersByBadgeType(
             @RequestParam UserAboutType type) {
         
         List<UserBadgesDetailsDto> badges = userBadgesService.findUsersByBadgeType(type);
+        return ResponseEntity.ok(badges);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<UserBadgesDetailsDto>> getUsersByBadgeType() {
+        
+        List<UserBadgesDetailsDto> badges = userBadgesService.findAll();
         return ResponseEntity.ok(badges);
     }
 }

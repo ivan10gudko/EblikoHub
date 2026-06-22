@@ -10,4 +10,5 @@ import project_z.demo.enums.UserAboutType;
 @Service
 public interface UserBadgesService {
     List<UserBadgesDetailsDto> findUsersByBadgeType(UserAboutType type);
+    List<UserBadgesDetailsDto> findAll();
 }
