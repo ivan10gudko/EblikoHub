@@ -2,7 +2,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { roomService } from "~/entities/room/api/roomService";
 import { notify } from "~/shared/lib";
 
-export const useLeaveOrDeleteRoomMutation = (roomId: number, isOwner: boolean) => {
+export const useRemoveRoomMutation = (roomId: number, isOwner: boolean) => {
   const queryClient = useQueryClient();
 
   return useMutation({

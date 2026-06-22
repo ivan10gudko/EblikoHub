@@ -4,13 +4,13 @@ import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import { Dropdown } from '~/shared/ui/DropDown';
 import { DropdownItem } from '~/shared/ui/DropDown/DropDown';
 import type { RoomShort } from "../model/room.types";
-import { useLeaveOrDeleteRoomMutation } from "../hooks/useLeaveOrDeleteRoomMutation";
+import { useRemoveRoomMutation } from "../hooks/useRemoveRoomMutation";
 import { useState } from "react";
 interface RoomActionsMenuProps {
     room: RoomShort;
 }
 export const RoomActionsMenu = ({ room }: RoomActionsMenuProps) => {
-  const { mutate: handleAction } = useLeaveOrDeleteRoomMutation(room.roomId, room.isOwner);
+  const { mutate: handleAction } = useRemoveRoomMutation(room.roomId, room.isOwner);
   const [isConfirming, setIsConfirming] = useState(false);
 
   return (

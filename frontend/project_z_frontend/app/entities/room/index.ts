@@ -8,4 +8,4 @@ export {RoomCardWrapper} from "./ui/roomCard/roomCardWrapper";
 export {useRoomMutation} from "./hooks/useRoomMutation";
 export {RoomListGrid} from "./ui/roomsListGrid";
 export * from './model/room.types';
-export {useLeaveOrDeleteRoomMutation} from "./hooks/useLeaveOrDeleteRoomMutation";
+export {useRemoveRoomMutation} from "./hooks/useRemoveRoomMutation";
