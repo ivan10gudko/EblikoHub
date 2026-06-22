@@ -1,5 +1,5 @@
 import type { FriendActionType, PendingFriendRequest } from "../../types/friends.types";
-import { FriendCard } from "../FriendCard";
+import { FriendCard } from "../FriendCards/FriendCard";
 
 interface SentInvitesTabProps {
     sentRequests: PendingFriendRequest[];

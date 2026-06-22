@@ -1,8 +1,8 @@
 
 import { InfiniteScrollLoader } from "~/shared/ui/infinityScroll";
 import type { FriendActionType } from "../../types/friends.types";
-import { FriendCardAdd } from "../AddFriendCard";
 import { useUserFriendshipSearch } from "~/entities/friendship/hooks/useFriendshipSearch";
+import { FriendCardAdd } from "../FriendCards/AddFriendCard";
 
 
 interface AddFriendTabProps {

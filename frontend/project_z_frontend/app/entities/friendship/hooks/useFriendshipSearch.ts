@@ -21,7 +21,7 @@ export const useUserFriendshipSearch = (query: string) => {
         },
 
         enabled: query.trim().length > 0,
-        
+        staleTime: 1000 * 60 * 2,
 
         refetchOnWindowFocus: false,
     });

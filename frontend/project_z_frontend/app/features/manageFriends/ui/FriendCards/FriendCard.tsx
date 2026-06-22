@@ -6,7 +6,7 @@ import CheckIcon from "@mui/icons-material/Check";
 import ClearIcon from "@mui/icons-material/Clear";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import PersonAddDisabledIcon from "@mui/icons-material/PersonAddDisabled";
-import type { FriendActionType, FriendCardVariant } from "../types/friends.types";
+import type { FriendActionType, FriendCardVariant } from "../../types/friends.types";
 
 interface FriendCardProps {
     user: UserProfile & { friendshipId?: string };
