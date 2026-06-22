@@ -1,4 +1,4 @@
-import { Link } from "react-router"; // Імпортуємо Link для навігації
+import { Link } from "react-router";
 import { UserAvatar, type UserProfile } from "~/entities/user";
 import { Button } from "~/shared/ui/Button";
 import PersonRemoveIcon from "@mui/icons-material/PersonRemove";

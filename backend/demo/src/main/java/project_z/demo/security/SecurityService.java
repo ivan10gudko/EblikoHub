@@ -39,8 +39,12 @@ public class SecurityService {
 
     public boolean isFriendshipMember(String token, UUID friendshipId) {
         UUID currentUserId = jwtService.extractUsername(token);
+        System.out.println("  - Friendship ID: " + friendshipId);
+        System.out.println("  - Current User ID: " + currentUserId);
+        boolean isMember = friendshipRepository.isUserMemberOfFriendship(friendshipId, currentUserId);
+        System.out.println("  - Result: " + isMember);
 
-        return friendshipRepository.isUserMemberOfFriendship(friendshipId, currentUserId);
+        return isMember;
     }
 
     public boolean canAcceptFriendRequest(String token, UUID senderId) {

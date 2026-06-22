@@ -1,8 +1,10 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient, type InfiniteData } from "@tanstack/react-query";
 import { notify } from "~/shared/lib";
 import { friendshipService } from "~/entities/friendship/api/friendshipService";
 import type { FriendActionType } from "../types/friends.types";
-
+import { RequestStatus, type PageResponse } from "~/shared/types";
+import { updateInfiniteQuery } from "~/shared/helpers/updateInfinityQuery";
+import type { UserDtoWithFriendshipStatus } from "~/entities/friendship";
 
 const getErrorMessage = (error: any, defaultMessage: string): string => {
     return error?.response?.data?.message || error?.message || defaultMessage;
@@ -10,6 +12,46 @@ const getErrorMessage = (error: any, defaultMessage: string): string => {
 
 export const useFriends = (userId: string, activeTab: string) => {
     const queryClient = useQueryClient();
+
+    const updateSearchCache = (id: string, actionType: FriendActionType) => {
+        queryClient.setQueriesData<InfiniteData<PageResponse<UserDtoWithFriendshipStatus>>>(
+            { queryKey: ["user_friendship_search"], exact: false },
+            (oldData) => {
+                if (!oldData) return undefined;
+
+                return updateInfiniteQuery<PageResponse<UserDtoWithFriendshipStatus>, UserDtoWithFriendshipStatus>({
+                    oldData,
+                    getContent: (page) => page.content,
+                    setContent: (page, newContent) => ({ ...page, content: newContent }),
+                    updater: (allItems) => allItems.map((user) =>
+                        (user.userId === id || user.friendshipId === id)
+                            ? {
+                                ...user,
+                                friendshipStatus: actionType === "send" ? RequestStatus.PENDING : RequestStatus.NONE,
+                                friendshipId: actionType === "send" ? user.friendshipId : null
+                            }
+                            : user
+                    )
+                });
+            }
+        );
+    };
+
+    const getMutationOptions = (actionType: FriendActionType) => ({
+        onMutate: async (id: string) => {
+            updateSearchCache(id, actionType);
+
+            return {};
+        },
+        onError: (err: any) => {
+            queryClient.invalidateQueries({ queryKey: ["user_friendship_search"] });
+
+            notify.error(getErrorMessage(err, "Action failed"));
+        },
+        onSettled: () => {
+            invalidateAll();
+        }
+    });
 
     const { data: counts } = useQuery({
         queryKey: ["friendship_counts", userId],
@@ -63,27 +105,27 @@ export const useFriends = (userId: string, activeTab: string) => {
     };
 
     const sendRequestMutation = useMutation({
-        mutationFn: (receiverId: string) => friendshipService.sendFriendRequest(receiverId),
-        onSuccess: () => { invalidateAll(); notify.success("Friend request sent!"); },
-        onError: (error) => notify.error(getErrorMessage(error, "Failed to send friend request"))
+        mutationFn: (id: string) => friendshipService.sendFriendRequest(id),
+        ...getMutationOptions("send"),
+        onSuccess: () => notify.success("Friend request sent!")
     });
 
     const acceptRequestMutation = useMutation({
-        mutationFn: (senderId: string) => friendshipService.acceptFriendRequest(senderId),
-        onSuccess: () => { invalidateAll(); notify.success("Friend request accepted"); },
-        onError: (error) => notify.error(getErrorMessage(error, "Failed to accept friend request"))
+        mutationFn: (id: string) => friendshipService.acceptFriendRequest(id),
+        ...getMutationOptions("accept"),
+        onSuccess: () => notify.success("Friend request accepted")
     });
 
     const rejectRequestMutation = useMutation({
-        mutationFn: (senderId: string) => friendshipService.rejectFriendRequest(senderId),
-        onSuccess: () => { invalidateAll(); notify.success("Friend request rejected"); },
-        onError: (error) => notify.error(getErrorMessage(error, "Failed to reject friend request"))
+        mutationFn: (id: string) => friendshipService.rejectFriendRequest(id),
+        ...getMutationOptions("reject"),
+        onSuccess: () => notify.success("Friend request rejected")
     });
 
     const deleteFriendshipMutation = useMutation({
-        mutationFn: (friendshipId: string) => friendshipService.deleteFriendshipById(friendshipId),
-        onSuccess: () => { invalidateAll(); notify.success("Action processed successfully"); },
-        onError: (error) => notify.error(getErrorMessage(error, "Failed to delete friendship connection"))
+        mutationFn: (id: string) => friendshipService.deleteFriendshipById(id),
+        ...getMutationOptions("delete"),
+        onSuccess: () => notify.success("Action processed successfully")
     });
 
     const isPendingGlobal =
@@ -99,12 +141,7 @@ export const useFriends = (userId: string, activeTab: string) => {
             reject: rejectRequestMutation,
             send: sendRequestMutation,
         };
-
-        const mutation = mutations[actionType];
-
-        if (mutation) {
-            mutation.mutate(id);
-        }
+        mutations[actionType]?.mutate(id);
     };
 
     return {

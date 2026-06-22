@@ -5,21 +5,29 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
+import project_z.demo.JavaUtil.PagingHelper;
 import project_z.demo.JavaUtil.PatchHelper;
 import project_z.demo.Mappers.Mapper;
+import project_z.demo.Mappers.impl.ObjectMappers.FriendRequestMapper;
 import project_z.demo.common.Exceptions.FriendshipConflictException;
 import project_z.demo.common.Exceptions.ResourceNotFoundException;
 import project_z.demo.common.Exceptions.SelfFriendRequestException;
+import project_z.demo.common.QueryParameters.FriendshipQueryParameters;
 import project_z.demo.dto.FriendshipDtos.FriendRequestDto;
 import project_z.demo.dto.FriendshipDtos.FriendshipCountsDto;
 import project_z.demo.dto.FriendshipDtos.FriendshipDetailsDto;
 import project_z.demo.dto.FriendshipDtos.FriendshipPartialUpdateDto;
 import project_z.demo.dto.UserDtos.UserDto;
+import project_z.demo.dto.UserDtos.UserDtoWithFriendshipStatus;
+import project_z.demo.dto.UserDtos.UserShortDto;
 import project_z.demo.entity.FriendshipEntity;
 import project_z.demo.entity.UserEntity;
 import project_z.demo.enums.RequestStatus;
@@ -36,6 +44,9 @@ public class FriendshipServiceImpl implements FriendshipService {
     private final UserRepository userRepository;
     private final Mapper<FriendshipEntity, FriendshipDetailsDto> friendshipMapper;
     private final Mapper<UserEntity, UserDto> userMapper;
+    private final Mapper<Object[], UserDtoWithFriendshipStatus> userWithStatusMapper;
+    private final Mapper<Object[], FriendRequestDto> friendRequestMapper;
+    private final Mapper<UserEntity, UserShortDto> userShortMapper;
 
     @Override
     @Transactional
@@ -54,9 +65,12 @@ public class FriendshipServiceImpl implements FriendshipService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<UserEntity> findFriendsByUserId(UUID userId) {
-        Sort sortByName = Sort.by(Sort.Direction.ASC, "name");
-        return friendshipRepository.findFriendsByUserId(userId, sortByName);
+    public List<FriendRequestDto> findFriendsByUserId(UUID userId) {
+        List<Object[]> rawData = friendshipRepository.findFriendsWithIds(userId);
+
+        return rawData.stream()
+                .map(friendRequestMapper::mapTo)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -67,7 +81,7 @@ public class FriendshipServiceImpl implements FriendshipService {
 
         return friends.stream().map(item -> {
             UserEntity sender = item.getSender();
-            UserDto senderDto = userMapper.mapTo(sender);
+            UserShortDto senderDto = userShortMapper.mapTo(sender);
 
             return new FriendRequestDto(item.getFriendshipId(), senderDto);
         }).collect(Collectors.toList());
@@ -81,7 +95,7 @@ public class FriendshipServiceImpl implements FriendshipService {
 
         return sentFriendships.stream().map(friendship -> {
             UserEntity receiver = friendship.getReceiver();
-            UserDto receiverDto = userMapper.mapTo(receiver);
+            UserShortDto receiverDto = userShortMapper.mapTo(receiver);
 
             return new FriendRequestDto(friendship.getFriendshipId(), receiverDto);
         }).collect(Collectors.toList());
@@ -191,5 +205,14 @@ public class FriendshipServiceImpl implements FriendshipService {
         long sentCount = friendshipRepository.countBySenderUserIdAndStatus(userId, RequestStatus.PENDING);
 
         return new FriendshipCountsDto(friendsCount, pendingCount, sentCount);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<UserDtoWithFriendshipStatus> searchUsers(String name, UUID currentUserId,
+            FriendshipQueryParameters friendshipQueryParameters) {
+        Pageable pageable = PagingHelper.toPageable(friendshipQueryParameters);
+        return friendshipRepository.findUsersWithStatus(name, currentUserId, pageable)
+                .map(userWithStatusMapper::mapTo);
     }
 }
