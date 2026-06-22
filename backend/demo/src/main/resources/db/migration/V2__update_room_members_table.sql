@@ -10,7 +10,13 @@ ALTER TABLE room_members ADD COLUMN IF NOT EXISTS is_pinned BOOLEAN DEFAULT FALS
 ALTER TABLE room_members ADD COLUMN IF NOT EXISTS created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
 
 UPDATE room_members SET id = gen_random_uuid() WHERE id IS NULL;
-ALTER TABLE room_members ADD PRIMARY KEY (id);
+
+DO $$ 
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE contype = 'p' AND conrelid = 'room_members'::regclass) THEN
+        ALTER TABLE room_members ADD PRIMARY KEY (id);
+    END IF;
+END $$;
 
 DO $$ 
 BEGIN

@@ -7,6 +7,7 @@ import { ModalFooter } from "~/shared/ui/Modal";
 import { useRoomMutation } from "~/entities/room";
 import { RoomInfoStep } from "./addRoomModalComponents/RoomInfoStep";
 import { MembersStep } from "./addRoomModalComponents/RoomMembersStep";
+import { validateStep } from "../../helpers/validateRoomStep";
 
 interface AddRoomModalProps {
   isOpen: boolean;
@@ -40,8 +41,6 @@ export const AddRoomModal = ({
   }, [isOpen]);
 
   const handleSave = () => {
-    if (!formData.roomName.trim()) return;
-
     createRoom(formData, {
       onSuccess: () => {
         onClose();
@@ -84,7 +83,12 @@ export const AddRoomModal = ({
   const isFirstStep = step === 1;
   const isLastStep = step === totalSteps;
 
-  const handleNext = () => onStepChange(Math.min(step + 1, totalSteps));
+  const handleNext = () => {
+    if (validateStep(step, formData)) {
+      onStepChange(Math.min(step + 1, totalSteps));
+    }
+  };
+
   const handleBack = () => onStepChange(Math.max(step - 1, 1));
 
   const renderFooter = () => (
