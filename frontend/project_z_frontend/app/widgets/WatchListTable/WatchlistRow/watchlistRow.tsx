@@ -13,14 +13,16 @@ import { useTitleFilterStore, type TitleSortType } from "~/features/titleFilter/
 interface WatchlistRowProps {
   title: TitleRecord;
   dragHandleProps?: DraggableProvidedDragHandleProps | null;
+  onOpenRatingModal: () => void; 
 }
 
-export const WatchlistRow = ({ title, dragHandleProps }: WatchlistRowProps) => {
+export const WatchlistRow = ({ title, dragHandleProps, onOpenRatingModal }: WatchlistRowProps) => {
   const navigate = useNavigate();
   const [tempTitleName, setTempTitleName] = useState(title.titleName);
   const { pinTitle, updateTitle, deleteTitle } = useUpdateTitleRecord(title.titleId);
   const sortBy = useTitleFilterStore((state) => state.sortBy);
   const isAvgView = sortBy === "avgRating" as TitleSortType;
+  
   useEffect(() => {
     setTempTitleName(title.titleName);
   }, [title.titleName]);
@@ -114,7 +116,13 @@ export const WatchlistRow = ({ title, dragHandleProps }: WatchlistRowProps) => {
         </div>
 
         <div className="flex-shrink-0 ml-1 border-l border-border pl-2">
-          <TitleActionsMenu title={title} onDelete={() => deleteTitle()} isOwn={true} />
+          
+          <TitleActionsMenu 
+            title={title} 
+            onDelete={() => deleteTitle()} 
+            isOwn={true} 
+            onOpenRatingModal={onOpenRatingModal} 
+          />
         </div>
       </div>
     </div>

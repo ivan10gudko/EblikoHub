@@ -8,16 +8,19 @@ import {
 import { RatingEditorContent } from "./RatingEditorContent";
 import type { Rating } from "~/shared/types";
 
+
 interface EditRatingModalProps {
   title: TitleRecord;
   isOpen: boolean;
   onClose: () => void;
+  onTitleChange?: (newTitleId: number) => void; // Нова функція для зміни аніме
 }
 
 export const EditRatingModal = ({
   title,
   isOpen,
   onClose,
+  onTitleChange, 
 }: EditRatingModalProps) => {
   const { rate } = useTitleRecordMutation(
     title.apiTitleId,
@@ -28,7 +31,7 @@ export const EditRatingModal = ({
       rating: title.rating,
       imageUrl: title.imageUrl,
       titleType: title.titleType,
-      pinned:title.pinned,
+      pinned: title.pinned,
     },
     title,
   );
@@ -67,6 +70,7 @@ export const EditRatingModal = ({
         isSaving={false}
         onSave={handleSave}
         onCancel={onClose}
+        onTitleChange={onTitleChange} 
       />
     </Modal>
   );

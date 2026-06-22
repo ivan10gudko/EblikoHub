@@ -12,12 +12,17 @@ import { PinnedWatchlistRow } from "./WatchlistRow/pinnedWatchlistRow";
 import { PinnedWatchlistRowReadOnly } from "./WatchlistRow/pinnedWatchlistRowReadOnly";
 import { WatchlistRowReadOnly } from "./WatchlistRow/WatchlistRowReadOnly";
 import { AddNewButton } from "~/shared/ui/AddNewButton";
+
+
+import { EditRatingModal } from "~/features/TitleRating/ui/EditRatingModal";
+
 interface WatchlistTableProps {
   titles: TitleRecord[];
   isLoading?: boolean;
   isOwn: boolean;
   queryKey: unknown[];
 }
+
 export const WatchlistTable = ({ titles, isLoading, isOwn, queryKey }: WatchlistTableProps) => {
   const [searchParams] = useSearchParams();
   const { userId } = useParams<{ userId: string }>();
@@ -27,6 +32,9 @@ export const WatchlistTable = ({ titles, isLoading, isOwn, queryKey }: Watchlist
   const isDragable = isCustomOrder && !isFiltered;
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  
+  const [activeRatingTitle, setActiveRatingTitle] = useState<TitleRecord | null>(null);
+
   const { reorder, optimisticTitles } = useReorderWatchlist(titles, queryKey, userId);
 
   const { pinnedTitle, regularTitles } = useMemo(() => {
@@ -34,6 +42,14 @@ export const WatchlistTable = ({ titles, isLoading, isOwn, queryKey }: Watchlist
     const regular = optimisticTitles.filter((t) => !t.pinned);
     return { pinnedTitle: pinned, regularTitles: regular };
   }, [optimisticTitles]);
+
+  
+  const handleTitleChange = (newTitleId: number) => {
+    const foundTitle = titles.find((t) => t.titleId === newTitleId);
+    if (foundTitle) {
+      setActiveRatingTitle(foundTitle);
+    }
+  };
 
   const onDragEnd = (result: DropResult) => {
     const { source, destination } = result;
@@ -48,6 +64,7 @@ export const WatchlistTable = ({ titles, isLoading, isOwn, queryKey }: Watchlist
       <AddNewButton onClick={() => setIsModalOpen(true)} placeholder="title" />
     );
   }
+
   if (!isOwn) {
     return (
       <div className="flex flex-col gap-2 w-full">
@@ -66,7 +83,13 @@ export const WatchlistTable = ({ titles, isLoading, isOwn, queryKey }: Watchlist
     <div className="flex flex-col gap-2 w-full">
       <AddNewButton onClick={() => setIsModalOpen(true)} placeholder="title" />
 
-      {pinnedTitle && <PinnedWatchlistRow title={pinnedTitle} />}
+      
+      {pinnedTitle && (
+        <PinnedWatchlistRow 
+          title={pinnedTitle} 
+          onOpenRatingModal={() => setActiveRatingTitle(pinnedTitle)} 
+        />
+      )}
 
       <DragDropContext onDragEnd={onDragEnd}>
         <Droppable droppableId="watchlist">
@@ -85,13 +108,17 @@ export const WatchlistTable = ({ titles, isLoading, isOwn, queryKey }: Watchlist
                 >
                   {(provided) => (
                     <div
-                      ref={provided.innerRef}
-                      {...provided.draggableProps}
-                      className="w-full"
-                    >
+  ref={provided.innerRef}
+  {...provided.draggableProps}
+  {...(isDragable ? provided.dragHandleProps : {})}
+  style={provided.draggableProps.style as React.CSSProperties} 
+  className="w-full"
+>
+                      
                       <WatchlistRow
                         title={title}
                         dragHandleProps={isDragable ? provided.dragHandleProps : undefined}
+                        onOpenRatingModal={() => setActiveRatingTitle(title)}
                       />
                     </div>
                   )}
@@ -104,6 +131,16 @@ export const WatchlistTable = ({ titles, isLoading, isOwn, queryKey }: Watchlist
       </DragDropContext>
 
       <AddTitleModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+
+      
+      {activeRatingTitle && (
+        <EditRatingModal
+          isOpen={true}
+          title={activeRatingTitle}
+          onClose={() => setActiveRatingTitle(null)}
+          onTitleChange={handleTitleChange} 
+        />
+      )}
     </div>
   );
 };
