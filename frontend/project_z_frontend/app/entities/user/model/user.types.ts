@@ -24,6 +24,10 @@ export interface UserParams extends QueryParams{
 }
 export interface BadgeUser {
     id: string;
-    type: "DEVELOPER" | "RESPECTED"  ;
+    type: BadgeType;
     user: UserProfile; 
+}
+export enum BadgeType {
+    DEVELOPER = "DEVELOPER",
+    RESPECTED = "RESPECTED"
 }

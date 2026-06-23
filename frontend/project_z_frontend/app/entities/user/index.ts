@@ -4,3 +4,4 @@ export { UserAvatar } from './ui/UserAvatar';
 export {generateFallbackName} from "./lib/generateFallbackName"
 export * from "./hooks/useUser";
 export * from "./hooks/useBadges";
+export { BadgeType } from "./model/user.types";
