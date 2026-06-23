@@ -11,6 +11,7 @@ import project_z.demo.dto.TitleDtos.SameCriteriaRatingResponse;
 import project_z.demo.dto.TitleDtos.TitleBatchCreateDto;
 import project_z.demo.dto.TitleDtos.TitleDto;
 import project_z.demo.dto.TitleDtos.TitlePatchUpdateDto;
+import project_z.demo.dto.TitleDtos.TitleStatsDto;
 import project_z.demo.entity.SeasonEntity;
 import project_z.demo.entity.TitleEntity;
 
@@ -49,4 +50,6 @@ public interface TitleService {
     TitleDto pinTitle(Long titleId, UUID userId);
     void unpin(UUID userId);
     SameCriteriaRatingResponse getNeighborsRating(Long titleId, String category, Float currentRating);
+
+    TitleStatsDto getUserTitlesStats(UUID userId);
 }
