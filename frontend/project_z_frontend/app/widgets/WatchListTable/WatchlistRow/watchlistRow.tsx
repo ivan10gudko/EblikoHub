@@ -15,9 +15,10 @@ interface WatchlistRowProps {
   dragHandleProps?: DraggableProvidedDragHandleProps | null;
   index: number;       
   showNumber: boolean; 
+  onOpenRatingModal: () => void; 
 }
 
-export const WatchlistRow = ({ title, dragHandleProps, index, showNumber }: WatchlistRowProps) => {
+export const WatchlistRow = ({ title, dragHandleProps, index, showNumber, onOpenRatingModal }: WatchlistRowProps) => {
   const navigate = useNavigate();
   const [tempTitleName, setTempTitleName] = useState(title.titleName);
   const { pinTitle, updateTitle, deleteTitle } = useUpdateTitleRecord(title.titleId);
@@ -132,7 +133,13 @@ export const WatchlistRow = ({ title, dragHandleProps, index, showNumber }: Watc
         </div>
 
         <div className="flex-shrink-0 ml-1 border-l border-border pl-2">
-          <TitleActionsMenu title={title} onDelete={() => deleteTitle()} isOwn={true} />
+          
+          <TitleActionsMenu 
+            title={title} 
+            onDelete={() => deleteTitle()} 
+            isOwn={true} 
+            onOpenRatingModal={onOpenRatingModal} 
+          />
         </div>
       </div>
     </div>

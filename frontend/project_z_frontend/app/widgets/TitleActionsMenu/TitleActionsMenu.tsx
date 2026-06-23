@@ -11,24 +11,24 @@ import type { TitleRecord } from "~/entities/titleRecord";
 import StarRoundedIcon from "@mui/icons-material/StarRounded";
 import { EditSeasonsModal } from "~/entities/season";
 import ViewListIcon from "@mui/icons-material/ViewList";
-import { EditRatingModal } from "~/features/TitleRating";
+
 interface TitleActionsMenuProps {
   title: TitleRecord;
-  isOwn: boolean
+  isOwn: boolean;
   onDelete?: () => void;
-
+  onOpenRatingModal: () => void; 
 }
 
 export const TitleActionsMenu = ({
   title,
   isOwn,
   onDelete,
+  onOpenRatingModal, 
 }: TitleActionsMenuProps) => {
   const [isEditOpen, setIsEditOpen] = useState(false);
-  const [isRatingsOpen, setIsRatingsOpen] = useState(false);
   const [isSeasonsOpen, setIsSeasonsOpen] = useState(false);
+
   const handleCloseEdit = () => setIsEditOpen(false);
-  const handleCloseRatings = () => setIsRatingsOpen(false);
   const handleCloseSeasons = () => setIsSeasonsOpen(false);
 
   return (
@@ -47,10 +47,12 @@ export const TitleActionsMenu = ({
           </DropdownItem>
         )}
         
-        <DropdownItem onClick={() => setIsRatingsOpen(true)}>
+        
+        <DropdownItem onClick={onOpenRatingModal}>
           <StarRoundedIcon sx={{ fontSize: 16 }} />
           Rating
         </DropdownItem>
+        
         <DropdownItem onClick={() => setIsSeasonsOpen(true)}>
           <ViewListIcon sx={{ fontSize: 16 }} />
           Seasons
@@ -64,6 +66,7 @@ export const TitleActionsMenu = ({
         isOpen={isEditOpen}
         onClose={handleCloseEdit}
       />
+      
       {isSeasonsOpen && (
         <EditSeasonsModal
           titleId={title.titleId}
@@ -72,11 +75,8 @@ export const TitleActionsMenu = ({
           onClose={handleCloseSeasons}
         />
       )}
-      <EditRatingModal
-        title={title}
-        isOpen={isRatingsOpen}
-        onClose={handleCloseRatings}
-      />
+      
+      
     </>
   );
 };
