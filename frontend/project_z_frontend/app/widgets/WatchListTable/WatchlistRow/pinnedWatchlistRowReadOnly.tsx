@@ -7,9 +7,10 @@ import { useTitleFilterStore, type TitleSortType } from "~/features/titleFilter/
 
 interface PinnedWatchlistRowReadOnlyProps {
   title: TitleRecord;
+  onOpenRatingModal: (title: TitleRecord) => void;
 }
 
-export const PinnedWatchlistRowReadOnly = ({ title }: PinnedWatchlistRowReadOnlyProps) => {
+export const PinnedWatchlistRowReadOnly = ({ title,onOpenRatingModal }: PinnedWatchlistRowReadOnlyProps) => {
   const navigate = useNavigate();
 
   const handleImageClick = (e: React.MouseEvent) => {
@@ -31,7 +32,7 @@ export const PinnedWatchlistRowReadOnly = ({ title }: PinnedWatchlistRowReadOnly
         Pinned Title
       </div>
 
-      <div className="flex items-center flex-1 gap-3 min-w-0 overflow-hidden max-w-full">
+      <div className="flex items-center flex-1 gap-3 min-w-0 max-w-full">
         <div className="relative h-10 w-16 flex-shrink-0 transition-transform duration-500 hover:scale-[3.0] hover:z-10 cursor-pointer">
           <img
             src={title.imageUrl || DEFAULT_IMAGE_PATH}
@@ -57,7 +58,7 @@ export const PinnedWatchlistRowReadOnly = ({ title }: PinnedWatchlistRowReadOnly
         </div>
 
         <div className="flex-shrink-0 ml-1 border-l border-border pl-2">
-          <TitleActionsMenu title={title} isOwn={false} />
+          <TitleActionsMenu title={title} isOwn={false} onOpenRatingModal={() => onOpenRatingModal(title)}/>
         </div>
       </div>
     </div>

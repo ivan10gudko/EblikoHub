@@ -5,13 +5,13 @@ import { calculateNewOrder } from "~/shared/helpers";
 import type { PageResponse } from "~/shared/types";
 import { useSearchParams } from "react-router";
 import { notify } from "~/shared/lib";
+import { updateInfiniteQuery } from "~/shared/helpers/updateInfinityQuery";
 
 export const useReorderWatchlist = (titles: TitleRecord[], queryKey: unknown[], userId: string | undefined) => {
   const [searchParams] = useSearchParams();
   const queryClient = useQueryClient();
   const [optimisticTitles, setOptimisticTitles] = useState<TitleRecord[]>(titles);
   const isMutating = useRef(false);
-  const optimisticOrderRef = useRef<number[]>(titles.map(t => t.titleId));
 
   useEffect(() => {
     if (isMutating.current) return;
@@ -20,9 +20,8 @@ export const useReorderWatchlist = (titles: TitleRecord[], queryKey: unknown[], 
       (t, i, arr) => arr.findIndex(x => x.titleId === t.titleId) === i
     );
     setOptimisticTitles(unique);
-    optimisticOrderRef.current = unique.map(t => t.titleId);
   }, [titles]);
-  
+
   const reorder = async (sourceIndex: number, destinationIndex: number) => {
     const reordered = Array.from(optimisticTitles);
     const [moved] = reordered.splice(sourceIndex, 1);
@@ -38,39 +37,33 @@ export const useReorderWatchlist = (titles: TitleRecord[], queryKey: unknown[], 
       await queryClient.invalidateQueries({ queryKey });
       return;
     }
-    moved.customOrder = newOrderValue;
+
     isMutating.current = true;
-    optimisticOrderRef.current = reordered.map(t => t.titleId);
     setOptimisticTitles(reordered);
 
     queryClient.setQueryData<InfiniteData<PageResponse<TitleRecord>>>(
       queryKey,
-      (oldData) => {
-        if (!oldData) return oldData;
-        const pageSize = oldData.pages[0]?.content.length || 10;
-        const allItems = oldData.pages.flatMap((p) => p.content);
-        const itemInCache = allItems.find(item => item.titleId === movedTitleId);
-        if (itemInCache) {
-          itemInCache.customOrder = newOrderValue;
+      (oldData) => updateInfiniteQuery({
+        oldData,
+        getContent: (page) => page.content,
+        setContent: (page, newContent) => ({ ...page, content: newContent }),
+        updater: (allItems) => {
+          const movedItemIndex = allItems.findIndex(item => item.titleId === movedTitleId);
+          if (movedItemIndex === -1) return allItems;
+
+          const [movedItem] = allItems.splice(movedItemIndex, 1);
+          const nextReordered = [...allItems];
+          nextReordered.splice(destinationIndex, 0, { ...movedItem, customOrder: newOrderValue });
+          return nextReordered;
         }
-        const [movedItem] = allItems.splice(sourceIndex, 1);
-        allItems.splice(destinationIndex, 0, movedItem);
-        return {
-          ...oldData,
-          pages: oldData.pages.map((page, pageIdx) => ({
-            ...page,
-            content: allItems.slice(pageIdx * pageSize, (pageIdx + 1) * pageSize),
-          })),
-        };
-      }
+      })
     );
 
     try {
       await titleRecordService.patchCustomOrder(movedTitleId, newOrderValue);
     } catch {
-      optimisticOrderRef.current = titles.map(t => t.titleId);
       setOptimisticTitles(titles);
-      queryClient.invalidateQueries({ queryKey });
+      await queryClient.invalidateQueries({ queryKey });
       notify.error("Failed to save position");
     } finally {
       isMutating.current = false;

@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { SearchBar } from "~/features/search";
-import { searchOptions } from "~/features/search";
+import SearchBar from "~/shared/ui/SearchBar";
+import { searchOptions } from "~/entities/title";
 import { useQuery } from "@tanstack/react-query";
 import type { AnimeCardType } from "~/entities/title";
 import { AnimeSearchDropDownResults } from "~/entities/titleRecord";

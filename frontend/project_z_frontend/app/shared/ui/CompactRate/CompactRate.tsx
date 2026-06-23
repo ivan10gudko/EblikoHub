@@ -11,7 +11,6 @@ interface CompactRateProps {
   onRate?: (val: number) => void;
   onClear?: () => void;
   isOwn?: boolean;
-  disabled?: boolean;
 }
 
 export const CompactRate = ({
@@ -21,12 +20,11 @@ export const CompactRate = ({
   onRate,
   onClear,
   isOwn = true,
-  disabled = false,
 }: CompactRateProps) => {
   const hasRating = currentRating !== undefined && currentRating !== null;
   const [value, setValue] = useState<string>(hasRating ? currentRating.toString() : "");
 
-  const isReadOnly = !onRate || !onClear || !isOwn || disabled;
+  const isReadOnly = !onRate || !onClear || !isOwn;
 
   useEffect(() => {
     setValue(hasRating ? currentRating.toString() : "");

@@ -2,8 +2,10 @@ package project_z.demo.services.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -25,8 +27,14 @@ import project_z.demo.common.QueryParameters.RoomQueryParameters;
 import project_z.demo.dto.RoomDtos.RoomCreateDto;
 import project_z.demo.dto.RoomDtos.RoomDto;
 import project_z.demo.dto.RoomDtos.RoomShortDto;
+import project_z.demo.dto.TitleDtos.TitleDto;
 import project_z.demo.entity.RoomEntity;
+import project_z.demo.entity.RoomMemberEntity;
+import project_z.demo.entity.TitleEntity;
 import project_z.demo.entity.UserEntity;
+import project_z.demo.enums.RequestStatus;
+import project_z.demo.enums.RequestType;
+import project_z.demo.repositories.RoomMemberRepository;
 import project_z.demo.repositories.RoomRepository;
 import project_z.demo.repositories.Specifications.RoomSpecifications;
 import project_z.demo.repositories.UserRepository;
@@ -48,6 +56,8 @@ public class RoomServiceImpl implements RoomService {
     private Mapper<RoomEntity, RoomDto> roomMapper;
     @Autowired
     private Mapper<RoomEntity, RoomShortDto> roomShortMapper;
+    @Autowired
+    private RoomMemberRepository roomMemberRepository;
 
     @Override
     public RoomEntity save(RoomEntity roomEntity) {
@@ -55,46 +65,32 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
-    public Page<RoomShortDto> getRoomsByUserId(UUID userId, RoomQueryParameters queryParameters) {
+    public Page<RoomShortDto> getRoomsByUserId(UUID userId, RoomQueryParameters params) {
+        Specification<RoomEntity> spec = Specification
+                .where(RoomSpecifications.hasMember(userId))
+                .and(RoomSpecifications.hasNameLike(params.getSearch()))
+                .and(RoomSpecifications.sortByPinnedThenUser(userId, params.getSortBy(), params.getOrder()));
 
-        Pageable pageable = PagingHelper.toPageable(queryParameters);
-        Page<RoomEntity> roomsPage;
+        Pageable pageable = PageRequest.of(params.getPage(), params.getLimit(), Sort.unsorted());
 
-        String sortBy = queryParameters.getSortBy();
+        Page<RoomEntity> roomPage = roomRepository.findAll(spec, pageable);
 
+        List<Long> roomIds = roomPage.getContent().stream()
+                .map(RoomEntity::getRoomId)
+                .toList();
 
-        if ("memberCount".equals(sortBy) || "membersCount".equals(sortBy)) {
+        Map<Long, Boolean> pinnedByRoomId = roomIds.isEmpty()
+                ? Map.of()
+                : roomMemberRepository.findByRoomRoomIdInAndReceiverUserId(roomIds, userId).stream()
+                        .collect(Collectors.toMap(
+                                m -> m.getRoom().getRoomId(),
+                                RoomMemberEntity::isPinned));
 
-
-            Pageable nativePageable = PageRequest.of(
-                    pageable.getPageNumber(),
-                    pageable.getPageSize(),
-                    Sort.unsorted());
-
-            roomsPage = "asc".equalsIgnoreCase(queryParameters.getOrder())
-                    ? roomRepository.findAllByMemberCountAsc(userId, nativePageable)
-                    : roomRepository.findAllByMemberCountDesc(userId, nativePageable);
-        } else {
-
-            Specification<RoomEntity> spec = Specification.where(RoomSpecifications.hasMember(userId));
-            roomsPage = roomRepository.findAll(spec, pageable);
-        }
-
-        if (roomsPage.isEmpty()) {
-            return Page.empty(pageable);
-        }
-
-        return roomsPage.map(roomShortMapper::mapTo);
-    }
-
-    @Override
-    public RoomEntity partialUpdate(Long id, RoomEntity source) {
-        return roomRepository.findById(id)
-                .map(target -> {
-                    beanUtilsHelper.copyNonNullProperties(source, target);
-                    return roomRepository.save(target);
-                })
-                .orElseThrow(() -> new RuntimeException("User not found"));
+        return roomPage.map(room -> {
+            RoomShortDto dto = roomShortMapper.mapTo(room);
+            dto.setPinned(pinnedByRoomId.getOrDefault(room.getRoomId(), false));
+            return dto;
+        });
     }
 
     @Override
@@ -103,8 +99,10 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
-    public Optional<RoomEntity> findOne(Long id) {
-        return roomRepository.findById(id);
+    public RoomDto findOne(Long id) {
+        RoomEntity room = roomRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Room not found"));
+        return roomMapper.mapTo(room);
     }
 
     @Override
@@ -112,71 +110,38 @@ public class RoomServiceImpl implements RoomService {
         roomRepository.deleteById(Id);
     }
 
-    @Override
-    @Transactional
-    public RoomEntity addMembersToRoom(Long roomId, List<UUID> userIds) {
-        RoomEntity roomEntity = roomRepository.findById(roomId).orElseThrow(
-                () -> new RuntimeException("Room not found"));
-        List<UserEntity> users = StreamSupport
-                .stream(userRepository.findAllById(userIds).spliterator(), false)
-                .collect(Collectors.toList());
-        List<UserEntity> newUsers = users
-                .stream().filter(u -> !roomEntity.getMembers().contains(u))
-                .collect(Collectors.toList());
-        roomEntity.getMembers().addAll(newUsers);
-        return roomRepository.save(roomEntity);
-    }
-
-    @Override
-    public void deleteMembers(Long roomId, List<UUID> userIds) {
-        RoomEntity roomEntity = roomRepository.findById(roomId).orElseThrow(
-                () -> new RuntimeException("Room not found"));
-
-        roomEntity.getMembers().removeIf(user -> userIds.contains(user.getUserId()));
-        roomRepository.save(roomEntity);
-    }
-
-    @Override
     public RoomDto createRoom(String token, RoomCreateDto dto) {
         UUID ownerId = jwtService.extractUsername(token);
         UserEntity owner = userRepository.findById(ownerId)
-                .orElseThrow(() -> new EntityNotFoundException("Owner not found"));
-        List<UserEntity> members = new ArrayList<>();
-        if (dto.getMembers() != null && !dto.getMembers().isEmpty()) {
-            Iterable<UserEntity> membersIterable = userRepository.findAllById(dto.getMembers());
-            members = StreamSupport.stream(membersIterable.spliterator(), false)
-                    .collect(Collectors.toList());
-        }
+                .orElseThrow(() -> new ResourceNotFoundException("Owner not found"));
 
         RoomEntity roomEntity = RoomEntity.builder()
                 .roomName(dto.getRoomName())
                 .owner(owner)
-                .members(members)
                 .build();
-
         RoomEntity savedRoom = roomRepository.save(roomEntity);
+
+        if (dto.getMembers() != null) {
+            Iterable<UserEntity> membersIterable = userRepository.findAllById(dto.getMembers());
+            List<UserEntity> members = new ArrayList<>();
+            members = StreamSupport.stream(membersIterable.spliterator(), false)
+
+                    .collect(Collectors.toList());
+            List<RoomMemberEntity> memberEntities = members.stream().map(user -> {
+                RoomMemberEntity member = new RoomMemberEntity();
+                member.setRoom(savedRoom);
+                member.setReceiver(user);
+                member.setSender(owner);
+                member.setStatus(RequestStatus.PENDING);
+                member.setType(RequestType.INVITE);
+                return member;
+            }).collect(Collectors.toList());
+
+            roomMemberRepository.saveAll(memberEntities);
+            savedRoom.setMembers(memberEntities);
+        }
+
         return roomMapper.mapTo(savedRoom);
     }
 
-    @Override
-    @Transactional
-    public void leaveRoom(UUID userId, Long roomId) {
-
-        RoomEntity room = roomRepository.findById(roomId)
-                .orElseThrow(() -> new ResourceNotFoundException("Room not found"));
-
-        boolean isMember = room.getMembers().stream()
-                .anyMatch(user -> user.getUserId().equals(userId));
-
-        if (!isMember && !room.getOwner().getUserId().equals(userId)) {
-            throw new IllegalArgumentException("You are not a member of this room");
-        }
-
-        if (room.getOwner().getUserId().equals(userId)) {
-            roomRepository.delete(room);
-        } else {
-            room.getMembers().removeIf(user -> user.getUserId().equals(userId));
-            roomRepository.save(room);
-        }
-    }
 }

@@ -7,9 +7,12 @@ import { useTitleFilterStore, type TitleSortType } from "~/features/titleFilter/
 
 interface WatchlistRowReadOnlyProps {
   title: TitleRecord;
+  index: number;       
+  showNumber: boolean; 
+  onOpenRatingModal: (title: TitleRecord) => void;
 }
 
-export const WatchlistRowReadOnly = ({ title }: WatchlistRowReadOnlyProps) => {
+export const WatchlistRowReadOnly = ({ title, index, showNumber,onOpenRatingModal }: WatchlistRowReadOnlyProps) => {
   const navigate = useNavigate();
 
   const handleImageClick = (e: React.MouseEvent) => {
@@ -27,7 +30,21 @@ export const WatchlistRowReadOnly = ({ title }: WatchlistRowReadOnlyProps) => {
         title.pinned ? "border-primary/30" : ""
       }`}
     >
-      <div className="flex items-center flex-1 gap-3 min-w-0 overflow-hidden max-w-full">
+      <div className="flex items-center flex-1 gap-3 min-w-0 max-w-full">
+        
+        
+        {showNumber && !title.pinned && (
+          <div className="flex items-center justify-center h-10 w-6 pl-1 select-none flex-shrink-0">
+            
+            <span translate="no" className="text-gray-400 font-bold text-sm sm:text-base">
+              {index + 1}
+            </span>
+          </div>
+        )}
+
+        
+        {showNumber && title.pinned && <div className="w-6 pl-1 flex-shrink-0" />}
+
         <div className="relative h-10 w-16 flex-shrink-0 transition-transform duration-500 hover:scale-[3.0] hover:z-10 cursor-pointer">
           <img
             src={title.imageUrl || "/defaultTitleRecordImage.jpg"}
@@ -57,7 +74,7 @@ export const WatchlistRowReadOnly = ({ title }: WatchlistRowReadOnlyProps) => {
         </div>
 
         <div className="flex-shrink-0 ml-1 border-l border-border pl-2">
-          <TitleActionsMenu title={title} isOwn={false} />
+          <TitleActionsMenu title={title} isOwn={false} onOpenRatingModal={() => onOpenRatingModal(title)} />
         </div>
       </div>
     </div>

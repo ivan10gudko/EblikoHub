@@ -1,6 +1,6 @@
 import { apiClient } from "~/shared/api";
-import type { Room, RoomCreateDto, RoomQueryParameters, RoomShort } from "../model/room.types";
-import type { PageResponse } from "~/shared/types";
+import type { MemberShort, Room, RoomCreateDto, RoomMemberDto, RoomQueryParameters, RoomShort } from "../model/room.types";
+import type { PageResponse, RequestStatus, RequestType } from "~/shared/types";
 
 interface RoomService {
     create(data: RoomCreateDto): Promise<Room>;
@@ -12,6 +12,19 @@ interface RoomService {
     deleteMembers(id: number, userIds: string[]): Promise<void>;
     leave(id: number): Promise<void>;
     delete(id: number): Promise<void>;
+
+    addMembers(id: number, userIds: string[]): Promise<Room>;
+    deleteMembers(id: number, userIds: string[]): Promise<void>;
+    leave(id: number): Promise<void>;
+    getAcceptedMembers(roomId: number | string): Promise<MemberShort[]>;
+    getRequests(roomId: number | string, status: RequestStatus, type: RequestType): Promise<RoomMemberDto[]>;
+    joinRoom(roomId: number | string): Promise<void>;
+    inviteUser(roomId: number | string, receiverId: string): Promise<void>;
+    acceptRequest(roomId: number | string, receiverId: string): Promise<void>;
+    rejectRequest(roomId: number | string, receiverId: string): Promise<void>;
+
+    pinRoom(roomId: number): Promise<RoomShort>;
+    unpin(): Promise<void>;
 }
 
 export const roomService: RoomService = {
@@ -40,6 +53,12 @@ export const roomService: RoomService = {
         return response;
     },
 
+    async delete(id) {
+        await apiClient.delete(`/rooms/${id}`);
+    },
+
+
+
     async addMembers(id, userIds) {
         const { data } = await apiClient.patch(`/rooms/${id}/members`, userIds);
         return data;
@@ -53,7 +72,41 @@ export const roomService: RoomService = {
         await apiClient.post(`/rooms/${id}/leave`);
     },
 
-    async delete(id) {
-        await apiClient.delete(`/rooms/${id}`);
+    async getAcceptedMembers(roomId) {
+        const { data } = await apiClient.get(`/rooms/${roomId}/members`);
+        return data;
+    },
+
+    async getRequests(roomId, status, type) {
+        const { data } = await apiClient.get(`/rooms/${roomId}/members/requests`, {
+            params: { status, type }
+        });
+        return data;
+    },
+
+    async joinRoom(roomId) {
+        await apiClient.post(`/rooms/${roomId}/members/join`);
+    },
+
+    async inviteUser(roomId, receiverId) {
+        await apiClient.post(`/rooms/${roomId}/members/invite/${receiverId}`);
+    },
+
+    async acceptRequest(roomId, receiverId) {
+        await apiClient.put(`/rooms/${roomId}/members/accept/${receiverId}`);
+    },
+
+    async rejectRequest(roomId, receiverId) {
+        await apiClient.put(`/rooms/${roomId}/members/reject/${receiverId}`);
+    },
+
+    
+    async pinRoom(roomId) {
+        const { data } = await apiClient.post<RoomShort>(`/rooms/${roomId}/pin`);
+        return data;
+    },
+
+    async unpin() {
+        await apiClient.post(`/rooms/unpin`);
     }
 };

@@ -17,6 +17,7 @@ const ManagedAnimeCard = ({ anime }: { anime: AnimeCardType }) => {
     status: titleRecord?.status ?? Status.DEFAULT,
     titleType: titleRecord?.titleType ?? TitleType.ANIME,
     imageUrl: titleRecord?.imageUrl || anime.img,
+    pinned:titleRecord?.pinned || false
   };
 
   return (

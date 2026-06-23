@@ -1,4 +1,5 @@
 package project_z.demo.entity;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,6 +31,7 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import project_z.demo.enums.UserRole;
+
 @EntityListeners(AuditingEntityListener.class)
 @Data
 @AllArgsConstructor
@@ -38,26 +40,26 @@ import project_z.demo.enums.UserRole;
 @Entity
 @DynamicUpdate
 @Table(name = "users")
-@JsonIgnoreProperties(ignoreUnknown=true)
+@JsonIgnoreProperties(ignoreUnknown = true)
 @Getter
 public class UserEntity {
     @Id
     private UUID userId;
     private String name;
-    @Column(unique= true, nullable= false)
+    @Column(unique = true, nullable = false)
     private String nameTag;
     @Builder.Default
     private UserRole role = UserRole.USER;
     private String description;
     private String img;
-    @ManyToMany(mappedBy = "members")
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    private List<RoomEntity> rooms = new ArrayList<>();
+
+    @OneToMany(mappedBy = "receiver")
+    private List<RoomMemberEntity> roomMembers = new ArrayList<>();
     @CreatedDate
-    @Column(nullable=false, updatable=false)
+    @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
-    @OneToMany(mappedBy= "user",cascade = CascadeType.ALL, orphanRemoval=true)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private List<TitleEntity> titleList;
-    
+
 }
