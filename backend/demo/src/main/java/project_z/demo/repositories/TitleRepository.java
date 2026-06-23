@@ -95,4 +95,10 @@ public interface TitleRepository extends JpaRepository<TitleEntity, Long>,
     @Transactional
     @Query(value = "UPDATE titles SET is_pinned = false WHERE user_id = :userId AND is_pinned = true", nativeQuery = true)
     void unpinAllTitlesForUser(UUID userId);
+
+    @Query("SELECT t.status, COUNT(t) FROM TitleEntity t WHERE t.user.userId = :userId GROUP BY t.status")
+    List<Object[]> countByStatus(@Param("userId") UUID userId);
+
+    @Query("SELECT t.titleType, COUNT(t) FROM TitleEntity t WHERE t.user.userId = :userId GROUP BY t.titleType")
+    List<Object[]> countByType(@Param("userId") UUID userId);
 }
