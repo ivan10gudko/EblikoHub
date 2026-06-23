@@ -23,21 +23,21 @@ interface ActionItem {
 
 interface TitleActionsMenuProps {
   title: TitleRecord;
-  isOwn: boolean
+  isOwn: boolean;
   onDelete?: () => void;
-
+  onOpenRatingModal: () => void; 
 }
 
 export const TitleActionsMenu = ({
   title,
   isOwn,
   onDelete,
+  onOpenRatingModal, 
 }: TitleActionsMenuProps) => {
   const [isEditOpen, setIsEditOpen] = useState(false);
-  const [isRatingsOpen, setIsRatingsOpen] = useState(false);
   const [isSeasonsOpen, setIsSeasonsOpen] = useState(false);
+
   const handleCloseEdit = () => setIsEditOpen(false);
-  const handleCloseRatings = () => setIsRatingsOpen(false);
   const handleCloseSeasons = () => setIsSeasonsOpen(false);
 
   const actions: ActionItem[] = [
@@ -95,6 +95,7 @@ export const TitleActionsMenu = ({
         isOpen={isEditOpen}
         onClose={handleCloseEdit}
       />
+      
       {isSeasonsOpen && (
         <EditSeasonsModal
           titleId={title.titleId}
@@ -103,11 +104,8 @@ export const TitleActionsMenu = ({
           onClose={handleCloseSeasons}
         />
       )}
-      <EditRatingModal
-        title={title}
-        isOpen={isRatingsOpen}
-        onClose={handleCloseRatings}
-      />
+      
+      
     </>
   );
 };

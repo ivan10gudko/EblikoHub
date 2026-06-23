@@ -17,6 +17,7 @@ interface RatingEditorContentProps {
   isSaving: boolean;
   onSave: () => void;
   onCancel: () => void;
+  onTitleChange?: (newTitleId: number) => void;
 }
 
 const PRESET_CATEGORIES = [
@@ -34,6 +35,7 @@ export const RatingEditorContent = ({
   isSaving,
   onSave,
   onCancel,
+  onTitleChange,
 }: RatingEditorContentProps) => {
   const safeRatings: Rating = Object.keys(ratings).length === 0 ? {} : ratings;
 
@@ -117,6 +119,7 @@ export const RatingEditorContent = ({
             </div>
           </div>
         </div>
+
         <div className="space-y-4">
           <div className="flex flex-col gap-3 px-2">
             <div className="flex justify-between items-center w-full">
@@ -195,6 +198,7 @@ export const RatingEditorContent = ({
                 onDelete={handleDeleteCategory}
                 onRate={(val) => handleUpdateNumericValue(key, val)}
                 onClear={() => handleUpdateNumericValue(key, 0)}
+                onTitleChange={onTitleChange}
               />
             ))}
           </div>
