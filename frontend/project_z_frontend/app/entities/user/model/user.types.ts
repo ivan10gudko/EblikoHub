@@ -22,3 +22,12 @@ export interface UpdateUserProfile{
 export interface UserParams extends QueryParams{
 
 }
+export interface BadgeUser {
+    id: string;
+    type: BadgeType;
+    user: UserProfile; 
+}
+export enum BadgeType {
+    DEVELOPER = "DEVELOPER",
+    RESPECTED = "RESPECTED"
+}
