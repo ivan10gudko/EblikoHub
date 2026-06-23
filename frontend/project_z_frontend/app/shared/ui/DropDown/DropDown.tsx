@@ -37,11 +37,11 @@ interface DropdownItemProps {
   onClick?: (e: Event) => void;
   children: ReactNode;
   variant?: "default" | "danger";
+  icon?: ReactNode;
 }
 
-export const DropdownItem = ({ onClick, children, variant = "default" }: DropdownItemProps) => {
+export const DropdownItem = ({ onClick, children, variant = "default", icon }: DropdownItemProps) => {
   const childrenArray = Children.toArray(children);
-  const icon = childrenArray[0];
   const label = childrenArray.slice(1);
 
   return (
@@ -50,18 +50,17 @@ export const DropdownItem = ({ onClick, children, variant = "default" }: Dropdow
       className="outline-none border-none list-none"
     >
       <Button
-        className={`w-full flex items-center justify-start gap-3 px-3 py-2.5 text-xs font-bold rounded-lg transition-colors text-left border-none shadow-none bg-transparent ${
-          variant === "danger"
-            ? "text-danger hover:bg-danger/10"
-            : "text-foreground hover:bg-border/50"
-        }`}
+        className={`w-full flex items-center justify-start gap-3 px-3 py-2.5 text-xs font-bold rounded-lg transition-colors text-left border-none shadow-none bg-transparent ${variant === "danger"
+          ? "text-danger hover:bg-danger/10"
+          : "text-foreground hover:bg-border/50"
+          }`}
       >
         {icon && (
           <span className="flex items-center justify-center w-5 h-5 flex-shrink-0">
             {icon}
           </span>
         )}
-        <span className="truncate">{label}</span>
+        <span className="truncate">{children}</span>
       </Button>
     </DropdownMenu.Item>
   );
@@ -81,9 +80,9 @@ export const DeleteDropdownItem = ({ onDelete }: { onDelete: () => void }) => {
         }
       }}
       variant="danger"
+      icon={<DeleteOutlineIcon sx={{ fontSize: 16 }} />}
     >
-      <DeleteOutlineIcon sx={{ fontSize: 16 }} />
-      {isConfirming ? <span className="text-foreground"> Are you sure? </span> : <span>Delete</span>}
+      {isConfirming ? "Are you sure?" : "Delete"}
     </DropdownItem>
   );
 };

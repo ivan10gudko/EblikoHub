@@ -81,7 +81,8 @@ public class RoomSpecifications {
             if ("memberCount".equalsIgnoreCase(sortBy) || "membersCount".equalsIgnoreCase(sortBy)) {
                 Subquery<Long> countSub = query.subquery(Long.class);
                 Root<RoomMemberEntity> cm = countSub.from(RoomMemberEntity.class);
-                countSub.select(cb.count(cm))
+
+                countSub.select(cb.count(cm.get("id")))
                         .where(cb.equal(cm.get("room").get("roomId"), root.get("roomId")),
                                 cb.equal(cm.get("status"), RequestStatus.ACCEPTED));
                 secondaryOrder = "asc".equalsIgnoreCase(order) ? cb.asc(countSub) : cb.desc(countSub);

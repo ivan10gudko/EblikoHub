@@ -28,7 +28,7 @@ const getNavConfig = (isAuth: boolean, userId: string | null): NavItem[] => [
     showInDesktop: false,
   },
   {
-    to: `/rooms/${userId || ""}`,
+    to: `/rooms/user/${userId || ""}`,
     label: "Rooms",
     icon: MeetingRoomIcon,
     showInDesktop: true,
@@ -131,11 +131,10 @@ const Header = () => {
         </div>
 
         <div
-          className={`fixed w-full h-screen inset-0 top-[73px] bg-card/60 backdrop-blur-xl z-[999] transition-all duration-300 flex justify-center p-6 ${
-            burgerMenuOpen
-              ? "opacity-100 pointer-events-auto"
-              : "opacity-0 pointer-events-none translate-y-4"
-          }`}
+          className={`fixed w-full h-screen inset-0 top-[73px] bg-card/60 backdrop-blur-xl z-[999] transition-all duration-300 flex justify-center p-6 ${burgerMenuOpen
+            ? "opacity-100 pointer-events-auto"
+            : "opacity-0 pointer-events-none translate-y-4"
+            }`}
           onClick={() => setBurgerMenuOpen(false)}
         >
           <nav

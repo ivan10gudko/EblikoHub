@@ -31,8 +31,8 @@ export default [
                 ]),
             ]),
             ...prefix("rooms", [
-                route(":userId", "./routes/rooms._index.tsx"),     // /rooms
-                route(":userId/:id", "./routes/rooms.$id.tsx"), // /rooms/:id
+                route("user/:userId", "./routes/rooms._index.tsx"),     // /rooms
+                route(":id", "./routes/rooms.$id.tsx"), // /rooms/:id
             ]),
         ]),
 

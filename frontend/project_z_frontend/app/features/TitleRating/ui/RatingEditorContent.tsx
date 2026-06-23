@@ -8,6 +8,7 @@ import { Button } from "~/shared/ui/Button";
 import { CompactRate } from "../../../shared/ui/CompactRate";
 import { CategoryRow } from "./RatingRow";
 import type { Rating } from "~/shared/types";
+import { ModalFooter } from "~/shared/ui/Modal";
 
 interface RatingEditorContentProps {
   titleId: number;
@@ -92,7 +93,7 @@ export const RatingEditorContent = ({
   return (
     <div className="flex flex-col max-h-[75vh] sm:max-h-[70vh]">
       <div className="flex-1 overflow-y-auto pr-1 sm:pr-3 space-y-6 sm:space-y-8 p-1 sm:p-2 custom-scrollbar">
-        
+
         <div className="space-y-3">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-3 sm:p-4 bg-background-muted/50 rounded-2xl border-2 border-primary/20 sticky top-0 z-10 backdrop-blur-md gap-3 sm:gap-0">
             <div className="flex items-center gap-3 text-primary">
@@ -150,11 +151,10 @@ export const RatingEditorContent = ({
                         type="button"
                         disabled={isAdded}
                         onClick={() => handleAddPreset(preset.label)}
-                        className={`text-[12px] px-2.5 py-1 rounded-lg font-bold border transition-all duration-200 ${
-                          isAdded
+                        className={`text-[12px] px-2.5 py-1 rounded-lg font-bold border transition-all duration-200 ${isAdded
                             ? "bg-transparent border-border text-muted-foreground/40 line-through cursor-not-allowed"
                             : "bg-background-muted hover:bg-primary/10 border-border hover:border-primary/30 text-foreground hover:text-primary active:scale-95"
-                        }`}
+                          }`}
                       >
                         {preset.label}
                       </Button>
@@ -176,8 +176,7 @@ export const RatingEditorContent = ({
           </div>
 
           <div
-            className={`flex flex-col gap-3 sm:gap-4 transition-all duration-300 ${
-              isOverallMissing
+            className={`flex flex-col gap-3 sm:gap-4 transition-all duration-300 ${isOverallMissing
                 ? "grayscale opacity-30 pointer-events-none scale-[0.98]"
                 : "opacity-100"
               }`}
@@ -206,23 +205,12 @@ export const RatingEditorContent = ({
         </div>
       </div>
 
-      <div className="flex flex-col-reverse sm:flex-row gap-2 sm:gap-3 pt-4 sm:pt-6 mt-4 border-t border-border">
-        <Button
-          variant="outline"
-          className="text-foreground bg-card border-none w-full sm:flex-1 h-12 sm:h-14 rounded-xl font-bold"
-          onClick={onCancel}
-          disabled={isSaving}
-        >
-          Cancel
-        </Button>
-        <Button
-          className="w-full sm:flex-[2] h-12 sm:h-14 rounded-xl bg-primary text-foreground font-black tracking-wide shadow-[0_4px_0_0_#d97706] active:translate-y-[1px] active:shadow-none transition-all disabled:opacity-50"
-          onClick={onSave}
-          disabled={isSaving}
-        >
-          {isSaving ? "Saving..." : "Save Rating"}
-        </Button>
-      </div>
+      <ModalFooter
+        onCancel={onCancel}
+        onSave={onSave}
+        isSaving={isSaving}
+        saveLabel="Save"
+      />
     </div>
   );
 };

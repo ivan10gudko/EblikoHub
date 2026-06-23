@@ -12,7 +12,7 @@ interface ModalProps {
     className?: string;
 }
 
-const Modal = ({ children, title, isOpen, onClose, maxWidth = "max-w-lg", className = "" }: ModalProps) => {
+export const Modal = ({ children, title, isOpen, onClose, maxWidth = "max-w-lg", className = "" }: ModalProps) => {
     const modalRef = useRef<HTMLDivElement>(null);
     const mouseDownOnOverlayRef = useRef<boolean>(false);
 
