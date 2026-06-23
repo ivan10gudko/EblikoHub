@@ -10,6 +10,9 @@ export default [
     layout("./routes/_main.tsx", [
 
         index("./routes/home.tsx"),
+        
+        route("about", "./routes/about.tsx"), 
+
         route("watchlist/:userId", "./routes/watchlist.$userId.tsx"),
 
         route("profile/:userId/friends", "./routes/friends/friends.tsx", [

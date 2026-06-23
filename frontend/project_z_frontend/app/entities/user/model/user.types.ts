@@ -22,3 +22,8 @@ export interface UpdateUserProfile{
 export interface UserParams extends QueryParams{
 
 }
+export interface BadgeUser {
+    id: string;
+    type: "DEVELOPER" | "RESPECTED"  ;
+    user: UserProfile; 
+}
