@@ -12,9 +12,9 @@ import { useState } from "react";
 import { TitleSearch } from "./components/titleSearch";
 import DeleteSweepIcon from "@mui/icons-material/DeleteSweep";
 import { formatRatingInput } from "~/shared/helpers/formatRating";
-import { TitleImageEditor } from "~/features/manageTitle";
 import { Status, statusOptions } from "~/shared/types/Status";
 import { notify } from "~/shared/lib";
+import { ImageUrlEditor } from "~/shared/ui/ImageUrlEditor";
 
 interface AddTitleModalProps {
   isOpen: boolean;
@@ -97,7 +97,7 @@ export const AddTitleModal = ({ isOpen, onClose }: AddTitleModalProps) => {
         </div>
         <div className="flex flex-col md:flex-row gap-8">
           <div className="border-t border-border/50 pt-6">
-            <TitleImageEditor
+            <ImageUrlEditor
               imageUrl={formData.imageUrl ?? null}
               onImageChange={handleImageChange}
             />

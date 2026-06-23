@@ -8,9 +8,6 @@ interface RoomService {
     getByUserId(userId: string, params?: RoomQueryParameters): Promise<PageResponse<RoomShort>>;
     fullUpdate(id: number, data: Room): Promise<Room>;
     patch(id: number, data: Partial<Room>): Promise<Room>;
-    addMembers(id: number, userIds: string[]): Promise<Room>;
-    deleteMembers(id: number, userIds: string[]): Promise<void>;
-    leave(id: number): Promise<void>;
     delete(id: number): Promise<void>;
 
     addMembers(id: number, userIds: string[]): Promise<Room>;
@@ -69,7 +66,7 @@ export const roomService: RoomService = {
     },
 
     async leave(id) {
-        await apiClient.post(`/rooms/${id}/leave`);
+        await apiClient.delete(`/rooms/${id}/members/leave`);
     },
 
     async getAcceptedMembers(roomId) {

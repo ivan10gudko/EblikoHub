@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
 public class RoomShortDto {
     private Long roomId;
     private String roomName;
-    private UUID ownerId;
+    private boolean isOwner;
     @JsonProperty("isPinned")
     private boolean isPinned;
     private String imageUrl;

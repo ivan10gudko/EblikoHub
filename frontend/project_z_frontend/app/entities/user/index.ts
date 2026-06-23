@@ -5,3 +5,5 @@ export {generateFallbackName} from "./lib/generateFallbackName"
 export * from "./hooks/useUser";
 export * from "./hooks/useBadges";
 export { BadgeType } from "./model/user.types";
+export {UserSearchDropdown} from "./ui/UserSearchDropdownResults";
+export {UserShortRow} from "./ui/userShortRow";

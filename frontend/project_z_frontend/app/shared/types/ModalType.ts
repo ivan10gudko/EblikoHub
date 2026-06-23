@@ -1,0 +1,1 @@
+export type ModalType = 'edit' | 'delete' | 'add';

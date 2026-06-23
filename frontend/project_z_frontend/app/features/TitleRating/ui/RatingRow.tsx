@@ -6,7 +6,6 @@ import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import CompareArrowsIcon from "@mui/icons-material/CompareArrows";
 import { RatingNeighborsContent } from "./RatingNeighbours";
 
-
 export const CategoryRow = ({
     categoryKey,
     value,
@@ -15,7 +14,8 @@ export const CategoryRow = ({
     onRename,
     onDelete,
     onRate,
-    onClear
+    onClear,
+    onTitleChange 
 }: {
     categoryKey: string;
     value: number;
@@ -25,6 +25,7 @@ export const CategoryRow = ({
     onDelete: (key: string) => void;
     onRate: (val: number) => void;
     onClear: () => void;
+    onTitleChange?: (newTitleId: number) => void; // 2. Описуємо тип для TypeScript
 }) => {
     const [localName, setLocalName] = useState(categoryKey);
     const [isPopoverOpen, setIsPopoverOpen] = useState(false);
@@ -92,6 +93,13 @@ export const CategoryRow = ({
                                 category={categoryKey}
                                 ratingValue={value} 
                                 onClose={() => setIsPopoverOpen(false)}
+                                
+                                onTitleChange={(newTitleId) => {
+                                    if (onTitleChange) {
+                                        onTitleChange(newTitleId);
+                                    }
+                                    setIsPopoverOpen(false); 
+                                }}
                             />
                         </DropdownMenu.Content>
                     </DropdownMenu.Portal>

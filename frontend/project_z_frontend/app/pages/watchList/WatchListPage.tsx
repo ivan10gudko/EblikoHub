@@ -39,6 +39,7 @@ export const WatchListPage = ({ userId }: { userId: string | null }) => {
       (t, i, arr) => arr.findIndex(x => x.titleId === t.titleId) === i
     );
   }, [data]);
+  
   return (
     <div className="flex flex-col lg:flex-row gap-6 p-4 sm:p-8 max-w-[1400px] mx-auto min-h-screen bg-background-muted/30">
 
@@ -49,6 +50,7 @@ export const WatchListPage = ({ userId }: { userId: string | null }) => {
       <main className="flex-1 flex flex-col gap-4">
         <WatchlistTable
           titles={allTitles}
+        
           isLoading={isLoading}
           isOwn={isOwn}
           queryKey={queryKey}

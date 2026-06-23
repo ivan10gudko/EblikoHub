@@ -6,30 +6,63 @@ import {
   DropdownItem,
 } from "~/shared/ui/DropDown/DropDown";
 import { EditTitleModal } from "../../features/manageTitle/ui/EditTitleModal";
-import { useState } from "react";
+import { useState, type JSX } from "react";
 import type { TitleRecord } from "~/entities/titleRecord";
 import StarRoundedIcon from "@mui/icons-material/StarRounded";
 import { EditSeasonsModal } from "~/entities/season";
 import ViewListIcon from "@mui/icons-material/ViewList";
 import { EditRatingModal } from "~/features/TitleRating";
+
+interface ActionItem {
+  key: string;
+  label: string;
+  icon: JSX.Element;
+  onClick: () => void;
+  show?: boolean;
+}
+
 interface TitleActionsMenuProps {
   title: TitleRecord;
-  isOwn: boolean
+  isOwn: boolean;
   onDelete?: () => void;
-
+  onOpenRatingModal: () => void; 
 }
 
 export const TitleActionsMenu = ({
   title,
   isOwn,
   onDelete,
+  onOpenRatingModal, 
 }: TitleActionsMenuProps) => {
   const [isEditOpen, setIsEditOpen] = useState(false);
-  const [isRatingsOpen, setIsRatingsOpen] = useState(false);
   const [isSeasonsOpen, setIsSeasonsOpen] = useState(false);
+
   const handleCloseEdit = () => setIsEditOpen(false);
-  const handleCloseRatings = () => setIsRatingsOpen(false);
   const handleCloseSeasons = () => setIsSeasonsOpen(false);
+
+  const actions: ActionItem[] = [
+    {
+      key: "edit",
+      label: "Edit Record",
+      icon: <EditIcon sx={{ fontSize: 16 }} />,
+      onClick: () => setIsEditOpen(true),
+      show: isOwn,
+    },
+    {
+      key: "rating",
+      label: "Rating",
+      icon: <StarRoundedIcon sx={{ fontSize: 16 }} />,
+      onClick: () => setIsRatingsOpen(true),
+      show: true,
+    },
+    {
+      key: "seasons",
+      label: "Seasons",
+      icon: <ViewListIcon sx={{ fontSize: 16 }} />,
+      onClick: () => setIsSeasonsOpen(true),
+      show: true,
+    },
+  ];
 
   return (
     <>
@@ -41,22 +74,20 @@ export const TitleActionsMenu = ({
           </div>
         }
       >
-        {isOwn && (
-          <DropdownItem onClick={() => setIsEditOpen(true)}>
-            <EditIcon sx={{ fontSize: 16 }} /> Edit Record
-          </DropdownItem>
+        {actions
+          .filter((item) => item.show)
+          .map((item) => (
+            <DropdownItem key={item.key} onClick={item.onClick} icon={item.icon}>
+              {item.label}
+            </DropdownItem>
+          ))}
+
+        {onDelete && (
+          <>
+            <div className="h-px bg-border my-1" />
+            <DeleteDropdownItem onDelete={onDelete} />
+          </>
         )}
-        
-        <DropdownItem onClick={() => setIsRatingsOpen(true)}>
-          <StarRoundedIcon sx={{ fontSize: 16 }} />
-          Rating
-        </DropdownItem>
-        <DropdownItem onClick={() => setIsSeasonsOpen(true)}>
-          <ViewListIcon sx={{ fontSize: 16 }} />
-          Seasons
-        </DropdownItem>
-        <div className="h-px bg-border my-1" />
-        {onDelete ? <DeleteDropdownItem onDelete={onDelete} /> : <></>}
       </Dropdown>
 
       <EditTitleModal
@@ -64,6 +95,7 @@ export const TitleActionsMenu = ({
         isOpen={isEditOpen}
         onClose={handleCloseEdit}
       />
+      
       {isSeasonsOpen && (
         <EditSeasonsModal
           titleId={title.titleId}
@@ -72,11 +104,8 @@ export const TitleActionsMenu = ({
           onClose={handleCloseSeasons}
         />
       )}
-      <EditRatingModal
-        title={title}
-        isOpen={isRatingsOpen}
-        onClose={handleCloseRatings}
-      />
+      
+      
     </>
   );
 };
