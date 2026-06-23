@@ -13,14 +13,17 @@ import { useTitleFilterStore, type TitleSortType } from "~/features/titleFilter/
 interface WatchlistRowProps {
   title: TitleRecord;
   dragHandleProps?: DraggableProvidedDragHandleProps | null;
+  index: number;       
+  showNumber: boolean; 
 }
 
-export const WatchlistRow = ({ title, dragHandleProps }: WatchlistRowProps) => {
+export const WatchlistRow = ({ title, dragHandleProps, index, showNumber }: WatchlistRowProps) => {
   const navigate = useNavigate();
   const [tempTitleName, setTempTitleName] = useState(title.titleName);
   const { pinTitle, updateTitle, deleteTitle } = useUpdateTitleRecord(title.titleId);
   const sortBy = useTitleFilterStore((state) => state.sortBy);
   const isAvgView = sortBy === "avgRating" as TitleSortType;
+  
   useEffect(() => {
     setTempTitleName(title.titleName);
   }, [title.titleName]);
@@ -39,13 +42,26 @@ export const WatchlistRow = ({ title, dragHandleProps }: WatchlistRowProps) => {
         title.pinned ? "border-primary/30" : ""
       }`}
     >
-      <div className="flex items-center flex-1 gap-3 min-w-0">
-        {!title.pinned && dragHandleProps && (
-          <div
-            {...dragHandleProps}
-            className="text-muted-foreground/40 group-hover/row:text-muted-foreground/70 transition-colors flex items-center justify-center pl-1 h-10 w-6 cursor-grab active:cursor-grabbing"
-          >
-            <DragIndicatorIcon sx={{ fontSize: 20 }} />
+      
+      <div className="flex items-center flex-1 gap-1.5 min-w-0">
+        
+        {!title.pinned && (
+          
+          <div className="flex items-center justify-center h-10 w-5 select-none flex-shrink-0">
+            {showNumber ? (
+              <span translate="no" className="text-gray-400 font-bold text-sm sm:text-base">
+                {index + 1}
+              </span>
+            ) : (
+              dragHandleProps && (
+                <div
+                  {...dragHandleProps}
+                  className="text-muted-foreground/40 group-hover/row:text-muted-foreground/70 transition-colors flex items-center justify-center cursor-grab active:cursor-grabbing w-full h-full"
+                >
+                  <DragIndicatorIcon sx={{ fontSize: 20 }} />
+                </div>
+              )
+            )}
           </div>
         )}
 
@@ -55,13 +71,15 @@ export const WatchlistRow = ({ title, dragHandleProps }: WatchlistRowProps) => {
             e.stopPropagation();
             pinTitle();
           }}
-          className="flex items-center justify-center h-10 w-6 text-muted-foreground/20 group-hover/row:text-muted-foreground/60 hover:!text-primary opacity-100 sm:opacity-0 md:group-hover/row:opacity-100 transition-all duration-200 cursor-pointer pl-1"
+         
+          className="flex items-center justify-center h-10 w-5 text-muted-foreground/20 group-hover/row:text-muted-foreground/60 hover:!text-primary opacity-100 sm:opacity-0 md:group-hover/row:opacity-100 transition-all duration-200 cursor-pointer"
           title="Pin title to the top"
         >
           <PushPinIcon sx={{ fontSize: 16 }} className="-rotate-45 group-hover/row:rotate-0 transition-transform duration-200" />
         </button>
 
-        <div className="relative h-10 w-16 flex-shrink-0 transition-transform duration-500 hover:scale-[3.0] hover:z-10 cursor-pointer">
+        
+        <div className="relative h-10 w-16 ml-1 flex-shrink-0 transition-transform duration-500 hover:scale-[3.0] hover:z-10 cursor-pointer">
           <img
             src={title.imageUrl || DEFAULT_IMAGE_PATH}
             onClick={handleImageClick}
