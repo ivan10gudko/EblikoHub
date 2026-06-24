@@ -2,14 +2,16 @@ import { useEffect, useState } from "react";
 import Modal from "~/shared/ui/Modal/Modal";
 import { type TitleRecord, useTitleRecordMutation } from "~/entities/titleRecord";
 import { RatingEditorContent } from "./RatingEditorContent";
-import { ReadonlyRatingContent } from "./ReadonlyRatingContent"; 
+import { ReadonlyRatingContent } from "./ReadonlyRatingContent";
 import type { Rating } from "~/shared/types";
+
 
 interface EditRatingModalProps {
   title: TitleRecord;
   isOpen: boolean;
   onClose: () => void;
   isOwn: boolean;
+  onTitleChange?: (newTitleId: number) => void; // Нова функція для зміни аніме
 }
 
 export const EditRatingModal = ({
@@ -17,6 +19,7 @@ export const EditRatingModal = ({
   isOpen,
   onClose,
   isOwn,
+  onTitleChange,
 }: EditRatingModalProps) => {
   const { rate } = useTitleRecordMutation(
     title.apiTitleId,
@@ -60,23 +63,26 @@ export const EditRatingModal = ({
   return (
     <Modal
       isOpen={isOpen}
-      onClose={isOwn ? handleSave : onClose} 
+      onClose={isOwn ? handleSave : onClose}
       title={isOwn ? `Edit Rating "${title.titleName}"` : `Rating Overview "${title.titleName}"`}
       maxWidth="max-w-xl"
     >
       {isOwn ? (
         <RatingEditorContent
-          titleId={title.apiTitleId ?? 0}
+          titleId={title.titleId}
           ratings={localRatings}
           onChange={setLocalRatings}
           isSaving={false}
           onSave={handleSave}
           onCancel={onClose}
+          onTitleChange={onTitleChange}
         />
       ) : (
         <ReadonlyRatingContent
           ratings={(title.rating as Rating) || { overall: 0 }}
           onCancel={onClose}
+          onTitleChange={onTitleChange}
+          titleId={title.titleId}
         />
       )}
     </Modal>

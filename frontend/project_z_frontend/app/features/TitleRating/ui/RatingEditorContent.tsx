@@ -15,6 +15,7 @@ interface RatingEditorContentProps {
   isSaving: boolean;
   onSave: () => void;
   onCancel: () => void;
+  onTitleChange?: (newTitleId: number) => void;
 }
 
 const PRESET_CATEGORIES = [
@@ -32,6 +33,7 @@ export const RatingEditorContent = ({
   isSaving,
   onSave,
   onCancel,
+  onTitleChange,
 }: RatingEditorContentProps) => {
   const safeRatings: Rating = Object.keys(ratings).length === 0 ? {} : ratings;
 
@@ -199,11 +201,11 @@ export const RatingEditorContent = ({
                   onRate={(val) => handleUpdateNumericValue(key, val)}
                   onClear={() => handleUpdateNumericValue(key, 0)}
                   isOwn={true}
+                  onTitleChange={onTitleChange}
                 />
               ))}
             </div>
           </div>
-
         </div>
       </div>
 

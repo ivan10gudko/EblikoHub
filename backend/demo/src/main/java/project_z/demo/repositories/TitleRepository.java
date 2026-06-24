@@ -25,13 +25,18 @@ public interface TitleRepository extends JpaRepository<TitleEntity, Long>,
     @Query("SELECT t FROM TitleEntity t WHERE t.apiTitleId = :apiTitleId AND t.user.userId = :userId")
     Optional<TitleEntity> findByApiTitleIdAndUserId(Integer apiTitleId, UUID userId);
 
-    @Query("SELECT t FROM TitleEntity t " +
-            "JOIN t.user u " +
-            "JOIN u.rooms r " +
-            "WHERE t.apiTitleId = :apiTitleId " +
-            "AND r.id IN (SELECT r2.id FROM UserEntity u2 JOIN u2.rooms r2 WHERE u2.id = :userId) " +
-            "AND u.id != :userId")
-    List<TitleEntity> findAllByApiTitleIdInUserRooms(Integer apiTitleId, UUID userId);
+    @Query(value = """
+                SELECT t.* FROM titles t
+                JOIN users u ON t.user_id = u.user_id
+                JOIN room_members rm ON rm.user_id = u.user_id
+                WHERE t.api_title_id = :apiTitleId
+                AND rm.room_id IN (
+                    SELECT room_id FROM room_members WHERE user_id = :userId
+                )
+                AND u.user_id != :userId
+            """, nativeQuery = true)
+    List<TitleEntity> findAllByApiTitleIdInUserRooms(@Param("apiTitleId") Integer apiTitleId,
+            @Param("userId") UUID userId);
 
     @Query("SELECT t FROM TitleEntity t WHERE t.user.userId = :userId ORDER BY t.customOrder ASC")
     List<TitleEntity> findAllByUserId(UUID userId);

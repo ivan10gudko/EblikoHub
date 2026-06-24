@@ -15,7 +15,8 @@ export const CategoryRow = ({
     onDelete,
     onRate,
     onClear,
-    isOwn
+    isOwn,
+    onTitleChange
 }: {
     categoryKey: string;
     value: number;
@@ -24,8 +25,9 @@ export const CategoryRow = ({
     onRename: (oldKey: string, newKey: string) => void;
     onDelete: (key: string) => void;
     onRate: (val: number) => void;
+    isOwn:boolean;
     onClear: () => void;
-    isOwn: boolean;
+    onTitleChange?: (newTitleId: number) => void;
 }) => {
     const [localName, setLocalName] = useState(categoryKey);
     const [isPopoverOpen, setIsPopoverOpen] = useState(false);
@@ -62,7 +64,7 @@ export const CategoryRow = ({
                     value={localName}
                     onChange={(e) => setLocalName(e.target.value)}
                     onBlur={() => onRename(categoryKey, localName)}
-                    disabled={!isOwn} // 👈 Вимикаємо інпут для гостя
+                    disabled={!isOwn}
                     className={`h-9 sm:h-10 w-full text-xs sm:text-sm bg-transparent p-0 border border-transparent transition-colors font-bold truncate placeholder:opacity-50 outline-none ${
                         isOwn ? "focus:border-foreground/80 cursor-text" : "cursor-default text-foreground/80"
                     }`}
@@ -71,7 +73,7 @@ export const CategoryRow = ({
 
             <div className="flex items-center gap-2 shrink-0 scale-[0.8] sm:scale-100 origin-right">
                 
-                {isOwn && showComparison && (
+                {showComparison && (
                     <DropdownMenu.Root open={isPopoverOpen} onOpenChange={setIsPopoverOpen}>
                         <DropdownMenu.Trigger asChild>
                             <button
@@ -87,31 +89,40 @@ export const CategoryRow = ({
                             </button>
                         </DropdownMenu.Trigger>
 
-                        <DropdownMenu.Portal>
-                            <DropdownMenu.Content
-                                align="end"
-                                side="bottom"
-                                sideOffset={8}
-                                className="z-[9999] outline-none animate-in fade-in zoom-in duration-150"
-                                onInteractOutside={() => {}}
-                            >
-                                <RatingNeighborsContent
-                                    titleId={titleId}
-                                    category={categoryKey}
-                                    ratingValue={value} 
-                                    onClose={() => setIsPopoverOpen(false)}
-                                />
-                            </DropdownMenu.Content>
-                        </DropdownMenu.Portal>
-                    </DropdownMenu.Root>
-                )}
+                    <DropdownMenu.Portal>
+                        <DropdownMenu.Content
+                            align="end"
+                            side="bottom"
+                            sideOffset={8}
+                            className="z-[9999] outline-none animate-in fade-in zoom-in duration-150"
+                            onInteractOutside={(e) => {
+                            }}
+                        >
+                            <RatingNeighborsContent
+                                titleId={titleId}
+                                category={categoryKey}
+                                ratingValue={value} 
+                                onClose={() => setIsPopoverOpen(false)}
+                                
+                                onTitleChange={(newTitleId) => {
+                                    if (onTitleChange) {
+                                        onTitleChange(newTitleId);
+                                    }
+                                    setIsPopoverOpen(false); 
+                                }}
+                            />
+                        </DropdownMenu.Content>
+                    </DropdownMenu.Portal>
+                </DropdownMenu.Root>)}
 
                 {!isOwn ? (
                     <CompactRate
+                        isOwn = {isOwn}
                         currentRating={value || undefined}
                     />
                 ) : (
                     <CompactRate
+                        isOwn = {isOwn}
                         currentRating={value || undefined}
                         onRate={handleRateAndTriggerComparison} 
                         onClear={() => {

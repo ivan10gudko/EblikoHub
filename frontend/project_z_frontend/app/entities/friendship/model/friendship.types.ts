@@ -1,21 +1,17 @@
 import type { UserProfile } from "~/entities/user";
+import type { RequestStatus } from "~/shared/types";
 
-export enum FriendshipStatus {
-    PENDING= "PENDING",
-    ACCEPTED = "ACCEPTED",
-    REJECTED = "REJECTED"
-}
 
 export interface FriendshipDetailsDto {
     friendshipId: string; 
     sender: string;       
     receiver: string;     
-    status: FriendshipStatus;
+    status: RequestStatus;
     createdAt: string;    
 }
 
 export interface FriendshipPartialUpdateDto {
-    status?: FriendshipStatus;
+    status?: RequestStatus;
 }
 export interface FriendRequestDto {
     friendshipId: string; 

@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.client.HttpClientErrorException;
 
+import project_z.demo.common.Exceptions.RoomMembersExceptions.RoomMembersConflictException;
+
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -42,6 +44,17 @@ public class GlobalExceptionHandler {
 
         return new ResponseEntity<>(body, HttpStatus.CONFLICT);
     }
+
+    @ExceptionHandler(RoomMembersConflictException.class)
+    public ResponseEntity<Map<String, Object>> handleRoomMembersConflict(RoomMembersConflictException ex) {
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("timestamp", LocalDateTime.now());
+        body.put("message", ex.getMessage());
+        body.put("status", HttpStatus.CONFLICT.value());
+
+        return new ResponseEntity<>(body, HttpStatus.CONFLICT);
+    }
+
 
     @ExceptionHandler(SelfFriendRequestException.class)
     public ResponseEntity<Map<String, Object>> handleSelfFriendRequest(SelfFriendRequestException ex) {

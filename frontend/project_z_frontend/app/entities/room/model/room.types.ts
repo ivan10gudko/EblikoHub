@@ -1,17 +1,17 @@
-import type { QueryParams } from "~/shared/types";
+import type { QueryParams, RequestStatus, RequestType } from "~/shared/types";
 
-export interface RoomMember {
+export interface MemberShort {
     userId: string;
     name: string;
     nameTag: string;
-    createdAt: string;
+    imageUrl?: string;
 }
 
 export interface Room {
     roomId: number;
     roomName: string;
     owner: string;
-    members: RoomMember[];
+    members: MemberShort[];
     createdAt: string;
 }
 
@@ -23,6 +23,8 @@ export interface RoomCreateDto {
 export interface RoomShort {
     roomId: number;
     roomName: string;
+    imageUrl: string;
+    isPinned:boolean;
     ownerId: string;
     usersCount: number;
 }
@@ -30,4 +32,14 @@ export interface RoomShort {
 
 export interface RoomQueryParameters extends QueryParams {
     search?: string;
+}
+
+
+export interface RoomMemberDto {
+    id: string;
+    receiver: MemberShort;
+    sender: MemberShort;
+    status: RequestStatus;
+    type: RequestType;
+    createdAt: string;
 }

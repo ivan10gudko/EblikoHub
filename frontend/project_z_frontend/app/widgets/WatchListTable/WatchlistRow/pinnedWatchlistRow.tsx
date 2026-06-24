@@ -10,14 +10,16 @@ import { useTitleFilterStore, type TitleSortType } from "~/features/titleFilter/
 
 interface PinnedWatchlistRowProps {
   title: TitleRecord;
+  onOpenRatingModal: () => void; 
 }
 
-export const PinnedWatchlistRow = ({ title }: PinnedWatchlistRowProps) => {
+export const PinnedWatchlistRow = ({ title, onOpenRatingModal }: PinnedWatchlistRowProps) => {
   const navigate = useNavigate();
   const [tempTitleName, setTempTitleName] = useState(title.titleName);
   const { unpinTitle, deleteTitle, updateTitle } = useUpdateTitleRecord(title.titleId);
   const sortBy = useTitleFilterStore((state) => state.sortBy);
   const isAvgView = sortBy === "avgRating" as TitleSortType;
+  
   const handleImageClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     if (title.apiTitleId) navigate(`/anime/${title.apiTitleId}`);
@@ -100,7 +102,13 @@ export const PinnedWatchlistRow = ({ title }: PinnedWatchlistRowProps) => {
         </div>
 
         <div className="flex-shrink-0 ml-1 border-l border-border pl-2">
-          <TitleActionsMenu title={title} onDelete={() => deleteTitle()} isOwn={true} />
+          
+          <TitleActionsMenu 
+            title={title} 
+            onDelete={() => deleteTitle()} 
+            isOwn={true} 
+            onOpenRatingModal={onOpenRatingModal}
+          />
         </div>
       </div>
     </div>

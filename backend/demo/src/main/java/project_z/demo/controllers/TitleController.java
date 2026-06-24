@@ -69,9 +69,10 @@ public class TitleController {
         titleService.reindexCustomOrder(userId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
     @PreAuthorize("hasRole('ADMIN') || @securityService.isTitleOwner(#titleId, #token)")
     @PostMapping(path = "/{titleId}/pinTitle")
-    public ResponseEntity<?> pinTitle(
+    public ResponseEntity<TitleDto> pinTitle(
             @PathVariable("titleId") Long titleId,
             @RequestHeader("Authorization") String token
     ) {

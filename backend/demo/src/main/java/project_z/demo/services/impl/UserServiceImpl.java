@@ -23,7 +23,9 @@ import project_z.demo.common.Exceptions.ResourceNotFoundException;
 import project_z.demo.common.QueryParameters.UserQueryParameters;
 import project_z.demo.config.MyConfig;
 import project_z.demo.entity.RoomEntity;
+import project_z.demo.entity.RoomMemberEntity;
 import project_z.demo.entity.UserEntity;
+import project_z.demo.repositories.RoomMemberRepository;
 import project_z.demo.repositories.RoomRepository;
 import project_z.demo.repositories.TitleRepository;
 import project_z.demo.repositories.UserRepository;
@@ -32,6 +34,7 @@ import project_z.demo.services.UserService;
 @Service
 public class UserServiceImpl implements UserService {
 
+    private final RoomMemberRepository roomMemberRepository;
     private final TitleRepository titleRepository;
     @Autowired
     private BeanUtilsHelper beanUtilsHelper;
@@ -40,10 +43,12 @@ public class UserServiceImpl implements UserService {
     private RoomRepository roomRepository;
     private MyConfig myConfig;
 
-    public UserServiceImpl(UserRepository userRepository, TitleRepository titleRepository, MyConfig myConfig) {
+    public UserServiceImpl(UserRepository userRepository, TitleRepository titleRepository, MyConfig myConfig,
+            RoomMemberRepository roomMemberRepository) {
         this.userRepository = userRepository;
         this.titleRepository = titleRepository;
         this.myConfig = myConfig;
+        this.roomMemberRepository = roomMemberRepository;
     }
 
     @Override
@@ -73,15 +78,14 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new ResourceNotFoundException("user not found"));
     }
 
-    @Override
     public void deleteById(UUID id) {
         UserEntity user = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("user not found"));
-        for (RoomEntity room : user.getRooms()) {
-            room.getMembers().remove(user);
-            roomRepository.save(room);
-        }
-        user.getRooms().clear();
+
+        List<RoomMemberEntity> memberships = roomMemberRepository.findByReceiver_UserId(user.getUserId());
+
+        roomMemberRepository.deleteAll(memberships);
+
         userRepository.deleteById(id);
     }
 
