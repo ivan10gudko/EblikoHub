@@ -137,7 +137,7 @@ export const WatchlistRow = ({ title, dragHandleProps, index, showNumber, onOpen
           <TitleActionsMenu 
             title={title} 
             onDelete={() => deleteTitle()} 
-            isOwn={true} 
+            isOwn={true}
             onOpenRatingModal={onOpenRatingModal} 
           />
         </div>
