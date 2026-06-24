@@ -2,7 +2,6 @@ package project_z.demo.controllers;
 
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,10 +17,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import project_z.demo.dto.RoomDtos.RoomDto;
 import project_z.demo.dto.RoomMemberDtos.RoomMemberDto;
 import project_z.demo.dto.UserDtos.UserShortDto;
-import project_z.demo.entity.RoomMemberEntity;
 import project_z.demo.enums.RequestStatus;
 import project_z.demo.enums.RequestType;
 import project_z.demo.security.JwtService;
@@ -60,7 +57,7 @@ public class RoomMemberController {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
-    @PreAuthorize("@securityService.isRoomOwner(#roomId, #token)")
+    @PreAuthorize("@securityService.isRoomOwner(#roomId)")
     @PostMapping("/invite/{receiverId}")
     public ResponseEntity<Void> inviteUser(
             @RequestHeader("Authorization") String token,
@@ -72,10 +69,9 @@ public class RoomMemberController {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
-    @PreAuthorize("@securityService.isRoomOwner(#roomId, #token) || @securityService.isRoomMember(#roomId, #token)")
+    @PreAuthorize("@securityService.isRoomOwner(#roomId) || @securityService.isRoomMember(#roomId)")
     @PutMapping("/accept/{receiverId}")
     public ResponseEntity<Void> acceptRequest(
-            @RequestHeader("Authorization") String token,
             @PathVariable("roomId") Long roomId,
             @PathVariable("receiverId") UUID receiverId) {
 

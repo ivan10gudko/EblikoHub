@@ -34,6 +34,7 @@ import project_z.demo.entity.TitleEntity;
 import project_z.demo.entity.UserEntity;
 import project_z.demo.enums.RequestStatus;
 import project_z.demo.enums.RequestType;
+import project_z.demo.enums.RoomRole;
 import project_z.demo.repositories.RoomMemberRepository;
 import project_z.demo.repositories.RoomRepository;
 import project_z.demo.repositories.Specifications.RoomSpecifications;
@@ -128,6 +129,7 @@ public class RoomServiceImpl implements RoomService {
         ownerMember.setReceiver(owner);
         ownerMember.setSender(owner);
         ownerMember.setStatus(RequestStatus.ACCEPTED);
+        ownerMember.setRole(RoomRole.OWNER);
         ownerMember.setType(RequestType.OWNER);
         memberEntities.add(ownerMember);
 

@@ -43,6 +43,8 @@ public class RoomEntity {
 
     private String roomName;
 
+    private String description;
+
     @ManyToOne
     @JoinColumn(name = "owner_id")
     private UserEntity owner;

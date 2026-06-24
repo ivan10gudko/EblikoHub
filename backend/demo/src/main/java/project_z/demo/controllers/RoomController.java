@@ -2,7 +2,6 @@ package project_z.demo.controllers;
 
 import java.util.UUID;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,33 +15,23 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import project_z.demo.Mappers.Mapper;
+import lombok.RequiredArgsConstructor;
 import project_z.demo.common.QueryParameters.RoomQueryParameters;
 import project_z.demo.dto.RoomDtos.RoomCreateDto;
 import project_z.demo.dto.RoomDtos.RoomDto;
 import project_z.demo.dto.RoomDtos.RoomShortDto;
-import project_z.demo.entity.RoomEntity;
 import project_z.demo.security.JwtService;
 import project_z.demo.services.RoomMemberService;
 import project_z.demo.services.RoomService;
-import project_z.demo.services.UserService;
 
 @RestController
 @RequestMapping("/api/v1/rooms")
+@RequiredArgsConstructor
 public class RoomController {
-    private final RoomMemberService roomMemberService;
-    @Autowired
-    private RoomService roomService;
-    @Autowired
-    private UserService userService;
-    @Autowired
-    private Mapper<RoomEntity, RoomDto> roomMapper;
-    @Autowired
-    private JwtService jwtService;
 
-    RoomController(RoomMemberService roomMemberService) {
-        this.roomMemberService = roomMemberService;
-    }
+    private final RoomMemberService roomMemberService;
+    private final RoomService roomService;
+    private final JwtService jwtService;
 
     @GetMapping("/{roomId}")
     public ResponseEntity<RoomDto> getRoomById(@PathVariable("roomId") Long roomId) {
@@ -79,14 +68,13 @@ public class RoomController {
         return ResponseEntity.ok().build();
     }
 
-    @PreAuthorize("hasRole('ADMIN') || @securityService.isRoomOwner(#id, #token)")
+    @PreAuthorize("hasRole('ADMIN') || @securityService.isRoomOwner(#id)")
     @DeleteMapping(path = "/{id}")
-    public ResponseEntity<Void> deleteRoom(@PathVariable("id") long id, @RequestHeader("Authorization") String token) {
+    public ResponseEntity<Void> deleteRoom(@PathVariable("id") long id) {
         if (!roomService.isExists(id)) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         roomService.deleteById(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
-
 }

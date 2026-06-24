@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -15,87 +16,64 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import lombok.RequiredArgsConstructor;
 import project_z.demo.Mappers.Mapper;
 import project_z.demo.dto.FriendshipDtos.FriendRequestDto;
 import project_z.demo.dto.FriendshipDtos.FriendshipCountsDto;
 import project_z.demo.dto.FriendshipDtos.FriendshipDetailsDto;
 import project_z.demo.dto.FriendshipDtos.FriendshipPartialUpdateDto;
 import project_z.demo.dto.UserDtos.UserDto;
-import project_z.demo.entity.FriendshipEntity;
 import project_z.demo.entity.UserEntity;
-import project_z.demo.security.JwtService;
 import project_z.demo.services.FriendshipService;
-
 @RestController
 @RequestMapping("/api/v1/friendships")
+@RequiredArgsConstructor
 public class FriendshipController {
 
-    @Autowired
-    private FriendshipService friendshipService;
-
-    @Autowired
-    private JwtService jwtService;
-
-    @Autowired
-    private Mapper<FriendshipEntity, FriendshipDetailsDto> friendshipMapper;
-
-    @Autowired
-    private Mapper<UserEntity, UserDto> userMapper;
+    private final FriendshipService friendshipService;
+    private final Mapper<UserEntity, UserDto> userMapper;
 
     @PostMapping("/request/{receiverId}")
-    public ResponseEntity<Void> sendFriendRequest(
-            @RequestHeader("Authorization") String token,
-            @PathVariable("receiverId") UUID receiverId) {
-
-        UUID senderId = jwtService.extractUsername(token);
+    public ResponseEntity<Void> sendFriendRequest(@PathVariable("receiverId") UUID receiverId) {
+        UUID senderId = SecurityContextHolder.getContext().getAuthentication() != null 
+                        ? UUID.fromString(SecurityContextHolder.getContext().getAuthentication().getName()) 
+                        : null;
+        
         friendshipService.sendFriendRequest(senderId, receiverId);
-
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
-    @PreAuthorize("hasRole('ADMIN') || @securityService.canAcceptFriendRequest(#token, #senderId)")
+    @PreAuthorize("hasRole('ADMIN') || @securityService.canAcceptFriendRequest(#senderId)")
     @PutMapping("/accept/{senderId}")
-    public ResponseEntity<Void> acceptFriendRequest(
-            @RequestHeader("Authorization") String token,
-            @PathVariable("senderId")  UUID senderId) {
-
-        UUID receiverId = jwtService.extractUsername(token);
+    public ResponseEntity<Void> acceptFriendRequest(@PathVariable("senderId") UUID senderId) {
+        UUID receiverId = UUID.fromString(SecurityContextHolder.getContext().getAuthentication().getName());
         friendshipService.acceptFriendRequest(receiverId, senderId);
-
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PreAuthorize("hasRole('ADMIN') || @securityService.canAcceptFriendRequest(#token, #senderId)")
+    @PreAuthorize("hasRole('ADMIN') || @securityService.canAcceptFriendRequest(#senderId)")
     @PutMapping("/reject/{senderId}")
-    public ResponseEntity<Void> rejectFriendRequest(
-            @RequestHeader("Authorization")  String token,
-            @PathVariable("senderId") UUID senderId) {
-
-        UUID receiverId = jwtService.extractUsername(token);
+    public ResponseEntity<Void> rejectFriendRequest(@PathVariable("senderId") UUID senderId) {
+        UUID receiverId = UUID.fromString(SecurityContextHolder.getContext().getAuthentication().getName());
         friendshipService.rejectFriendRequest(receiverId, senderId);
-
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping("/user/{userId}")
     public ResponseEntity<List<UserDto>> getFriendsByUserId(@PathVariable("userId") UUID userId) {
         List<UserEntity> friends = friendshipService.findFriendsByUserId(userId);
-
         List<UserDto> response = friends.stream()
                 .map(userMapper::mapTo)
                 .collect(Collectors.toList());
-
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<FriendshipDetailsDto> getFriendshipById(@PathVariable("id") UUID id) {
-        FriendshipDetailsDto dto = friendshipService.findOne(id);
-        return new ResponseEntity<>(dto, HttpStatus.OK);
+        return ResponseEntity.ok(friendshipService.findOne(id));
     }
 
     @GetMapping("/{userId}/receivedPending")
@@ -110,8 +88,7 @@ public class FriendshipController {
 
     @GetMapping("/{userId}/stats")
     public ResponseEntity<FriendshipCountsDto> getUserFriendshipStats(@PathVariable("userId") UUID userId) {
-        FriendshipCountsDto stats = friendshipService.getUserFriendshipStats(userId);
-        return new ResponseEntity<>(stats, HttpStatus.OK);
+        return ResponseEntity.ok(friendshipService.getUserFriendshipStats(userId));
     }
 
     @PreAuthorize("hasRole('ADMIN')")
@@ -119,17 +96,12 @@ public class FriendshipController {
     public ResponseEntity<FriendshipDetailsDto> partialUpdate(
             @PathVariable("id") UUID id,
             @RequestBody FriendshipPartialUpdateDto updateDto) {
-
-        FriendshipDetailsDto updated = friendshipService.partialUpdate(id, updateDto);
-        return new ResponseEntity<>(updated, HttpStatus.OK);
+        return ResponseEntity.ok(friendshipService.partialUpdate(id, updateDto));
     }
 
-    @PreAuthorize("hasRole('ADMIN') || @securityService.isFriendshipMember(#token, #id)")
+    @PreAuthorize("hasRole('ADMIN') || @securityService.isFriendshipMember(#id)")
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteFriendshipById(
-            @PathVariable("id") UUID id,
-            @RequestHeader("Authorization") String token) {
-
+    public ResponseEntity<Void> deleteFriendshipById(@PathVariable("id") UUID id) {
         friendshipService.deleteFriendById(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }

@@ -20,6 +20,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import project_z.demo.enums.RequestStatus;
 import project_z.demo.enums.RequestType;
+import project_z.demo.enums.RoomRole;
 
 @Data
 @Entity
@@ -53,7 +54,12 @@ public class RoomMemberEntity {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private RequestType type;
+    
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private RoomRole role = RoomRole.MEMBER;
+    
     @Column(name = "is_pinned")
     private boolean isPinned = false;
     

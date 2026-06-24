@@ -5,7 +5,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 import jakarta.transaction.Transactional;
@@ -19,6 +19,7 @@ import project_z.demo.entity.RoomMemberEntity;
 import project_z.demo.entity.UserEntity;
 import project_z.demo.enums.RequestStatus;
 import project_z.demo.enums.RequestType;
+import project_z.demo.repositories.RoomBanRepository;
 import project_z.demo.repositories.RoomMemberRepository;
 import project_z.demo.repositories.RoomRepository;
 import project_z.demo.repositories.UserRepository;
@@ -31,23 +32,30 @@ public class RoomMemberServiceImpl implements RoomMemberService {
     private final UserRepository userRepository;
     private final Mapper<RoomMemberEntity, RoomMemberDto> memberMapper;
     private final Mapper<UserEntity, UserShortDto> userMapper;
+    private final RoomBanRepository roomBanRepository;
 
     public RoomMemberServiceImpl(
             RoomMemberRepository roomMemberRepository,
             RoomRepository roomRepository,
             UserRepository userRepository,
             Mapper<RoomMemberEntity, RoomMemberDto> memberMapper,
-            Mapper<UserEntity, UserShortDto> userMapper) {
+            Mapper<UserEntity, UserShortDto> userMapper,
+            RoomBanRepository roomBanRepository) {
         this.roomMemberRepository = roomMemberRepository;
         this.roomRepository = roomRepository;
         this.userRepository = userRepository;
         this.memberMapper = memberMapper;
         this.userMapper = userMapper;
+        this.roomBanRepository = roomBanRepository;
     }
 
-    @Override
     @Transactional
     public void sendRequest(UUID senderId, UUID receiverId, long roomId, RequestType type) {
+
+        if (roomBanRepository.existsByRoomRoomIdAndUserUserId(roomId, receiverId)) {
+            throw new AccessDeniedException("User is permanently banned from this room.");
+        }
+
         RoomEntity room = roomRepository.findById(roomId)
                 .orElseThrow(() -> new ResourceNotFoundException("Room not found"));
 
@@ -56,8 +64,14 @@ public class RoomMemberServiceImpl implements RoomMemberService {
 
         if (existing.isPresent()) {
             RoomMemberEntity member = existing.get();
-            if (member.getStatus() == RequestStatus.ACCEPTED)
-                throw new RoomMembersConflictException("Already a member.");
+
+            if (member.getStatus() == RequestStatus.REJECTED && type == RequestType.JOIN_REQUEST) {
+                throw new RoomMembersConflictException("Your previous request was rejected.");
+            }
+
+            if (member.getStatus() == RequestStatus.PENDING) {
+                throw new RoomMembersConflictException("Request is already pending.");
+            }
 
             member.setStatus(RequestStatus.PENDING);
             member.setSender(userRepository.findById(senderId).orElseThrow());
@@ -65,7 +79,6 @@ public class RoomMemberServiceImpl implements RoomMemberService {
             roomMemberRepository.save(member);
             return;
         }
-
         RoomMemberEntity newMember = new RoomMemberEntity();
         newMember.setRoom(room);
         newMember.setReceiver(userRepository.findById(receiverId).orElseThrow());
