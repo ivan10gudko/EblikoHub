@@ -8,15 +8,22 @@ interface TitleImageEditorProps {
   imageUrl: string | null;
   onImageChange: (url: string | null) => void;
   defaultImage?: string;
+  variant?: "portrait" | "landscape";
 }
 
 const DEFAULT_IMAGE_PATH = "/defaultTitleRecordImage.jpg";
 
-export const TitleImageEditor = ({
+export const ImageUrlEditor = ({
   imageUrl,
   onImageChange,
   defaultImage = DEFAULT_IMAGE_PATH,
+  variant = "portrait",
 }: TitleImageEditorProps) => {
+  const containerClasses =
+    variant === "portrait"
+      ? "h-[280px] w-[190px]"
+      : "w-full max-w-[400px] aspect-video";
+
   const [tempUrl, setTempUrl] = useState(imageUrl || "");
   const [imageError, setImageError] = useState(false);
 
@@ -45,7 +52,9 @@ export const TitleImageEditor = ({
   return (
     <div className="flex flex-col items-center gap-6 w-full">
       <div className="relative group">
-        <div className="h-[280px] w-[190px] bg-card/50 backdrop-blur-sm rounded-2xl border-2 border-dashed border-border flex items-center justify-center overflow-hidden shadow-xl transition-all duration-300 group-hover:border-primary/50 group-hover:shadow-primary/10">
+        <div
+          className={`${containerClasses} bg-card/50 backdrop-blur-sm rounded-2xl border-2 border-dashed border-border flex items-center justify-center overflow-hidden shadow-xl transition-all duration-300 group-hover:border-primary/50 group-hover:shadow-primary/10`}
+        >
           <img
             src={imageError || !imageUrl ? defaultImage : imageUrl}
             className={`h-full w-full object-cover transition-transform duration-500 group-hover:scale-105 ${
@@ -74,7 +83,7 @@ export const TitleImageEditor = ({
         <div className="flex items-center justify-between px-1">
           <label className="text-xs tracking-[0.2em] text-foreground flex items-center gap-2">
             <LinkIcon sx={{ fontSize: 14 }} className="text-primary" />
-            Poster Source URL
+            Source URL
           </label>
           {tempUrl && (
             <span
@@ -89,10 +98,10 @@ export const TitleImageEditor = ({
           <Input
             type="text"
             autoComplete="off"
-            placeholder="https://example.com/anime-poster.jpg"
+            placeholder="Enter poster url..."
             value={tempUrl}
             onChange={(val) => handleUrlChange(val)}
-            className={`h-12 w-full pl-4 pr-12 border-2 rounded-xl font-medium bg-background/50 transition-all shadow-inner ${
+            className={`h-12 w-full pl-4 pr-12 border-2 rounded-xl font-medium bg-background/50 transition-all shadow-inner placeholder:opacity-10 ${
               imageError && tempUrl
                 ? "border-danger/50 focus:border-danger"
                 : "border-border/50 focus:border-primary focus:bg-background"

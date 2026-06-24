@@ -66,12 +66,9 @@ export const WatchlistTable = ({ titles, isLoading, isOwn, queryKey }: Watchlist
 
   return (
     <div className="flex flex-col gap-2 w-full">
-      {/* Кнопка додавання лише для власника */}
       {isOwn && <AddNewButton onClick={() => setIsModalOpen(true)} placeholder="title" />}
 
-      {/* Рендер списку */}
       {isOwn ? (
-        // ВЛАСНИЙ ПЕРЕГЛЯД (з Drag & Drop)
         <>
           {pinnedTitle && <PinnedWatchlistRow title={pinnedTitle} onOpenRatingModal={() => openRating(pinnedTitle)} />}
 
@@ -95,7 +92,6 @@ export const WatchlistTable = ({ titles, isLoading, isOwn, queryKey }: Watchlist
           </DragDropContext>
         </>
       ) : (
-        // ПЕРЕГЛЯД ГОСТЯ
         <div className="flex flex-col gap-2 w-full">
           {pinnedTitle && <PinnedWatchlistRowReadOnly title={pinnedTitle} onOpenRatingModal={() => openRating(pinnedTitle)} />}
           {regularTitles.map((title, index) => (
@@ -110,7 +106,6 @@ export const WatchlistTable = ({ titles, isLoading, isOwn, queryKey }: Watchlist
         </div>
       )}
 
-      {/* МОДАЛКИ (завжди доступні) */}
       <AddTitleModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
 
       {activeRatingTitle && (

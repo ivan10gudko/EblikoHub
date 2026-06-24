@@ -5,7 +5,7 @@ import { Button } from "~/shared/ui/Button";
 import { Status } from "~/shared/types/Status";
 import { useSeasonActions, useSeasons, type LocalDraftSeason } from "~/entities/season";
 import { SeasonRow } from "./SeasonRow";
-
+import { ModalFooter } from "~/shared/ui/Modal";
 interface SeasonsModalProps {
     titleId: number;
     titleName: string;
@@ -145,35 +145,14 @@ export const EditSeasonsModal = ({ titleId, isOpen, onClose, titleName, isOwn }:
                     </div>
 
                 </div>
-                <div className="flex flex-col sm:flex-row gap-3 pt-4 border-t border-border/50">
-                    {isOwn ? (
-                        <>
-                            <Button
-                                variant="outline"
-                                className="order-2 sm:order-1 text-foreground bg-card/50 border-none w-full sm:flex-1 h-12 rounded-2xl font-bold hover:bg-border/20"
-                                onClick={onClose} 
-                                disabled={isSyncing}
-                            >
-                                Cancel
-                            </Button>
-                            <Button
-                                className="order-1 sm:order-2 w-full sm:flex-[2] h-12 rounded-2xl bg-primary text-foreground font-black tracking-widest shadow-[0_4px_0_0_#d97706] active:translate-y-[1px] active:shadow-none transition-all"
-                                disabled={isSyncing}
-                                onClick={handleSaveChanges} 
-                            >
-                                {isSyncing ? "Syncing..." : "Save Changes"}
-                            </Button>
-                        </>
-                    ) : (
-                        <Button
-                            variant="outline"
-                            className="text-foreground bg-card/50 border border-border/50 w-full h-12 rounded-2xl font-bold hover:bg-border/20 transition-all cursor-pointer"
-                            onClick={onClose}
-                        >
-                            Close
-                        </Button>
-                    )}
-                </div>
+
+                <ModalFooter
+                    onCancel={onClose}
+                    onSave={handleSaveChanges}
+                    isSaving={isSyncing}
+                    saveLabel="Save"
+                    isOwn = {isOwn}
+                />
             </div>
         </Modal>
     );
