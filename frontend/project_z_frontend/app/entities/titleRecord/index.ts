@@ -8,7 +8,7 @@ export { useTitleByApiId } from "./hooks/useTitleByApiId"
 export { useTitleRecordMutation } from "./hooks/useTitleRecordMutation";
 export { useReorderWatchlist } from "./hooks/useReorderWatchlist";
 export { useCreateTitleRecord } from "./hooks/useCreateTitleRecord";
-export type { ManageTitleRecordProps } from "./model/titleRecord";
+export type { ManageTitleRecordProps, TitleStats } from "./model/titleRecord";
 
 export { default as StatusSelect } from "./ui/StatusSelect";
 export { AnimeSearchDropDownResults } from "./ui/AnimeSearchDropDownResult";

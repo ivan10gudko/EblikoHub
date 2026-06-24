@@ -10,6 +10,7 @@ interface CheckboxProps extends Omit<
   error?: string;
   themeVariant?: "light" | "dark";
   labelClassName?: string;
+  count?: number; 
 }
 
 const CHECKBOX_CLASSES = {
@@ -28,6 +29,7 @@ export const Checkbox: React.FC<CheckboxProps> = ({
   error,
   labelClassName = "",
   disabled,
+  count, 
   ...props
 }) => {
   const id = useId();
@@ -49,50 +51,60 @@ export const Checkbox: React.FC<CheckboxProps> = ({
 
   return (
     <div className={`flex flex-col gap-1 w-full min-w-0 ${containerClasses}`}>
+     
       <label
         htmlFor={id}
-        className="flex items-start gap-3 cursor-pointer select-none group w-fit"
+        className="flex items-center justify-between cursor-pointer select-none group w-full"
       >
-        <input
-          id={id}
-          type="checkbox"
-          checked={checked}
-          disabled={disabled}
-          onChange={(e) => onChange(e.target.checked)}
-          className="sr-only peer"
-          {...props}
-        />
+        <div className="flex items-center gap-3 min-w-0">
+          <input
+            id={id}
+            type="checkbox"
+            checked={checked}
+            disabled={disabled}
+            onChange={(e) => onChange(e.target.checked)}
+            className="sr-only peer"
+            {...props}
+          />
 
-        <div
-          className={`
-                        checkbox-box
-                        ${CHECKBOX_CLASSES.base}
-                        ${backgroundStyle}
-                        ${error ? CHECKBOX_CLASSES.error : CHECKBOX_CLASSES.default}
-                        ${checkboxClasses}
-                    `}
-        >
-          <svg
-            className={`h-3.5 w-3.5 stroke-[#121212] stroke-[3.5] fill-none transition-all duration-200 ${
-              checked ? "opacity-100 scale-100" : "opacity-0 scale-75"
-            }`}
-            viewBox="0 0 24 24"
+          <div
+            className={`
+              checkbox-box
+              ${CHECKBOX_CLASSES.base}
+              ${backgroundStyle}
+              ${error ? CHECKBOX_CLASSES.error : CHECKBOX_CLASSES.default}
+              ${checkboxClasses}
+            `}
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M4.5 12.75l6 6 9-13.5"
-            />
-          </svg>
+            <svg
+              className={`h-3.5 w-3.5 stroke-[#121212] stroke-[3.5] fill-none transition-all duration-200 ${
+                checked ? "opacity-100 scale-100" : "opacity-0 scale-75"
+              }`}
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M4.5 12.75l6 6 9-13.5"
+              />
+            </svg>
+          </div>
+
+          {label && (
+            <span
+              className={`text-sm font-semibold leading-5 transition-colors peer-disabled:opacity-50 truncate ${labelClassName} ${
+                labelClassName ? "" : "text-foreground"
+              }`}
+            >
+              {label}
+            </span>
+          )}
         </div>
 
-        {label && (
-          <span
-            className={`text-sm font-medium leading-5 transition-colors peer-disabled:opacity-50 ${labelClassName} ${
-              labelClassName ? "" : "text-foreground"
-            }`}
-          >
-            {label}
+        
+        {count !== undefined && (
+          <span className="text-xs bg-card text-foreground/80 px-2 py-0.5 rounded-md font-medium border border-border/40 min-w-[24px] text-center transition-colors group-hover:border-border">
+            {count}
           </span>
         )}
       </label>

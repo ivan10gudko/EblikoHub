@@ -1,8 +1,9 @@
-import { type CreateTitleRecord, type SameCriteriaRating, type TitleParams, type TitleRecord, type TitleShortDto } from "../model/titleRecord"
+import { type CreateTitleRecord, type SameCriteriaRating, type TitleParams, type TitleRecord, type TitleShortDto, type TitleStats } from "../model/titleRecord"
 import type { PageResponse } from "~/shared/types";
 import { apiClient } from "~/shared/api";
 import { Status } from "~/shared/types/Status";
 import type { Rating } from "~/shared/types/Rating";
+
 
 export interface ActionOptions {
     apiTitleId?: number | null;
@@ -16,6 +17,7 @@ export interface RateOptions extends ActionOptions {
 
 
 interface TitleRecordService {
+
     get(userId: string, params?: TitleParams): Promise<PageResponse<TitleRecord>>;
     post(titleData: CreateTitleRecord): Promise<TitleRecord>;
     put(titleId: number, titleData: TitleRecord): Promise<TitleRecord>;
@@ -34,7 +36,7 @@ interface TitleRecordService {
     moveToPlanned(options: ActionOptions): Promise<TitleRecord>;
     markAsWatched(options: ActionOptions): Promise<TitleRecord>;
     markAsDropped(options: ActionOptions): Promise<TitleRecord>;
-
+getTitleStats(userId: string): Promise<TitleStats>;
     saveAction(options: ActionOptions & { data: Partial<TitleRecord> }): Promise<TitleRecord>;
 }
 
@@ -147,5 +149,9 @@ export const titleRecordService: TitleRecordService = {
 
     async markAsDropped(options) {
         return this.saveAction({ ...options, data: { status: Status.DROPPED } });
+    },
+    async getTitleStats(userId) {
+        const response = await apiClient.get(`/titles/titleStats/${userId}`);
+        return response.data;
     }
 };

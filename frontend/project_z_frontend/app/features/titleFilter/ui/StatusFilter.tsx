@@ -10,8 +10,34 @@ const statusOptions = [
   { label: "Dropped", value: Status.DROPPED },
 ];
 
-const StatusFilter = () => {
+interface StatusFilterProps {
+  statusCount?: Record<string, number>;
+}
+
+
+const getBackendCount = (
+  countRecord: Record<string, number> | undefined,
+  value: string | undefined
+): number => {
+  if (!countRecord || value === undefined) return 0;
+
+  const cleanClientKey = value.toUpperCase().replace(/[^A-Z]/g, "");
+
+  const foundKey = Object.keys(countRecord).find((key) => {
+    const cleanServerKey = key.toUpperCase().replace(/[^A-Z]/g, "");
+    return cleanServerKey === cleanClientKey;
+  });
+
+  return foundKey ? countRecord[foundKey] : 0;
+};
+
+const StatusFilter = ({ statusCount }: StatusFilterProps) => {
   const { status, setStatus } = useTitleFilterStore();
+
+  
+  const totalTitles = statusCount
+    ? Object.values(statusCount).reduce((sum, count) => sum + count, 0)
+    : 0;
 
   return (
     <div className="flex flex-col gap-2">
@@ -34,39 +60,45 @@ const StatusFilter = () => {
           if (isActive) {
             switch (opt.value) {
               case Status.INPROGRESS:
-                activeBgAndShadow =
-                  "bg-amber-500/10 shadow-xs shadow-amber-500/30";
+                activeBgAndShadow = "bg-amber-500/10 shadow-xs shadow-amber-500/30";
                 break;
               case Status.PLANNED:
-                activeBgAndShadow =
-                  "bg-blue-500/10 shadow-xs shadow-blue-500/30";
+                activeBgAndShadow = "bg-blue-500/10 shadow-xs shadow-blue-500/30";
                 break;
               case Status.WATCHED:
-                activeBgAndShadow =
-                  "bg-green-500/10 shadow-xs shadow-green-500/30";
+                activeBgAndShadow = "bg-green-500/10 shadow-xs shadow-green-500/30";
                 break;
               case Status.DROPPED:
                 activeBgAndShadow = "bg-red-500/10 shadow-xs shadow-red-500/30";
                 break;
               default:
-                activeBgAndShadow =
-                  "bg-primary !text-background shadow-xs shadow-yellow-100";
+                activeBgAndShadow = "bg-primary !text-background shadow-xs shadow-yellow-100";
                 break;
             }
           }
+
+          
+          const count = opt.value === undefined ? totalTitles : getBackendCount(statusCount, opt.value);
 
           return (
             <Button
               variant="outline"
               key={opt.label}
               onClick={() => setStatus(opt.value)}
-              className={`border-none px-4 py-2 rounded-full text-sm font-semibold transition-all ${textColor} ${
+              className={`border-none px-4 py-2 rounded-full text-sm font-semibold transition-all flex items-center gap-1.5 ${textColor} ${
                 isActive
                   ? activeBgAndShadow
                   : "bg-background-muted hover:bg-background-muted-hover"
               }`}
             >
-              {opt.label}
+              <span>{opt.label}</span>
+              <span className={`text-xs px-1.5 py-0.5 rounded-md font-normal transition-colors ${
+                isActive && opt.value === undefined
+                  ? "bg-background/20 text-background" 
+                  : "bg-background/20 text-foreground/80"
+              }`}>
+                {count}
+              </span>
             </Button>
           );
         })}
