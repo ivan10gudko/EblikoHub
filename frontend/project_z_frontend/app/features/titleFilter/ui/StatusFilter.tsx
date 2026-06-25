@@ -1,35 +1,15 @@
 import { Button } from "~/shared/ui/Button";
 import { useTitleFilterStore } from "../store/titleFilter.store";
-import { Status } from "~/shared/types/Status";
+import { Status, statusOptionsFilters } from "~/shared/types/Status";
+import { getBackendCount } from "~/shared/helpers";
 
-const statusOptions = [
-  { label: "All", value: undefined },
-  { label: "In Progress", value: Status.INPROGRESS },
-  { label: "Planned", value: Status.PLANNED },
-  { label: "Watched", value: Status.WATCHED },
-  { label: "Dropped", value: Status.DROPPED },
-];
 
 interface StatusFilterProps {
   statusCount?: Record<string, number>;
 }
 
 
-const getBackendCount = (
-  countRecord: Record<string, number> | undefined,
-  value: string | undefined
-): number => {
-  if (!countRecord || value === undefined) return 0;
 
-  const cleanClientKey = value.toUpperCase().replace(/[^A-Z]/g, "");
-
-  const foundKey = Object.keys(countRecord).find((key) => {
-    const cleanServerKey = key.toUpperCase().replace(/[^A-Z]/g, "");
-    return cleanServerKey === cleanClientKey;
-  });
-
-  return foundKey ? countRecord[foundKey] : 0;
-};
 
 const StatusFilter = ({ statusCount }: StatusFilterProps) => {
   const { status, setStatus } = useTitleFilterStore();
@@ -45,7 +25,7 @@ const StatusFilter = ({ statusCount }: StatusFilterProps) => {
         Status
       </label>
       <div className="flex flex-wrap gap-2">
-        {statusOptions.map((opt) => {
+        {statusOptionsFilters.map((opt) => {
           const isActive =
             status === opt.value ||
             (opt.value === undefined && status === undefined);

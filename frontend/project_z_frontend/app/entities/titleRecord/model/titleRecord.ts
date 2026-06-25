@@ -1,6 +1,6 @@
 import type { QueryParams } from "~/shared/types";
 import type { Rating } from "~/shared/types/Rating";
-import type { Status } from "~/shared/types/Status";
+import { Status } from "~/shared/types/Status";
 
 export interface TitleRecord {
     titleId: number,
@@ -71,3 +71,4 @@ export interface TitleStats {
   statusCount: Record<string, number>;
   typeCount: Record<string, number>;
 }
+
