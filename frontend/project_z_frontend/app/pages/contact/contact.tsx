@@ -13,8 +13,8 @@ const CONTACTS_CONFIG: ContactChannel[] = [
   {
     id: 'email',
     title: 'Email',
-    subtitle: 'walpys@gmail.com',
-    href: 'mailto:walpys@gmail.com',
+    subtitle: 'lb.softwaresup@gmail.com',
+    href: 'mailto:lb.softwaresup@gmail.com',
     icon: '📧',
     isExternal: false,
   },
@@ -30,7 +30,6 @@ const CONTACTS_CONFIG: ContactChannel[] = [
 
 export function ContactPage() {
   return (
-    /* flex-col та flex-1 розтягнуть сторінку, притиснувши футер до самого низу екрана */
     <div className="min-h-[80vh] bg-background text-foreground transition-colors duration-200 flex flex-col items-center justify-start pt-16 md:pt-24">
       <div className="max-w-2xl w-full mx-auto p-6 space-y-8">
         
