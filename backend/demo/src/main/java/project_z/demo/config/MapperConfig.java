@@ -21,17 +21,10 @@ public class MapperConfig {
     public ModelMapper modelMapper() {
         ModelMapper mapper = new ModelMapper();
 
-        Converter<Collection<?>, Long> collectionSizeConverter = context -> context.getSource() != null
-                ? (long) context.getSource().size()
-                : 0L;
 
         mapper.typeMap(RoomEntity.class, RoomShortDto.class).addMappings(m -> {
-
-            m.using(collectionSizeConverter)
-                    .map(RoomEntity::getMembers, RoomShortDto::setUsersCount);
-
-            m.map(src -> src.getOwner().getUserId(), RoomShortDto::setOwnerId);
-
+            m.map(RoomEntity::getMemberCount, RoomShortDto::setUsersCount);
+            m.skip(RoomShortDto::setOwner);
         });
 
         return mapper;

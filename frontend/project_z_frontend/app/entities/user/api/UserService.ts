@@ -1,5 +1,5 @@
 import { apiClient, publicClient } from "~/shared/api";
-import type { CreateUserProfile, UpdateUserProfile, UserParams, UserProfile } from "../model/user.types";
+import type { BadgeUser, CreateUserProfile, UpdateUserProfile, UserParams, UserProfile } from "../model/user.types";
 import { generateFallbackName } from "../lib/generateFallbackName";
 import type { PageResponse } from "~/shared/types";
 
@@ -56,6 +56,11 @@ export const userService = {
             params: params 
         });
         
+        return response.data;
+    },
+    
+    getBadges: async (): Promise<BadgeUser[]> => {
+        const response = await apiClient.get<BadgeUser[]>("/badges");
         return response.data;
     },
 };

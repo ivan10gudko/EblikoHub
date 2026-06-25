@@ -1,6 +1,6 @@
 import type { QueryParams } from "~/shared/types";
 import type { Rating } from "~/shared/types/Rating";
-import type { Status } from "~/shared/types/Status";
+import { Status } from "~/shared/types/Status";
 
 export interface TitleRecord {
     titleId: number,
@@ -61,9 +61,14 @@ export interface SameCriteriaRating{
     avgRating : number;
 }
 export const TitleTypeOptionsColors: Record<TitleType, string> = {
-    [TitleType.ANIME]: "text-foreground",
-    [TitleType.MANGA]: "text-green-500",
-    [TitleType.SERIES]: "text-blue-500",
-    [TitleType.MOVIE]: "text-amber-500",
-    [TitleType.HENTAI]: "text-red-500",
+    [TitleType.ANIME]: "text-foreground/90",
+    [TitleType.MANGA]: "text-green-500/90",
+    [TitleType.SERIES]: "text-purple-500/90",
+    [TitleType.MOVIE]: "text-amber-500/90",
+    [TitleType.HENTAI]: "text-red-500/90",
 };
+export interface TitleStats {
+  statusCount: Record<string, number>;
+  typeCount: Record<string, number>;
+}
+

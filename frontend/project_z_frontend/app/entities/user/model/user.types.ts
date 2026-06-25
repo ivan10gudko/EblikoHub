@@ -28,3 +28,12 @@ export interface UserShort {
     nameTag: string;
     img?: string;
 }
+export interface BadgeUser {
+    id: string;
+    type: BadgeType;
+    user: UserProfile;
+}
+export enum BadgeType {
+    DEVELOPER = "DEVELOPER",
+    RESPECTED = "RESPECTED"
+}

@@ -10,6 +10,9 @@ export default [
     layout("./routes/_main.tsx", [
 
         index("./routes/home.tsx"),
+        
+        route("about", "./routes/about.tsx"), 
+
         route("watchlist/:userId", "./routes/watchlist.$userId.tsx"),
 
         route("profile/:userId/friends", "./routes/friends/friends.tsx", [
@@ -31,8 +34,8 @@ export default [
                 ]),
             ]),
             ...prefix("rooms", [
-                route(":userId", "./routes/rooms._index.tsx"),     // /rooms
-                route(":userId/:id", "./routes/rooms.$id.tsx"), // /rooms/:id
+                route("user/:userId", "./routes/rooms._index.tsx"),     // /rooms
+                route(":id", "./routes/rooms.$id.tsx"), // /rooms/:id
             ]),
         ]),
 

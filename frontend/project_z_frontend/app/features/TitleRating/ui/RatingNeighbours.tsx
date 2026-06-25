@@ -8,12 +8,19 @@ interface RatingNeighborsProps {
   category: string;
   ratingValue: number;
   onClose?: () => void;
+  onTitleChange?: (newTitleId: number) => void; 
 }
 
-export const RatingNeighborsContent = ({ titleId, category, ratingValue, onClose }: RatingNeighborsProps) => {
+export const RatingNeighborsContent = ({ 
+  titleId, 
+  category, 
+  ratingValue, 
+  onClose,
+  onTitleChange
+}: RatingNeighborsProps) => {
   const [neighbors, setNeighbors] = useState<TitleShortDto[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [averageRating, setAverageRating] = useState(Number);
+  const [averageRating, setAverageRating] = useState<number>(0); 
 
   const containerRef = useRef<HTMLDivElement>(null);
   const currentItemRef = useRef<HTMLDivElement>(null);
@@ -27,7 +34,7 @@ export const RatingNeighborsContent = ({ titleId, category, ratingValue, onClose
       .then((data) => {
         if (isMounted) {
           setNeighbors(data.titles);
-          setAverageRating(data.avgRating)
+          setAverageRating(data.avgRating);
         }
       })
       .catch((err) => {
@@ -35,6 +42,7 @@ export const RatingNeighborsContent = ({ titleId, category, ratingValue, onClose
       })
       .finally(() => {
         if (isMounted) {
+          
           setIsLoading(false);
         }
       });
@@ -99,18 +107,22 @@ export const RatingNeighborsContent = ({ titleId, category, ratingValue, onClose
               <div
                 key={item.titleId}
                 ref={isCurrent ? currentItemRef : null}
-                className={`flex items-center justify-between px-2.5 py-1.5 rounded-md transition-all text-xs gap-2 ${isCurrent
-                  ? "bg-primary/20 border border-primary/40 font-black text-primary shadow-sm"
-                  : "text-foreground/90 font-semibold hover:bg-border/30"
-                  }`}
+                onClick={() => {
+                  if (!isCurrent && onTitleChange) {
+                    onTitleChange(item.titleId);
+                  }
+                }}
+                className={`flex items-center justify-between px-2.5 py-1.5 rounded-md transition-all text-xs gap-2 ${
+                  isCurrent
+                    ? "bg-primary/20 border border-primary/40 font-black text-primary shadow-sm cursor-default"
+                    : "text-foreground/90 font-semibold hover:bg-border/30 cursor-pointer"
+                }`}
               >
-                
                 <span className="truncate flex items-center gap-1 flex-1 min-w-0">
                   {isCurrent && <span className="text-primary text-[10px] flex-shrink-0">➜</span>}
                   <span className="truncate">{item.titleName}</span>
                 </span>
 
-                
                 <span className={`font-mono text-[11px] pl-4 flex-shrink-0 ${isCurrent ? "text-primary font-bold" : "text-foreground/70"}`}>
                   {item.ratingValue !== undefined && item.ratingValue !== null
                     ? item.ratingValue.toFixed(1)

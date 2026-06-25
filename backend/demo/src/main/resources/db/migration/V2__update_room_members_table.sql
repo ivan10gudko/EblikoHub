@@ -2,9 +2,21 @@
 ALTER TABLE rooms ADD COLUMN IF NOT EXISTS image_url VARCHAR(255);
 ALTER TABLE rooms ADD COLUMN IF NOT EXISTS is_pinned BOOLEAN DEFAULT FALSE;
 
+ALTER TABLE room_members ADD COLUMN IF NOT EXISTS id UUID DEFAULT gen_random_uuid();
 ALTER TABLE room_members ADD COLUMN IF NOT EXISTS sender_id UUID;
 ALTER TABLE room_members ADD COLUMN IF NOT EXISTS status VARCHAR(50) DEFAULT 'PENDING';
 ALTER TABLE room_members ADD COLUMN IF NOT EXISTS type VARCHAR(50) DEFAULT 'INVITE';
+ALTER TABLE room_members ADD COLUMN IF NOT EXISTS is_pinned BOOLEAN DEFAULT FALSE;
+ALTER TABLE room_members ADD COLUMN IF NOT EXISTS created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
+
+UPDATE room_members SET id = gen_random_uuid() WHERE id IS NULL;
+
+DO $$ 
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE contype = 'p' AND conrelid = 'room_members'::regclass) THEN
+        ALTER TABLE room_members ADD PRIMARY KEY (id);
+    END IF;
+END $$;
 
 DO $$ 
 BEGIN
