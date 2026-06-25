@@ -3,28 +3,34 @@ import { useParams } from "react-router";
 import { AddFriendTab } from "~/features/manageFriends/ui/FriendsTabs/AddFriendTab";
 import SearchBar from "~/shared/ui/SearchBar";
 import { useFriends } from "~/features/manageFriends/hooks/useFriends";
+import { useDebouncedCallback } from "~/shared/hooks/useDebouncedCallback";
 
 export default function AddFriendPage() {
   const { userId } = useParams();
   const [searchQuery, setSearchQuery] = useState("");
-  const [debouncedQuery, setDebouncedQuery] = useState("");
-  const { isPendingGlobal, handleFriendAction } = useFriends(userId!, "add");
-  useEffect(() => {
-    const handler = setTimeout(() => {
-      setDebouncedQuery(searchQuery);
-    }, 400);
+  const [displayQuery, setDisplayQuery] = useState("");
 
-    return () => clearTimeout(handler);
-  }, [searchQuery]);
+  const { isPendingGlobal, handleFriendAction } = useFriends(userId!, "add");
+
+
+  const [debouncedSearch] = useDebouncedCallback((query: string) => {
+    setDisplayQuery(query);
+  }, 400);
+
+  const handleSearchChange = (value: string) => {
+    setSearchQuery(value);
+    debouncedSearch(value);
+  };
+
   return (
     <div className="flex flex-col gap-6">
       <SearchBar
-        onChange={setSearchQuery}
-        onSearch={setSearchQuery}
+        onChange={handleSearchChange}
+        onSearch={handleSearchChange}
         className="bg-background-muted/40"
       />
       <AddFriendTab
-        searchQuery={debouncedQuery} 
+        searchQuery={displayQuery}
         isPendingAction={isPendingGlobal}
         onAction={handleFriendAction}
       />

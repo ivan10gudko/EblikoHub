@@ -16,6 +16,47 @@ interface FriendCardAddProps {
 export const FriendCardAdd = ({ user, onAction, isPendingAction }: FriendCardAddProps) => {
     const { friendshipStatus: status, userId, friendshipId } = user;
 
+    const renderActionButtons = () => {
+        switch (status) {
+            case RequestStatus.NONE:
+            case RequestStatus.REJECTED:
+                return (
+                    <Button
+                        disabled={isPendingAction}
+                        className="w-full bg-primary text-background hover:bg-primary-hover font-bold gap-2 px-4 py-2 rounded-xl"
+                        onClick={() => onAction("send", userId)}
+                    >
+                        <PersonAddIcon fontSize="small" />
+                        <span>{status === RequestStatus.REJECTED ? "Rejected" : "Add"}</span>
+                    </Button>
+                );
+
+            case RequestStatus.PENDING:
+                return (
+                    <Button
+                        variant="outline"
+                        disabled={isPendingAction}
+                        className="w-full border-danger/30 text-danger hover:bg-danger hover:text-foreground gap-2 px-4 py-2 rounded-xl"
+                        onClick={() => onAction("delete", friendshipId ?? userId)}
+                    >
+                        <PersonAddIcon fontSize="small" />
+                        <span>Cancel</span>
+                    </Button>
+                );
+
+            case RequestStatus.ACCEPTED:
+                return (
+                    <div className="text-secondary flex items-center gap-2 px-4 py-2 font-bold">
+                        <HowToRegIcon fontSize="small" />
+                        <span>Friends</span>
+                    </div>
+                );
+
+            default:
+                return null;
+        }
+    };
+
     return (
         <div className="flex flex-col md:flex-row items-stretch md:items-center gap-4 p-4 rounded-xl bg-background-muted/20 border border-border/40 hover:border-secondary/50 hover:bg-background-muted/40 transition-all duration-300 group">
             <Link to={`/profile/${userId}`} className="flex items-center gap-4 grow min-w-0 focus:outline-none">
@@ -31,45 +72,7 @@ export const FriendCardAdd = ({ user, onAction, isPendingAction }: FriendCardAdd
             </Link>
 
             <div className="flex items-center gap-2 shrink-0 pt-4 md:pt-0">
-                {status === RequestStatus.NONE && (
-                    <Button
-                        disabled={isPendingAction}
-                        className="w-full bg-primary text-background hover:bg-primary-hover font-bold gap-2 px-4 py-2 rounded-xl"
-                        onClick={() => onAction("send", userId)}
-                    >
-                        <PersonAddIcon fontSize="small" />
-                        <span>Add</span>
-                    </Button>
-                )}
-
-                {status === RequestStatus.PENDING && (
-                    <Button
-                        variant="outline"
-                        disabled={isPendingAction}
-                        className="w-full border-danger/30 text-danger hover:bg-danger hover:text-foreground gap-2 px-4 py-2 rounded-xl"
-                        onClick={() => onAction("delete", friendshipId ?? userId)}
-                    >
-                        <PersonAddDisabledIcon fontSize="small" />
-                        <span>Cancel</span>
-                    </Button>
-                )}
-                {status === RequestStatus.ACCEPTED && (
-                    <div className="text-secondary flex items-center gap-2 px-4 py-2 font-bold">
-                        <HowToRegIcon fontSize="small" />
-                        <span>Friends</span>
-                    </div>
-                )}
-
-                {status === RequestStatus.REJECTED && (
-                    <Button
-                        disabled={isPendingAction}
-                        className="w-full bg-primary text-background hover:bg-primary-hover font-bold gap-2 px-4 py-2 rounded-xl"
-                        onClick={() => onAction("send", userId)}
-                    >
-                        <PersonAddIcon fontSize="small" />
-                        <span>Rejected</span>
-                    </Button>
-                )}
+                {renderActionButtons()}
             </div>
         </div>
     );
