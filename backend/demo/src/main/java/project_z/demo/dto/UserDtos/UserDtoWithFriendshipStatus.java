@@ -1,20 +1,20 @@
 package project_z.demo.dto.UserDtos;
 
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
+import project_z.demo.enums.RequestStatus;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
-
-public class UserShortDto {
+@NoArgsConstructor
+public class UserDtoWithFriendshipStatus {
     private UUID userId;
     private String name;
     private String nameTag;
     private String img;
+    private RequestStatus friendshipStatus;
+    private UUID friendshipId;
 }

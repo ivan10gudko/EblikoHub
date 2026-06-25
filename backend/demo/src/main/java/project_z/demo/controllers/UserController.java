@@ -1,6 +1,8 @@
 package project_z.demo.controllers;
+
 import java.util.UUID;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,106 +28,109 @@ import project_z.demo.dto.UserDtos.UserPostDto;
 import project_z.demo.dto.UserDtos.UserUpdateDto;
 import project_z.demo.entity.UserEntity;
 import project_z.demo.repositories.UserRepository;
+import project_z.demo.security.JwtService;
 import project_z.demo.services.UserService;
 
-
-
-
-    
 @RestController
 @RequestMapping("/api/v1/users")
 @RequiredArgsConstructor
-public class UserController {  
+public class UserController {
 
     private final UserService userService;
     private final Mapper<UserEntity, UserDto> userMapper;
     private final Mapper<UserEntity, UserPostDto> userPostMapper;
     private final Mapper<UserEntity, UserUpdateDto> userPutMapper;
     private final UserRepository userRepository;
+    private final JwtService jwtService;
 
-    
     @PostMapping
-    public ResponseEntity <?> createUser(@RequestBody UserPostDto user) {
+    public ResponseEntity<?> createUser(@RequestBody UserPostDto user) {
         UserEntity userEntity = userPostMapper.mapFrom(user);
-        if(userRepository.existsByNameTag(userEntity.getNameTag())){
+        if (userRepository.existsByNameTag(userEntity.getNameTag())) {
             return ResponseEntity.badRequest()
-            .body("NameTag '" + userEntity.getNameTag() + "already exists");
+                    .body("NameTag '" + userEntity.getNameTag() + "already exists");
         }
         UserEntity savedUserEntity = userService.save(userEntity);
-        return new ResponseEntity<>( userMapper.mapTo(savedUserEntity), HttpStatus.CREATED);
+        return new ResponseEntity<>(userMapper.mapTo(savedUserEntity), HttpStatus.CREATED);
     }
-    
+
     @GetMapping(path = "/{id}")
-    public ResponseEntity<UserDto> getUserById(@PathVariable("id") UUID id){
+    public ResponseEntity<UserDto> getUserById(@PathVariable("id") UUID id) {
         UserEntity foundUser = userService.findOne(id);
-        return new ResponseEntity<> (userMapper.mapTo(foundUser), HttpStatus.OK);
-            
+        return new ResponseEntity<>(userMapper.mapTo(foundUser), HttpStatus.OK);
+
     }
-    
+
     @GetMapping(path = "/{nameTag}/nameTag")
-    public UserDto findUsersByNameTag(@PathVariable("nameTag") String nameTag) {
-        UserEntity foundUser = userService.findByNameTag(nameTag).orElseThrow(
-            () -> new RuntimeException("user not found")
-        );
-        UserDto response = userMapper.mapTo(foundUser);
-        return response;
+    public ResponseEntity<UserDto> findUsersByNameTag(@PathVariable("nameTag") String nameTag) {
+
+        UserDto res = userService.findByNameTag(nameTag);
+
+        return new ResponseEntity<>(res, HttpStatus.OK);
     }
 
     @GetMapping(path = "/{nameTag}/checkNameTag")
-    public boolean isNameTagIsAlreadyTaken(@PathVariable("nameTag")String nameTag) {
-        if(userRepository.existsByNameTag(nameTag)){
+    public boolean isNameTagIsAlreadyTaken(@PathVariable("nameTag") String nameTag) {
+        if (userRepository.existsByNameTag(nameTag)) {
             return false;
         }
         return true;
     }
-    
+
     @GetMapping(path = "/name/{name}")
-    public ResponseEntity<Page<UserDto>> findUsersByName(@PathVariable("name")String name, UserQueryParameters userQueryParameters) {
-        Page<UserEntity> entitys = userService.findByName(name, userQueryParameters);
+    public ResponseEntity<Page<UserDto>> findUsersByName(@PathVariable("name") String name,
+            UserQueryParameters userQueryParameters,
+            @RequestHeader(value = "Authorization", required = false) String token) {
+
+        UUID userId = null;
+        if (token != null) {
+            userId = jwtService.extractUsername(token);
+        }
+        Page<UserEntity> entitys = userService.findByName(name, userQueryParameters, userId);
         Page<UserDto> res = entitys.map(userMapper::mapTo);
-        if(res.isEmpty()){
+        if (res.isEmpty()) {
             return new ResponseEntity<>(res, HttpStatus.NO_CONTENT);
         }
         return new ResponseEntity<>(res, HttpStatus.OK);
     }
-    
+
     @PreAuthorize("hasRole('ADMIN') || @securityService.isUserOwner(#id, #token)")
-    @PutMapping(path  = "/{id}")
+    @PutMapping(path = "/{id}")
     public ResponseEntity<UserDto> fullUpdateUser(
-        @PathVariable("id") UUID id,
-        @RequestHeader("Authorization") String token,
-        @RequestBody UserUpdateDto userDto) {
+            @PathVariable("id") UUID id,
+            @RequestHeader("Authorization") String token,
+            @RequestBody UserUpdateDto userDto) {
         UserEntity userToUpdate = userService.findOne(id);
 
-        userPutMapper.updateEntity(userDto,userToUpdate);
-        
-        UserEntity savedUserEntity =  userService.save(userToUpdate);
-      return new ResponseEntity<> (userMapper.mapTo(savedUserEntity), HttpStatus.OK);
+        userPutMapper.updateEntity(userDto, userToUpdate);
+
+        UserEntity savedUserEntity = userService.save(userToUpdate);
+        return new ResponseEntity<>(userMapper.mapTo(savedUserEntity), HttpStatus.OK);
     }
 
     @PreAuthorize("hasRole('ADMIN') || @securityService.isUserOwner(#id, #token)")
     @PatchMapping(path = "/{id}")
-    public ResponseEntity<UserDto> partialUpdate (
-        @PathVariable("id") UUID id,
-        @RequestHeader("Authorization") String token,
-        @RequestBody UserDto userDto
-        ){
-             if(!userService.isExists(id)){
-            return  new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    public ResponseEntity<UserDto> partialUpdate(
+            @PathVariable("id") UUID id,
+            @RequestHeader("Authorization") String token,
+            @RequestBody UserDto userDto) {
+        if (!userService.isExists(id)) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-       UserEntity userEntity = userMapper.mapFrom(userDto);
-        UserEntity updatedUserEntity  = userService.partialUpdate(id, userEntity);
+        UserEntity userEntity = userMapper.mapFrom(userDto);
+        UserEntity updatedUserEntity = userService.partialUpdate(id, userEntity);
         return new ResponseEntity<>(userMapper.mapTo(updatedUserEntity), HttpStatus.OK);
     }
+
     @PreAuthorize("hasRole('ADMIN') || @securityService.isUserOwner(#id, #token)")
     @PutMapping(path = "/avatar/{id}")
     public ResponseEntity<String> changeUserImg(
-        @PathVariable("id") UUID id,
-        @RequestHeader("Authorization") String token,
-        @RequestParam("file") MultipartFile file){
+            @PathVariable("id") UUID id,
+            @RequestHeader("Authorization") String token,
+            @RequestParam("file") MultipartFile file) {
         UserEntity userEntity = userService.findOne(id);
-        
-        String response =  userService.uploadAvatar(userEntity,file);
+
+        String response = userService.uploadAvatar(userEntity, file);
         userEntity.setImg(response);
         userRepository.save(userEntity);
         return new ResponseEntity<>(response, HttpStatus.OK);
@@ -134,13 +139,12 @@ public class UserController {
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping(path = "/{id}")
     public ResponseEntity<Void> deleteUserById(
-        @PathVariable("id") UUID id,
-        @RequestHeader("Authorization") String token
-    ){
-         if(!userService.isExists(id)){
+            @PathVariable("id") UUID id,
+            @RequestHeader("Authorization") String token) {
+        if (!userService.isExists(id)) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-         }
-          userService.deleteById(id);
-          return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        userService.deleteById(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }
