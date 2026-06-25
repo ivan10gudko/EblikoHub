@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/rooms/{roomId}/links")
+@RequestMapping("/api/v1/rooms/{roomId}/links")
 @RequiredArgsConstructor
 public class RoomTitleLinkController {
 

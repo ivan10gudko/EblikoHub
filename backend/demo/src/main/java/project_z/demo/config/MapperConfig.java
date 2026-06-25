@@ -7,6 +7,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import project_z.demo.dto.RoomDtos.RoomDto;
 import project_z.demo.dto.RoomDtos.RoomShortDto;
 import project_z.demo.entity.RoomEntity;
 
@@ -17,12 +18,14 @@ public class MapperConfig {
     public ModelMapper modelMapper() {
         ModelMapper mapper = new ModelMapper();
 
-
         mapper.typeMap(RoomEntity.class, RoomShortDto.class).addMappings(m -> {
             m.map(RoomEntity::getMemberCount, RoomShortDto::setUsersCount);
             m.skip(RoomShortDto::setOwner);
         });
-
+        mapper.createTypeMap(RoomEntity.class, RoomDto.class)
+                .addMappings(m -> {
+                    m.map(src -> src.getOwner().getUserId(), RoomDto::setOwner);
+                });
         return mapper;
     }
 }

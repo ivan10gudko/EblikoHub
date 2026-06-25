@@ -17,5 +17,4 @@ public class RoomCreateDto {
     private String roomName;
     private List<UUID> members;
     private String imageUrl;
-    private String descrition;
 }

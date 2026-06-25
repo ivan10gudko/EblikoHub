@@ -30,5 +30,6 @@ public class RoomDto {
     private List<UserShortDto> members;
     private String imageUrl;
     private LocalDateTime createdAt;
+    private String description;
     
 }
