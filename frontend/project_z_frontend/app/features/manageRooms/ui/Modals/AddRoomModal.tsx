@@ -50,12 +50,10 @@ export const AddRoomModal = ({
 
   const handleSelectUser = useCallback((user: UserProfile) => {
     setAddedUsers((prevUsers) => {
-      // Перевіряємо, чи юзер вже є в актуальному стейті prevUsers
       if (prevUsers.some((u) => u.userId === user.userId)) {
         return prevUsers;
       }
 
-      // Якщо немає, оновлюємо formData та додаємо юзера
       setFormData((prevForm) => ({
         ...prevForm,
         members: [...prevForm.members, user.userId],

@@ -25,7 +25,6 @@ export const MembersStep = ({
   isLoading,
 }: MembersStepProps) => (
   <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
-    {/* Ліва колонка: Пошук */}
     <div className="relative space-y-4">
       <SearchBar
         onSearch={onSearch}
@@ -41,13 +40,11 @@ export const MembersStep = ({
       )}
     </div>
 
-    {/* Права колонка: Додані користувачі (обмежена за висотою) */}
     <div className="bg-background-muted/30 rounded-xl p-4 border border-border h-[380px] flex flex-col">
       <h4 className="text-xs font-bold uppercase text-muted-foreground mb-3 shrink-0">
         Added Members ({addedUsers.length})
       </h4>
       
-      {/* Внутрішній контейнер, який тепер точно буде скролитися самостійно */}
       <div className="flex-1 overflow-y-auto pr-1 custom-scrollbar space-y-2">
         {addedUsers.length === 0 ? (
           <p className="text-sm text-muted-foreground italic text-center mt-10">
