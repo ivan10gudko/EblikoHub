@@ -52,7 +52,7 @@ export const TitleActionsMenu = ({
       key: "rating",
       label: "Rating",
       icon: <StarRoundedIcon sx={{ fontSize: 16 }} />,
-      onClick: () => setIsRatingsOpen(true),
+      onClick: onOpenRatingModal,
       show: true,
     },
     {
@@ -102,6 +102,7 @@ export const TitleActionsMenu = ({
           titleName={title.titleName}
           isOpen={isSeasonsOpen}
           onClose={handleCloseSeasons}
+          isOwn={isOwn}
         />
       )}
       

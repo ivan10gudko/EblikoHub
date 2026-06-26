@@ -66,7 +66,8 @@ export const Modal = ({ children, title, isOpen, onClose, maxWidth = "max-w-lg",
             >
                 <div className="flex items-center justify-between p-5 border-b border-border">
                     {title ? (
-                        <h2 className="text-xl font-bold text-foreground">{title}</h2>
+                        <h2 className="text-xl font-bold text-foreground break-all" >{title}</h2>
+
                     ) : (
                         <div />
                     )}

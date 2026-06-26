@@ -16,5 +16,5 @@ public class UserShortDto {
     private UUID userId;
     private String name;
     private String nameTag;
-    private LocalDateTime createdAt;
+    private String img;
 }

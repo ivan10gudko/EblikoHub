@@ -49,7 +49,7 @@ export const WatchlistTable = ({ titles, isLoading, isOwn, queryKey }: Watchlist
       setActiveRatingTitle(foundTitle);
     }
   };
-
+  const openRating = (title: TitleRecord) => setActiveRatingTitle(title);
   const onDragEnd = (result: DropResult) => {
     const { source, destination } = result;
     if (!destination || source.index === destination.index) return;
@@ -67,81 +67,49 @@ export const WatchlistTable = ({ titles, isLoading, isOwn, queryKey }: Watchlist
     );
   }
 
-  if (!isOwn) {
-    return (
-      <div className="flex flex-col gap-2 w-full">
-        {pinnedTitle && <PinnedWatchlistRowReadOnly title={pinnedTitle} />}
+  return (
+    <div className="flex flex-col gap-2 w-full">
+      {isOwn && <AddNewButton onClick={() => setIsModalOpen(true)} placeholder="title" />}
 
+      {isOwn ? (
+        <>
+          {pinnedTitle && <PinnedWatchlistRow title={pinnedTitle} onOpenRatingModal={() => openRating(pinnedTitle)} />}
+
+          <DragDropContext onDragEnd={onDragEnd}>
+            <Droppable droppableId="watchlist">
+              {(provided) => (
+                <div {...provided.droppableProps} ref={provided.innerRef} className="flex flex-col gap-2 w-full">
+                  {regularTitles.map((title, index) => (
+                    <Draggable key={String(title.titleId)} draggableId={String(title.titleId)} index={index} isDragDisabled={!isDragable}>
+                      {(provided) => (
+                        <div ref={provided.innerRef} {...provided.draggableProps} {...(isDragable ? provided.dragHandleProps : {})} style={provided.draggableProps.style as React.CSSProperties}>
+                          <WatchlistRow title={title} index={index} showNumber={showNumber} onOpenRatingModal={() => openRating(title)} />
+                        </div>
+                      )}
+                    </Draggable>
+                  ))}
+                  {provided.placeholder}
+                </div>
+              )}
+            </Droppable>
+          </DragDropContext>
+        </>
+      ) : (
         <div className="flex flex-col gap-2 w-full">
+          {pinnedTitle && <PinnedWatchlistRowReadOnly title={pinnedTitle} onOpenRatingModal={() => openRating(pinnedTitle)} />}
           {regularTitles.map((title, index) => (
             <WatchlistRowReadOnly
               key={String(title.titleId)}
               title={title}
               index={index}
               showNumber={showNumber}
+              onOpenRatingModal={() => openRating(title)}
             />
           ))}
         </div>
-      </div>
-    );
-  }
-
-
-  return (
-    <div className="flex flex-col gap-2 w-full">
-      <AddNewButton onClick={() => setIsModalOpen(true)} placeholder="title" />
-
-
-      {pinnedTitle && (
-        <PinnedWatchlistRow
-          title={pinnedTitle}
-          onOpenRatingModal={() => setActiveRatingTitle(pinnedTitle)}
-        />
       )}
 
-      <DragDropContext onDragEnd={onDragEnd}>
-        <Droppable droppableId="watchlist">
-          {(provided) => (
-            <div
-              {...provided.droppableProps}
-              ref={provided.innerRef}
-              className="flex flex-col gap-2 w-full"
-            >
-              {regularTitles.map((title, index) => (
-                <Draggable
-                  key={String(title.titleId)}
-                  draggableId={String(title.titleId)}
-                  index={index}
-                  isDragDisabled={!isDragable}
-                >
-                  {(provided) => (
-                    <div
-                      ref={provided.innerRef}
-                      {...provided.draggableProps}
-                      {...(isDragable ? provided.dragHandleProps : {})}
-                      style={provided.draggableProps.style as React.CSSProperties}
-                      className="w-full"
-                    >
-
-                      <WatchlistRow
-                        title={title}
-                        index={index}
-                        showNumber={showNumber}
-                        dragHandleProps={isDragable ? provided.dragHandleProps : undefined}
-                        onOpenRatingModal={() => setActiveRatingTitle(title)}
-                      />
-                    </div>
-                  )}
-                </Draggable>
-              ))}
-              {provided.placeholder}
-            </div>
-          )}
-        </Droppable>
-      </DragDropContext>
-
       <AddTitleModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
-
 
       {activeRatingTitle && (
         <EditRatingModal
@@ -149,8 +117,11 @@ export const WatchlistTable = ({ titles, isLoading, isOwn, queryKey }: Watchlist
           title={activeRatingTitle}
           onClose={() => setActiveRatingTitle(null)}
           onTitleChange={handleTitleChange}
+          isOwn={isOwn} 
         />
       )}
     </div>
   );
 };
+
+

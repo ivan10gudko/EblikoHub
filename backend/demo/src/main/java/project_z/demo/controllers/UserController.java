@@ -2,6 +2,7 @@ package project_z.demo.controllers;
 
 import java.util.UUID;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +18,8 @@ import project_z.demo.dto.UserDtos.UserPostDto;
 import project_z.demo.dto.UserDtos.UserUpdateDto;
 import project_z.demo.entity.UserEntity;
 import project_z.demo.repositories.UserRepository;
+import project_z.demo.security.JwtService;
+import project_z.demo.security.SecurityService;
 import project_z.demo.services.UserService;
 
 @RestController
@@ -29,13 +32,15 @@ public class UserController {
     private final Mapper<UserEntity, UserPostDto> userPostMapper;
     private final Mapper<UserEntity, UserUpdateDto> userPutMapper;
     private final UserRepository userRepository;
+    private final JwtService jwtService;
+    private final SecurityService securityService;
 
     @PostMapping
     public ResponseEntity<?> createUser(@RequestBody UserPostDto user) {
         UserEntity userEntity = userPostMapper.mapFrom(user);
         if (userRepository.existsByNameTag(userEntity.getNameTag())) {
             return ResponseEntity.badRequest()
-                    .body("NameTag '" + userEntity.getNameTag() + "' already exists");
+                    .body("NameTag '" + userEntity.getNameTag() + "already exists");
         }
         UserEntity savedUserEntity = userService.save(userEntity);
         return new ResponseEntity<>(userMapper.mapTo(savedUserEntity), HttpStatus.CREATED);
@@ -45,25 +50,36 @@ public class UserController {
     public ResponseEntity<UserDto> getUserById(@PathVariable("id") UUID id) {
         UserEntity foundUser = userService.findOne(id);
         return new ResponseEntity<>(userMapper.mapTo(foundUser), HttpStatus.OK);
+
     }
 
     @GetMapping(path = "/{nameTag}/nameTag")
-    public UserDto findUsersByNameTag(@PathVariable("nameTag") String nameTag) {
-        UserEntity foundUser = userService.findByNameTag(nameTag).orElseThrow(
-                () -> new RuntimeException("user not found")
-        );
-        return userMapper.mapTo(foundUser);
+    public ResponseEntity<UserDto> findUsersByNameTag(@PathVariable("nameTag") String nameTag) {
+
+        UserDto res = userService.findByNameTag(nameTag);
+
+        return new ResponseEntity<>(res, HttpStatus.OK);
     }
 
     @GetMapping(path = "/{nameTag}/checkNameTag")
     public boolean isNameTagIsAlreadyTaken(@PathVariable("nameTag") String nameTag) {
-        return !userRepository.existsByNameTag(nameTag);
+        if (userRepository.existsByNameTag(nameTag)) {
+            return false;
+        }
+        return true;
     }
 
     @GetMapping(path = "/name/{name}")
-    public ResponseEntity<Page<UserDto>> findUsersByName(@PathVariable("name") String name, UserQueryParameters userQueryParameters) {
-        Page<UserEntity> entities = userService.findByName(name, userQueryParameters);
-        Page<UserDto> res = entities.map(userMapper::mapTo);
+    public ResponseEntity<Page<UserDto>> findUsersByName(@PathVariable("name") String name,
+            UserQueryParameters userQueryParameters,
+            @RequestHeader(value = "Authorization", required = false) String token) {
+
+        UUID userId = null;
+        if (token != null) {
+            userId = securityService.getCurrentUserId();
+        }
+        Page<UserEntity> entitys = userService.findByName(name, userQueryParameters, userId);
+        Page<UserDto> res = entitys.map(userMapper::mapTo);
         if (res.isEmpty()) {
             return new ResponseEntity<>(res, HttpStatus.NO_CONTENT);
         }

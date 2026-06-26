@@ -4,6 +4,7 @@ import java.util.Collection;
 
 import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -14,6 +15,10 @@ import project_z.demo.dto.RoomTitleLinkDtos.RoomTitleLinkDetailsDto;
 import project_z.demo.entity.RoomBanEntity;
 import project_z.demo.entity.RoomEntity;
 import project_z.demo.entity.RoomTitleLinkEntity;
+import project_z.demo.dto.UserDtos.UserDtoWithFriendshipStatus;
+import project_z.demo.entity.RoomEntity;
+import project_z.demo.entity.UserEntity;
+import project_z.demo.enums.RequestStatus;
 
 @Configuration
 public class MapperConfig {
