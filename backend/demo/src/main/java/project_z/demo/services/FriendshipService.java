@@ -3,12 +3,16 @@ package project_z.demo.services;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import project_z.demo.common.QueryParameters.FriendshipQueryParameters;
 import project_z.demo.dto.FriendshipDtos.FriendRequestDto;
 import project_z.demo.dto.FriendshipDtos.FriendshipCountsDto;
 import project_z.demo.dto.FriendshipDtos.FriendshipDetailsDto;
 import project_z.demo.dto.FriendshipDtos.FriendshipPartialUpdateDto;
+import project_z.demo.dto.UserDtos.UserDtoWithFriendshipStatus;
 import project_z.demo.entity.FriendshipEntity;
 import project_z.demo.entity.UserEntity;
 
@@ -16,7 +20,7 @@ import project_z.demo.entity.UserEntity;
 public interface FriendshipService {
     FriendshipDetailsDto save(FriendshipEntity user);
     FriendshipDetailsDto findOne(UUID id);
-    List<UserEntity> findFriendsByUserId(UUID userId);
+    List<FriendRequestDto> findFriendsByUserId(UUID userId);
     FriendshipDetailsDto partialUpdate(UUID id, FriendshipPartialUpdateDto updateDto);
     void deleteFriendById(UUID id);
     void sendFriendRequest(UUID senderId, UUID receiverId);
@@ -25,4 +29,5 @@ public interface FriendshipService {
     List<FriendRequestDto> findPendingFriendRequestsByUserId(UUID userId);
     List<FriendRequestDto> findSentFriendRequestsByUserId(UUID userId);
     FriendshipCountsDto getUserFriendshipStats(UUID userId);
+    Page<UserDtoWithFriendshipStatus> searchUsers(String name, UUID currentUserId, FriendshipQueryParameters pageable);
 }

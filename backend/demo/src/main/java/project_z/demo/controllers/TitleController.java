@@ -28,6 +28,7 @@ import project_z.demo.dto.TitleDtos.TitleBatchCreateDto;
 import project_z.demo.dto.TitleDtos.TitleDto;
 import project_z.demo.dto.TitleDtos.TitlePatchUpdateDto;
 import project_z.demo.dto.TitleDtos.TitlePositionUpdateDto;
+import project_z.demo.dto.TitleDtos.TitleStatsDto;
 import project_z.demo.entity.TitleEntity;
 import project_z.demo.security.JwtService;
 import project_z.demo.services.TitleService;
@@ -105,6 +106,11 @@ public class TitleController {
         TitleEntity title = titleService.findUserTitleByMalId(titleMalId, token);
         return new ResponseEntity<>(titleMapper.mapTo(title), HttpStatus.OK);
     }
+    @GetMapping("/titleStats/{userId}")
+    public TitleStatsDto getTitleStatsByUserId(@PathVariable("userId") UUID userId) {
+        return titleService.getUserTitlesStats(userId);
+    }
+    
 
     @GetMapping(path = "/mal/{titleMalId}/room")
     public List<TitleDto> getUsersTitlesByMalId(@PathVariable("titleMalId") Integer titleMalId,

@@ -5,6 +5,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -19,12 +20,16 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import project_z.demo.JavaUtil.PagingHelper;
 import project_z.demo.Mappers.Mapper;
+import project_z.demo.common.QueryParameters.FriendshipQueryParameters;
+import project_z.demo.common.QueryParameters.UserQueryParameters;
 import project_z.demo.dto.FriendshipDtos.FriendRequestDto;
 import project_z.demo.dto.FriendshipDtos.FriendshipCountsDto;
 import project_z.demo.dto.FriendshipDtos.FriendshipDetailsDto;
 import project_z.demo.dto.FriendshipDtos.FriendshipPartialUpdateDto;
 import project_z.demo.dto.UserDtos.UserDto;
+import project_z.demo.dto.UserDtos.UserDtoWithFriendshipStatus;
 import project_z.demo.entity.FriendshipEntity;
 import project_z.demo.entity.UserEntity;
 import project_z.demo.security.JwtService;
@@ -61,7 +66,7 @@ public class FriendshipController {
     @PutMapping("/accept/{senderId}")
     public ResponseEntity<Void> acceptFriendRequest(
             @RequestHeader("Authorization") String token,
-            @PathVariable("senderId")  UUID senderId) {
+            @PathVariable("senderId") UUID senderId) {
 
         UUID receiverId = jwtService.extractUsername(token);
         friendshipService.acceptFriendRequest(receiverId, senderId);
@@ -72,7 +77,7 @@ public class FriendshipController {
     @PreAuthorize("hasRole('ADMIN') || @securityService.canAcceptFriendRequest(#token, #senderId)")
     @PutMapping("/reject/{senderId}")
     public ResponseEntity<Void> rejectFriendRequest(
-            @RequestHeader("Authorization")  String token,
+            @RequestHeader("Authorization") String token,
             @PathVariable("senderId") UUID senderId) {
 
         UUID receiverId = jwtService.extractUsername(token);
@@ -81,15 +86,24 @@ public class FriendshipController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @GetMapping("/user/{userId}")
-    public ResponseEntity<List<UserDto>> getFriendsByUserId(@PathVariable("userId") UUID userId) {
-        List<UserEntity> friends = friendshipService.findFriendsByUserId(userId);
+    @GetMapping("/search/{name}")
+    public ResponseEntity<Page<UserDtoWithFriendshipStatus>> searchUsers(
+            @RequestHeader(value = "Authorization", required = false) String token,
+            @PathVariable("name") String name,
+            FriendshipQueryParameters friendshipQueryParameters) {
 
-        List<UserDto> response = friends.stream()
-                .map(userMapper::mapTo)
-                .collect(Collectors.toList());
+        UUID currentUserId = (token != null) ? jwtService.extractUsername(token) : null;
+
+        Page<UserDtoWithFriendshipStatus> response = friendshipService.searchUsers(name, currentUserId,
+                friendshipQueryParameters);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<FriendRequestDto>> getFriendsByUserId(@PathVariable("userId") UUID userId) {
+        List<FriendRequestDto> res = friendshipService.findFriendsByUserId(userId);
+        return new ResponseEntity<>(res, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")

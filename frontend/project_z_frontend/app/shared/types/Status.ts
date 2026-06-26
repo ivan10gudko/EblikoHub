@@ -34,4 +34,12 @@ export const statusColorConfig: Record<Status, { color: string; dot: string }> =
         color: "text-foreground-muted",
         dot: "bg-gray-500"
     },
+    
 };
+export const statusOptionsFilters = [
+  { label: "All", value: undefined },
+  { label: "In Progress", value: Status.INPROGRESS },
+  { label: "Planned", value: Status.PLANNED },
+  { label: "Watched", value: Status.WATCHED },
+  { label: "Dropped", value: Status.DROPPED },
+];

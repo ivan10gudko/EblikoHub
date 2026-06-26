@@ -1,5 +1,14 @@
-import type { UserProfile } from "~/entities/user";
-import type { RequestStatus } from "~/shared/types";
+
+import type { QueryParams, RequestStatus } from "~/shared/types";
+
+export interface UserProfile {
+    userId: string;
+    name: string;
+    nameTag: string;
+    description?: string;
+    img?: string;
+    createdAt?: string;
+}
 
 
 export interface FriendshipDetailsDto {
@@ -21,4 +30,16 @@ export interface FriendshipCounts {
     friendsCount: number;
     pendingCount: number;
     sentCount: number;
+}
+
+export interface UserDtoWithFriendshipStatus {
+    userId: string;
+    name: string;
+    nameTag: string;
+    img: string | null;
+    friendshipStatus: RequestStatus;
+    friendshipId: string | null;
+}
+export interface FriendshipQueryParameters extends QueryParams{
+
 }

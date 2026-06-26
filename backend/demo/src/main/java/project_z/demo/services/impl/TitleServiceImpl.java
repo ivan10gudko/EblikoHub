@@ -1,8 +1,11 @@
 package project_z.demo.services.impl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collector;
@@ -15,12 +18,13 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import jakarta.transaction.Transactional;
 import project_z.demo.JavaUtil.BeanUtilsHelper;
 import project_z.demo.JavaUtil.PagingHelper;
 import project_z.demo.JavaUtil.PatchHelper;
 import project_z.demo.Mappers.Mapper;
+import project_z.demo.Mappers.impl.TitleMappers.TitleStatsMapper;
 import project_z.demo.common.Exceptions.ResourceNotFoundException;
 import project_z.demo.common.Exceptions.TitleWithThatMalIdAlreadyExistsException;
 import project_z.demo.common.QueryParameters.TitleQueryParameters;
@@ -30,10 +34,12 @@ import project_z.demo.dto.TitleDtos.TitleBatchCreateDto;
 import project_z.demo.dto.TitleDtos.TitleDto;
 import project_z.demo.dto.TitleDtos.TitlePatchUpdateDto;
 import project_z.demo.dto.TitleDtos.TitleShortDto;
+import project_z.demo.dto.TitleDtos.TitleStatsDto;
 import project_z.demo.entity.SeasonEntity;
 import project_z.demo.entity.TitleEntity;
 import project_z.demo.entity.UserEntity;
 import project_z.demo.enums.TitleStatus;
+import project_z.demo.enums.TitleType;
 import project_z.demo.repositories.Specifications.TitleSpecifications;
 import project_z.demo.repositories.TitleRepository;
 import project_z.demo.repositories.UserRepository;
@@ -48,6 +54,7 @@ public class TitleServiceImpl implements TitleService {
     private final TitleSeachServiceImpl titleSeachServiceImpl;
     private final SeasonService seasonService;
     private final PatchHelper patchHelper;
+    private final TitleStatsMapper titleStatsMapper;
 
     @Autowired
     private BeanUtilsHelper beanUtilsHelper;
@@ -61,10 +68,11 @@ public class TitleServiceImpl implements TitleService {
     private Mapper<TitleEntity, TitleDto> titleMapper;
 
     TitleServiceImpl(SeasonService seasonService, TitleSeachServiceImpl titleSeachServiceImpl,
-            PatchHelper patchHelper) {
+            PatchHelper patchHelper,TitleStatsMapper titleStatsMapper) {
         this.seasonService = seasonService;
         this.titleSeachServiceImpl = titleSeachServiceImpl;
         this.patchHelper = patchHelper;
+        this.titleStatsMapper = titleStatsMapper;
     }
 
     @Override
@@ -279,5 +287,22 @@ public class TitleServiceImpl implements TitleService {
     @Override
     public void unpin(UUID userId) {
         titleRepository.unpinAllTitlesForUser(userId);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public TitleStatsDto getUserTitlesStats(UUID userId) {
+        Map<TitleStatus, Long> statusCount = Arrays.stream(TitleStatus.values())
+                .collect(Collectors.toMap(s -> s, s -> 0L, (a, b) -> a, () -> new EnumMap<>(TitleStatus.class)));
+
+        Map<TitleType, Long> typeCount = Arrays.stream(TitleType.values())
+                .collect(Collectors.toMap(t -> t, t -> 0L, (a, b) -> a, () -> new EnumMap<>(TitleType.class)));
+
+        titleRepository.countByStatus(userId).forEach(obj -> statusCount.put((TitleStatus) obj[0], (Long) obj[1]));
+
+        titleRepository.countByType(userId).forEach(obj -> typeCount.put((TitleType) obj[0], (Long) obj[1]));
+
+
+        return titleStatsMapper.mapToDto(statusCount, typeCount);
     }
 }

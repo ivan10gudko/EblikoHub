@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -19,9 +20,12 @@ import org.springframework.web.multipart.MultipartFile;
 import jakarta.transaction.Transactional;
 import project_z.demo.JavaUtil.BeanUtilsHelper;
 import project_z.demo.JavaUtil.PagingHelper;
+import project_z.demo.Mappers.Mapper;
+import project_z.demo.Mappers.impl.UserMapperImpl;
 import project_z.demo.common.Exceptions.ResourceNotFoundException;
 import project_z.demo.common.QueryParameters.UserQueryParameters;
 import project_z.demo.config.MyConfig;
+import project_z.demo.dto.UserDtos.UserDto;
 import project_z.demo.entity.RoomEntity;
 import project_z.demo.entity.RoomMemberEntity;
 import project_z.demo.entity.UserEntity;
@@ -34,6 +38,10 @@ import project_z.demo.services.UserService;
 @Service
 public class UserServiceImpl implements UserService {
 
+    @Autowired
+    private Mapper<UserEntity,UserDto> userMapper;
+
+    private final ModelMapper modelMapper;
     private final RoomMemberRepository roomMemberRepository;
     private final TitleRepository titleRepository;
     @Autowired
@@ -44,11 +52,12 @@ public class UserServiceImpl implements UserService {
     private MyConfig myConfig;
 
     public UserServiceImpl(UserRepository userRepository, TitleRepository titleRepository, MyConfig myConfig,
-            RoomMemberRepository roomMemberRepository) {
+            RoomMemberRepository roomMemberRepository, ModelMapper modelMapper) {
         this.userRepository = userRepository;
         this.titleRepository = titleRepository;
         this.myConfig = myConfig;
         this.roomMemberRepository = roomMemberRepository;
+        this.modelMapper = modelMapper;
     }
 
     @Override
@@ -90,8 +99,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Optional<UserEntity> findByNameTag(String nameTag) {
-        return userRepository.findByNameTag(nameTag);
+    public UserDto findByNameTag(String nameTag) {
+        UserEntity userEntity = userRepository.findByNameTag(nameTag).orElseThrow(
+            () -> new ResourceNotFoundException("User not found")
+        );
+        return userMapper.mapTo(userEntity);
     }
 
     @Override
@@ -136,10 +148,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Page<UserEntity> findByName(String name, UserQueryParameters userQueryParameters) {
-        System.out.println(name);
-        System.out.println(userQueryParameters);
+    public Page<UserEntity> findByName(String name, UserQueryParameters userQueryParameters, UUID currentUserId) {
         Pageable pageable = PagingHelper.toPageable(userQueryParameters);
-        return userRepository.findByNameContainingIgnoreCase(name, pageable);
+        return userRepository.findByNameContainingIgnoreCaseAndNotSelf(name, currentUserId, pageable);
     }
 }
