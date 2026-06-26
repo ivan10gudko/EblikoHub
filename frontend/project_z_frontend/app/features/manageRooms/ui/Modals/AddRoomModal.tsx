@@ -49,20 +49,27 @@ export const AddRoomModal = ({
   };
 
   const handleSelectUser = useCallback((user: UserProfile) => {
-    if (!addedUsers.find((u) => u.userId === user.userId)) {
-      setAddedUsers([...addedUsers, user]);
-      setFormData((prev) => ({
-        ...prev,
-        members: [...prev.members, user.userId],
+    setAddedUsers((prevUsers) => {
+      // Перевіряємо, чи юзер вже є в актуальному стейті prevUsers
+      if (prevUsers.some((u) => u.userId === user.userId)) {
+        return prevUsers;
+      }
+
+      // Якщо немає, оновлюємо formData та додаємо юзера
+      setFormData((prevForm) => ({
+        ...prevForm,
+        members: [...prevForm.members, user.userId],
       }));
-    }
+
+      return [...prevUsers, user];
+    });
   }, []);
 
   const handleRemoveUser = useCallback((userId: string) => {
-    setAddedUsers(addedUsers.filter((u) => u.userId !== userId));
-    setFormData((prev) => ({
-      ...prev,
-      members: prev.members.filter((id) => id !== userId),
+    setAddedUsers((prevUsers) => prevUsers.filter((u) => u.userId !== userId));
+    setFormData((prevForm) => ({
+      ...prevForm,
+      members: prevForm.members.filter((id) => id !== userId),
     }));
   }, []);
 
