@@ -53,7 +53,7 @@ public class UserEntity {
     private String description;
     private String img;
 
-    @OneToMany(mappedBy = "receiver")
+    @OneToMany(mappedBy = "user")
     private List<RoomMemberEntity> roomMembers = new ArrayList<>();
     @CreatedDate
     @Column(nullable = false, updatable = false)

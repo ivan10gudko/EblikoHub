@@ -12,34 +12,27 @@ import org.springframework.data.repository.query.Param;
 
 import jakarta.transaction.Transactional;
 import project_z.demo.entity.RoomMemberEntity;
-import project_z.demo.enums.RequestStatus;
-import project_z.demo.enums.RequestType;
 
-public interface RoomMemberRepository
+public interface RoomMemberRepository 
         extends JpaRepository<RoomMemberEntity, UUID>, JpaSpecificationExecutor<RoomMemberEntity> {
-    boolean existsByRoomRoomIdAndReceiverUserId(Long roomId, UUID receiverId);
 
-    Optional<RoomMemberEntity> findByRoomRoomIdAndReceiverUserId(Long roomId, UUID receiverId);
+    boolean existsByRoom_RoomIdAndUser_UserId(Long roomId, UUID userId);
 
-    List<RoomMemberEntity> findByReceiverUserIdAndStatus(UUID userId, RequestStatus status);
+    List<RoomMemberEntity> findByUser_UserId(UUID userId);
 
-    List<RoomMemberEntity> findByRoomRoomIdAndStatus(Long roomId, RequestStatus status);
+    Optional<RoomMemberEntity> findOneByRoom_RoomIdAndUser_UserId(Long roomId, UUID userId);
 
-    List<RoomMemberEntity> findByRoomRoomIdAndTypeAndStatus(Long roomId, RequestType type, RequestStatus status);
-
-    List<RoomMemberEntity> findByReceiverUserIdAndTypeAndStatus(UUID userId, RequestType type, RequestStatus status);
-
-    List<RoomMemberEntity> findByReceiver_UserId(UUID receiverId);
-    
-    List<RoomMemberEntity> findByRoomRoomIdInAndReceiverUserId(List<Long> roomIds, UUID userId);
+    List<RoomMemberEntity> findByRoom_RoomIdInAndUser_UserId(List<Long> roomIds, UUID userId);
 
     @Modifying
     @Transactional
     @Query("""
             UPDATE RoomMemberEntity rm
             SET rm.isPinned = false
-            WHERE rm.receiver.userId = :userId
+            WHERE rm.user.id = :userId
             AND rm.isPinned = true
             """)
     void unpinAllForUser(@Param("userId") UUID userId);
+
+    List<RoomMemberEntity> findByRoom_RoomId(Long roomId);
 }

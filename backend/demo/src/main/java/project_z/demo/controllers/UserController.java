@@ -7,17 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import lombok.RequiredArgsConstructor;
@@ -29,6 +19,7 @@ import project_z.demo.dto.UserDtos.UserUpdateDto;
 import project_z.demo.entity.UserEntity;
 import project_z.demo.repositories.UserRepository;
 import project_z.demo.security.JwtService;
+import project_z.demo.security.SecurityService;
 import project_z.demo.services.UserService;
 
 @RestController
@@ -42,6 +33,7 @@ public class UserController {
     private final Mapper<UserEntity, UserUpdateDto> userPutMapper;
     private final UserRepository userRepository;
     private final JwtService jwtService;
+    private final SecurityService securityService;
 
     @PostMapping
     public ResponseEntity<?> createUser(@RequestBody UserPostDto user) {
@@ -84,7 +76,7 @@ public class UserController {
 
         UUID userId = null;
         if (token != null) {
-            userId = jwtService.extractUsername(token);
+            userId = securityService.getCurrentUserId();
         }
         Page<UserEntity> entitys = userService.findByName(name, userQueryParameters, userId);
         Page<UserDto> res = entitys.map(userMapper::mapTo);
@@ -94,25 +86,21 @@ public class UserController {
         return new ResponseEntity<>(res, HttpStatus.OK);
     }
 
-    @PreAuthorize("hasRole('ADMIN') || @securityService.isUserOwner(#id, #token)")
+    @PreAuthorize("hasRole('ADMIN') || @securityService.isUserOwner(#id)")
     @PutMapping(path = "/{id}")
     public ResponseEntity<UserDto> fullUpdateUser(
             @PathVariable("id") UUID id,
-            @RequestHeader("Authorization") String token,
             @RequestBody UserUpdateDto userDto) {
         UserEntity userToUpdate = userService.findOne(id);
-
         userPutMapper.updateEntity(userDto, userToUpdate);
-
         UserEntity savedUserEntity = userService.save(userToUpdate);
         return new ResponseEntity<>(userMapper.mapTo(savedUserEntity), HttpStatus.OK);
     }
 
-    @PreAuthorize("hasRole('ADMIN') || @securityService.isUserOwner(#id, #token)")
+    @PreAuthorize("hasRole('ADMIN') || @securityService.isUserOwner(#id)")
     @PatchMapping(path = "/{id}")
     public ResponseEntity<UserDto> partialUpdate(
             @PathVariable("id") UUID id,
-            @RequestHeader("Authorization") String token,
             @RequestBody UserDto userDto) {
         if (!userService.isExists(id)) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -122,14 +110,12 @@ public class UserController {
         return new ResponseEntity<>(userMapper.mapTo(updatedUserEntity), HttpStatus.OK);
     }
 
-    @PreAuthorize("hasRole('ADMIN') || @securityService.isUserOwner(#id, #token)")
+    @PreAuthorize("hasRole('ADMIN') || @securityService.isUserOwner(#id)")
     @PutMapping(path = "/avatar/{id}")
     public ResponseEntity<String> changeUserImg(
             @PathVariable("id") UUID id,
-            @RequestHeader("Authorization") String token,
             @RequestParam("file") MultipartFile file) {
         UserEntity userEntity = userService.findOne(id);
-
         String response = userService.uploadAvatar(userEntity, file);
         userEntity.setImg(response);
         userRepository.save(userEntity);
@@ -138,9 +124,7 @@ public class UserController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping(path = "/{id}")
-    public ResponseEntity<Void> deleteUserById(
-            @PathVariable("id") UUID id,
-            @RequestHeader("Authorization") String token) {
+    public ResponseEntity<Void> deleteUserById(@PathVariable("id") UUID id) {
         if (!userService.isExists(id)) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }

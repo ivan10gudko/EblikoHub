@@ -3,14 +3,11 @@ package project_z.demo.repositories.Specifications;
 import java.util.UUID;
 
 import org.springframework.data.jpa.domain.Specification;
-import jakarta.persistence.criteria.Expression;
 import jakarta.persistence.criteria.Order;
 import jakarta.persistence.criteria.Root;
 import jakarta.persistence.criteria.Subquery;
 import project_z.demo.entity.RoomEntity;
 import project_z.demo.entity.RoomMemberEntity;
-import project_z.demo.enums.RequestStatus;
-
 public class RoomSpecifications {
 
     public static Specification<RoomEntity> hasMember(UUID userId) {
@@ -23,8 +20,7 @@ public class RoomSpecifications {
 
             subquery.select(memberRoot.get("room").get("roomId"))
                     .where(criteriaBuilder.and(
-                            criteriaBuilder.equal(memberRoot.get("receiver").get("userId"), userId),
-                            criteriaBuilder.in(memberRoot.get("status")).value(RequestStatus.ACCEPTED)));
+                            criteriaBuilder.equal(memberRoot.get("user").get("userId"), userId)));
 
             return root.get("roomId").in(subquery);
         };
@@ -47,8 +43,7 @@ public class RoomSpecifications {
             Subquery<Long> subquery = query.subquery(Long.class);
             Root<RoomMemberEntity> m = subquery.from(RoomMemberEntity.class);
             subquery.select(cb.count(m))
-                    .where(cb.equal(m.get("room").get("roomId"), root.get("roomId")),
-                            cb.equal(m.get("status"), RequestStatus.ACCEPTED));
+                    .where(cb.equal(m.get("room").get("roomId"), root.get("roomId")));
 
             Order countOrder = order.equalsIgnoreCase("asc") ? cb.asc(subquery) : cb.desc(subquery);
             Order idOrder = cb.desc(root.get("roomId"));
@@ -73,7 +68,7 @@ public class RoomSpecifications {
                             .otherwise(0))
                     .where(
                             cb.equal(pm.get("room").get("roomId"), root.get("roomId")),
-                            cb.equal(pm.get("receiver").get("userId"), userId));
+                            cb.equal(pm.get("user").get("userId"), userId));
 
             Order pinnedOrder = cb.desc(pinnedSub);
 
@@ -83,8 +78,7 @@ public class RoomSpecifications {
                 Root<RoomMemberEntity> cm = countSub.from(RoomMemberEntity.class);
 
                 countSub.select(cb.count(cm.get("id")))
-                        .where(cb.equal(cm.get("room").get("roomId"), root.get("roomId")),
-                                cb.equal(cm.get("status"), RequestStatus.ACCEPTED));
+                        .where(cb.equal(cm.get("room").get("roomId"), root.get("roomId")));
                 secondaryOrder = "asc".equalsIgnoreCase(order) ? cb.asc(countSub) : cb.desc(countSub);
             } else {
                 String property = "roomName".equalsIgnoreCase(sortBy) ? "roomName" : "createdAt";

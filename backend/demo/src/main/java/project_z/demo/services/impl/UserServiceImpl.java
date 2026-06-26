@@ -91,7 +91,7 @@ public class UserServiceImpl implements UserService {
         UserEntity user = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("user not found"));
 
-        List<RoomMemberEntity> memberships = roomMemberRepository.findByReceiver_UserId(user.getUserId());
+        List<RoomMemberEntity> memberships = roomMemberRepository.findByUser_UserId(user.getUserId());
 
         roomMemberRepository.deleteAll(memberships);
 

@@ -19,9 +19,7 @@ public class RoomMemberMapperImpl implements Mapper<RoomMemberEntity, RoomMember
     public RoomMemberDto mapTo(RoomMemberEntity entity) {
         RoomMemberDto dto = new RoomMemberDto();
         dto.setRequestId(entity.getId());
-        dto.setUser(userMapper.mapTo(entity.getReceiver()));
-        dto.setStatus(entity.getStatus());
-        dto.setType(entity.getType());
+        dto.setUser(userMapper.mapTo(entity.getUser()));
         dto.setCreatedAt(entity.getCreatedAt());
         return dto;
     }

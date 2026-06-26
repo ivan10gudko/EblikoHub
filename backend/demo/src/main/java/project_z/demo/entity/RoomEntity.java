@@ -43,6 +43,8 @@ public class RoomEntity {
 
     private String roomName;
 
+    private String description;
+
     @ManyToOne
     @JoinColumn(name = "owner_id")
     private UserEntity owner;
@@ -58,6 +60,6 @@ public class RoomEntity {
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
-    @Formula("(SELECT COUNT(*) FROM room_members m WHERE m.room_id = room_id AND m.status = 'ACCEPTED')")
+    @Formula("(SELECT COUNT(*) FROM room_members m WHERE m.room_id = room_id)")
     private Long memberCount;
 }
