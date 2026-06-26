@@ -24,7 +24,7 @@ public class RoomTitleController {
     public ResponseEntity<RoomTitleDetailsDto> create(
             @PathVariable Long roomId,
             @RequestBody RoomTitleCreateDto dto) {
-        return ResponseEntity.ok(roomTitleService.create(dto));
+        return ResponseEntity.ok(roomTitleService.create(dto,roomId));
     }
 
     @GetMapping

@@ -1,0 +1,93 @@
+package project_z.demo.services.impl;
+
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import project_z.demo.Mappers.Mapper;
+import project_z.demo.common.Exceptions.ResourceNotFoundException;
+import project_z.demo.common.Exceptions.RoomMembersExceptions.RoomMembersConflictException;
+import project_z.demo.dto.RoomRequestsDtos.RoomRequestDetailsDto;
+import project_z.demo.entity.*;
+import project_z.demo.enums.RequestStatus;
+import project_z.demo.enums.RequestType;
+import project_z.demo.enums.RoomRole;
+import project_z.demo.repositories.*;
+import project_z.demo.services.RoomRequestService;
+
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
+@Service
+@RequiredArgsConstructor
+public class RoomRequestServiceImpl implements RoomRequestService {
+    private final RoomRequestRepository roomRequestRepository;
+    private final RoomMemberRepository roomMemberRepository;
+    private final RoomRepository roomRepository;
+    private final UserRepository userRepository;
+    private final RoomBanRepository roomBanRepository;
+    private final Mapper<RoomRequestsEntity, RoomRequestDetailsDto> requestMapper;
+
+    @Transactional
+    public void sendRequest(UUID senderId, UUID receiverId, long roomId, RequestType type) {
+        if (roomBanRepository.existsByRoomRoomIdAndUserUserId(roomId, receiverId)) {
+            throw new AccessDeniedException("User is permanently banned from this room.");
+        }
+
+        RoomEntity room = roomRepository.findById(roomId)
+                .orElseThrow(() -> new ResourceNotFoundException("Room not found"));
+
+        roomRequestRepository.findByRoom_RoomIdAndUser_UserId(roomId, receiverId).ifPresent(req -> {
+            if (req.getStatus() == RequestStatus.PENDING) {
+                throw new RoomMembersConflictException("Request is already pending.");
+            }
+            if (req.getStatus() == RequestStatus.REJECTED && type == RequestType.JOIN_REQUEST) {
+                throw new RoomMembersConflictException("Your previous request was rejected.");
+            }
+        });
+
+        RoomRequestsEntity request = roomRequestRepository.findByRoom_RoomIdAndUser_UserId(roomId, receiverId)
+                .orElse(new RoomRequestsEntity());
+        
+        request.setRoom(room);
+        request.setUser(userRepository.findById(receiverId).orElseThrow(()-> new ResourceNotFoundException("receiver not found")));
+        request.setSender(userRepository.findById(senderId).orElseThrow(()-> new ResourceNotFoundException("sender not found")));
+        request.setStatus(RequestStatus.PENDING);
+        request.setType(type);
+        
+        roomRequestRepository.save(request);
+    }
+
+    @Transactional
+    public void acceptRequest(Long roomId, UUID receiverId) {
+        RoomRequestsEntity request = roomRequestRepository.findByRoom_RoomIdAndUser_UserId(roomId, receiverId)
+                .orElseThrow(() -> new ResourceNotFoundException("Request not found"));
+
+        RoomMemberEntity member = new RoomMemberEntity();
+        member.setRoom(request.getRoom());
+        member.setUser(request.getUser());
+        member.setRole(RoomRole.MEMBER);
+        
+        roomMemberRepository.save(member);
+        roomRequestRepository.delete(request);
+    }
+
+    @Transactional
+    public void rejectRequest(Long roomId, UUID receiverId) {
+        RoomRequestsEntity request = roomRequestRepository.findByRoom_RoomIdAndUser_UserId(roomId, receiverId)
+                .orElseThrow(() -> new ResourceNotFoundException("Request not found"));
+        
+        request.setStatus(RequestStatus.REJECTED);
+        roomRequestRepository.save(request);
+    }
+    @Override
+    @Transactional(readOnly = true)
+    public List<RoomRequestDetailsDto> getRequestsByUserId(UUID userId, RequestStatus status, RequestType type) {
+        return roomRequestRepository.findByUser_UserIdAndStatusAndType(userId, status, type)
+                .stream()
+                .map(requestMapper::mapTo)
+                .collect(Collectors.toList());
+    }
+}

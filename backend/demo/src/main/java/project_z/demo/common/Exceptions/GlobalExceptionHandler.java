@@ -14,7 +14,9 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.dao.DataAccessException;
 
+import project_z.demo.common.Exceptions.RoomBanExceptions.RoomSelfBanException;
 import project_z.demo.common.Exceptions.RoomMembersExceptions.RoomMembersConflictException;
+import project_z.demo.common.Exceptions.RoomTitleLinkExceptions.RoomTitleLinkAlreadyExistsException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -27,8 +29,18 @@ public class GlobalExceptionHandler {
         return buildErrorResponse(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(RoomTitleLinkAlreadyExistsException.class)
+    public ResponseEntity<Map<String, Object>> handleLinkAlreadyExists (RoomTitleLinkAlreadyExistsException ex){
+        return buildErrorResponse(ex.getMessage(), HttpStatus.CONFLICT);
+    }
+    
     @ExceptionHandler(TitleWithThatMalIdAlreadyExistsException.class)
     public ResponseEntity<Map<String, Object>> handleAlreadyExists(TitleWithThatMalIdAlreadyExistsException ex) {
+        return buildErrorResponse(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(RoomSelfBanException.class)
+    public ResponseEntity<Map<String, Object>> handleRoomSelfBan(RoomSelfBanException ex) {
         return buildErrorResponse(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 

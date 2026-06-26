@@ -16,5 +16,8 @@ public class RoomBanDetailsDto {
 
     private String reason;
 
+    private UUID bannedByUserId;
+
     private LocalDateTime createdAt;
+
 }

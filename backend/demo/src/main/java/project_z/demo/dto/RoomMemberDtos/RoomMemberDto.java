@@ -5,7 +5,6 @@ import java.util.UUID;
 
 import lombok.Data;
 import project_z.demo.dto.UserDtos.UserShortDto;
-import project_z.demo.enums.RequestStatus;
 import project_z.demo.enums.RequestType;
 import project_z.demo.enums.RoomRole;
 
@@ -13,7 +12,6 @@ import project_z.demo.enums.RoomRole;
 public class RoomMemberDto {
     private UUID requestId;
     private UserShortDto user; 
-    private RequestStatus status;
     private RequestType type;
     private RoomRole role;
     private LocalDateTime createdAt;

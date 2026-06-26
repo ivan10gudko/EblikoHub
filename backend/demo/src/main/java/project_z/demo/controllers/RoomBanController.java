@@ -30,7 +30,7 @@ public class RoomBanController {
     public ResponseEntity<RoomBanDetailsDto> create(
             @PathVariable Long roomId,
             @RequestBody RoomBanCreateDto banDto) {
-        return new ResponseEntity<>(roomBanService.create(banDto), HttpStatus.CREATED);
+        return new ResponseEntity<>(roomBanService.create(banDto, roomId), HttpStatus.CREATED);
     }
 
     @GetMapping("/check/{userId}")

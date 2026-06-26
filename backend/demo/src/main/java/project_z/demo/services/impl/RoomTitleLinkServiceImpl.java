@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import project_z.demo.Mappers.Mapper;
+import project_z.demo.common.Exceptions.RoomTitleLinkExceptions.RoomTitleLinkAlreadyExistsException;
 import project_z.demo.dto.RoomTitleLinkDtos.RoomTitleLinkCreateDto;
 import project_z.demo.dto.RoomTitleLinkDtos.RoomTitleLinkDetailsDto;
 import project_z.demo.entity.RoomTitleLinkEntity;
@@ -28,6 +29,9 @@ public class RoomTitleLinkServiceImpl implements RoomTitleLinkService {
     @Override
     @Transactional
     public RoomTitleLinkDetailsDto createLink(RoomTitleLinkCreateDto dto) {
+                if(repository.existsByUserTitleRecord_TitleIdAndRoomTitle_Id(dto.getTitleId(), dto.getRoomTitleId())){
+                    throw new RoomTitleLinkAlreadyExistsException("link between this title and room title adlready exists");
+                }
         var userTitle = titleRepository.findById(dto.getTitleId())
                 .orElseThrow(() -> new RuntimeException("Title record not found with id: " + dto.getTitleId()));
 

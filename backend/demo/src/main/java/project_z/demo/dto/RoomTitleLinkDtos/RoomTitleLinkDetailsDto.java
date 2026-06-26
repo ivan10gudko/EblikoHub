@@ -4,16 +4,16 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 import lombok.Data;
-import project_z.demo.dto.RoomTitleDtos.RoomTitleDetailsDto;
-import project_z.demo.dto.TitleDtos.TitleShortDto;
+import project_z.demo.dto.RoomTitleDtos.RoomTitleShortDto;
+import project_z.demo.dto.TitleDtos.TitleDto;
 @Data
 public class RoomTitleLinkDetailsDto {
 
     private UUID id;
 
-    private TitleShortDto title;
+    private TitleDto title;
 
-    private RoomTitleDetailsDto roomTitle;
+    private RoomTitleShortDto roomTitle;
     
     private LocalDateTime createdAt;
 }

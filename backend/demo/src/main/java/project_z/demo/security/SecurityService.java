@@ -24,7 +24,7 @@ public class SecurityService {
     private final FriendshipRepository friendshipRepository;
     private final RoomMemberRepository roomMemberRepository;
 
-    private UUID getCurrentUserId() {
+    public UUID getCurrentUserId() {
         var auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth == null || !auth.isAuthenticated() || "anonymousUser".equals(auth.getPrincipal())) {
             throw new RuntimeException("User not authenticated");
@@ -74,13 +74,13 @@ public class SecurityService {
 
     public boolean isAdminOrOwner(Long roomId) {
         UUID currentUserId = getCurrentUserId();
-        return roomMemberRepository.findByRoomRoomIdAndReceiverUserId(roomId, currentUserId)
+        return roomMemberRepository.findOneByRoom_RoomIdAndUser_UserId(roomId, currentUserId)
                 .map(member -> member.getRole() == RoomRole.OWNER || member.getRole() == RoomRole.ADMIN)
                 .orElse(false);
     }
     
     public boolean isRoomMember(Long roomId) {
         UUID currentUserId = getCurrentUserId();
-        return roomMemberRepository.existsByRoomRoomIdAndReceiverUserId(roomId, currentUserId);
+        return roomMemberRepository.existsByRoom_RoomIdAndUser_UserId(roomId, currentUserId);
     }
 }

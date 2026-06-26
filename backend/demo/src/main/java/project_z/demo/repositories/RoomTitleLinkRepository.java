@@ -17,4 +17,5 @@ public interface RoomTitleLinkRepository extends JpaRepository<RoomTitleLinkEnti
     void deleteByUserTitleRecord_TitleIdAndRoomTitle_Id(Long titleId, UUID roomTitleId);
 
     void deleteByRoomTitle_Id(UUID roomTitleId);
+
 }

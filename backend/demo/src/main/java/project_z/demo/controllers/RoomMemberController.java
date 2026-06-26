@@ -38,57 +38,6 @@ public class RoomMemberController {
     public ResponseEntity<List<UserShortDto>> getRoomMembers(@PathVariable Long roomId) {
         return ResponseEntity.ok(roomMemberService.getAcceptedMembers(roomId));
     }
-
-    @GetMapping("/requests")
-    public ResponseEntity<List<RoomMemberDto>> getRequests(
-            @PathVariable Long roomId,
-            @RequestParam RequestStatus status,
-            @RequestParam RequestType type) {
-        return ResponseEntity.ok(roomMemberService.getRequests(roomId, status, type));
-    }
-
-    @PostMapping("/join")
-    public ResponseEntity<Void> joinRoom(
-            @RequestHeader("Authorization") String token,
-            @PathVariable("roomId") Long roomId) {
-
-        UUID userId = jwtService.extractUsername(token);
-        roomMemberService.sendRequest(userId, userId, roomId, RequestType.JOIN_REQUEST);
-        return new ResponseEntity<>(HttpStatus.CREATED);
-    }
-
-    @PreAuthorize("@securityService.isRoomOwner(#roomId)")
-    @PostMapping("/invite/{receiverId}")
-    public ResponseEntity<Void> inviteUser(
-            @RequestHeader("Authorization") String token,
-            @PathVariable("roomId") Long roomId,
-            @PathVariable("receiverId") UUID receiverId) {
-
-        UUID senderId = jwtService.extractUsername(token);
-        roomMemberService.sendRequest(senderId, receiverId, roomId, RequestType.INVITE);
-        return new ResponseEntity<>(HttpStatus.CREATED);
-    }
-
-    @PreAuthorize("@securityService.isRoomOwner(#roomId) || @securityService.isRoomMember(#roomId)")
-    @PutMapping("/accept/{receiverId}")
-    public ResponseEntity<Void> acceptRequest(
-            @PathVariable("roomId") Long roomId,
-            @PathVariable("receiverId") UUID receiverId) {
-
-        roomMemberService.acceptRequest(roomId, receiverId);
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
-
-    @PutMapping("/reject/{receiverId}")
-    public ResponseEntity<Void> rejectRequest(
-            @RequestHeader("Authorization") String token,
-            @PathVariable("roomId") Long roomId,
-            @PathVariable("receiverId") UUID receiverId) {
-
-        roomMemberService.rejectRequest(roomId, receiverId);
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
-
     @DeleteMapping("/leave")
     public ResponseEntity<Void> leaveRoom(
             @RequestHeader("Authorization") String token,

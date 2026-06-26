@@ -60,7 +60,10 @@ export const WatchlistTable = ({ titles, isLoading, isOwn, queryKey }: Watchlist
 
   if (titles.length === 0) {
     return (
-      <AddNewButton onClick={() => setIsModalOpen(true)} placeholder="title" />
+      <>
+        <AddNewButton onClick={() => setIsModalOpen(true)} placeholder="title" />
+        <AddTitleModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+      </>
     );
   }
 

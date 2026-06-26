@@ -10,7 +10,7 @@ import project_z.demo.dto.RoomBanDtos.RoomBanDetailsDto;
 
 @Service
 public interface RoomBanService {
-    RoomBanDetailsDto create(RoomBanCreateDto ban);
+    RoomBanDetailsDto create(RoomBanCreateDto ban,Long roomId);
     List<RoomBanDetailsDto> findAllByRoom(Long roomId);
     boolean isBanned(Long roomId, UUID userId);
 }
