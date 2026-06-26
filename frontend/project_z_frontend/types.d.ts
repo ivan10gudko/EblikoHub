@@ -1,0 +1,1 @@
+declare module '@conarti/eslint-plugin-feature-sliced';
