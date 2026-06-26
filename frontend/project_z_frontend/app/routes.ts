@@ -13,6 +13,9 @@ export default [
         
         route("about", "./routes/about.tsx"), 
 
+        
+        route("privacy", "./routes/privacy.tsx"), 
+
         route("watchlist/:userId", "./routes/watchlist.$userId.tsx"),
 
         route("profile/:userId/friends", "./routes/friends/friends.tsx", [
