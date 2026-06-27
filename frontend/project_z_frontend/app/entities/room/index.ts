@@ -9,3 +9,6 @@ export {useRoomMutation} from "./hooks/useRoomMutation";
 export {RoomListGrid} from "./ui/roomsListGrid";
 export * from './model/room.types';
 export {useRemoveRoomMutation} from "./hooks/useRemoveRoomMutation";
+export {RoomRequestsSidebar} from "./ui/roomRequestsSidebar";
+export {useRoomRequests} from "./hooks/useRoomRequests";
+export {RoomRequestsInvitesTab} from "./ui/roomRequestsTabs/RoomRequestsInvitesTab";

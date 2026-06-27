@@ -8,7 +8,9 @@ import org.springframework.transaction.annotation.Transactional;
 import project_z.demo.Mappers.Mapper;
 import project_z.demo.common.Exceptions.ResourceNotFoundException;
 import project_z.demo.common.Exceptions.RoomMembersExceptions.RoomMembersConflictException;
+import project_z.demo.dto.RoomRequestsDtos.RoomRequestCountsDto;
 import project_z.demo.dto.RoomRequestsDtos.RoomRequestDetailsDto;
+import project_z.demo.dto.RoomRequestsDtos.RoomRequestShortDto;
 import project_z.demo.entity.*;
 import project_z.demo.enums.RequestStatus;
 import project_z.demo.enums.RequestType;
@@ -29,6 +31,7 @@ public class RoomRequestServiceImpl implements RoomRequestService {
     private final UserRepository userRepository;
     private final RoomBanRepository roomBanRepository;
     private final Mapper<RoomRequestsEntity, RoomRequestDetailsDto> requestMapper;
+    private final Mapper<RoomRequestsEntity, RoomRequestShortDto> requestShortMapper;
 
     @Transactional
     public void sendRequest(UUID senderId, UUID receiverId, long roomId, RequestType type) {
@@ -50,44 +53,60 @@ public class RoomRequestServiceImpl implements RoomRequestService {
 
         RoomRequestsEntity request = roomRequestRepository.findByRoom_RoomIdAndUser_UserId(roomId, receiverId)
                 .orElse(new RoomRequestsEntity());
-        
+
         request.setRoom(room);
-        request.setUser(userRepository.findById(receiverId).orElseThrow(()-> new ResourceNotFoundException("receiver not found")));
-        request.setSender(userRepository.findById(senderId).orElseThrow(()-> new ResourceNotFoundException("sender not found")));
+        request.setUser(userRepository.findById(receiverId)
+                .orElseThrow(() -> new ResourceNotFoundException("receiver not found")));
+        request.setSender(
+                userRepository.findById(senderId).orElseThrow(() -> new ResourceNotFoundException("sender not found")));
         request.setStatus(RequestStatus.PENDING);
         request.setType(type);
-        
+
         roomRequestRepository.save(request);
     }
 
+    @Override
+    public RoomRequestCountsDto getRequestCounts(UUID userId) {
+        return roomRequestRepository.getRoomRequestCounts(userId);
+    }
+
+    @Override
     @Transactional
-    public void acceptRequest(Long roomId, UUID receiverId) {
-        RoomRequestsEntity request = roomRequestRepository.findByRoom_RoomIdAndUser_UserId(roomId, receiverId)
+    public void acceptRequest(UUID roomRequestId) {
+        RoomRequestsEntity request = roomRequestRepository.findById(roomRequestId)
                 .orElseThrow(() -> new ResourceNotFoundException("Request not found"));
 
         RoomMemberEntity member = new RoomMemberEntity();
         member.setRoom(request.getRoom());
         member.setUser(request.getUser());
         member.setRole(RoomRole.MEMBER);
-        
+        System.out.println("ID to delete: " + request.getId()); // <-- ПЕРЕВІР ЦЕ
         roomMemberRepository.save(member);
         roomRequestRepository.delete(request);
     }
 
     @Transactional
-    public void rejectRequest(Long roomId, UUID receiverId) {
-        RoomRequestsEntity request = roomRequestRepository.findByRoom_RoomIdAndUser_UserId(roomId, receiverId)
+    public void rejectRequest(UUID roomRequestId) {
+        RoomRequestsEntity request = roomRequestRepository.findById(roomRequestId)
                 .orElseThrow(() -> new ResourceNotFoundException("Request not found"));
-        
+
         request.setStatus(RequestStatus.REJECTED);
         roomRequestRepository.save(request);
     }
+
+    @Override
+    public void cancelRequest(UUID roomRequestId) {
+        RoomRequestsEntity request = roomRequestRepository.findById(roomRequestId)
+                .orElseThrow(() -> new ResourceNotFoundException("Request not found"));
+        roomRequestRepository.deleteById(roomRequestId);
+    }
+
     @Override
     @Transactional(readOnly = true)
-    public List<RoomRequestDetailsDto> getRequestsByUserId(UUID userId, RequestStatus status, RequestType type) {
+    public List<RoomRequestShortDto> getRequestsByUserId(UUID userId, RequestStatus status, RequestType type) {
         return roomRequestRepository.findByUser_UserIdAndStatusAndType(userId, status, type)
                 .stream()
-                .map(requestMapper::mapTo)
+                .map(requestShortMapper::mapTo)
                 .collect(Collectors.toList());
     }
 }

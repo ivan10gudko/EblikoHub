@@ -12,6 +12,7 @@ import { ModalFooter } from "~/shared/ui/Modal";
 interface RatingEditorContentProps {
   titleId: number;
   ratings: Rating;
+  avgRating: number;
   onChange: (newRatings: Rating) => void;
   isSaving: boolean;
   onSave: () => void;
@@ -30,6 +31,7 @@ const PRESET_CATEGORIES = [
 export const RatingEditorContent = ({
   titleId,
   ratings,
+  avgRating,
   onChange,
   isSaving,
   onSave,
@@ -52,18 +54,18 @@ export const RatingEditorContent = ({
     } as Rating);
   };
 
-  const calculateAverage = (): string => {
-    const activeValues = customCategories
-      .map((key) => safeRatings[key])
-      .filter((val): val is number => typeof val === "number" && val > 0);
+  // const calculateAverage = (): string => {
+  //   const activeValues = customCategories
+  //     .map((key) => safeRatings[key])
+  //     .filter((val): val is number => typeof val === "number" && val > 0);
 
-    if (activeValues.length === 0) return "0.0";
+  //   if (activeValues.length === 0) return "0.0";
 
-    const sum = activeValues.reduce((acc, current) => acc + current, 0);
-    return (sum / activeValues.length).toFixed(1);
-  };
+  //   const sum = activeValues.reduce((acc, current) => acc + current, 0);
+  //   return (sum / activeValues.length).toFixed(1);
+  // };
 
-  const avgRating = calculateAverage();
+  // const avgRating = calculateAverage();
 
   const handleRenameCategory = (oldKey: string, newKey: string) => {
     if (!newKey || newKey === "overall" || safeRatings[newKey] !== undefined)
@@ -152,11 +154,10 @@ export const RatingEditorContent = ({
                           type="button"
                           disabled={isAdded}
                           onClick={() => handleAddPreset(preset.label)}
-                          className={`text-[12px] px-2.5 py-1 rounded-lg font-bold border transition-all duration-200 ${
-                            isAdded
+                          className={`text-[12px] px-2.5 py-1 rounded-lg font-bold border transition-all duration-200 ${isAdded
                               ? "bg-transparent border-border text-muted-foreground/40 line-through cursor-not-allowed"
                               : "bg-background-muted hover:bg-primary/10 border-border hover:border-primary/30 text-foreground hover:text-primary active:scale-95"
-                          }`}
+                            }`}
                         >
                           {preset.label}
                         </Button>
@@ -170,7 +171,7 @@ export const RatingEditorContent = ({
                       Criteria Avg:
                     </span>
                     <span className="text-xs sm:text-sm font-black px-2 py-0.5 rounded-md transition-all text-primary bg-primary/10">
-                      {avgRating}
+                      {avgRating.toFixed(1)}
                     </span>
                   </div>
                 </div>
@@ -178,11 +179,10 @@ export const RatingEditorContent = ({
             </div>
 
             <div
-              className={`flex flex-col gap-3 sm:gap-4 transition-all duration-300 ${
-                isOverallMissing
+              className={`flex flex-col gap-3 sm:gap-4 transition-all duration-300 ${isOverallMissing
                   ? "grayscale opacity-30 pointer-events-none scale-[0.98]"
                   : "opacity-100"
-              }`}
+                }`}
             >
               {customCategories.length === 0 && !isOverallMissing && (
                 <div className="text-center p-6 sm:p-8 border-2 border-dashed border-border rounded-2xl text-muted-foreground text-xs sm:text-sm font-medium">

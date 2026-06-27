@@ -16,11 +16,13 @@ import org.springframework.data.jpa.domain.Specification;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import project_z.demo.JavaUtil.BeanUtilsHelper;
+import project_z.demo.JavaUtil.PagingHelper;
 import project_z.demo.Mappers.Mapper;
 import project_z.demo.common.Exceptions.ResourceNotFoundException;
 import project_z.demo.common.QueryParameters.RoomQueryParameters;
 import project_z.demo.dto.RoomDtos.RoomCreateDto;
 import project_z.demo.dto.RoomDtos.RoomDto;
+import project_z.demo.dto.RoomDtos.RoomSearchResultDto;
 import project_z.demo.dto.RoomDtos.RoomShortDto;
 import project_z.demo.entity.RoomEntity;
 import project_z.demo.entity.RoomMemberEntity;
@@ -35,6 +37,7 @@ import project_z.demo.repositories.RoomRequestRepository;
 import project_z.demo.repositories.Specifications.RoomSpecifications;
 import project_z.demo.repositories.UserRepository;
 import project_z.demo.security.JwtService;
+import project_z.demo.security.SecurityService;
 import project_z.demo.services.RoomService;
 
 @Service
@@ -49,6 +52,7 @@ public class RoomServiceImpl implements RoomService {
     private final Mapper<RoomEntity, RoomShortDto> roomShortMapper;
     private final RoomMemberRepository roomMemberRepository;
     private final RoomRequestRepository roomRequestRepository;
+    private final SecurityService securityService;
 
     @Override
     public RoomEntity save(RoomEntity roomEntity) {
@@ -86,6 +90,16 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
+    public Page<RoomSearchResultDto> findRoomsByName(String roomName, RoomQueryParameters queryParameters) {
+        UUID currentUserId = securityService.getCurrentUserId();
+        Pageable pageable = PagingHelper.toPageable(queryParameters);
+
+        Page<RoomSearchResultDto> roomPage = roomRepository.searchRoomsWithMembershipStatus(roomName, currentUserId, pageable);
+        return roomPage;
+
+    }
+
+    @Override
     public boolean isExists(Long id) {
         return roomRepository.existsById(id);
     }
@@ -110,6 +124,7 @@ public class RoomServiceImpl implements RoomService {
 
         RoomEntity roomEntity = RoomEntity.builder()
                 .roomName(dto.getRoomName())
+                .imageUrl(dto.getImageUrl())
                 .owner(owner)
                 .build();
         RoomEntity savedRoom = roomRepository.save(roomEntity);

@@ -8,14 +8,14 @@ interface FilterResponsiveWrapperProps {
   pageTitle: string;
   filterTitle?: string;
   modal?: ReactNode;
-  actionButton?: ReactNode;
+  actionButtons?: ReactNode[];
 }
 
 export const FilterResponsiveWrapper = ({
   children,
   pageTitle,
   filterTitle = "Filters",
-  actionButton,
+  actionButtons,
 }: FilterResponsiveWrapperProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const close = () => setIsOpen(false);
@@ -68,9 +68,11 @@ export const FilterResponsiveWrapper = ({
             </div>
             <div>{children}</div>
 
-            {actionButton && (
-              <div className="px-5 lg:px-0 mt-auto pb-5">
-                {actionButton}
+            {actionButtons && actionButtons.length > 0 && (
+              <div className="px-5 lg:px-0 mt-auto pb-5 flex flex-col gap-2">
+                {actionButtons.map((btn, index) => (
+                  <div key={index}>{btn}</div>
+                ))}
               </div>
             )}
           </div>
