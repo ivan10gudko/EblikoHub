@@ -1,8 +1,8 @@
-import { useMutation, useQueryClient, type InfiniteData } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { titleRecordService, type CreateTitleRecord, type TitleRecord } from "~/entities/titleRecord";
 import { notify } from "~/shared/lib";
 import { getSessionUserId } from "~/shared/lib/supabase";
-import type { PageResponse, Rating } from "~/shared/types";
+import type { Rating } from "~/shared/types";
 import { Status } from "~/shared/types/Status";
 
 export const useTitleRecordMutation = (apiTitleId: number | undefined, initialData: CreateTitleRecord, existingTitleRecord?: TitleRecord | null) => {
@@ -14,19 +14,15 @@ export const useTitleRecordMutation = (apiTitleId: number | undefined, initialDa
 
     const mutationConfig = {
         onSuccess: (updatedRecord: TitleRecord | null) => {
-            if (updatedRecord) {
-                
-                queryClient.setQueryData<TitleRecord>(queryKey, updatedRecord);
-                
-               
-                queryClient.invalidateQueries({ queryKey: ['titles'] });
-            }
+            
+            queryClient.invalidateQueries({ queryKey: ['titles'] });
+            queryClient.invalidateQueries({ queryKey: ['titleRecord'] });
         },
         onSettled: () => {
             queryClient.invalidateQueries({ queryKey: queryKey });
         },
         onError: (error: any) => {
-            console.error("Фронтенд зловив помилку в мутації:", error);
+            console.error("Помилка зміни статусу/оцінки:", error);
             const message = error.response?.data?.message || "Something went wrong";
             notify.error(message);
         },
@@ -57,10 +53,8 @@ export const useTitleRecordMutation = (apiTitleId: number | undefined, initialDa
     const deleteMutation = useMutation({
         mutationFn: (titleId: number) => titleRecordService.delete(titleId),
         onSuccess: () => {
-            queryClient.setQueryData(queryKey, null);
-        },
-        onSettled: () => {
-            queryClient.invalidateQueries({ queryKey: queryKey });
+            queryClient.invalidateQueries({ queryKey: ['titles'] });
+            queryClient.invalidateQueries({ queryKey: ['titleRecord'] });
         },
         onError: (error: any) => {
             const message = error.response?.data?.message || "Something went wrong";

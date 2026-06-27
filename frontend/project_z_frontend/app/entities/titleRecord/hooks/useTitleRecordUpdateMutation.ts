@@ -1,44 +1,33 @@
-import { useMutation, useQueryClient, type InfiniteData } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { titleRecordService, type TitleRecord } from "~/entities/titleRecord";
 import { notify } from "~/shared/lib";
-import type { PageResponse } from "~/shared/types";
 
 export const useUpdateTitleRecord = (titleId: number) => {
   const queryClient = useQueryClient();
 
-  
-  const invalidateTitlesCache = () => {
+  const refreshAllCaches = () => {
     queryClient.invalidateQueries({ queryKey: ['titles'] });
-  };
-
-  
-  const updateSingleTitleCache = (updatedRecord: TitleRecord) => {
-    if (updatedRecord.apiTitleId) {
-      queryClient.setQueryData(['titleRecord', updatedRecord.apiTitleId], updatedRecord);
-    }
-    
-    queryClient.setQueryData(['titleRecord', 'local', updatedRecord.titleId], updatedRecord);
+    queryClient.invalidateQueries({ queryKey: ['titleRecord'] });
   };
 
   const updateMutation = useMutation({
     mutationFn: (updates: Partial<TitleRecord>) => titleRecordService.patch(titleId, updates),
-    onSuccess: (updatedRecord: TitleRecord) => {
-      
-      updateSingleTitleCache(updatedRecord);
-      
-      
-      invalidateTitlesCache();
+    onSuccess: () => {
+      refreshAllCaches();
+    },
+    onError: (error: any) => {
+      notify.error(error.response?.data?.message || "Failed to save changes");
     }
   });
 
   const pinMutation = useMutation({
     mutationFn: () => titleRecordService.pinTitle(titleId),
-    onSuccess: (updatedRecord: TitleRecord) => {
-      updateSingleTitleCache({ ...updatedRecord, pinned: true });
-      invalidateTitlesCache();
+    onSuccess: () => {
+      refreshAllCaches();
       notify.success("Pinned to top!");
     },
     onError: (error: any) => {
+      console.error(error);
       notify.error(error.response?.data?.message || "Error while pinning");
     }
   });
@@ -46,9 +35,7 @@ export const useUpdateTitleRecord = (titleId: number) => {
   const unpinMutation = useMutation({
     mutationFn: () => titleRecordService.unpin(),
     onSuccess: () => {
-      
-      queryClient.invalidateQueries({ queryKey: ['titleRecord'] });
-      invalidateTitlesCache();
+      refreshAllCaches();
       notify.success("Unpinned!");
     },
     onError: (error: any) => {
@@ -59,8 +46,7 @@ export const useUpdateTitleRecord = (titleId: number) => {
   const deleteMutation = useMutation({
     mutationFn: () => titleRecordService.delete(titleId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['titleRecord'] });
-      invalidateTitlesCache();
+      refreshAllCaches();
     }
   });
 
