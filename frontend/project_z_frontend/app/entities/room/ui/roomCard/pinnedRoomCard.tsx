@@ -22,7 +22,8 @@ export const PinnedRoomCard = ({ room, onClick }: RoomCardProps) => {
       onClick={onClick}
       className="group flex flex-col w-full rounded-2xl border-2 border-primary bg-card shadow-lg shadow-primary/10 transition-all cursor-pointer"
     >
-      <div className="relative h-40 w-full overflow-hidden hover:scale-[1.3] hover:z-10 duration-500 rounded-t-[14px] transition-transform hover:translate-y-5">
+     
+      <div className="relative h-40 w-full overflow-hidden rounded-t-[14px] hover:rounded-none hover:scale-[1.2] hover:z-10 origin-top duration-500 transition-all">
         <img
           src={room.imageUrl || DEFAULT_IMAGE_PATH}
           alt={room.roomName}
