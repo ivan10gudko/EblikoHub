@@ -71,6 +71,7 @@ export const EditRatingModal = ({
         <RatingEditorContent
           titleId={title.titleId}
           ratings={localRatings}
+          avgRating={title.avgRating || 0}
           onChange={setLocalRatings}
           isSaving={false}
           onSave={handleSave}

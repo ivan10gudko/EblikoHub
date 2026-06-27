@@ -19,10 +19,12 @@ import lombok.RequiredArgsConstructor;
 import project_z.demo.common.QueryParameters.RoomQueryParameters;
 import project_z.demo.dto.RoomDtos.RoomCreateDto;
 import project_z.demo.dto.RoomDtos.RoomDto;
+import project_z.demo.dto.RoomDtos.RoomSearchResultDto;
 import project_z.demo.dto.RoomDtos.RoomShortDto;
 import project_z.demo.security.JwtService;
 import project_z.demo.services.RoomMemberService;
 import project_z.demo.services.RoomService;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @RestController
 @RequestMapping("/api/v1/rooms")
@@ -43,6 +45,12 @@ public class RoomController {
             RoomQueryParameters roomQueryParameters) {
         Page<RoomShortDto> response = roomService.getRoomsByUserId(id, roomQueryParameters);
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @GetMapping("/roomSearch")
+    public Page<RoomSearchResultDto> getMethodName(@RequestParam("roomName") String roomName,
+            RoomQueryParameters roomQueryParameters) {
+        return roomService.findRoomsByName(roomName, roomQueryParameters);
     }
 
     @PostMapping

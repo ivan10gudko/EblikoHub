@@ -20,6 +20,8 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import project_z.demo.JavaUtil.BeanUtilsHelper;
 import project_z.demo.JavaUtil.PagingHelper;
 import project_z.demo.JavaUtil.PatchHelper;
@@ -55,6 +57,8 @@ public class TitleServiceImpl implements TitleService {
     private final SeasonService seasonService;
     private final PatchHelper patchHelper;
     private final TitleStatsMapper titleStatsMapper;
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Autowired
     private BeanUtilsHelper beanUtilsHelper;
@@ -68,7 +72,7 @@ public class TitleServiceImpl implements TitleService {
     private Mapper<TitleEntity, TitleDto> titleMapper;
 
     TitleServiceImpl(SeasonService seasonService, TitleSeachServiceImpl titleSeachServiceImpl,
-            PatchHelper patchHelper,TitleStatsMapper titleStatsMapper) {
+            PatchHelper patchHelper, TitleStatsMapper titleStatsMapper) {
         this.seasonService = seasonService;
         this.titleSeachServiceImpl = titleSeachServiceImpl;
         this.patchHelper = patchHelper;
@@ -154,18 +158,21 @@ public class TitleServiceImpl implements TitleService {
     @Override
     @Transactional
     public TitleEntity partialUpdate(Long titleId, TitlePatchUpdateDto source) {
-        return titleRepository.findById(titleId)
-                .map(target -> {
-                    patchHelper.updateIfPresent(source.getApiTitleId(), target::setApiTitleId);
-                    patchHelper.updateIfPresent(source.getTitleName(), target::setTitleName);
-                    patchHelper.updateIfPresent(source.getStatus(), target::setStatus);
-                    patchHelper.updateIfPresent(source.getTitleType(), target::setTitleType);
-                    patchHelper.updateIfPresent(source.getRating(), target::setRating);
-                    patchHelper.updateIfPresent(source.getCustomOrder(), target::setCustomOrder);
-                    patchHelper.updateIfPresent(source.getImageUrl(), target::setImageUrl);
-                    return titleRepository.save(target);
-                })
+        TitleEntity titleEntity = titleRepository.findById(titleId)
                 .orElseThrow(() -> new ResourceNotFoundException("Title not found"));
+
+        patchHelper.updateIfPresent(source.getApiTitleId(), titleEntity::setApiTitleId);
+        patchHelper.updateIfPresent(source.getTitleName(), titleEntity::setTitleName);
+        patchHelper.updateIfPresent(source.getStatus(), titleEntity::setStatus);
+        patchHelper.updateIfPresent(source.getTitleType(), titleEntity::setTitleType);
+        patchHelper.updateIfPresent(source.getRating(), titleEntity::setRating);
+        patchHelper.updateIfPresent(source.getCustomOrder(), titleEntity::setCustomOrder);
+        patchHelper.updateIfPresent(source.getImageUrl(), titleEntity::setImageUrl);
+
+        titleRepository.saveAndFlush(titleEntity);
+        entityManager.refresh(titleEntity);
+        
+        return titleEntity;
     }
 
     @Override
@@ -301,7 +308,6 @@ public class TitleServiceImpl implements TitleService {
         titleRepository.countByStatus(userId).forEach(obj -> statusCount.put((TitleStatus) obj[0], (Long) obj[1]));
 
         titleRepository.countByType(userId).forEach(obj -> typeCount.put((TitleType) obj[0], (Long) obj[1]));
-
 
         return titleStatsMapper.mapToDto(statusCount, typeCount);
     }

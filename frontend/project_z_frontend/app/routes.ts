@@ -40,6 +40,11 @@ export default [
             ...prefix("rooms", [
                 route("user/:userId", "./routes/rooms._index.tsx"),     // /rooms
                 route(":id", "./routes/rooms.$id.tsx"), // /rooms/:id
+                route("/requests", "./routes/roomRequestsLayouts/room.user.requests.tsx", [
+                    index("./routes/roomRequestsLayouts/room.user.requests.add.tsx"),
+                    route("invites","./routes/roomRequestsLayouts/room.user.requests.invites.tsx"),
+                    route("sent","./routes/roomRequestsLayouts/room.user.requests.sent.tsx" ),
+                ]), // rooms requests 
             ]),
         ]),
 

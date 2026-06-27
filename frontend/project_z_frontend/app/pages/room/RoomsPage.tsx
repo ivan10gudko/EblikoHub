@@ -12,6 +12,7 @@ import { useMemo, useState } from "react";
 import { Button } from "~/shared/ui/Button";
 import { RoomModalManager } from "~/features/manageRooms";
 import { useRoomModal } from "~/features/manageRooms/ui/hooks/useRoomModal";
+import { NavLink, useNavigate } from "react-router";
 
 
 export default function RoomsPage({ userId }: { userId: string | null }) {
@@ -27,7 +28,7 @@ export default function RoomsPage({ userId }: { userId: string | null }) {
   const { open } = useRoomModal();
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
     useRoomsQuery(userId ?? null);
-
+  const navigate = useNavigate();
   const allRooms = useMemo(() => {
     const flat = data?.pages.flatMap((page) => page.content) || [];
     return flat.filter(
@@ -38,18 +39,25 @@ export default function RoomsPage({ userId }: { userId: string | null }) {
   const handleOpenAdd = () => {
     open('add', '1');
   };
+  const actionButtonsStyles = "w-full flex items-center justify-center gap-2 bg-primary text-foreground py-3 rounded-xl";
   return (
     <div className="flex flex-col lg:flex-row gap-6 p-4 sm:p-8 max-w-[1400px] mx-auto min-h-screen bg-background-muted/30">
       <FilterResponsiveWrapper
         pageTitle="My Rooms"
-        actionButton={
+        actionButtons={[
+          <Button
+            onClick={() => navigate("/rooms/requests")}
+            className={actionButtonsStyles}>
+            My Requests
+          </Button>,
           <Button
             onClick={handleOpenAdd}
-            className="w-full flex items-center justify-center gap-2 bg-primary text-foreground py-3 rounded-xl"
+            className={actionButtonsStyles}
           >
-            <span>+ Add New Room</span>
+            <span>Add New Room</span>
           </Button>
-        }
+
+        ]}
       >
         <RoomFilters />
       </FilterResponsiveWrapper>
