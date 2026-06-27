@@ -97,13 +97,15 @@ export const AddRoomModal = ({
   const handleBack = () => onStepChange(Math.max(step - 1, 1));
 
   const renderFooter = () => (
-    <ModalFooter
-      onCancel={isFirstStep ? onClose : handleBack}
-      cancelLabel={isFirstStep ? "Cancel" : "Back"}
-      onSave={isLastStep ? handleSave : handleNext}
-      isSaving={isCreating}
-      saveLabel={isLastStep ? "Create Room" : "Next"}
-    />
+    <div className="pt-4 bg-background shrink-0">
+      <ModalFooter
+        onCancel={isFirstStep ? onClose : handleBack}
+        cancelLabel={isFirstStep ? "Cancel" : "Back"}
+        onSave={isLastStep ? handleSave : handleNext}
+        isSaving={isCreating}
+        saveLabel={isLastStep ? "Create Room" : "Next"}
+      />
+    </div>
   );
 
   const currentStepIndex = Math.min(Math.max(step - 1, 0), totalSteps - 1);
@@ -115,11 +117,14 @@ export const AddRoomModal = ({
       title={`Create New Room (${step}/${totalSteps})`}
       maxWidth="max-w-4xl"
     >
-      <div className="p-3 md:p-6 min-h-[400px]">
-        {stepsContent[currentStepIndex]}
-      </div>
+      <div className="flex flex-col h-[65vh] px-1 sm:px-0">
+        
+        <div className="flex-1 min-h-0 overflow-y-auto pr-1 sm:pr-3 custom-scrollbar p-3 md:p-6">
+          {stepsContent[currentStepIndex]}
+        </div>
 
-      {renderFooter()}
+        {renderFooter()}
+      </div>
     </Modal>
   );
 };

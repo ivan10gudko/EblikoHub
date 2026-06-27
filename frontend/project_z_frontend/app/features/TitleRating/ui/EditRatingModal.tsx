@@ -11,7 +11,7 @@ interface EditRatingModalProps {
   isOpen: boolean;
   onClose: () => void;
   isOwn: boolean;
-  onTitleChange?: (newTitleId: number) => void; // Нова функція для зміни аніме
+  onTitleChange?: (newTitleId: number) => void;
 }
 
 export const EditRatingModal = ({
