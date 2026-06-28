@@ -11,8 +11,7 @@ import { PinnedWatchlistRowReadOnly } from "./WatchlistRow/pinnedWatchlistRowRea
 import { WatchlistRowReadOnly } from "./WatchlistRow/WatchlistRowReadOnly";
 import { AddNewButton } from "~/shared/ui/AddNewButton";
 
-
-import { EditRatingModal } from "~/features/TitleRating/ui/EditRatingModal";
+import { EditRatingModal } from "~/features/TitleRating";
 
 interface WatchlistTableProps {
   titles: TitleRecord[];
@@ -30,7 +29,6 @@ export const WatchlistTable = ({ titles, isLoading, isOwn, queryKey }: Watchlist
   const isDragable = isCustomOrder && !isFiltered;
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-
   const [activeRatingTitle, setActiveRatingTitle] = useState<TitleRecord | null>(null);
   const showNumber = !isDragable;
 
@@ -41,7 +39,6 @@ export const WatchlistTable = ({ titles, isLoading, isOwn, queryKey }: Watchlist
     const regular = optimisticTitles.filter((t) => !t.pinned);
     return { pinnedTitle: pinned, regularTitles: regular };
   }, [optimisticTitles]);
-
 
   const handleTitleChange = (newTitleId: number) => {
     const foundTitle = titles.find((t) => t.titleId === newTitleId);
@@ -73,17 +70,42 @@ export const WatchlistTable = ({ titles, isLoading, isOwn, queryKey }: Watchlist
 
       {isOwn ? (
         <>
-          {pinnedTitle && <PinnedWatchlistRow title={pinnedTitle} onOpenRatingModal={() => openRating(pinnedTitle)} />}
+          {pinnedTitle && (
+            <PinnedWatchlistRow
+              title={pinnedTitle}
+              onOpenRatingModal={() => openRating(pinnedTitle)}
+            />
+          )}
 
           <DragDropContext onDragEnd={onDragEnd}>
             <Droppable droppableId="watchlist">
               {(provided) => (
-                <div {...provided.droppableProps} ref={provided.innerRef} className="flex flex-col gap-2 w-full">
+                <div
+                  {...provided.droppableProps}
+                  ref={provided.innerRef}
+                  className="flex flex-col gap-2 w-full"
+                >
                   {regularTitles.map((title, index) => (
-                    <Draggable key={String(title.titleId)} draggableId={String(title.titleId)} index={index} isDragDisabled={!isDragable}>
+                    <Draggable
+                      key={String(title.titleId)}
+                      draggableId={String(title.titleId)}
+                      index={index}
+                      isDragDisabled={!isDragable}
+                    >
                       {(provided) => (
-                        <div ref={provided.innerRef} {...provided.draggableProps} {...(isDragable ? provided.dragHandleProps : {})} style={provided.draggableProps.style as React.CSSProperties}>
-                          <WatchlistRow title={title} index={index} showNumber={showNumber} onOpenRatingModal={() => openRating(title)} />
+                        <div
+                          ref={provided.innerRef}
+                          {...provided.draggableProps}
+                          {...(isDragable ? provided.dragHandleProps : {})}
+                          style={provided.draggableProps.style as React.CSSProperties}
+                        >
+                          <WatchlistRow
+                            key={title.titleName}
+                            title={title}
+                            index={index}
+                            showNumber={showNumber}
+                            onOpenRatingModal={() => openRating(title)}
+                          />
                         </div>
                       )}
                     </Draggable>
@@ -96,7 +118,12 @@ export const WatchlistTable = ({ titles, isLoading, isOwn, queryKey }: Watchlist
         </>
       ) : (
         <div className="flex flex-col gap-2 w-full">
-          {pinnedTitle && <PinnedWatchlistRowReadOnly title={pinnedTitle} onOpenRatingModal={() => openRating(pinnedTitle)} />}
+          {pinnedTitle && (
+            <PinnedWatchlistRowReadOnly
+              title={pinnedTitle}
+              onOpenRatingModal={() => openRating(pinnedTitle)}
+            />
+          )}
           {regularTitles.map((title, index) => (
             <WatchlistRowReadOnly
               key={String(title.titleId)}
@@ -117,11 +144,9 @@ export const WatchlistTable = ({ titles, isLoading, isOwn, queryKey }: Watchlist
           title={activeRatingTitle}
           onClose={() => setActiveRatingTitle(null)}
           onTitleChange={handleTitleChange}
-          isOwn={isOwn} 
+          isOwn={isOwn}
         />
       )}
     </div>
   );
 };
-
-

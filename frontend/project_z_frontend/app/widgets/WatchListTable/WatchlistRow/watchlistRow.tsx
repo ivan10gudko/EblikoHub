@@ -1,6 +1,6 @@
 import type { DraggableProvidedDragHandleProps } from "@hello-pangea/dnd";
 import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import PushPinIcon from "@mui/icons-material/PushPin";
 import { useNavigate } from "react-router";
 import { StatusSelect, TitleTypeThemes, type TitleRecord } from "~/entities/titleRecord";
@@ -8,26 +8,31 @@ import { useUpdateTitleRecord } from "~/entities/titleRecord/hooks/useTitleRecor
 import { CompactRate } from "~/shared/ui/CompactRate";
 import { TitleActionsMenu } from "../../TitleActionsMenu";
 import type { Rating } from "~/shared/types";
-import { useTitleFilterStore, type TitleSortType } from "~/features/titleFilter/store/titleFilter.store";
+import {
+  useTitleFilterStore,
+  type TitleSortType,
+} from "~/features/titleFilter/store/titleFilter.store";
 
 interface WatchlistRowProps {
   title: TitleRecord;
   dragHandleProps?: DraggableProvidedDragHandleProps | null;
-  index: number;       
-  showNumber: boolean; 
-  onOpenRatingModal: () => void; 
+  index: number;
+  showNumber: boolean;
+  onOpenRatingModal: () => void;
 }
 
-export const WatchlistRow = ({ title, dragHandleProps, index, showNumber, onOpenRatingModal }: WatchlistRowProps) => {
+export const WatchlistRow = ({
+  title,
+  dragHandleProps,
+  index,
+  showNumber,
+  onOpenRatingModal,
+}: WatchlistRowProps) => {
   const navigate = useNavigate();
   const [tempTitleName, setTempTitleName] = useState(title.titleName);
   const { pinTitle, updateTitle, deleteTitle } = useUpdateTitleRecord(title.titleId);
   const sortBy = useTitleFilterStore((state) => state.sortBy);
-  const isAvgView = sortBy === "avgRating" as TitleSortType;
-  
-  useEffect(() => {
-    setTempTitleName(title.titleName);
-  }, [title.titleName]);
+  const isAvgView = sortBy === ("avgRating" as TitleSortType);
 
   const handleImageClick = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -43,11 +48,8 @@ export const WatchlistRow = ({ title, dragHandleProps, index, showNumber, onOpen
         title.pinned ? "border-primary/30" : ""
       }`}
     >
-      
       <div className="flex items-center flex-1 gap-1.5 min-w-0">
-        
         {!title.pinned && (
-          
           <div className="flex items-center justify-center h-10 w-5 select-none flex-shrink-0">
             {showNumber ? (
               <span translate="no" className="text-gray-400 font-bold text-sm sm:text-base">
@@ -72,14 +74,15 @@ export const WatchlistRow = ({ title, dragHandleProps, index, showNumber, onOpen
             e.stopPropagation();
             pinTitle();
           }}
-         
           className="flex items-center justify-center h-10 w-5 text-muted-foreground/20 group-hover/row:text-muted-foreground/60 hover:!text-primary opacity-100 sm:opacity-0 md:group-hover/row:opacity-100 transition-all duration-200 cursor-pointer"
           title="Pin title to the top"
         >
-          <PushPinIcon sx={{ fontSize: 16 }} className="-rotate-45 group-hover/row:rotate-0 transition-transform duration-200" />
+          <PushPinIcon
+            sx={{ fontSize: 16 }}
+            className="-rotate-45 group-hover/row:rotate-0 transition-transform duration-200"
+          />
         </button>
 
-        
         <div className="relative h-10 w-16 ml-1 flex-shrink-0 transition-transform duration-500 hover:scale-[3.0] hover:z-10 cursor-pointer">
           <img
             src={title.imageUrl || DEFAULT_IMAGE_PATH}
@@ -95,7 +98,9 @@ export const WatchlistRow = ({ title, dragHandleProps, index, showNumber, onOpen
             type="text"
             value={tempTitleName}
             onChange={(e) => setTempTitleName(e.target.value)}
-            onBlur={() => tempTitleName !== title.titleName && updateTitle({ titleName: tempTitleName })}
+            onBlur={() =>
+              tempTitleName !== title.titleName && updateTitle({ titleName: tempTitleName })
+            }
             className="w-full font-bold text-foreground uppercase text-xs sm:text-sm bg-transparent border-none p-0 h-auto leading-tight focus:ring-0 cursor-text"
           />
         </div>
@@ -113,7 +118,7 @@ export const WatchlistRow = ({ title, dragHandleProps, index, showNumber, onOpen
 
         <div>
           <CompactRate
-           isAvgView={isAvgView}
+            isAvgView={isAvgView}
             currentRating={title.rating?.overall}
             avgRating={title.avgRating}
             onRate={(val) =>
@@ -133,12 +138,11 @@ export const WatchlistRow = ({ title, dragHandleProps, index, showNumber, onOpen
         </div>
 
         <div className="flex-shrink-0 ml-1 border-l border-border pl-2">
-          
-          <TitleActionsMenu 
-            title={title} 
-            onDelete={() => deleteTitle()} 
+          <TitleActionsMenu
+            title={title}
+            onDelete={() => deleteTitle()}
             isOwn={true}
-            onOpenRatingModal={onOpenRatingModal} 
+            onOpenRatingModal={onOpenRatingModal}
           />
         </div>
       </div>
