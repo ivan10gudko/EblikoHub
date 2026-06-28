@@ -70,6 +70,9 @@ public class TitleEntity {
 
     @Enumerated(EnumType.STRING)
     private TitleStatus status;
+    @Column(name = "description")
+    private String description;
+
 
     @Enumerated(EnumType.STRING)
     @Column(name = "title_type", nullable = false)
