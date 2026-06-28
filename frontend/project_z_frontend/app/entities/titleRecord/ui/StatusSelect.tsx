@@ -1,18 +1,25 @@
 import { type ManageTitleRecordProps } from "~/entities/titleRecord";
 import { useTitleRecordMutation } from "..";
-import { Select } from "~/shared/ui/Select";
 import { Status, statusColorConfig, statusOptions } from "~/shared/types/Status";
+import { Select } from "~/shared/ui/Select/Select";
 
-
-interface StatusSelectProps extends ManageTitleRecordProps {
+export interface StatusSelectProps extends ManageTitleRecordProps {
     className?: string;
     variant?: "page" | "card";
+    onStatusChange?: (status: Status) => void;
+    triggerColorClass?: string;
+    getOptionClass?: (value: string | number) => string;
+    getStatusColor?: (value: string | number) => string;
 }
+
 const StatusSelect = ({
     initialData,
     titleRecord,
     variant = "page",
     className = "",
+    onStatusChange,
+    triggerColorClass: externalTriggerColor,
+    getOptionClass: externalGetOptionClass,
 }: StatusSelectProps) => {
     const { updateStatus, isAnyActionLoading } = useTitleRecordMutation(
         initialData.apiTitleId,
@@ -23,8 +30,20 @@ const StatusSelect = ({
     const currentStatus = (titleRecord?.status as Status) || Status.DEFAULT;
     const config = statusColorConfig[currentStatus];
 
+    const getStatusColor = (optionValue: string | number) => {
+        const valStr = String(optionValue) as Status;
+        if (statusColorConfig[valStr]) {
+            return statusColorConfig[valStr].color;
+        }
+        return "text-foreground";
+    };
+
     const handleStatusChange = (val: string) => {
-        updateStatus(val as Status);
+        if (onStatusChange) {
+            onStatusChange(val as Status);
+        } else {
+            updateStatus(val as Status);
+        }
     };
 
     const styles = {
@@ -32,9 +51,12 @@ const StatusSelect = ({
         card: `my-2 border-none bg-transparent rounded-none py-4 text-center transition-all ${className}`,
     };
 
+    const finalTriggerColor = externalTriggerColor || (currentStatus ? getStatusColor(currentStatus) : "text-foreground-muted");
+    const finalGetOptionClass = externalGetOptionClass || getStatusColor;
+
     return (
         <div className="relative flex items-center w-full group">
-            {currentStatus !== Status.DEFAULT && (
+            {currentStatus !== Status.DEFAULT && config?.dot && (
                 <div
                     className={`absolute left-2 w-1.5 h-1.5 rounded-full z-10 pointer-events-none ${config.dot}`}
                 />
@@ -48,12 +70,13 @@ const StatusSelect = ({
                 disabled={isAnyActionLoading}
                 className={`
                     ${styles[variant]} 
-                    ${currentStatus !== Status.DEFAULT ? `pl-6 ${config.color}` : "text-foreground-muted"}
+                    ${currentStatus !== Status.DEFAULT ? `pl-6` : "text-foreground-muted"}
                 `}
-                themeVariant={variant === "card" ? "dark" : "light"}
+                triggerColorClass={finalTriggerColor}
+                getOptionClass={finalGetOptionClass}
             />
         </div>
     );
 };
 
-export default StatusSelect
+export default StatusSelect;

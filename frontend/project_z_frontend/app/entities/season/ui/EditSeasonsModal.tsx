@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import AddIcon from "@mui/icons-material/Add";
 import Modal from "~/shared/ui/Modal/Modal";
 import { Button } from "~/shared/ui/Button";
-import { Status } from "~/shared/types/Status";
+import { Status, statusColorConfig } from "~/shared/types/Status"; // Імпортуємо конфіг кольорів статусів
 import { useSeasonActions, useSeasons, type LocalDraftSeason } from "~/entities/season";
 import { SeasonRow } from "./SeasonRow";
 import { ModalFooter } from "~/shared/ui/Modal";
@@ -84,6 +84,15 @@ export const EditSeasonsModal = ({ titleId, isOpen, onClose, titleName, isOwn }:
         syncSeasons(localSeasons);
     };
 
+   
+    const getStatusColor = (optionValue: string | number) => {
+        const valStr = String(optionValue) as Status;
+        if (statusColorConfig && statusColorConfig[valStr]) {
+            return statusColorConfig[valStr].color;
+        }
+        return "text-foreground";
+    };
+
     return (
         <Modal
             maxWidth="max-w-2xl"
@@ -136,6 +145,8 @@ export const EditSeasonsModal = ({ titleId, isOpen, onClose, titleName, isOwn }:
                                             onDelete={() => handleRemove(season.localId)}
                                             onUpdate={(patch) => handleUpdate(season.localId, patch)}
                                             isOwn={isOwn}
+                                            // Прокидаємо функцію визначення кольору в компонент рядка
+                                            getStatusColor={getStatusColor}
                                         />
                                     ))
                                 )}

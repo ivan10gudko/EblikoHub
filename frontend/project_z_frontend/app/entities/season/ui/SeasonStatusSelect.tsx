@@ -1,14 +1,17 @@
-import { Select } from "~/shared/ui/Select";
+import { Select } from "~/shared/ui/Select/Select"; 
 import { Status, statusColorConfig, statusOptions } from "~/shared/types/Status";
 import type { CreateSeasonDto, Season } from "~/entities/season";
 
-interface SeasonStatusSelectProps {
+export interface SeasonStatusSelectProps {
     initialData: CreateSeasonDto;
     titleRecord: Season | CreateSeasonDto;
-    onStatusChange: (status: Status) => void;
+    onStatusChange?: (status: Status) => void;
     isLoading?: boolean;
     variant?: "page" | "card";
     className?: string;
+    triggerColorClass?: string;
+    getOptionClass?: (value: string | number) => string;
+    getStatusColor?: (value: string | number) => string;
 }
 
 const SeasonStatusSelect = ({
@@ -17,6 +20,8 @@ const SeasonStatusSelect = ({
     isLoading = false,
     variant = "page",
     className = "",
+    triggerColorClass = "",
+    getOptionClass,
 }: SeasonStatusSelectProps) => {
     
     const currentStatus = (titleRecord?.status as Status) || Status.DEFAULT;
@@ -29,7 +34,7 @@ const SeasonStatusSelect = ({
 
     return (
         <div className="relative flex items-center w-full group">
-            {currentStatus !== Status.DEFAULT && (
+            {currentStatus !== Status.DEFAULT && config?.dot && (
                 <div
                     className={`absolute left-2 w-1.5 h-1.5 rounded-full z-10 pointer-events-none ${config.dot}`}
                 />
@@ -39,13 +44,14 @@ const SeasonStatusSelect = ({
                 placeholder="Add to list..."
                 options={statusOptions}
                 value={titleRecord?.status || ""}
-                onChange={(val) => onStatusChange(val as Status)}
+                onChange={(val) => onStatusChange?.(val as Status)}
                 disabled={isLoading}
                 className={`
                     ${styles[variant]} 
-                    ${currentStatus !== Status.DEFAULT ? `pl-6 ${config.color}` : "text-foreground-muted"}
+                    ${currentStatus !== Status.DEFAULT ? `pl-6` : "text-foreground-muted"}
                 `}
-                themeVariant={variant === "card" ? "dark" : "light"}
+                triggerColorClass={triggerColorClass}
+                getOptionClass={getOptionClass}
             />
         </div>
     );

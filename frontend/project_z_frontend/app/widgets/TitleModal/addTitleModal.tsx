@@ -7,12 +7,13 @@ import {
   TitleType,
   titleTypeOptions,
   useCreateTitleRecord,
+  TitleTypeOptionsColors, 
   type CreateTitleRecord,
 } from "~/entities/titleRecord";
 import { TitleSearch } from "./components/titleSearch";
 import DeleteSweepIcon from "@mui/icons-material/DeleteSweep";
 import { formatRatingInput } from "~/shared/helpers/formatRating";
-import { Status, statusOptions } from "~/shared/types/Status";
+import { Status, statusOptions, statusColorConfig } from "~/shared/types/Status";
 import { notify } from "~/shared/lib";
 import { ImageUrlEditor } from "~/shared/ui/ImageUrlEditor";
 
@@ -82,6 +83,14 @@ export const AddTitleModal = ({ isOpen, onClose }: AddTitleModalProps) => {
     setFormData((prev: CreateTitleRecord) => ({ ...prev, imageUrl: url }));
   };
 
+  const getStatusColor = (optionValue: string | number) => {
+    const valStr = String(optionValue) as Status;
+    if (statusColorConfig && statusColorConfig[valStr]) {
+      return statusColorConfig[valStr].color;
+    }
+    return "text-foreground";
+  };
+
   return (
     <Modal
       isOpen={isOpen}
@@ -135,6 +144,8 @@ export const AddTitleModal = ({ isOpen, onClose }: AddTitleModalProps) => {
                       onChange={(val) => setFormData({ ...formData, titleType: val as TitleType })}
                       options={[...titleTypeOptions]}
                       className="h-12 border-2 border-border/60 rounded-xl font-bold text-foreground text-sm shadow-sm w-full"
+                      triggerColorClass={TitleTypeOptionsColors[formData.titleType]}
+                      getOptionClass={(val) => TitleTypeOptionsColors[val as TitleType]}
                     />
                   </div>
                 </div>
@@ -161,6 +172,8 @@ export const AddTitleModal = ({ isOpen, onClose }: AddTitleModalProps) => {
                       }
                       options={[...statusOptions]}
                       className="h-12 border-2 border-border rounded-xl font-bold text-foreground text-sm shadow-sm"
+                      triggerColorClass={getStatusColor(formData.status)}
+                      getOptionClass={getStatusColor}
                     />
                   </div>
                   <div className="w-[112px] flex-shrink-0">

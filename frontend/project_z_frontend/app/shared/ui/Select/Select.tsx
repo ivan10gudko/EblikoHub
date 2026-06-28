@@ -1,7 +1,5 @@
-import React, { useId, useState } from "react";
+import React, { useId, useState, useEffect } from "react";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
-import { Status, statusColorConfig } from "~/shared/types/Status"; 
-import { TitleType, TitleTypeOptionsColors, TitleTypeThemes } from "~/entities/titleRecord/model/titleRecord";
 
 export interface Option {
     value: string | number;
@@ -15,9 +13,10 @@ interface SelectProps {
     onChange: (value: string) => void;
     placeholder?: string;
     error?: string;
-    themeVariant?: "light" | "dark";
     className?: string;
     disabled?: boolean;
+    triggerColorClass?: string;
+    getOptionClass?: (value: string | number) => string;
 }
 
 const SELECT_CLASSES = {
@@ -26,22 +25,7 @@ const SELECT_CLASSES = {
     default: "border-border/60 focus:border-primary focus:ring-1 focus:ring-primary"
 };
 
-const getOptionTextColor = (optionValue: string | number) => {
-    const valStr = String(optionValue);
-    
-    if (statusColorConfig[valStr as Status]) {
-        return statusColorConfig[valStr as Status].color;
-    }
-
-    const upperVal = valStr.toUpperCase() as TitleType;
-    if (TitleTypeOptionsColors[upperVal]) {
-        return TitleTypeOptionsColors[upperVal];
-    }
-
-    return "";
-};
-
-const Select: React.FC<SelectProps> = ({
+export const Select: React.FC<SelectProps> = ({
     label,
     options,
     value,
@@ -50,9 +34,27 @@ const Select: React.FC<SelectProps> = ({
     className = "",
     error,
     disabled,
+    triggerColorClass = "",
+    getOptionClass,
 }) => {
     const id = useId();
     const [open, setOpen] = useState(false);
+
+    
+    useEffect(() => {
+        const handleScroll = () => {
+            if (open) {
+                setOpen(false);
+            }
+        };
+
+      
+        window.addEventListener("scroll", handleScroll, { capture: true });
+        
+        return () => {
+            window.removeEventListener("scroll", handleScroll, { capture: true });
+        };
+    }, [open]);
 
     const selectedOption = options.find((opt) => String(opt.value) === String(value));
 
@@ -66,17 +68,6 @@ const Select: React.FC<SelectProps> = ({
 
     const hasCustomBg = className.includes("bg-");
     const backgroundStyle = hasCustomBg ? "" : "bg-background";
-
-    const triggerColorClass = value ? getOptionTextColor(value) : "";
-
-    React.useEffect(() => {
-        if (!open) return;
-
-        const handleScroll = () => setOpen(false);
-        
-        window.addEventListener("scroll", handleScroll, { capture: true, passive: true });
-        return () => window.removeEventListener("scroll", handleScroll, { capture: true });
-    }, [open]);
 
     return (
         <div className={`flex flex-col gap-1.5 w-full min-w-0 ${containerClasses}`}>
@@ -99,11 +90,10 @@ const Select: React.FC<SelectProps> = ({
                             ${SELECT_CLASSES.base}
                             ${backgroundStyle}
                             ${error ? SELECT_CLASSES.error : SELECT_CLASSES.default}
-                            ${triggerColorClass ? triggerColorClass : "text-foreground"}
                             ${selectClasses}
                         `}
                     >
-                        <span className="truncate">
+                        <span className={`truncate ${triggerColorClass ? triggerColorClass : "text-foreground"}`}>
                             {selectedOption ? selectedOption.label : (placeholder || "Select option...")}
                         </span>
                         <svg className="h-3.5 w-3.5 fill-current text-muted-foreground ml-2 shrink-0" viewBox="0 0 20 20">
@@ -116,17 +106,13 @@ const Select: React.FC<SelectProps> = ({
                     <DropdownMenu.Content
                         align="start"
                         sideOffset={6}
-                        onInteractOutside={(e) => setOpen(false)}
+                        onInteractOutside={() => setOpen(false)}
                         className="
-                            z-[9999] 
+                            z-[3000] 
                             w-[var(--radix-dropdown-menu-trigger-width)] 
                             min-w-[var(--radix-dropdown-menu-trigger-width)] 
                             bg-card border border-border rounded-lg shadow-xl overflow-hidden p-1
-                            
-                            
                             [[data-state]]:!block
-                            
-                            
                             data-[state=open]:animate-enter
                             data-[state=closed]:animate-leave
                         "
@@ -136,9 +122,7 @@ const Select: React.FC<SelectProps> = ({
                             style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
                         >
                             <style>{`
-                                div::-webkit-scrollbar {
-                                    display: none;
-                                }
+                                div::-webkit-scrollbar { display: none; }
                             `}</style>
                             
                             {placeholder && (
@@ -149,13 +133,10 @@ const Select: React.FC<SelectProps> = ({
 
                             {options.map((option) => {
                                 const isSelected = String(option.value) === String(value);
-                                const optionColorClass = getOptionTextColor(option.value);
+                                const optionColorClass = getOptionClass ? getOptionClass(option.value) : "text-foreground";
 
                                 return (
-                                    <DropdownMenu.Item
-                                        key={option.value}
-                                        asChild
-                                    >
+                                    <DropdownMenu.Item key={option.value} asChild>
                                         <button
                                             type="button"
                                             onClick={() => {
@@ -163,17 +144,16 @@ const Select: React.FC<SelectProps> = ({
                                                 setOpen(false);
                                             }}
                                             className={`
-                                                w-full text-left rounded-lg px-3 py-2 text-[13px] font-medium transition-all mb-0.5 last:mb-0 flex items-center justify-between outline-none cursor-pointer select-none
-                                                ${isSelected 
-                                                    ? "bg-[#2a2a2a] font-semibold" 
-                                                    : "hover:bg-muted/40 active:bg-muted"
-                                                }
-                                                ${optionColorClass || "text-foreground"}
+                                                w-full text-left rounded-lg px-3 py-2 text-[13px] font-medium transition-all mb-0.5 last:mb-0 flex items-center justify-between outline-none cursor-pointer select-none text-foreground
+                                                ${isSelected ? "bg-muted font-semibold" : "hover:bg-muted/40 active:bg-muted"}
                                             `}
                                         >
-                                            <span>{option.label}</span>
+                                            <span className={optionColorClass}>
+                                                {option.label}
+                                            </span>
+
                                             {isSelected && (
-                                                <svg className="h-3.5 w-3.5 flex-shrink-0 stroke-current" fill="none" viewBox="0 0 24 24" strokeWidth={2.5}>
+                                                <svg className={`h-3.5 w-3.5 flex-shrink-0 stroke-current ${optionColorClass}`} fill="none" viewBox="0 0 24 24" strokeWidth={2.5}>
                                                     <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                                                 </svg>
                                             )}
@@ -186,11 +166,7 @@ const Select: React.FC<SelectProps> = ({
                 </DropdownMenu.Portal>
             </DropdownMenu.Root>
 
-            {error && (
-                <span className="text-xs text-danger ml-1 mt-0.5">
-                    {error}
-                </span>
-            )}
+            {error && <span className="text-xs text-danger ml-1 mt-0.5">{error}</span>}
         </div>
     );
 };

@@ -11,9 +11,18 @@ interface SeasonRowProps {
   onDelete: () => void;
   onUpdate: (patch: Partial<Season>) => void;
   isOwn: boolean;
+  getStatusColor: (value: string | number) => string; // Додали в інтерфейс
 }
 
-export const SeasonRow = ({ season, onDelete, onUpdate, isOwn }: SeasonRowProps) => {
+export const SeasonRow = ({ 
+  season, 
+  titleId, 
+  onDelete, 
+  onUpdate, 
+  isOwn,
+  getStatusColor 
+}: SeasonRowProps) => {
+  
   if (!isOwn) {
     return <SeasonRowReadOnly season={season} />;
   }
@@ -52,6 +61,9 @@ export const SeasonRow = ({ season, onDelete, onUpdate, isOwn }: SeasonRowProps)
             onStatusChange={(newStatus) => onUpdate({ status: newStatus })}
             variant="page"
             className="h-9 text-[10px] sm:text-[11px] font-black"
+           
+            triggerColorClass={getStatusColor(season.status)}
+            getOptionClass={getStatusColor}
           />
         </div>
 
