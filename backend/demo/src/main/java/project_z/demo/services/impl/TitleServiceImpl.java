@@ -168,10 +168,11 @@ public class TitleServiceImpl implements TitleService {
         patchHelper.updateIfPresent(source.getRating(), titleEntity::setRating);
         patchHelper.updateIfPresent(source.getCustomOrder(), titleEntity::setCustomOrder);
         patchHelper.updateIfPresent(source.getImageUrl(), titleEntity::setImageUrl);
+        patchHelper.updateIfPresent(source.getDescription(), titleEntity::setDescription);
 
         titleRepository.saveAndFlush(titleEntity);
         entityManager.refresh(titleEntity);
-        
+
         return titleEntity;
     }
 

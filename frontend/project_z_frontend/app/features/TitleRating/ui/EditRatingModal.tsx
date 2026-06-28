@@ -5,7 +5,6 @@ import { RatingEditorContent } from "./RatingEditorContent";
 import { ReadonlyRatingContent } from "./ReadonlyRatingContent";
 import type { Rating } from "~/shared/types";
 
-
 interface EditRatingModalProps {
   title: TitleRecord;
   isOpen: boolean;
@@ -21,6 +20,8 @@ export const EditRatingModal = ({
   isOwn,
   onTitleChange,
 }: EditRatingModalProps) => {
+  // Передаємо обов'язкове поле description в мутацію, забираючи його з об'єкта title.
+  // Додаємо фолбек на пусту строку "", якщо раптом у старих записах бази даних цього поля немає.
   const { rate } = useTitleRecordMutation(
     title.apiTitleId,
     {
@@ -31,6 +32,7 @@ export const EditRatingModal = ({
       imageUrl: title.imageUrl,
       titleType: title.titleType,
       pinned: title.pinned,
+      description: title.description || "", // Фікс помилки з image_25bcdc.png
     },
     title,
   );

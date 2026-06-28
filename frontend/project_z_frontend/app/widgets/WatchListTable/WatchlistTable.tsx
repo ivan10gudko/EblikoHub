@@ -10,9 +10,8 @@ import { PinnedWatchlistRow } from "./WatchlistRow/pinnedWatchlistRow";
 import { PinnedWatchlistRowReadOnly } from "./WatchlistRow/pinnedWatchlistRowReadOnly";
 import { WatchlistRowReadOnly } from "./WatchlistRow/WatchlistRowReadOnly";
 import { AddNewButton } from "~/shared/ui/AddNewButton";
-
-
 import { EditRatingModal } from "~/features/TitleRating/ui/EditRatingModal";
+import { ViewTitleModal } from "~/entities/titleRecord/ui/ViewTitleModal";
 
 interface WatchlistTableProps {
   titles: TitleRecord[];
@@ -30,8 +29,8 @@ export const WatchlistTable = ({ titles, isLoading, isOwn, queryKey }: Watchlist
   const isDragable = isCustomOrder && !isFiltered;
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-
   const [activeRatingTitle, setActiveRatingTitle] = useState<TitleRecord | null>(null);
+  const [viewTitle, setViewTitle] = useState<TitleRecord | null>(null); // <-- Стейт для перегляду деталей
   const showNumber = !isDragable;
 
   const { reorder, optimisticTitles } = useReorderWatchlist(titles, queryKey, userId);
@@ -42,14 +41,16 @@ export const WatchlistTable = ({ titles, isLoading, isOwn, queryKey }: Watchlist
     return { pinnedTitle: pinned, regularTitles: regular };
   }, [optimisticTitles]);
 
-
   const handleTitleChange = (newTitleId: number) => {
     const foundTitle = titles.find((t) => t.titleId === newTitleId);
     if (foundTitle) {
       setActiveRatingTitle(foundTitle);
     }
   };
+
   const openRating = (title: TitleRecord) => setActiveRatingTitle(title);
+  const openView = (title: TitleRecord) => setViewTitle(title); // <-- Функція для відкриття модалки перегляду
+
   const onDragEnd = (result: DropResult) => {
     const { source, destination } = result;
     if (!destination || source.index === destination.index) return;
@@ -96,7 +97,13 @@ export const WatchlistTable = ({ titles, isLoading, isOwn, queryKey }: Watchlist
         </>
       ) : (
         <div className="flex flex-col gap-2 w-full">
-          {pinnedTitle && <PinnedWatchlistRowReadOnly title={pinnedTitle} onOpenRatingModal={() => openRating(pinnedTitle)} />}
+          {pinnedTitle && (
+            <PinnedWatchlistRowReadOnly 
+              title={pinnedTitle} 
+              onOpenRatingModal={() => openRating(pinnedTitle)} 
+              onRowClick={openView} 
+            />
+          )}
           {regularTitles.map((title, index) => (
             <WatchlistRowReadOnly
               key={String(title.titleId)}
@@ -104,6 +111,7 @@ export const WatchlistTable = ({ titles, isLoading, isOwn, queryKey }: Watchlist
               index={index}
               showNumber={showNumber}
               onOpenRatingModal={() => openRating(title)}
+              onRowClick={openView}
             />
           ))}
         </div>
@@ -120,8 +128,15 @@ export const WatchlistTable = ({ titles, isLoading, isOwn, queryKey }: Watchlist
           isOwn={isOwn} 
         />
       )}
+      {viewTitle && (
+        <ViewTitleModal 
+          isOpen={true}
+          title={viewTitle}
+          onClose={() => setViewTitle(null)}
+          isOwn={isOwn}
+          onEditClick={() => openRating(viewTitle)}
+        />
+      )}
     </div>
   );
 };
-
-
