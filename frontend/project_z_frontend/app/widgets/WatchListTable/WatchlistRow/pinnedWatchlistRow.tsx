@@ -1,12 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import PushPinIcon from "@mui/icons-material/PushPin";
-import {
-  StatusSelect,
-  TitleTypeThemes,
-  type TitleRecord,
-} from "~/entities/titleRecord";
-import { useUpdateTitleRecord } from "~/entities/titleRecord/hooks/useTitleRecordUpdateMutation";
+import { StatusSelect, TitleTypeThemes, type TitleRecord } from "~/entities/titleRecord";
+import { useUpdateTitleRecord } from "~/entities/titleRecord";
 import { CompactRate } from "~/shared/ui/CompactRate";
 import { TitleActionsMenu } from "../../TitleActionsMenu";
 import type { Rating } from "~/shared/types";
@@ -20,15 +16,10 @@ interface PinnedWatchlistRowProps {
   onOpenRatingModal: () => void;
 }
 
-export const PinnedWatchlistRow = ({
-  title,
-  onOpenRatingModal,
-}: PinnedWatchlistRowProps) => {
+export const PinnedWatchlistRow = ({ title, onOpenRatingModal }: PinnedWatchlistRowProps) => {
   const navigate = useNavigate();
   const [tempTitleName, setTempTitleName] = useState(title.titleName);
-  const { unpinTitle, deleteTitle, updateTitle } = useUpdateTitleRecord(
-    title.titleId,
-  );
+  const { unpinTitle, deleteTitle, updateTitle } = useUpdateTitleRecord(title.titleId);
   const sortBy = useTitleFilterStore((state) => state.sortBy);
   const isAvgView = sortBy === ("avgRating" as TitleSortType);
 
@@ -80,8 +71,7 @@ export const PinnedWatchlistRow = ({
             value={tempTitleName}
             onChange={(e) => setTempTitleName(e.target.value)}
             onBlur={() =>
-              tempTitleName !== title.titleName &&
-              updateTitle({ titleName: tempTitleName })
+              tempTitleName !== title.titleName && updateTitle({ titleName: tempTitleName })
             }
             className="w-full font-bold text-foreground uppercase text-xs sm:text-sm bg-transparent border-none p-0 h-auto leading-tight focus:ring-0 cursor-text"
           />
@@ -112,9 +102,7 @@ export const PinnedWatchlistRow = ({
               })
             }
             onClear={() => {
-              const updatedRating = title.rating
-                ? ({ ...title.rating } as Partial<Rating>)
-                : {};
+              const updatedRating = title.rating ? ({ ...title.rating } as Partial<Rating>) : {};
               delete updatedRating.overall;
               updateTitle({ rating: updatedRating as Rating });
             }}

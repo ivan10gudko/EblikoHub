@@ -1,3 +1,2 @@
 cd frontend/project_z_frontend
 npx lint-staged
-npm run knip

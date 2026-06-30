@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import Modal from "~/shared/ui/Modal/Modal";
+import { Modal } from "~/shared/ui/Modal";
 import { type TitleRecord, useTitleRecordMutation } from "~/entities/titleRecord";
 import { RatingEditorContent } from "./RatingEditorContent";
 import { ReadonlyRatingContent } from "./ReadonlyRatingContent";

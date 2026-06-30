@@ -1,7 +1,7 @@
 import { type CreateTitleRecord, type SameCriteriaRating, type TitleParams, type TitleRecord, type TitleShortDto, type TitleStats } from "../model/titleRecord"
 import type { PageResponse } from "~/shared/types";
 import { apiClient } from "~/shared/api";
-import { Status } from "~/shared/types/Status";
+import { Status } from "~/shared/types";
 import type { Rating } from "~/shared/types/Rating";
 
 

@@ -86,5 +86,3 @@ export const Modal = ({ children, title, isOpen, onClose, maxWidth = "max-w-lg",
         document.body
     );
 };
-
-export default Modal;

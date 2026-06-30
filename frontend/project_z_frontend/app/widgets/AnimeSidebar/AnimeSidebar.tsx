@@ -6,7 +6,7 @@ import {
   useTitleByApiId,
   type CreateTitleRecord,
 } from "~/entities/titleRecord";
-import { useTitleRecordMutation } from "~/entities/titleRecord/hooks/useTitleRecordMutation";
+import { useTitleRecordMutation } from "~/entities/titleRecord";
 import { PageRate } from "~/features/manageTitle";
 import { Status } from "~/shared/types";
 import { Button } from "~/shared/ui/Button";

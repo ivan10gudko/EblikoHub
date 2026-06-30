@@ -1,1 +1,1 @@
-export {default as ColapsableSection} from "./ui/CollapsableSection"
+export { default as CollapsableSection } from "./ui/CollapsableSection"

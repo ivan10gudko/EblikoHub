@@ -6,11 +6,11 @@ import MeetingRoomIcon from "@mui/icons-material/MeetingRoom";
 import FormatListBulletedIcon from "@mui/icons-material/FormatListBulleted";
 import PersonIcon from "@mui/icons-material/Person";
 
-import BurgerIcon from "../../shared/ui/Burger/BurgerIcon";
+import { BurgerIcon } from "~/shared/ui/Burger";
 import { Logo, LogoImg } from "~/shared/ui/Logo";
 import SearchBar from "~/shared/ui/SearchBar";
 import { useAuthStore } from "~/features/auth";
-import { ThemeToggle } from "~/features/theme/ui/ThemeToggle";
+import { ThemeToggle } from "~/features/theme";
 import { useUser } from "~/entities/user";
 import { HeaderAvatar } from "./HeadAvatar";
 interface NavItem {
@@ -59,8 +59,7 @@ const Header = () => {
   };
 
   const isSearchLoading =
-    navigation.state === "loading" &&
-    navigation.location?.pathname === "/search";
+    navigation.state === "loading" && navigation.location?.pathname === "/search";
 
   const navItems = getNavConfig(isAuth, userId);
 
@@ -80,11 +79,7 @@ const Header = () => {
         <ThemeToggle />
 
         <nav className="hidden sm:flex gap-6 items-center">
-          <SearchBar
-            isLoading={isSearchLoading}
-            onSearch={handleMainSearch}
-            className="w-56"
-          />
+          <SearchBar isLoading={isSearchLoading} onSearch={handleMainSearch} className="w-56" />
 
           {navItems
             .filter((item) => item.showInDesktop)
@@ -93,9 +88,7 @@ const Header = () => {
                 key={item.to}
                 to={item.to}
                 className={({ isActive }) =>
-                  isActive
-                    ? "text-primary font-bold"
-                    : "hover:text-primary transition-colors"
+                  isActive ? "text-primary font-bold" : "hover:text-primary transition-colors"
                 }
               >
                 {item.label}
@@ -124,23 +117,18 @@ const Header = () => {
           <NavLink to="search">
             <SearchIcon fontSize="medium" className="text-foreground/70" />
           </NavLink>
-          <BurgerIcon
-            onClick={() => setBurgerMenuOpen((v) => !v)}
-            isOpen={burgerMenuOpen}
-          />
+          <BurgerIcon onClick={() => setBurgerMenuOpen((v) => !v)} isOpen={burgerMenuOpen} />
         </div>
 
         <div
-          className={`fixed w-full h-screen inset-0 top-[73px] bg-card/60 backdrop-blur-xl z-[999] transition-all duration-300 flex justify-center p-6 ${burgerMenuOpen
-            ? "opacity-100 pointer-events-auto"
-            : "opacity-0 pointer-events-none translate-y-4"
-            }`}
+          className={`fixed w-full h-screen inset-0 top-[73px] bg-card/60 backdrop-blur-xl z-[999] transition-all duration-300 flex justify-center p-6 ${
+            burgerMenuOpen
+              ? "opacity-100 pointer-events-auto"
+              : "opacity-0 pointer-events-none translate-y-4"
+          }`}
           onClick={() => setBurgerMenuOpen(false)}
         >
-          <nav
-            className="w-full max-w-sm flex flex-col gap-3"
-            onClick={(e) => e.stopPropagation()}
-          >
+          <nav className="w-full max-w-sm flex flex-col gap-3" onClick={(e) => e.stopPropagation()}>
             {navItems
               .filter((item) => item.label !== "Profile Settings" || isAuth)
               .map((item) => {
@@ -153,9 +141,7 @@ const Header = () => {
                     className={burgerLinkStyle}
                   >
                     <Icon className="text-primary group-hover:animate-pulse" />
-                    <span className="font-semibold text-lg text-foreground">
-                      {item.label}
-                    </span>
+                    <span className="font-semibold text-lg text-foreground">{item.label}</span>
                   </NavLink>
                 );
               })}

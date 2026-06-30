@@ -1,6 +1,6 @@
 
 import type { Rating } from "~/shared/types/Rating";
-import type { Status } from "~/shared/types/Status";
+import type { Status } from "~/shared/types";
 
 
 export interface Season {

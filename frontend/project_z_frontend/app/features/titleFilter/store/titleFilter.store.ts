@@ -3,7 +3,7 @@ import { persist, createJSONStorage } from 'zustand/middleware';
 import { TitleType } from '~/entities/titleRecord';
 import { Status } from '~/shared/types';
 import type { SortOrder } from '~/shared/types/api';
-
+import { getInitialValue } from '~/shared/helpers';
 export type TitleSortType = 'rating' | 'title' | 'chapters' | 'createdAt' | 'customOrder';
 
 interface TitleFilterState {
@@ -28,7 +28,7 @@ interface TitleFilterState {
 export const useTitleFilterStore = create<TitleFilterState>()(
     persist(
         (set) => ({
-            search: '',
+            search: getInitialValue('search', ''),
             sortBy: 'createdAt',
             order: 'desc',
             status: undefined,

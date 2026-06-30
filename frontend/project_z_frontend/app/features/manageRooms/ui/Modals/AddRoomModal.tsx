@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import type { RoomCreateDto } from "~/entities/room/model/room.types";
 import { type UserProfile } from "~/entities/user";
 import { useUserSearch } from "~/entities/user/hooks/useUserSearch";
-import Modal from "~/shared/ui/Modal/Modal";
+import { Modal } from "~/shared/ui/Modal";
 import { ModalFooter } from "~/shared/ui/Modal";
 import { useRoomMutation } from "~/entities/room";
 import { RoomInfoStep } from "./addRoomModalComponents/RoomInfoStep";

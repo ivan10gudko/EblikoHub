@@ -2,7 +2,7 @@ import { DragDropContext, Droppable, Draggable, type DropResult } from "@hello-p
 import { type TitleRecord } from "~/entities/titleRecord";
 import { WatchlistRow } from "./WatchlistRow/watchlistRow";
 import { useParams, useSearchParams } from "react-router";
-import { useReorderWatchlist } from "~/entities/titleRecord/hooks/useReorderWatchlist";
+import { useReorderWatchlist } from "~/entities/titleRecord";
 import { useMemo, useState } from "react";
 import { WatchlistSkeleton } from "./WatchlistTableSkeleton";
 import { AddTitleModal } from "../TitleModal";

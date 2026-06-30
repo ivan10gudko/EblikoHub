@@ -5,7 +5,7 @@ import {
   DeleteDropdownItem,
   DropdownItem,
 } from "~/shared/ui/DropDown/DropDown";
-import { EditTitleModal } from "../../features/manageTitle/ui/EditTitleModal";
+import { EditTitleModal } from "~/features/manageTitle";
 import { useState, type JSX } from "react";
 import type { TitleRecord } from "~/entities/titleRecord";
 import StarRoundedIcon from "@mui/icons-material/StarRounded";

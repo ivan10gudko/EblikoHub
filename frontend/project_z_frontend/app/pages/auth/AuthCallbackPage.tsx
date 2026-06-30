@@ -1,4 +1,4 @@
-import { useAuthCallback } from "~/features/auth/hooks/useAuthCallback";
+import { useAuthCallback } from "~/features/auth";
 
 const AuthCallbackPage = () => {
   useAuthCallback();

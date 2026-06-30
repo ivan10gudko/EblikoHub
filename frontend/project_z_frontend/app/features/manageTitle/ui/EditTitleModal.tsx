@@ -1,23 +1,17 @@
-import Modal from "~/shared/ui/Modal/Modal";
+import { Modal } from "~/shared/ui/Modal";
 import { Button } from "~/shared/ui/Button";
 import { Input } from "~/shared/ui/Input";
 import { useEffect, useState } from "react";
-import {
-  TitleType,
-  titleTypeOptions,
-  TitleTypeOptionsColors,
-} from "~/entities/titleRecord";
+import { TitleType } from "~/entities/titleRecord";
 import type { TitleRecord } from "~/entities/titleRecord";
 import { StatusSelect } from "~/entities/titleRecord";
-import { useUpdateTitleRecord } from "~/entities/titleRecord/hooks/useTitleRecordUpdateMutation";
-import { Status, statusColorConfig } from "~/shared/types/Status";
+import { useUpdateTitleRecord } from "~/entities/titleRecord";
+import type { Status } from "~/shared/types";
 import { CompactRate } from "~/shared/ui/CompactRate";
-import { Select } from "~/shared/ui/Select/Select";
 import { notify } from "~/shared/lib/notify";
 import type { Rating } from "~/shared/types";
 import { ImageUrlEditor } from "~/shared/ui/ImageUrlEditor";
-import { getStatusColor } from "~/shared/utils";
-import TitleTypeSelect from "~/entities/titleRecord/ui/TitleTypeSelect";
+import { TitleTypeSelect } from "~/entities/titleRecord";
 
 interface EditTitleModalProps {
   title: TitleRecord;
@@ -25,22 +19,12 @@ interface EditTitleModalProps {
   onClose: () => void;
 }
 
-export const EditTitleModal = ({
-  title,
-  isOpen,
-  onClose,
-}: EditTitleModalProps) => {
+export const EditTitleModal = ({ title, isOpen, onClose }: EditTitleModalProps) => {
   const [titleName, setTitleName] = useState(title.titleName);
-  const [imageUrl, setImageUrl] = useState<string | null>(
-    title.imageUrl ?? null,
-  );
+  const [imageUrl, setImageUrl] = useState<string | null>(title.imageUrl ?? null);
   const [status, setStatus] = useState<Status>(title.status);
-  const [rating, setRating] = useState<number | undefined>(
-    title.rating?.overall,
-  );
-  const [titleType, setTitleType] = useState<TitleType>(
-    title.titleType ?? TitleType.ANIME,
-  );
+  const [rating, setRating] = useState<number | undefined>(title.rating?.overall);
+  const [titleType, setTitleType] = useState<TitleType>(title.titleType ?? TitleType.ANIME);
 
   const { updateTitle, isUpdating } = useUpdateTitleRecord(title.titleId);
 

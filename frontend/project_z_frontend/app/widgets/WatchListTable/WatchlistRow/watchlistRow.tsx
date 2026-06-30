@@ -4,7 +4,7 @@ import { useState } from "react";
 import PushPinIcon from "@mui/icons-material/PushPin";
 import { useNavigate } from "react-router";
 import { StatusSelect, TitleTypeThemes, type TitleRecord } from "~/entities/titleRecord";
-import { useUpdateTitleRecord } from "~/entities/titleRecord/hooks/useTitleRecordUpdateMutation";
+import { useUpdateTitleRecord } from "~/entities/titleRecord";
 import { CompactRate } from "~/shared/ui/CompactRate";
 import { TitleActionsMenu } from "../../TitleActionsMenu";
 import type { Rating } from "~/shared/types";

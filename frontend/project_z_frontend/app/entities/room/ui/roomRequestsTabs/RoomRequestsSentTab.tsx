@@ -1,5 +1,4 @@
 import type { RoomRequestShort } from "../../model/room.types";
-import { RoomRequestCard } from "../roomCard/roomRequestCard";
 import { RoomRequestSentCard } from "../roomCard/roomRequestSentCard";
 
 interface RoomSentRequestsTabProps {

@@ -18,13 +18,7 @@ const SeasonStatusSelect = ({
     card: `my-2 border-none bg-transparent rounded-none py-4 text-center transition-all ${className}`,
   };
 
-  return (
-    <BaseStatusSelect
-      {...props}
-      data={titleRecord || {}}
-      className={styles[variant]}
-    />
-  );
+  return <BaseStatusSelect {...props} data={titleRecord || {}} className={styles[variant]} />;
 };
 
 export default SeasonStatusSelect;

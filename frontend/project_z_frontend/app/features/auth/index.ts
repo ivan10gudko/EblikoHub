@@ -13,6 +13,7 @@ export { default as LogoutButton } from './ui/LogoutButton';
 
 export { ensureAuthenticated } from './model/ensureAuthenticated';
 export { useResetPassword } from "./hooks/useResetPassword";
+export { useAuthCallback } from "./hooks/useAuthCallback";
 export {
     validateEmail,
     validatePassword,

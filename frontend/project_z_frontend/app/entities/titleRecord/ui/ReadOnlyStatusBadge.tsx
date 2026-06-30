@@ -1,22 +1,16 @@
 import React from "react";
-import {
-  Status,
-  statusColorConfig,
-  statusOptions,
-} from "~/shared/types/Status";
+import { Status, statusColorConfig, statusOptions } from "~/shared/types";
 
 interface ReadOnlyStatusBadgeProps {
   status?: Status;
 }
 
-export const getStatusLabel = (status?: Status): string => {
+const getStatusLabel = (status?: Status): string => {
   const option = statusOptions.find((opt) => opt.value === status);
   return option ? option.label : "In Progress";
 };
 
-export const ReadOnlyStatusBadge: React.FC<ReadOnlyStatusBadgeProps> = ({
-  status,
-}) => {
+export const ReadOnlyStatusBadge: React.FC<ReadOnlyStatusBadgeProps> = ({ status }) => {
   const currentStatus = status || Status.DEFAULT;
   const config = statusColorConfig[currentStatus];
   const isDefault = currentStatus === Status.DEFAULT;

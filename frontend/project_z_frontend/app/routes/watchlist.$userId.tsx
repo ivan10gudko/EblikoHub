@@ -1,5 +1,5 @@
-import type { Route } from "./+types/watchlist.$userId"; 
-import { WatchListPage } from "~/pages/watchList/WatchListPage";
+import type { Route } from "./+types/watchlist.$userId";
+import { WatchListPage } from "~/pages/watchList";
 
 export async function loader({ params }: Route.LoaderArgs) {
   return { userId: params.userId };

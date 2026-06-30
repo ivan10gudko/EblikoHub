@@ -1,5 +1,5 @@
 import { useState } from "react";
-import Modal from "~/shared/ui/Modal/Modal";
+import { Modal } from "~/shared/ui/Modal";
 import { Button } from "~/shared/ui/Button";
 import { Select } from "~/shared/ui/Select";
 import type { AnimeCardType } from "~/entities/title";
@@ -11,7 +11,7 @@ import {
 import { TitleSearch } from "./components/titleSearch";
 import DeleteSweepIcon from "@mui/icons-material/DeleteSweep";
 import { formatRatingInput } from "~/shared/helpers/formatRating";
-import { Status, statusOptions } from "~/shared/types/Status";
+import { Status, statusOptions } from "~/shared/types";
 import { notify } from "~/shared/lib";
 import { ImageUrlEditor } from "~/shared/ui/ImageUrlEditor";
 import { getStatusColor } from "~/shared/utils";

@@ -1,5 +1,5 @@
-import HomePage from "~/pages/home/Home";
+import { HomePage } from "~/pages/home";
 
 export default function HomeRoute() {
-    return <HomePage />;
+  return <HomePage />;
 }

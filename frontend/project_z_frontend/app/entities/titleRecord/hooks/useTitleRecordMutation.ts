@@ -3,7 +3,7 @@ import { titleRecordService, type CreateTitleRecord, type TitleRecord } from "~/
 import { notify } from "~/shared/lib";
 import { getSessionUserId } from "~/shared/lib/supabase";
 import type { Rating } from "~/shared/types";
-import { Status } from "~/shared/types/Status";
+import { Status } from "~/shared/types";
 
 export const useTitleRecordMutation = (apiTitleId: number | undefined, initialData: CreateTitleRecord, existingTitleRecord?: TitleRecord | null) => {
     const queryClient = useQueryClient();

@@ -1,9 +1,8 @@
 import { notify } from "~/shared/lib";
 import { validateEmail } from "../utils/validators";
-import { authService } from "~/entities/session/api/AuthService";
-import type { LoginData } from "~/entities/session/model/session.types";
+import { authService, type LoginData } from "~/entities/session";
 import { useNavigate } from "react-router";
-import { getErrorMessage } from "~/shared/utils/getErrorMessage";
+import { getErrorMessage } from "~/shared/utils";
 
 export const useForgotPassword = ({
   formData,

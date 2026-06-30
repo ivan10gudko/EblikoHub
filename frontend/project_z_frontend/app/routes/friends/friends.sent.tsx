@@ -1,6 +1,5 @@
 import { useParams } from "react-router";
-import { useFriends } from "~/features/manageFriends/hooks/useFriends";
-import { SentInvitesTab } from "~/features/manageFriends/ui/FriendsTabs/SentInvitesTab";
+import { SentInvitesTab, useFriends } from "~/features/manageFriends";
 
 export default function SentRequestsPage() {
     const { userId } = useParams();

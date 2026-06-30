@@ -1,5 +1,5 @@
 import { Outlet, redirect, useParams } from "react-router";
-import { ensureAuthenticated } from "~/features/auth/model/ensureAuthenticated";
+import { ensureAuthenticated } from "~/features/auth";
 import type { Route } from "./+types/profile._settings";
 
 export async function clientLoader({ params }: Route.LoaderArgs) {

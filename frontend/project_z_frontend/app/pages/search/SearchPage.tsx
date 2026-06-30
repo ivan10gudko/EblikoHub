@@ -1,10 +1,8 @@
 import { useSearchParams, useNavigate } from "react-router";
 import { useQuery } from "@tanstack/react-query";
 import SearchBar from "~/shared/ui/SearchBar";
-import { searchOptions } from "~/entities/title";
-import { AnimeCard } from "~/entities/title";
+import { AnimeCard, AnimeCardSceleton, searchOptions } from "~/entities/title";
 import { Pagination } from "~/shared/ui/Pagination";
-import AnimeSkeletonCard from "~/entities/title/ui/AnimeCardSkeleton";
 
 const SearchPage: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -53,7 +51,7 @@ const SearchPage: React.FC = () => {
       {isLoading && (
         <div className="card-container">
           {[0, 1, 2, 3, 4].map((v) => (
-            <AnimeSkeletonCard key={v} />
+            <AnimeCardSceleton key={v} />
           ))}
         </div>
       )}

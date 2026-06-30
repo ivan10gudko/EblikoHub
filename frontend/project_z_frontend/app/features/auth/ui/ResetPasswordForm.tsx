@@ -1,6 +1,6 @@
 import { Button } from "~/shared/ui/Button";
 import { Input } from "~/shared/ui/Input";
-import { useResetPassword } from "~/features/auth/hooks/useResetPassword";
+import { useResetPassword } from "~/features/auth";
 
 const ResetPasswordForm = () => {
   const { password, error, isLoading, handleChange, handleBlur, handleSubmit } =

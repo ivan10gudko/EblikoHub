@@ -1,7 +1,6 @@
 import { useParams } from "react-router";
 import { useAuthStore } from "~/features/auth";
-import { useFriends } from "~/features/manageFriends/hooks/useFriends";
-import { FriendsListTab } from "~/features/manageFriends/ui/FriendsTabs/FriendsListTab";
+import { FriendsListTab, useFriends } from "~/features/manageFriends";
 
 export default function FriendsIndexPage() {
     const { userId } = useParams();

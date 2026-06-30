@@ -1,6 +1,6 @@
 
 import { useTitleFilterStore } from "../store/titleFilter.store";
-import { useInfinityTitles } from "~/entities/titleRecord/hooks/useInfinityTitles";
+import { useInfinityTitles } from "~/entities/titleRecord";
 
 
 export const useTitlesQuery = (userId: string | null) => {

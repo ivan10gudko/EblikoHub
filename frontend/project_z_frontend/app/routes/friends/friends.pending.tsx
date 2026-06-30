@@ -1,6 +1,5 @@
 import { useParams } from "react-router";
-import { useFriends } from "~/features/manageFriends/hooks/useFriends";
-import { PendingInvitesTab } from "~/features/manageFriends/ui/FriendsTabs/PendingInvitesTab";
+import { PendingInvitesTab, useFriends } from "~/features/manageFriends";
 
 export default function PendingRequestsPage() {
     const { userId } = useParams();

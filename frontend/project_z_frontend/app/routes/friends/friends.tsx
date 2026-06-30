@@ -1,8 +1,7 @@
 import { useState } from "react";
 import { Outlet, useParams } from "react-router";
 import { useAuthStore } from "~/features/auth";
-import { FriendsSidebar } from "~/features/manageFriends/ui/FriendsSidebar";
-import { useFriends } from "~/features/manageFriends/hooks/useFriends";
+import { FriendsSidebar, useFriends } from "~/features/manageFriends";
 import MenuIcon from "@mui/icons-material/Menu";
 
 export default function FriendsLayout() {

@@ -1,21 +1,19 @@
-import { Suspense} from "react";
+import { Suspense } from "react";
 import { HeroSection } from "~/widgets/HeroSection";
 import HeroSkeleton from "~/widgets/HeroSection/HeroSkeleton";
 import { SeasonAnimeList } from "~/widgets/SeasonAnimeList";
 import { TopAnimeList } from "~/widgets/TopAnimeList";
 
-
-const HomePage : React.FC = ()=> {
-
-    return (
+const HomePage = () => {
+  return (
     <>
-        <Suspense fallback={<HeroSkeleton />}>
-            <HeroSection />
-        </Suspense>
-        <SeasonAnimeList />
-        <TopAnimeList />
+      <Suspense fallback={<HeroSkeleton />}>
+        <HeroSection />
+      </Suspense>
+      <SeasonAnimeList />
+      <TopAnimeList />
     </>
-    );
-}
+  );
+};
 
 export default HomePage;

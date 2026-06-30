@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import SearchIcon from "@mui/icons-material/Search";
 import CircularProgress from "@mui/material/CircularProgress";
-import { useDebouncedCallback } from "~/shared/hooks/useDebouncedCallback";
+import { useDebouncedCallback } from "~/shared/hooks";
 
 interface SearchBarProps {
   onSearch: (query: string) => void;
@@ -120,5 +120,3 @@ export const SearchBar: React.FC<SearchBarProps> = ({
     </form>
   );
 };
-
-export default SearchBar;

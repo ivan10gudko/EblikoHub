@@ -1,13 +1,10 @@
 import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
-import { useParams } from "react-router";
-import AnimePageSceleton from "~/pages/animePage/ui/AnimePageSkeleton";
-import ErrorAnimePage from "~/pages/animePage/ui/ErrorAnimePage";
-import AnimeInfo from "~/widgets/AnimeInfo/AnimeInfo";
-import AnimeSidebar from "~/widgets/AnimeSidebar/AnimeSidebar";
-import { getAnimeById } from "~/entities/title/api/jikan.api";
-import type { Anime } from "~/entities/title/model/animeTitle.types";
 import { Suspense } from "react";
-import { AnimeSidebarSkeleton } from "~/widgets/AnimeSidebar";
+import { useParams } from "react-router";
+import { AnimePageSceleton, getAnimeById, type Anime } from "~/entities/title";
+import ErrorAnimePage from "~/pages/animePage/ui/ErrorAnimePage";
+import { AnimeInfo } from "~/widgets/AnimeInfo";
+import { AnimeSidebar, AnimeSidebarSkeleton } from "~/widgets/AnimeSidebar";
 
 const AnimePage = ({id}:{id: number | undefined}) => {
     

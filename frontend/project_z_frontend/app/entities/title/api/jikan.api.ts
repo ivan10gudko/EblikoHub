@@ -27,13 +27,13 @@ export async function getAnimeById(id:number){
     return response.data.data;
 };
 
-export async function getSeasonNow(){
+async function getSeasonNow(){
     const response = await jikanClient.get(`/seasons/now`);
 	
     return response.data.data;
 }
 
-export async function getRecentAnimeRecommendations(){
+async function getRecentAnimeRecommendations(){
     const response = await jikanClient.get('/recommendations/anime');
 	
     return response.data.data;

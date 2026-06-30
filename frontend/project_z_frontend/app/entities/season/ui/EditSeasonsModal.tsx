@@ -1,13 +1,9 @@
 import { useEffect, useState } from "react";
 import AddIcon from "@mui/icons-material/Add";
-import Modal from "~/shared/ui/Modal/Modal";
+import { Modal } from "~/shared/ui/Modal";
 import { Button } from "~/shared/ui/Button";
-import { Status } from "~/shared/types/Status";
-import {
-  useSeasonActions,
-  useSeasons,
-  type LocalDraftSeason,
-} from "~/entities/season";
+import { Status } from "~/shared/types";
+import { useSeasonActions, useSeasons, type LocalDraftSeason } from "~/entities/season";
 import { SeasonRow } from "./SeasonRow";
 import { ModalFooter } from "~/shared/ui/Modal";
 
@@ -71,9 +67,7 @@ export const EditSeasonsModal = ({
 
   const handleUpdate = (localId: string, patch: Partial<LocalDraftSeason>) => {
     if (!isOwn) return;
-    setLocalSeasons((prev) =>
-      prev.map((s) => (s.localId === localId ? { ...s, ...patch } : s)),
-    );
+    setLocalSeasons((prev) => prev.map((s) => (s.localId === localId ? { ...s, ...patch } : s)));
   };
 
   const handleSaveChanges = () => {
@@ -81,25 +75,20 @@ export const EditSeasonsModal = ({
       onClose();
       return;
     }
-    const cleanInitial = (initialSeasons || []).map(
-      ({ seasonId, name, status, rating }) => ({
-        seasonId,
-        name,
-        status,
-        rating,
-      }),
-    );
-    const cleanLocal = (localSeasons || []).map(
-      ({ seasonId, name, status, rating }) => ({
-        seasonId,
-        name,
-        status,
-        rating,
-      }),
-    );
+    const cleanInitial = (initialSeasons || []).map(({ seasonId, name, status, rating }) => ({
+      seasonId,
+      name,
+      status,
+      rating,
+    }));
+    const cleanLocal = (localSeasons || []).map(({ seasonId, name, status, rating }) => ({
+      seasonId,
+      name,
+      status,
+      rating,
+    }));
 
-    const hasChanges =
-      JSON.stringify(cleanInitial) !== JSON.stringify(cleanLocal);
+    const hasChanges = JSON.stringify(cleanInitial) !== JSON.stringify(cleanLocal);
 
     if (!hasChanges) {
       onClose();
@@ -132,9 +121,7 @@ export const EditSeasonsModal = ({
                 className="bg-primary text-background hover:bg-primary-hover h-9 sm:h-10 px-3 sm:px-5 rounded-xl shadow-lg active:scale-95 transition-all shrink-0"
               >
                 <AddIcon fontSize="small" />
-                <span className="hidden xs:inline ml-1 font-black uppercase text-[11px]">
-                  Add
-                </span>
+                <span className="hidden xs:inline ml-1 font-black uppercase text-[11px]">Add</span>
               </Button>
             </div>
           </div>
@@ -143,9 +130,7 @@ export const EditSeasonsModal = ({
         <div className="flex-1 min-h-0 overflow-y-auto pr-1 sm:pr-3 custom-scrollbar">
           <div
             className={
-              !isOwn
-                ? "pointer-events-none opacity-80 select-none space-y-5"
-                : "space-y-5"
+              !isOwn ? "pointer-events-none opacity-80 select-none space-y-5" : "space-y-5"
             }
           >
             <div className="space-y-3">

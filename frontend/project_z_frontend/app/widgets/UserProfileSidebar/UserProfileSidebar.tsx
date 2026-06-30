@@ -5,7 +5,7 @@ import FormatListBulletedIcon from "@mui/icons-material/FormatListBulleted";
 import PeopleOutlineIcon from "@mui/icons-material/PeopleOutline";
 import { Divider } from "@mui/material";
 import { Sidebar } from "~/shared/ui/Sidebar";
-import LogoutButton from "~/features/auth/ui/LogoutButton";
+import { LogoutButton } from "~/features/auth";
 import { NavLink } from "react-router";
 
 const NAV_LINKS = [
