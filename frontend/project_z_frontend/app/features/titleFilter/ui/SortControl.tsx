@@ -1,4 +1,4 @@
-import { Select } from "~/shared/ui/Select";
+import { Select } from "~/shared/ui/Select/Select";
 import type { Option } from "~/shared/ui/Select/Select";
 import {
   useTitleFilterStore,

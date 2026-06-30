@@ -2,16 +2,22 @@ import Modal from "~/shared/ui/Modal/Modal";
 import { Button } from "~/shared/ui/Button";
 import { Input } from "~/shared/ui/Input";
 import { useEffect, useState } from "react";
-import { TitleType, titleTypeOptions } from "~/entities/titleRecord";
+import {
+  TitleType,
+  titleTypeOptions,
+  TitleTypeOptionsColors,
+} from "~/entities/titleRecord";
 import type { TitleRecord } from "~/entities/titleRecord";
 import { StatusSelect } from "~/entities/titleRecord";
 import { useUpdateTitleRecord } from "~/entities/titleRecord/hooks/useTitleRecordUpdateMutation";
-import type { Status } from "~/shared/types/Status";
+import { Status, statusColorConfig } from "~/shared/types/Status";
 import { CompactRate } from "~/shared/ui/CompactRate";
-import { Select } from "~/shared/ui/Select";
+import { Select } from "~/shared/ui/Select/Select";
 import { notify } from "~/shared/lib/notify";
 import type { Rating } from "~/shared/types";
 import { ImageUrlEditor } from "~/shared/ui/ImageUrlEditor";
+import { getStatusColor } from "~/shared/utils";
+import TitleTypeSelect from "~/entities/titleRecord/ui/TitleTypeSelect";
 
 interface EditTitleModalProps {
   title: TitleRecord;
@@ -44,6 +50,7 @@ export const EditTitleModal = ({
       setImageUrl(title.imageUrl ?? null);
       setStatus(title.status);
       setRating(title.rating?.overall);
+      setTitleType(title.titleType ?? TitleType.ANIME);
     }
   }, [isOpen, title]);
 
@@ -70,7 +77,7 @@ export const EditTitleModal = ({
     if (rating !== undefined) {
       finalRating = {
         ...title.rating,
-        overall: rating
+        overall: rating,
       };
     } else if (title.rating) {
       finalRating = { ...title.rating };
@@ -96,7 +103,7 @@ export const EditTitleModal = ({
       },
     );
   };
-  
+
   const handleBackdropClick = () => {
     handleSave(true);
   };
@@ -108,12 +115,7 @@ export const EditTitleModal = ({
       title={`Edit "${title.titleName}"`}
       maxWidth="max-w-xl"
     >
-      {/* Задаємо контейнеру фіксовану висоту (max-h-[70vh]) та flex-col, 
-        щоб він адаптувався під будь-який екран і тримав структуру
-      */}
       <div className="flex flex-col max-h-[70vh] h-full justify-between p-2 custom-scrollbar">
-        
-        {/* Контент форми: інпути, селекти, постер — тепер скроляться тільки вони */}
         <div className="overflow-y-auto flex-1 pr-1 pb-6 space-y-8">
           <ImageUrlEditor imageUrl={imageUrl} onImageChange={setImageUrl} />
 
@@ -127,26 +129,28 @@ export const EditTitleModal = ({
                 className="h-12 border-2 p-3 border-border focus:border-primary rounded-xl font-bold"
               />
             </div>
+
             <div className="w-full space-y-2">
               <label className="text-xs font-bold tracking-widest text-muted-foreground ml-1 uppercase opacity-70 block">
                 Title Type
               </label>
               <div className="w-full sm:max-w-xs">
-                <Select
+                <TitleTypeSelect
                   value={titleType}
                   onChange={(val: string) => setTitleType(val as TitleType)}
-                  options={[...titleTypeOptions]}
                   className="h-12 border-2 border-border/60 rounded-xl font-bold text-foreground text-sm shadow-sm w-full"
                 />
               </div>
             </div>
+
             <div className="flex flex-col sm:flex-row gap-6">
               <div className="flex-1 space-y-2">
                 <StatusSelect
                   variant="page"
                   initialData={title}
                   titleRecord={{ ...title, status }}
-                  className="h-12 w-full border-2 border-border rounded-xl bg-background"
+                  onStatusChange={(newStatus) => setStatus(newStatus)}
+                  className="h-12 w-full border-2 border-border rounded-xl bg-background font-bold text-sm"
                 />
               </div>
 
@@ -163,7 +167,6 @@ export const EditTitleModal = ({
           </div>
         </div>
 
-        {/* Кнопки: завжди притиснуті до низу, плавають поверх скролу */}
         <div className="flex gap-3 pt-4 border-t border-border bg-background mt-auto">
           <Button
             onClick={onClose}
@@ -180,7 +183,6 @@ export const EditTitleModal = ({
             {isUpdating ? "Saving Changes..." : "Save Changes"}
           </Button>
         </div>
-
       </div>
     </Modal>
   );
