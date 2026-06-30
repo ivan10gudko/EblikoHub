@@ -1,25 +1,37 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import PushPinIcon from "@mui/icons-material/PushPin";
-import { StatusSelect, TitleTypeThemes, type TitleRecord } from "~/entities/titleRecord";
+import {
+  StatusSelect,
+  TitleTypeThemes,
+  type TitleRecord,
+} from "~/entities/titleRecord";
 import { useUpdateTitleRecord } from "~/entities/titleRecord/hooks/useTitleRecordUpdateMutation";
 import { CompactRate } from "~/shared/ui/CompactRate";
 import { TitleActionsMenu } from "../../TitleActionsMenu";
 import type { Rating } from "~/shared/types";
-import { useTitleFilterStore, type TitleSortType } from "~/features/titleFilter/store/titleFilter.store";
+import {
+  useTitleFilterStore,
+  type TitleSortType,
+} from "~/features/titleFilter/store/titleFilter.store";
 
 interface PinnedWatchlistRowProps {
   title: TitleRecord;
-  onOpenRatingModal: () => void; 
+  onOpenRatingModal: () => void;
 }
 
-export const PinnedWatchlistRow = ({ title, onOpenRatingModal }: PinnedWatchlistRowProps) => {
+export const PinnedWatchlistRow = ({
+  title,
+  onOpenRatingModal,
+}: PinnedWatchlistRowProps) => {
   const navigate = useNavigate();
   const [tempTitleName, setTempTitleName] = useState(title.titleName);
-  const { unpinTitle, deleteTitle, updateTitle } = useUpdateTitleRecord(title.titleId);
+  const { unpinTitle, deleteTitle, updateTitle } = useUpdateTitleRecord(
+    title.titleId,
+  );
   const sortBy = useTitleFilterStore((state) => state.sortBy);
-  const isAvgView = sortBy === "avgRating" as TitleSortType;
-  
+  const isAvgView = sortBy === ("avgRating" as TitleSortType);
+
   const handleImageClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     if (title.apiTitleId) navigate(`/anime/${title.apiTitleId}`);
@@ -46,7 +58,10 @@ export const PinnedWatchlistRow = ({ title, onOpenRatingModal }: PinnedWatchlist
           className="flex items-center justify-center h-10 w-6 text-primary hover:text-destructive transition-colors cursor-pointer pl-1"
           title="Unpin title"
         >
-          <PushPinIcon sx={{ fontSize: 16 }} className="group-hover/pinned:scale-110 transition-transform" />
+          <PushPinIcon
+            sx={{ fontSize: 16 }}
+            className="group-hover/pinned:scale-110 transition-transform"
+          />
         </button>
 
         <div className="relative h-10 w-16 flex-shrink-0 transition-transform duration-500 hover:scale-[3.0] hover:z-10 cursor-pointer">
@@ -64,7 +79,10 @@ export const PinnedWatchlistRow = ({ title, onOpenRatingModal }: PinnedWatchlist
             type="text"
             value={tempTitleName}
             onChange={(e) => setTempTitleName(e.target.value)}
-            onBlur={() => tempTitleName !== title.titleName && updateTitle({ titleName: tempTitleName })}
+            onBlur={() =>
+              tempTitleName !== title.titleName &&
+              updateTitle({ titleName: tempTitleName })
+            }
             className="w-full font-bold text-foreground uppercase text-xs sm:text-sm bg-transparent border-none p-0 h-auto leading-tight focus:ring-0 cursor-text"
           />
         </div>
@@ -76,7 +94,7 @@ export const PinnedWatchlistRow = ({ title, onOpenRatingModal }: PinnedWatchlist
             variant="page"
             initialData={title}
             titleRecord={title}
-            className="h-9 text-xs font-bold bg-background rounded-lg border-primary/20"
+            className="h-9 text-xs font-bold bg-transparent rounded-lg border-primary/20"
           />
         </div>
 
@@ -94,7 +112,9 @@ export const PinnedWatchlistRow = ({ title, onOpenRatingModal }: PinnedWatchlist
               })
             }
             onClear={() => {
-              const updatedRating = title.rating ? ({ ...title.rating } as Partial<Rating>) : {};
+              const updatedRating = title.rating
+                ? ({ ...title.rating } as Partial<Rating>)
+                : {};
               delete updatedRating.overall;
               updateTitle({ rating: updatedRating as Rating });
             }}
@@ -102,11 +122,10 @@ export const PinnedWatchlistRow = ({ title, onOpenRatingModal }: PinnedWatchlist
         </div>
 
         <div className="flex-shrink-0 ml-1 border-l border-border pl-2">
-          
-          <TitleActionsMenu 
-            title={title} 
-            onDelete={() => deleteTitle()} 
-            isOwn={true} 
+          <TitleActionsMenu
+            title={title}
+            onDelete={() => deleteTitle()}
+            isOwn={true}
             onOpenRatingModal={onOpenRatingModal}
           />
         </div>

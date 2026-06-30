@@ -154,8 +154,6 @@ export const EditTitleModal = ({
                   initialData={title}
                   titleRecord={{ ...title, status }}
                   onStatusChange={(newStatus) => setStatus(newStatus)}
-                  triggerColorClass={getStatusColor(status)}
-                  getOptionClass={getStatusColor}
                   className="h-12 w-full border-2 border-border rounded-xl bg-background font-bold text-sm"
                 />
               </div>
