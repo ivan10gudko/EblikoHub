@@ -5,9 +5,7 @@ import { Select } from "~/shared/ui/Select";
 import type { AnimeCardType } from "~/entities/title";
 import {
   TitleType,
-  titleTypeOptions,
   useCreateTitleRecord,
-  TitleTypeOptionsColors,
   type CreateTitleRecord,
 } from "~/entities/titleRecord";
 import { TitleSearch } from "./components/titleSearch";
@@ -17,6 +15,7 @@ import { Status, statusOptions } from "~/shared/types/Status";
 import { notify } from "~/shared/lib";
 import { ImageUrlEditor } from "~/shared/ui/ImageUrlEditor";
 import { getStatusColor } from "~/shared/utils";
+import TitleTypeSelect from "~/entities/titleRecord/ui/TitleTypeSelect";
 
 interface AddTitleModalProps {
   isOpen: boolean;
@@ -132,7 +131,7 @@ export const AddTitleModal = ({ isOpen, onClose }: AddTitleModalProps) => {
                     Title Type
                   </label>
                   <div className="w-auto sm:max-w-xs max-w-full">
-                    <Select
+                    <TitleTypeSelect
                       value={formData.titleType}
                       onChange={(val) =>
                         setFormData({
@@ -140,14 +139,7 @@ export const AddTitleModal = ({ isOpen, onClose }: AddTitleModalProps) => {
                           titleType: val as TitleType,
                         })
                       }
-                      options={[...titleTypeOptions]}
                       className="h-12 border-2 border-border/60 rounded-xl font-bold text-foreground text-sm shadow-sm w-full"
-                      triggerColorClass={
-                        TitleTypeOptionsColors[formData.titleType]
-                      }
-                      getOptionClass={(val) =>
-                        TitleTypeOptionsColors[val as TitleType]
-                      }
                     />
                   </div>
                 </div>

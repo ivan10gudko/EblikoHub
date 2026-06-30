@@ -17,6 +17,7 @@ import { notify } from "~/shared/lib/notify";
 import type { Rating } from "~/shared/types";
 import { ImageUrlEditor } from "~/shared/ui/ImageUrlEditor";
 import { getStatusColor } from "~/shared/utils";
+import TitleTypeSelect from "~/entities/titleRecord/ui/TitleTypeSelect";
 
 interface EditTitleModalProps {
   title: TitleRecord;
@@ -134,15 +135,10 @@ export const EditTitleModal = ({
                 Title Type
               </label>
               <div className="w-full sm:max-w-xs">
-                <Select
+                <TitleTypeSelect
                   value={titleType}
                   onChange={(val: string) => setTitleType(val as TitleType)}
-                  options={[...titleTypeOptions]}
                   className="h-12 border-2 border-border/60 rounded-xl font-bold text-foreground text-sm shadow-sm w-full"
-                  triggerColorClass={TitleTypeOptionsColors[titleType]}
-                  getOptionClass={(val) =>
-                    TitleTypeOptionsColors[val as TitleType]
-                  }
                 />
               </div>
             </div>
