@@ -2,7 +2,11 @@ import Modal from "~/shared/ui/Modal/Modal";
 import { Button } from "~/shared/ui/Button";
 import { Input } from "~/shared/ui/Input";
 import { useEffect, useState } from "react";
-import { TitleType, titleTypeOptions, TitleTypeOptionsColors } from "~/entities/titleRecord";
+import {
+  TitleType,
+  titleTypeOptions,
+  TitleTypeOptionsColors,
+} from "~/entities/titleRecord";
 import type { TitleRecord } from "~/entities/titleRecord";
 import { StatusSelect } from "~/entities/titleRecord";
 import { useUpdateTitleRecord } from "~/entities/titleRecord/hooks/useTitleRecordUpdateMutation";
@@ -12,6 +16,7 @@ import { Select } from "~/shared/ui/Select/Select";
 import { notify } from "~/shared/lib/notify";
 import type { Rating } from "~/shared/types";
 import { ImageUrlEditor } from "~/shared/ui/ImageUrlEditor";
+import { getStatusColor } from "~/shared/utils";
 
 interface EditTitleModalProps {
   title: TitleRecord;
@@ -48,10 +53,6 @@ export const EditTitleModal = ({
     }
   }, [isOpen, title]);
 
-  const getStatusColor = (statusValue: string | number) => {
-    return statusColorConfig[statusValue as Status]?.color || "text-foreground-muted";
-  };
-
   const handleSave = (shouldCloseAfter = true) => {
     if (!titleName.trim()) {
       notify.error("Title name cannot be empty");
@@ -75,7 +76,7 @@ export const EditTitleModal = ({
     if (rating !== undefined) {
       finalRating = {
         ...title.rating,
-        overall: rating
+        overall: rating,
       };
     } else if (title.rating) {
       finalRating = { ...title.rating };
@@ -101,7 +102,7 @@ export const EditTitleModal = ({
       },
     );
   };
-  
+
   const handleBackdropClick = () => {
     handleSave(true);
   };
@@ -114,7 +115,6 @@ export const EditTitleModal = ({
       maxWidth="max-w-xl"
     >
       <div className="flex flex-col max-h-[70vh] h-full justify-between p-2 custom-scrollbar">
-        
         <div className="overflow-y-auto flex-1 pr-1 pb-6 space-y-8">
           <ImageUrlEditor imageUrl={imageUrl} onImageChange={setImageUrl} />
 
@@ -128,7 +128,7 @@ export const EditTitleModal = ({
                 className="h-12 border-2 p-3 border-border focus:border-primary rounded-xl font-bold"
               />
             </div>
-            
+
             <div className="w-full space-y-2">
               <label className="text-xs font-bold tracking-widest text-muted-foreground ml-1 uppercase opacity-70 block">
                 Title Type
@@ -140,7 +140,9 @@ export const EditTitleModal = ({
                   options={[...titleTypeOptions]}
                   className="h-12 border-2 border-border/60 rounded-xl font-bold text-foreground text-sm shadow-sm w-full"
                   triggerColorClass={TitleTypeOptionsColors[titleType]}
-                  getOptionClass={(val) => TitleTypeOptionsColors[val as TitleType]}
+                  getOptionClass={(val) =>
+                    TitleTypeOptionsColors[val as TitleType]
+                  }
                 />
               </div>
             </div>
@@ -187,7 +189,6 @@ export const EditTitleModal = ({
             {isUpdating ? "Saving Changes..." : "Save Changes"}
           </Button>
         </div>
-
       </div>
     </Modal>
   );

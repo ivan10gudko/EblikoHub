@@ -7,15 +7,16 @@ import {
   TitleType,
   titleTypeOptions,
   useCreateTitleRecord,
-  TitleTypeOptionsColors, 
+  TitleTypeOptionsColors,
   type CreateTitleRecord,
 } from "~/entities/titleRecord";
 import { TitleSearch } from "./components/titleSearch";
 import DeleteSweepIcon from "@mui/icons-material/DeleteSweep";
 import { formatRatingInput } from "~/shared/helpers/formatRating";
-import { Status, statusOptions, statusColorConfig } from "~/shared/types/Status";
+import { Status, statusOptions } from "~/shared/types/Status";
 import { notify } from "~/shared/lib";
 import { ImageUrlEditor } from "~/shared/ui/ImageUrlEditor";
+import { getStatusColor } from "~/shared/utils";
 
 interface AddTitleModalProps {
   isOpen: boolean;
@@ -33,7 +34,8 @@ const INITIAL_FORM_DATA: CreateTitleRecord = {
 };
 
 export const AddTitleModal = ({ isOpen, onClose }: AddTitleModalProps) => {
-  const [formData, setFormData] = useState<CreateTitleRecord>(INITIAL_FORM_DATA);
+  const [formData, setFormData] =
+    useState<CreateTitleRecord>(INITIAL_FORM_DATA);
   const { createNewTitleRecord, isCreating } = useCreateTitleRecord();
 
   const handleImport = (anime: AnimeCardType) => {
@@ -83,14 +85,6 @@ export const AddTitleModal = ({ isOpen, onClose }: AddTitleModalProps) => {
     setFormData((prev: CreateTitleRecord) => ({ ...prev, imageUrl: url }));
   };
 
-  const getStatusColor = (optionValue: string | number) => {
-    const valStr = String(optionValue) as Status;
-    if (statusColorConfig && statusColorConfig[valStr]) {
-      return statusColorConfig[valStr].color;
-    }
-    return "text-foreground";
-  };
-
   return (
     <Modal
       isOpen={isOpen}
@@ -100,7 +94,6 @@ export const AddTitleModal = ({ isOpen, onClose }: AddTitleModalProps) => {
     >
       <div className="flex flex-col h-[70vh] px-1 sm:px-0">
         <div className="flex-1 min-h-0 overflow-y-auto pr-1 sm:pr-3 custom-scrollbar space-y-6 p-2">
-          
           <div className="space-y-2">
             <label className="text-xs font-bold tracking-widest text-foreground ml-1 leading-tight uppercase">
               Quick Import via MAL
@@ -115,7 +108,7 @@ export const AddTitleModal = ({ isOpen, onClose }: AddTitleModalProps) => {
                 onImageChange={handleImageChange}
               />
             </div>
-            
+
             <div className="flex-grow space-y-6">
               <div className="space-y-2">
                 <label className="text-xs font-bold tracking-widest text-foreground ml-1 leading-tight">
@@ -141,11 +134,20 @@ export const AddTitleModal = ({ isOpen, onClose }: AddTitleModalProps) => {
                   <div className="w-auto sm:max-w-xs max-w-full">
                     <Select
                       value={formData.titleType}
-                      onChange={(val) => setFormData({ ...formData, titleType: val as TitleType })}
+                      onChange={(val) =>
+                        setFormData({
+                          ...formData,
+                          titleType: val as TitleType,
+                        })
+                      }
                       options={[...titleTypeOptions]}
                       className="h-12 border-2 border-border/60 rounded-xl font-bold text-foreground text-sm shadow-sm w-full"
-                      triggerColorClass={TitleTypeOptionsColors[formData.titleType]}
-                      getOptionClass={(val) => TitleTypeOptionsColors[val as TitleType]}
+                      triggerColorClass={
+                        TitleTypeOptionsColors[formData.titleType]
+                      }
+                      getOptionClass={(val) =>
+                        TitleTypeOptionsColors[val as TitleType]
+                      }
                     />
                   </div>
                 </div>
@@ -218,7 +220,6 @@ export const AddTitleModal = ({ isOpen, onClose }: AddTitleModalProps) => {
             Clear Form Data
           </Button>
         </div>
-
       </div>
     </Modal>
   );
