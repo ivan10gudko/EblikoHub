@@ -35,7 +35,7 @@ import project_z.demo.dto.TitleDtos.TargetTitleContext;
 import project_z.demo.dto.TitleDtos.TitleBatchCreateDto;
 import project_z.demo.dto.TitleDtos.TitleDto;
 import project_z.demo.dto.TitleDtos.TitlePatchUpdateDto;
-import project_z.demo.dto.TitleDtos.TitleShortDto;
+import project_z.demo.dto.TitleDtos.TitleSameCriteriaDto;
 import project_z.demo.dto.TitleDtos.TitleStatsDto;
 import project_z.demo.entity.SeasonEntity;
 import project_z.demo.entity.TitleEntity;
@@ -263,9 +263,9 @@ public class TitleServiceImpl implements TitleService {
 
         List<Object[]> rows = titleRepository.findAllTitlesInLeaderboard(context);
 
-        List<TitleShortDto> titles = TitleShortDto.fromRows(rows);
+        List<TitleSameCriteriaDto> titles = TitleSameCriteriaDto.fromRows(rows);
         Float ratingSum = 0.0f;
-        for (TitleShortDto title : titles) {
+        for (TitleSameCriteriaDto title : titles) {
             ratingSum += title.getRatingValue();
 
         }

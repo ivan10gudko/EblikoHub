@@ -55,10 +55,16 @@ public class RoomRequestServiceImpl implements RoomRequestService {
                 .orElse(new RoomRequestsEntity());
 
         request.setRoom(room);
-        request.setUser(userRepository.findById(receiverId)
-                .orElseThrow(() -> new ResourceNotFoundException("receiver not found")));
+
         request.setSender(
                 userRepository.findById(senderId).orElseThrow(() -> new ResourceNotFoundException("sender not found")));
+
+        if (type == RequestType.INVITE) {
+            request.setUser(userRepository.findById(receiverId)
+                    .orElseThrow(() -> new ResourceNotFoundException("receiver not found")));
+        } else {
+            request.setUser(null);
+        }
         request.setStatus(RequestStatus.PENDING);
         request.setType(type);
 
@@ -80,7 +86,6 @@ public class RoomRequestServiceImpl implements RoomRequestService {
         member.setRoom(request.getRoom());
         member.setUser(request.getUser());
         member.setRole(RoomRole.MEMBER);
-        System.out.println("ID to delete: " + request.getId()); // <-- ПЕРЕВІР ЦЕ
         roomMemberRepository.save(member);
         roomRequestRepository.delete(request);
     }
@@ -104,9 +109,17 @@ public class RoomRequestServiceImpl implements RoomRequestService {
     @Override
     @Transactional(readOnly = true)
     public List<RoomRequestShortDto> getRequestsByUserId(UUID userId, RequestStatus status, RequestType type) {
-        return roomRequestRepository.findByUser_UserIdAndStatusAndType(userId, status, type)
+        if(type.equals(RequestType.JOIN_REQUEST)){
+            return roomRequestRepository.findOutgoingRequests(userId, status, type)
                 .stream()
                 .map(requestShortMapper::mapTo)
                 .collect(Collectors.toList());
+        }
+        else{
+            return roomRequestRepository.findIncomingRequests(userId, status, type)
+                .stream()
+                .map(requestShortMapper::mapTo)
+                .collect(Collectors.toList());
+        }
     }
 }
