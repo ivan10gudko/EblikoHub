@@ -6,7 +6,6 @@ import {
 import { Select } from "~/shared/ui/Select/Select";
 import { getStatusColor } from "~/shared/utils";
 
-// Інтерфейс для будь-якої сутності, що має поле статусу
 interface StatusHolder {
   status?: string | number | null;
 }
@@ -20,7 +19,6 @@ export interface BaseStatusSelectProps<T extends StatusHolder> {
   triggerColorClass?: string;
   getOptionClass?: (value: string | number) => string;
 }
-
 export const BaseStatusSelect = <T extends StatusHolder>({
   data,
   onStatusChange,
@@ -35,7 +33,7 @@ export const BaseStatusSelect = <T extends StatusHolder>({
 
   const styles = {
     page: className,
-    card: `my-2 border-none bg-transparent rounded-none py-4 text-center transition-all ${className}`,
+    card: `my-2 border-none pl-12 text-[14px] bg-transparent rounded-none py-4 transition-all text-center justify-center ${className}`,
   };
 
   const finalTriggerColor =
@@ -44,9 +42,12 @@ export const BaseStatusSelect = <T extends StatusHolder>({
       ? getStatusColor(currentStatus)
       : "text-foreground-muted");
 
+  const showDot =
+    currentStatus !== Status.DEFAULT && config?.dot && variant === "page";
+
   return (
     <div className="relative flex items-center w-full group">
-      {currentStatus !== Status.DEFAULT && config?.dot && (
+      {showDot && (
         <div
           className={`absolute left-2 w-1.5 h-1.5 rounded-full z-10 pointer-events-none ${config.dot}`}
         />
@@ -60,7 +61,8 @@ export const BaseStatusSelect = <T extends StatusHolder>({
         disabled={isLoading}
         className={`
           ${styles[variant]} 
-          ${currentStatus !== Status.DEFAULT ? "pl-6" : "text-foreground-muted"}
+          ${showDot ? "pl-6" : ""} 
+          ${currentStatus === Status.DEFAULT ? "text-foreground-muted" : ""}
         `}
         triggerColorClass={finalTriggerColor}
         getOptionClass={getOptionClass || getStatusColor}
