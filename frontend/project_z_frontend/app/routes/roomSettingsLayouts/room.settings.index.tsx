@@ -27,8 +27,8 @@ export default function RoomsSettingsIndexLayout() {
                 roomId={Number(roomId)}
                 role={roomMember.role}
             />
-            <main className="flex-1 w-full flex flex-col pt-5">
-                <div className="w-full">
+            <main className="flex-1 w-full flex justify-center pt-5">
+                <div className="w-full max-w-4xl">
                     <Outlet />
                 </div>
             </main>
