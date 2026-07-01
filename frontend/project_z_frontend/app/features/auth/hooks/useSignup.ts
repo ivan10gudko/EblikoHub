@@ -84,7 +84,7 @@ export const useSignup = () => {
                     username: `This username is already taken`,
                 }));
             }
-        } catch (error) {
+        } catch {
             console.error("Server error");
         }
     };

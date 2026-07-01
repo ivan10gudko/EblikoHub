@@ -1,5 +1,5 @@
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
-import { useState, type ReactNode, Children } from "react";
+import { useState, type ReactNode } from "react";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import { Button } from "../Button";
 
@@ -41,9 +41,6 @@ interface DropdownItemProps {
 }
 
 export const DropdownItem = ({ onClick, children, variant = "default", icon }: DropdownItemProps) => {
-  const childrenArray = Children.toArray(children);
-  const label = childrenArray.slice(1);
-
   return (
     <DropdownMenu.Item
       onSelect={onClick}

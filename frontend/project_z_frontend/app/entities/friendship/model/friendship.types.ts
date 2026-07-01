@@ -40,6 +40,4 @@ export interface UserDtoWithFriendshipStatus {
     friendshipStatus: RequestStatus;
     friendshipId: string | null;
 }
-export interface FriendshipQueryParameters extends QueryParams{
-
-}
+export type FriendshipQueryParameters = QueryParams;

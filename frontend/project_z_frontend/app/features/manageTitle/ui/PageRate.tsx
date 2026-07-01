@@ -14,7 +14,7 @@ const PageRate = ({ initialData, titleRecord }: ManageTitleRecordProps) => {
 
   const inputRef = useRef<HTMLInputElement | null>(null);
 
-  const { rate, isAnyActionLoading, clearRate } = useTitleRecordMutation(
+  const { rate, clearRate } = useTitleRecordMutation(
     initialData.apiTitleId,
     initialData,
     titleRecord,

@@ -1,5 +1,4 @@
-import { useState, useRef, useCallback } from "react";
-import Cropper, { type Area } from "react-easy-crop";
+import { useState, useRef } from "react";
 import { Button } from "~/shared/ui/Button";
 import { UserAvatar, type UserProfile } from "~/entities/user";
 import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
@@ -17,9 +16,6 @@ interface UserProfileEditProps {
 export const UserProfileEdit = ({ user, onSave, onCancel, isPending }: UserProfileEditProps) => {
     const [formData, setFormData] = useState({ name: user.name, description: user.description || "" });
     const [imageSrc, setImageSrc] = useState<string | null>(null);
-    const [crop, setCrop] = useState({ x: 0, y: 0 });
-    const [zoom, setZoom] = useState(1);
-    const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area | null>(null);
     const [finalPreview, setFinalPreview] = useState(user.img);
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
 

@@ -7,10 +7,14 @@ const AnimeInfoSkeleton : React.FC = () => {
         <div className={baseClass + " w-24 h-10 mb-2"}></div>
         <div className={baseClass + " w-24 h-4 mb-6"}></div>
         <div className="flex my-4 gap-5">
-        {Array.from({length:4},()=>null).map((v,i)=><div className={baseClass+" w-18 h-6"}></div>)}
+        {Array.from({ length: 4 }, () => null).map((_, index) => (
+          <div key={index} className={baseClass + " w-18 h-6"}></div>
+        ))}
         </div>
         <div className="flex my-4 gap-5">
-            {Array.from({length:4},()=>null).map((v,i)=><div className={baseClass+" w-12 h-4 rounded-lg"}></div>)}
+            {Array.from({ length: 4 }, () => null).map((_, index) => (
+              <div key={index} className={baseClass + " w-12 h-4 rounded-lg"}></div>
+            ))}
         </div>
         <div className={baseClass + " w-full h-3 mb-2"}></div>
         <div className={baseClass + " w-full h-3 mb-2"}></div>

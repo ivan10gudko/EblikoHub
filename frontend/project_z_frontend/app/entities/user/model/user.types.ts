@@ -19,9 +19,7 @@ export interface UpdateUserProfile {
     name: string;
     description?: string;
 }
-export interface UserParams extends QueryParams {
-
-}
+export type UserParams = QueryParams;
 export interface UserShort {
     userId: string;
     name: string;

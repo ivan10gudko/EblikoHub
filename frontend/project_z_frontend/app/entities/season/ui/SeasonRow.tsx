@@ -16,7 +16,7 @@ interface SeasonRowProps {
 
 export const SeasonRow = ({
   season,
-  titleId,
+  titleId: _titleId,
   onDelete,
   onUpdate,
   isOwn,

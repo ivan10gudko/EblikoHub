@@ -1,12 +1,11 @@
 import { useNavigate } from "react-router";
-import { authService, type LoginData } from "~/entities/session";
+import { type LoginData } from "~/entities/session";
 import {
     useAuthStore,
     validateEmail,
     validatePassword,
 } from "~/features/auth";
 import { useForm } from "~/shared/hooks";
-import { notify } from "~/shared/lib";
 import { useForgotPassword } from "./useForgotPassword";
 
 export const useLogin = () => {

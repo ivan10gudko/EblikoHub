@@ -1,6 +1,6 @@
 import { redirect } from "react-router";
 
-import { userService } from "~/entities/user/api/UserService";
+import { userService } from "~/entities/user";
 import { queryClient } from "~/shared/lib/queryClient";
 import { ensureAuthenticated } from "~/features/auth";
 

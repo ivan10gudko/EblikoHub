@@ -32,7 +32,7 @@ export const useResetPassword = () => {
                 await updatePassword(values.password);
                 notify.updateSuccess(updateNotifyId, "Password updated successfully! Please log in.");
                 navigate("/auth/login");
-            } catch (err) {
+            } catch {
                 notify.updateError(updateNotifyId, "Failed to update password");
             }
         },

@@ -18,7 +18,7 @@ export interface CreateSeasonDto {
 
 export type LocalDraftSeason = DraftSeason & { localId: string };
 
-export interface UpdateSeasonDto extends Partial<Omit<CreateSeasonDto, 'seasonId'>> { }
+export type UpdateSeasonDto = Partial<Omit<CreateSeasonDto, 'seasonId'>>;
 
 export type DraftSeason = Omit<Season, 'seasonId'> & {
     seasonId: number | null;

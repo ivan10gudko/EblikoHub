@@ -18,7 +18,6 @@ export const useChangePassword = () => {
         formData,
         errors,
         touched,
-        setErrors,
         handleChange,
         handleBlur,
         handleSubmit,
@@ -45,7 +44,7 @@ export const useChangePassword = () => {
 
                 notify.updateSuccess(updateNotifyId, "Password updated successfully!");
                 navigate("/profile");
-            } catch (err) {
+            } catch {
                 notify.updateError(updateNotifyId, "Failed to update password");
             }
         },

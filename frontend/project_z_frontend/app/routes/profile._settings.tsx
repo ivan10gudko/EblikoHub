@@ -1,4 +1,4 @@
-import { Outlet, redirect, useParams } from "react-router";
+import { Outlet, redirect } from "react-router";
 import { ensureAuthenticated } from "~/features/auth";
 import type { Route } from "./+types/profile._settings";
 

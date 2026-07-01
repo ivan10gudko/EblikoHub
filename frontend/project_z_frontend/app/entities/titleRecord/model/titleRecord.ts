@@ -50,7 +50,7 @@ export interface TitleShortDto {
     ratingValue: number;
 }
 
-export interface CreateTitleRecord extends Omit<TitleRecord, 'titleId' | 'createdAt' | 'customOrder'> { }
+export type CreateTitleRecord = Omit<TitleRecord, 'titleId' | 'createdAt' | 'customOrder'>;
 
 export interface ManageTitleRecordProps {
     initialData: CreateTitleRecord;

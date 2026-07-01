@@ -95,7 +95,7 @@ export const CategoryRow = ({
                             side="bottom"
                             sideOffset={8}
                             className="z-[9999] outline-none animate-in fade-in zoom-in duration-150"
-                            onInteractOutside={(e) => {
+                            onInteractOutside={() => {
                             }}
                         >
                             <RatingNeighborsContent

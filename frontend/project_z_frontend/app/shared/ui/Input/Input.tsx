@@ -1,4 +1,4 @@
-import React, { useId, useState, type ComponentProps } from "react";
+import React, { useId, type ComponentProps } from "react";
 
 interface InputProps
   extends Omit<ComponentProps<"input">, "onChange" | "onBlur"> {

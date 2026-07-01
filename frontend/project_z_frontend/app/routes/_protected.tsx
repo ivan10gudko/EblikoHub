@@ -21,6 +21,6 @@ export function HydrateFallback() {
     );
 }
 
-export default function ProtectedRoute({ loaderData }: Route.ComponentProps) {    
+export default function ProtectedRoute(_props: Route.ComponentProps) {    
     return <Outlet />;
 }

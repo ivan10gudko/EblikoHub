@@ -13,7 +13,7 @@ export const useTitleRecordMutation = (apiTitleId: number | undefined, initialDa
         : ['titleRecord', 'local', existingTitleRecord?.titleId];
 
     const mutationConfig = {
-        onSuccess: (updatedRecord: TitleRecord | null) => {
+        onSuccess: (_updatedRecord: TitleRecord | null) => {
             
             queryClient.invalidateQueries({ queryKey: ['titles'] });
             queryClient.invalidateQueries({ queryKey: ['titleRecord'] });

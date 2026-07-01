@@ -1,7 +1,5 @@
 
-import { BadgeType } from '~/entities/user';
-import { useBadges } from "~/entities/user/hooks/useBadges";
-import { UserBadgeCard } from '~/entities/user/ui/UserBadgeCard';
+import { BadgeType, useBadges, UserBadgeCard } from "~/entities/user";
 
 
 export function AboutPage() {

@@ -9,7 +9,7 @@ export const useSeasonActions = (titleId: number, onClose?: () => void) => {
 
   const syncMutation = useMutation({
     mutationFn: (localSeasons: Array<DraftSeason & { localId: string }>) => {
-      const cleanSeasons: DraftSeason[] = localSeasons.map(({ localId, ...rest }) => rest);
+      const cleanSeasons: DraftSeason[] = localSeasons.map(({ localId: _localId, ...rest }) => rest);
       return seasonService.sync(titleId, cleanSeasons);
     },
     onSuccess: () => {

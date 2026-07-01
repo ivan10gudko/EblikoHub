@@ -1,4 +1,3 @@
-import { useState, useEffect } from "react";
 import { friendshipService } from "../api/friendshipService";
 import type { UserDtoWithFriendshipStatus } from "../model/friendship.types";
 import { useInfiniteQuery } from "@tanstack/react-query";

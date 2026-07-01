@@ -15,7 +15,7 @@ import { Status, statusOptions } from "~/shared/types";
 import { notify } from "~/shared/lib";
 import { ImageUrlEditor } from "~/shared/ui/ImageUrlEditor";
 import { getStatusColor } from "~/shared/utils";
-import TitleTypeSelect from "~/entities/titleRecord/ui/TitleTypeSelect";
+import { TitleTypeSelect } from "~/entities/titleRecord";
 
 interface AddTitleModalProps {
   isOpen: boolean;

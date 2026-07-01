@@ -8,7 +8,7 @@ import { Rating } from "~/shared/ui/Rating";
 import { Button } from "~/shared/ui/Button";
 import { Date } from "~/shared/ui/Date";
 
-const HeroSection: React.FC<{}> = () => {
+const HeroSection = () => {
     const { error, data } = useSuspenseQuery<Anime>({
         queryKey: ["hero_section", "top_anime"],
         queryFn: async ()=>{

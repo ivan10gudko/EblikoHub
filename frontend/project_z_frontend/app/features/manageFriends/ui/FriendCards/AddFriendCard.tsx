@@ -2,7 +2,6 @@ import { Link } from "react-router";
 import { UserAvatar } from "~/entities/user";
 import { Button } from "~/shared/ui/Button";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
-import PersonAddDisabledIcon from "@mui/icons-material/PersonAddDisabled";
 import HowToRegIcon from "@mui/icons-material/HowToReg";
 import type { UserDtoWithFriendshipStatus } from "~/entities/friendship";
 import { RequestStatus } from "~/shared/types";

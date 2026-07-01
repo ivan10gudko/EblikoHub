@@ -9,7 +9,7 @@ interface SeasonActionsMenuProps {
 
 }
 
-export const SeasonActionsMenu = ({ season, onDelete }: SeasonActionsMenuProps) => {
+export const SeasonActionsMenu = ({ season: _season, onDelete }: SeasonActionsMenuProps) => {
   return (
     <>
       <Dropdown

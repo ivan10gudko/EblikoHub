@@ -1,4 +1,4 @@
-const Logo: React.FC<{}> = ({ }) => {
+const Logo = () => {
     return (<h1 className="relative text-xl text-primary text-nowrap">Ebliko-Hub</h1>)
 };
 

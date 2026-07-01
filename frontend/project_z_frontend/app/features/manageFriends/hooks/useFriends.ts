@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient, type InfiniteData } from "@tanstack/react-query";
 import { notify } from "~/shared/lib";
-import { friendshipService } from "~/entities/friendship/api/friendshipService";
+import { friendshipService } from "~/entities/friendship";
 import type { FriendActionType } from "../types/friends.types";
 import { RequestStatus, type PageResponse } from "~/shared/types";
 import { updateInfiniteQuery } from "~/shared/helpers/updateInfinityQuery";

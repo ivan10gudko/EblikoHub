@@ -40,7 +40,7 @@ export const useAuthCallback = () => {
         await syncOAuthUser(session.user.id, fallbackData);
 
         navigate("/profile", { replace: true });
-      } catch (backendError) {
+      } catch {
         notify.error("Authorization Synchronization Failed");
         navigate("/auth/login", { replace: true });
       }

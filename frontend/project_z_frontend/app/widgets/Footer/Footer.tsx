@@ -1,7 +1,7 @@
 import { Link } from "react-router";
 import { Logo } from "../../shared/ui/Logo";
 
-const Footer : React.FC<{}> = ()=>{
+const Footer = () => {
     return (
     <footer className="w-full flex items-center justify-center flex-col gap-4 py-16 px-6 bg-card text-center text-foreground">
         <Logo />

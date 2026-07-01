@@ -1,5 +1,5 @@
 import FileDownloadIcon from "@mui/icons-material/FileDownload";
-import type { Anime, AnimeCardType } from "~/entities/title";
+import type { AnimeCardType } from "~/entities/title";
 import { Button } from "~/shared/ui/Button";
 
 interface AnimeSearchDropDownResultsProps {

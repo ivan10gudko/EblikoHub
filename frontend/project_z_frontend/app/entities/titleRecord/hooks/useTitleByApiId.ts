@@ -1,4 +1,4 @@
-import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { titleRecordService } from "../api/titleRecordService";
 import type { TitleRecord } from "../model/titleRecord";
 

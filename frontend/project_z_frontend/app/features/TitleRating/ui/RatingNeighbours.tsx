@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from "react";
-import { titleRecordService } from "~/entities/titleRecord/api/titleRecordService";
+import { titleRecordService } from "~/entities/titleRecord";
 import type { TitleShortDto } from "~/entities/titleRecord";
 import CloseIcon from "@mui/icons-material/Close";
 

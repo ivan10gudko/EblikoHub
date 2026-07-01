@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router";
-import { Separator, SocialMediaBlock, validateEmail } from "~/features/auth";
+import { Separator, SocialMediaBlock } from "~/features/auth";
 import { Button } from "~/shared/ui/Button";
 import { Input } from "~/shared/ui/Input";
 import { useLogin } from "../hooks/useLogin";

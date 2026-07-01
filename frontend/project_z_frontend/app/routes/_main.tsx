@@ -1,5 +1,4 @@
 import Loader from "~/shared/ui/Loader/Loader";
-import type { Route } from "./+types/_main";
 import { ensureAuthenticated } from "~/features/auth";
 import {
   isRouteErrorResponse,

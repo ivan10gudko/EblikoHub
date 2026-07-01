@@ -1,4 +1,4 @@
-import axios, { AxiosError } from "axios";
+import axios from "axios";
 import { notify, supabase } from "../lib";
 import qs from 'qs';
 

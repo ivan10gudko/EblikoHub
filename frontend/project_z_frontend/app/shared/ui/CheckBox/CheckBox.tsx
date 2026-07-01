@@ -24,7 +24,7 @@ export const Checkbox: React.FC<CheckboxProps> = ({
   label,
   checked,
   onChange,
-  themeVariant = "light",
+  themeVariant: _themeVariant = "light",
   className = "",
   error,
   labelClassName = "",
