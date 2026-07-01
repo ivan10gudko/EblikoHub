@@ -45,7 +45,13 @@ export default [
                     route("sent", "./routes/roomRequestsLayouts/room.user.requests.sent.tsx"),
                 ]), // rooms requests 
                 route(":id", "./routes/roomDetailsLayouts/room.details.main.tsx"), // /rooms/:id
-                route(":id/settings", "./routes/roomDetailsLayouts/room.details.settings.tsx"),
+                route(":id/settings", "./routes/roomSettingsLayouts/room.settings.index.tsx",[
+                    route("general", "./routes/roomSettingsLayouts/room.settings.general.tsx"),
+                    route("titles", "./routes/roomSettingsLayouts/room.settings.titles.tsx"),
+                    route("requests", "./routes/roomSettingsLayouts/room.settings.requests.tsx"),
+                    route("members", "./routes/roomSettingsLayouts/room.settings.members.tsx"),
+                    route("admin", "./routes/roomSettingsLayouts/room.settings.admin.tsx"),
+                ]),
 
             ]),
         ]),

@@ -14,13 +14,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import project_z.demo.dto.RoomMemberDtos.RoomMemberDto;
 import project_z.demo.dto.UserDtos.UserShortDto;
-import project_z.demo.enums.RequestStatus;
-import project_z.demo.enums.RequestType;
 import project_z.demo.security.JwtService;
 import project_z.demo.services.RoomMemberService;
 
@@ -38,6 +35,13 @@ public class RoomMemberController {
     public ResponseEntity<List<UserShortDto>> getRoomMembers(@PathVariable Long roomId) {
         return ResponseEntity.ok(roomMemberService.getAcceptedMembers(roomId));
     }
+
+    @GetMapping("/{userId}")
+    public ResponseEntity<RoomMemberDto> getRoomMemberByRoomAndUserId(@PathVariable("userId") UUID userId,
+            @PathVariable("roomId") Long roomId) {
+        return new ResponseEntity<>(roomMemberService.getRooMemberByRoomIdAndUserId(roomId, userId), HttpStatus.OK);
+    }
+
     @DeleteMapping("/leave")
     public ResponseEntity<Void> leaveRoom(
             @RequestHeader("Authorization") String token,
