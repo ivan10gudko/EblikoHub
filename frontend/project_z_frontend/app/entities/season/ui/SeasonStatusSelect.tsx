@@ -1,7 +1,7 @@
 import { BaseStatusSelect } from "~/shared/ui/BaseStatusSelect";
 import type { CreateSeasonDto, Season } from "~/entities/season";
 
-export type SeasonStatusSelectProps = {
+type SeasonStatusSelectProps = {
   initialData: CreateSeasonDto;
   titleRecord: Season | CreateSeasonDto;
   variant?: "page" | "card";

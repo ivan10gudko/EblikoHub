@@ -1,7 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 
-import { titleRecordService } from "~/entities/titleRecord/api/titleRecordService";
-import type { TitleStats } from "~/entities/titleRecord/model/titleRecord";
+import { titleRecordService, type TitleStats } from "~/entities/titleRecord";
 
 
 

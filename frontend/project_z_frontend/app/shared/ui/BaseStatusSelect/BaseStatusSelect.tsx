@@ -2,8 +2,8 @@ import {
   Status,
   statusColorConfig,
   statusOptions,
-} from "~/shared/types/Status";
-import { Select } from "~/shared/ui/Select/Select";
+} from "~/shared/types";
+import { Select } from "~/shared/ui/Select";
 import { getStatusColor } from "~/shared/utils";
 
 interface StatusHolder {

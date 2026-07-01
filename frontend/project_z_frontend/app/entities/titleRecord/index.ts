@@ -1,7 +1,6 @@
 export * from "./model/titleRecord";
 
 export { titleRecordService } from "./api/titleRecordService";
-export type { ActionOptions, RateOptions } from "./api/titleRecordService";
 
 
 export { useTitleByApiId } from "./hooks/useTitleByApiId"

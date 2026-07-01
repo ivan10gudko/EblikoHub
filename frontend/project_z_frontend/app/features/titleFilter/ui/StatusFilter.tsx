@@ -1,5 +1,5 @@
 import { useTitleFilterStore } from "../store/titleFilter.store";
-import { statusFilterStyles, statusOptionsFilters } from "~/shared/types/Status";
+import { statusFilterStyles, statusOptionsFilters } from "~/shared/types";
 import { getBackendCount } from "~/shared/helpers";
 import { StatusButton } from "~/shared/ui/StatusButton";
 interface StatusFilterProps {

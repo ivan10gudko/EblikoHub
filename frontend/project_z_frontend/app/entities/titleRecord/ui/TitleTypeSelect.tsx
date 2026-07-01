@@ -3,7 +3,7 @@ import {
   TitleTypeOptionsColors,
   titleTypeOptions,
 } from "~/entities/titleRecord/model/titleRecord";
-import Select from "~/shared/ui/Select/Select";
+import { Select } from "~/shared/ui/Select";
 
 interface TitleTypeSelectProps {
   value: string | number;

@@ -52,8 +52,7 @@ export interface Title {
     type: string;
     title: string;
 }
-
-export interface ImageSet {
+interface ImageSet {
     image_url?: string | null;
     small_image_url?: string | null;
     large_image_url?: string | null;
