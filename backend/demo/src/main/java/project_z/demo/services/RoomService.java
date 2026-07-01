@@ -12,6 +12,7 @@ import project_z.demo.dto.RoomDtos.RoomCreateDto;
 import project_z.demo.dto.RoomDtos.RoomDto;
 import project_z.demo.dto.RoomDtos.RoomSearchResultDto;
 import project_z.demo.dto.RoomDtos.RoomShortDto;
+import project_z.demo.dto.RoomDtos.RoomPatchUpdateDto;
 import project_z.demo.entity.RoomEntity;
 
 @Service
@@ -29,4 +30,6 @@ public interface RoomService {
     RoomDto createRoom(String token, RoomCreateDto dto);
 
     Page<RoomSearchResultDto> findRoomsByName(String roomName, RoomQueryParameters queryParameters);
+
+    RoomDto roomPartialUpdate(RoomPatchUpdateDto source, Long roomId);
 }
