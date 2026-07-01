@@ -1,6 +1,9 @@
 import { useEffect, useState } from "react";
 import Modal from "~/shared/ui/Modal/Modal";
-import { type TitleRecord, useTitleRecordMutation } from "~/entities/titleRecord";
+import {
+  type TitleRecord,
+  useTitleRecordMutation,
+} from "~/entities/titleRecord";
 import { RatingEditorContent } from "./RatingEditorContent";
 import { ReadonlyRatingContent } from "./ReadonlyRatingContent";
 import type { Rating } from "~/shared/types";
@@ -20,8 +23,6 @@ export const EditRatingModal = ({
   isOwn,
   onTitleChange,
 }: EditRatingModalProps) => {
-  // Передаємо обов'язкове поле description в мутацію, забираючи його з об'єкта title.
-  // Додаємо фолбек на пусту строку "", якщо раптом у старих записах бази даних цього поля немає.
   const { rate } = useTitleRecordMutation(
     title.apiTitleId,
     {
@@ -32,13 +33,15 @@ export const EditRatingModal = ({
       imageUrl: title.imageUrl,
       titleType: title.titleType,
       pinned: title.pinned,
-      description: title.description || "", // Фікс помилки з image_25bcdc.png
+      description: title.description || "",
     },
     title,
   );
 
   const [localRatings, setLocalRatings] = useState<Rating>(
-    title.rating && "overall" in title.rating ? (title.rating as Rating) : { overall: 0 },
+    title.rating && "overall" in title.rating
+      ? (title.rating as Rating)
+      : { overall: 0 },
   );
 
   useEffect(() => {
@@ -66,7 +69,11 @@ export const EditRatingModal = ({
     <Modal
       isOpen={isOpen}
       onClose={isOwn ? handleSave : onClose}
-      title={isOwn ? `Edit Rating "${title.titleName}"` : `Rating Overview "${title.titleName}"`}
+      title={
+        isOwn
+          ? `Edit Rating "${title.titleName}"`
+          : `Rating Overview "${title.titleName}"`
+      }
       maxWidth="max-w-xl"
     >
       {isOwn ? (
