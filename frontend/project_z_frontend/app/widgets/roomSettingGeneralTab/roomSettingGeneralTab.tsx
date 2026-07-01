@@ -6,12 +6,15 @@ import { ImageUrlEditor } from "~/shared/ui/ImageUrlEditor";
 
 interface RoomSettingGeneralTabProps {
   room: Room;
+  onSave?: (data: UpdateRoomPayload) => Promise<void> | void;
+  isLoading?: boolean;
 }
+
 export const RoomSettingGeneralTab: React.FC<RoomSettingGeneralTabProps> = ({
   room,
+  onSave,
+  isLoading = false,
 }) => {
-  const { updateRoom, isUpdating } = useRoomMutation();
-
   const [formData, setFormData] = useState<UpdateRoomPayload>({
     roomName: room?.roomName || "",
     imageUrl: room?.imageUrl || "",
@@ -39,41 +42,48 @@ export const RoomSettingGeneralTab: React.FC<RoomSettingGeneralTabProps> = ({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (room?.roomId) {
-      updateRoom(room.roomId, formData);
-    }
+    if (onSave) onSave(formData);
   };
 
   return (
-    <div className="w-full max-w-3xl bg-background border border-border rounded-2xl shadow-2xl overflow-hidden text-left transition-all">
-      <div className="p-6 bg-card border-b border-border flex items-center gap-3">
-        <SettingsIcon sx={{ color: "#ffa31a", fontSize: 22 }} />
+    <div className="w-full max-w-3xl bg-[var(--background)] border border-[var(--border)] rounded-2xl shadow-2xl overflow-hidden text-left transition-all">
+      
+      {/* Шапка */}
+      <div className="p-6 bg-[var(--card)] border-b border-[var(--border)] flex items-center gap-3">
+        <SettingsIcon sx={{ color: "var(--primary)", fontSize: 22 }} />
         <div>
-          <div className="text-primary font-semibold text-xs uppercase tracking-wider">
+          <div className="text-[var(--primary)] font-semibold text-xs uppercase tracking-wider">
             Room Management
           </div>
-          <h3 className="text-base font-bold text-foreground mt-0.5 tracking-wide">
+          <h3 className="text-base font-bold text-[var(--foreground)] mt-0.5 tracking-wide">
             {formData.roomName || "Unnamed Space"}
           </h3>
         </div>
       </div>
+
+      {/* Форма на дві колонки */}
       <form onSubmit={handleSubmit} className="p-6 flex flex-col gap-6">
+        
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+          
+          {/* Ліва колонка: Інтегрований редактор зображення */}
           <div className="flex flex-col gap-2 w-full">
-            <span className="text-xs font-semibold text-foreground-muted tracking-wide px-1">
+            <span className="text-xs font-semibold text-[var(--foreground-muted)] tracking-wide px-1">
               Space Cover
             </span>
             <ImageUrlEditor
               imageUrl={formData.imageUrl || null}
               onImageChange={handleImageChange}
               variant="landscape"
-              defaultImage="/defaultTitleRecordImage.jpg"
+              defaultImage="/defaultTitleRecordImage.jpg" // Твій дефолтний шлях
             />
           </div>
 
+          {/* Права колонка: Текстові інпути */}
           <div className="flex flex-col gap-5 w-full">
+            {/* Поле: Назва кімнати */}
             <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-semibold text-foreground-muted tracking-wide">
+              <label className="text-xs font-semibold text-[var(--foreground-muted)] tracking-wide">
                 Room Name
               </label>
               <input
@@ -83,12 +93,13 @@ export const RoomSettingGeneralTab: React.FC<RoomSettingGeneralTabProps> = ({
                 onChange={handleChange}
                 required
                 placeholder="Enter room name..."
-                className="w-full h-12 bg-card border border-border rounded-xl px-4 text-sm text-foreground placeholder-foreground-muted/40 focus:outline-none focus:border-primary transition-all font-medium"
+                className="w-full h-12 bg-[var(--card)] border border-[var(--border)] rounded-xl px-4 text-sm text-[var(--foreground)] placeholder-[var(--foreground-muted)]/40 focus:outline-none focus:border-[var(--primary)] transition-all font-medium"
               />
             </div>
 
-            <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-semibold text-foreground-muted tracking-wide">
+            {/* Поле: Опис кімнати */}
+            <div className="flex flex-col gap-1.5 custom-scrollbar">
+              <label className="text-xs font-semibold text-[var(--foreground-muted)] tracking-wide">
                 Description
               </label>
               <textarea
@@ -97,20 +108,22 @@ export const RoomSettingGeneralTab: React.FC<RoomSettingGeneralTabProps> = ({
                 onChange={handleChange}
                 rows={5}
                 placeholder="Describe what this space is about..."
-                className="w-full bg-card border border-border rounded-xl px-4 py-3 text-sm text-foreground placeholder-foreground-muted/40 focus:outline-none focus:border-primary transition-all resize-none leading-relaxed font-medium"
+                className="w-full bg-[var(--card)] border border-[var(--border)] rounded-xl px-4 py-3 text-sm text-[var(--foreground)] placeholder-[var(--foreground-muted)]/40 focus:outline-none focus:border-[var(--primary)] transition-all resize-none leading-relaxed font-medium"
               />
             </div>
           </div>
+
         </div>
 
-        <div className="flex justify-end mt-2 pt-4 border-t border-border">
-          <Button
-            type="submit"
-            variant="fill"
-            disabled={isUpdating}
-            className="bg-primary hover:bg-primary-hover text-background font-bold px-8 h-11 rounded-xl text-sm transition-all shadow-lg active:scale-[0.98]"
+        {/* Нижня панель із кнопкою збереження */}
+        <div className="flex justify-end mt-2 pt-4 border-t border-[var(--border)]">
+          <Button 
+            type="submit" 
+            variant="fill" 
+            disabled={isLoading} 
+            className="bg-[var(--primary)] hover:bg-[var(--primary-hover)] text-[var(--background)] font-bold px-8 h-11 rounded-xl text-sm transition-all shadow-lg active:scale-[0.98]"
           >
-            {isUpdating ? "Saving changes..." : "Save changes"}
+            {isLoading ? "Saving changes..." : "Save changes"}
           </Button>
         </div>
       </form>
