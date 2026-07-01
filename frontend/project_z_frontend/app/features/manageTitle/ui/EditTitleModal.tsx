@@ -2,16 +2,22 @@ import Modal from "~/shared/ui/Modal/Modal";
 import { Button } from "~/shared/ui/Button";
 import { Input } from "~/shared/ui/Input";
 import { useEffect, useState } from "react";
-import { TitleType, titleTypeOptions } from "~/entities/titleRecord";
+import {
+  TitleType,
+  titleTypeOptions,
+  TitleTypeOptionsColors,
+} from "~/entities/titleRecord";
 import type { TitleRecord } from "~/entities/titleRecord";
 import { StatusSelect } from "~/entities/titleRecord";
 import { useUpdateTitleRecord } from "~/entities/titleRecord/hooks/useTitleRecordUpdateMutation";
-import type { Status } from "~/shared/types/Status";
+import { Status, statusColorConfig } from "~/shared/types/Status";
 import { CompactRate } from "~/shared/ui/CompactRate";
-import { Select } from "~/shared/ui/Select";
+import { Select } from "~/shared/ui/Select/Select";
 import { notify } from "~/shared/lib/notify";
 import type { Rating } from "~/shared/types";
 import { ImageUrlEditor } from "~/shared/ui/ImageUrlEditor";
+import { getStatusColor } from "~/shared/utils";
+import TitleTypeSelect from "~/entities/titleRecord/ui/TitleTypeSelect";
 
 interface EditTitleModalProps {
   title: TitleRecord;
@@ -66,7 +72,7 @@ export const EditTitleModal = ({
     if (rating !== undefined) {
       finalRating = {
         ...title.rating,
-        overall: rating
+        overall: rating,
       };
     } else if (title.rating) {
       finalRating = { ...title.rating };
@@ -106,7 +112,6 @@ export const EditTitleModal = ({
       maxWidth="max-w-xl"
     >
       <div className="flex flex-col max-h-[70vh] h-full justify-between p-2 custom-scrollbar">
-
         <div className="overflow-y-auto flex-1 pr-1 pb-6 space-y-8">
           <ImageUrlEditor imageUrl={imageUrl} onImageChange={setImageUrl} />
 
@@ -139,10 +144,9 @@ export const EditTitleModal = ({
                 Title Type
               </label>
               <div className="w-full sm:max-w-xs">
-                <Select
+                <TitleTypeSelect
                   value={titleType}
                   onChange={(val: string) => setTitleType(val as TitleType)}
-                  options={[...titleTypeOptions]}
                   className="h-12 border-2 border-border/60 rounded-xl font-bold text-foreground text-sm shadow-sm w-full"
                 />
               </div>
@@ -154,7 +158,8 @@ export const EditTitleModal = ({
                   variant="page"
                   initialData={title}
                   titleRecord={{ ...title, status }}
-                  className="h-12 w-full border-2 border-border rounded-xl bg-background"
+                  onStatusChange={(newStatus) => setStatus(newStatus)}
+                  className="h-12 w-full border-2 border-border rounded-xl bg-background font-bold text-sm"
                 />
               </div>
 
@@ -187,7 +192,6 @@ export const EditTitleModal = ({
             {isUpdating ? "Saving Changes..." : "Save Changes"}
           </Button>
         </div>
-
       </div>
     </Modal>
   );

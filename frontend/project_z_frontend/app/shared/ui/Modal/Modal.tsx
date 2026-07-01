@@ -52,7 +52,7 @@ export const Modal = ({ children, title, isOpen, onClose, maxWidth = "max-w-lg",
 
     return createPortal(
         <div
-            className="fixed inset-0 z-[9999] flex items-center justify-center overflow-hidden bg-foreground-muted/20 backdrop-blur-[2px] p-4 md:p-16"
+            className="fixed inset-0 z-[2000] flex items-center justify-center overflow-hidden bg-foreground-muted/20 backdrop-blur-[2px] p-4 md:p-16"
             onMouseDown={handleOverlayMouseDown}
             onMouseUp={handleOverlayMouseUp}
         >
