@@ -16,7 +16,7 @@ export const Modal = ({ children, title, isOpen, onClose, maxWidth = "max-w-lg",
     const modalRef = useRef<HTMLDivElement>(null);
     const mouseDownOnOverlayRef = useRef<boolean>(false);
 
-    const DEFAULT_STYLES = "relative bg-background w-full rounded-3xl shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200 mt-10 mb-10";
+    const DEFAULT_STYLES = "relative bg-background w-full rounded-3xl shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200 mt-10 mb-10 flex flex-col max-h-[calc(100vh-5rem)]";
     
     const handleEsc = useCallback((e: KeyboardEvent) => {
         if (e.key === "Escape") onClose();
@@ -52,7 +52,7 @@ export const Modal = ({ children, title, isOpen, onClose, maxWidth = "max-w-lg",
 
     return createPortal(
         <div
-            className="fixed inset-0 z-[100] flex items-start justify-center overflow-y-auto bg-foreground-muted/20 backdrop-blur-[2px] p-4 md:p-16"
+            className="fixed inset-0 z-[2000] flex items-center justify-center overflow-hidden bg-foreground-muted/20 backdrop-blur-[2px] p-4 md:p-16"
             onMouseDown={handleOverlayMouseDown}
             onMouseUp={handleOverlayMouseUp}
         >
@@ -64,10 +64,9 @@ export const Modal = ({ children, title, isOpen, onClose, maxWidth = "max-w-lg",
                     ${maxWidth}
                     `}
             >
-                <div className="flex items-center justify-between p-5 border-b border-border">
+                <div className="flex items-center justify-between p-5 border-b border-border shrink-0">
                     {title ? (
                         <h2 className="text-xl font-bold text-foreground break-all" >{title}</h2>
-
                     ) : (
                         <div />
                     )}
@@ -79,8 +78,7 @@ export const Modal = ({ children, title, isOpen, onClose, maxWidth = "max-w-lg",
                         <CloseIcon fontSize="small" />
                     </Button>
                 </div>
-
-                <div className="p-6">
+                <div className="p-6 overflow-y-auto flex-1 min-h-0">
                     {children}
                 </div>
             </div>

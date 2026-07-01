@@ -1,11 +1,9 @@
-import { useMutation, useQueryClient, type InfiniteData } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { titleRecordService, type CreateTitleRecord, type TitleRecord } from "~/entities/titleRecord";
-import { updateInfiniteQuery } from "~/shared/helpers/updateInfinityQuery";
 import { notify } from "~/shared/lib";
 import { getSessionUserId } from "~/shared/lib/supabase";
-import type { PageResponse, Rating } from "~/shared/types";
+import type { Rating } from "~/shared/types";
 import { Status } from "~/shared/types/Status";
-
 
 export const useTitleRecordMutation = (apiTitleId: number | undefined, initialData: CreateTitleRecord, existingTitleRecord?: TitleRecord | null) => {
     const queryClient = useQueryClient();
@@ -16,30 +14,22 @@ export const useTitleRecordMutation = (apiTitleId: number | undefined, initialDa
 
     const mutationConfig = {
         onSuccess: (updatedRecord: TitleRecord | null) => {
-            if (updatedRecord) {
-                queryClient.setQueriesData<InfiniteData<PageResponse<TitleRecord>>>(
-                    { queryKey: ['titles'] },
-                    (oldData) => updateInfiniteQuery({
-                        oldData,
-                        getContent: (page) => page.content,
-                        setContent: (page, newContent) => ({ ...page, content: newContent }),
-                        updater: (allItems) => allItems.map(item =>
-                            item.titleId === updatedRecord.titleId ? updatedRecord : item
-                        )
-                    })
-                );
-            }
+            
+            queryClient.invalidateQueries({ queryKey: ['titles'] });
+            queryClient.invalidateQueries({ queryKey: ['titleRecord'] });
         },
         onSettled: () => {
             queryClient.invalidateQueries({ queryKey: queryKey });
         },
         onError: (error: any) => {
+            console.error("Помилка зміни статусу/оцінки:", error);
             const message = error.response?.data?.message || "Something went wrong";
             notify.error(message);
         },
     };
 
     const getCache = () => queryClient.getQueryData<TitleRecord>(queryKey) || existingTitleRecord;
+
     const rateMutation = useMutation({
         mutationFn: (score: number | Rating) =>
             titleRecordService.rate({ apiTitleId, score, initialData, existingTitle: getCache() }),
@@ -63,10 +53,8 @@ export const useTitleRecordMutation = (apiTitleId: number | undefined, initialDa
     const deleteMutation = useMutation({
         mutationFn: (titleId: number) => titleRecordService.delete(titleId),
         onSuccess: () => {
-            queryClient.setQueryData(queryKey, null);
-        },
-        onSettled: () => {
-            queryClient.invalidateQueries({ queryKey: queryKey });
+            queryClient.invalidateQueries({ queryKey: ['titles'] });
+            queryClient.invalidateQueries({ queryKey: ['titleRecord'] });
         },
         onError: (error: any) => {
             const message = error.response?.data?.message || "Something went wrong";
@@ -77,7 +65,7 @@ export const useTitleRecordMutation = (apiTitleId: number | undefined, initialDa
     const checkAuthAndRun = async (action: () => void) => {
         const userId = await getSessionUserId();
         if (!userId) {
-            notify.error("Please sign in first to perform this action")
+            notify.error("Please sign in first to perform this action");
             return;
         }
         action();

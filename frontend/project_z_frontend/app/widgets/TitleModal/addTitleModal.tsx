@@ -1,20 +1,21 @@
+import { useState } from "react";
 import Modal from "~/shared/ui/Modal/Modal";
 import { Button } from "~/shared/ui/Button";
 import { Select } from "~/shared/ui/Select";
 import type { AnimeCardType } from "~/entities/title";
 import {
   TitleType,
-  titleTypeOptions,
   useCreateTitleRecord,
   type CreateTitleRecord,
 } from "~/entities/titleRecord";
-import { useState } from "react";
 import { TitleSearch } from "./components/titleSearch";
 import DeleteSweepIcon from "@mui/icons-material/DeleteSweep";
 import { formatRatingInput } from "~/shared/helpers/formatRating";
 import { Status, statusOptions } from "~/shared/types/Status";
 import { notify } from "~/shared/lib";
 import { ImageUrlEditor } from "~/shared/ui/ImageUrlEditor";
+import { getStatusColor } from "~/shared/utils";
+import TitleTypeSelect from "~/entities/titleRecord/ui/TitleTypeSelect";
 
 interface AddTitleModalProps {
   isOpen: boolean;
@@ -28,11 +29,12 @@ const INITIAL_FORM_DATA: CreateTitleRecord = {
   titleType: TitleType.ANIME,
   imageUrl: null,
   rating: undefined,
-  pinned:false,
+  pinned: false,
 };
 
 export const AddTitleModal = ({ isOpen, onClose }: AddTitleModalProps) => {
-  const [formData, setFormData] = useState<CreateTitleRecord>(INITIAL_FORM_DATA);
+  const [formData, setFormData] =
+    useState<CreateTitleRecord>(INITIAL_FORM_DATA);
   const { createNewTitleRecord, isCreating } = useCreateTitleRecord();
 
   const handleImport = (anime: AnimeCardType) => {
@@ -81,6 +83,7 @@ export const AddTitleModal = ({ isOpen, onClose }: AddTitleModalProps) => {
   const handleImageChange = (url: string | null) => {
     setFormData((prev: CreateTitleRecord) => ({ ...prev, imageUrl: url }));
   };
+
   return (
     <Modal
       isOpen={isOpen}
@@ -88,112 +91,128 @@ export const AddTitleModal = ({ isOpen, onClose }: AddTitleModalProps) => {
       title="Add New Title"
       maxWidth="max-w-4xl"
     >
-      <div className="space-y-6 p-2">
-        <div className="space-y-2">
-          <label className="text-xs font-bold tracking-widest text-foreground ml-1 leading-tight uppercase">
-            Quick Import via MAL
-          </label>
-          <TitleSearch onSelect={handleImport} />
-        </div>
-        <div className="flex flex-col md:flex-row gap-8">
-          <div className="border-t border-border/50 pt-6">
-            <ImageUrlEditor
-              imageUrl={formData.imageUrl ?? null}
-              onImageChange={handleImageChange}
-            />
+      <div className="flex flex-col h-[70vh] px-1 sm:px-0">
+        <div className="flex-1 min-h-0 overflow-y-auto pr-1 sm:pr-3 custom-scrollbar space-y-6 p-2">
+          <div className="space-y-2">
+            <label className="text-xs font-bold tracking-widest text-foreground ml-1 leading-tight uppercase">
+              Quick Import via MAL
+            </label>
+            <TitleSearch onSelect={handleImport} />
           </div>
-          <div className="flex-grow space-y-6">
-            <div className="space-y-2">
-              <label className="text-xs font-bold tracking-widest text-foreground ml-1 leading-tight">
-                Title Name
-              </label>
-              <input
-                name="Title name"
-                autoComplete="off"
-                placeholder="Enter name..."
-                value={formData.titleName}
-                onChange={(e) =>
-                  setFormData({ ...formData, titleName: e.target.value })
-                }
-                className="h-12 w-full px-4  border-2 border-border rounded-xl font-bold text-foreground text-sm focus:border-primary transition-all shadow-sm"
+
+          <div className="flex flex-col md:flex-row gap-8">
+            <div className="border-t border-border/50 pt-6 md:border-t-0 md:pt-0">
+              <ImageUrlEditor
+                imageUrl={formData.imageUrl ?? null}
+                onImageChange={handleImageChange}
               />
             </div>
-            <div className="w-full">
-              <div className="space-y-2 mb-5">
-                <label className="text-xs font-bold tracking-widest text-muted-foreground ml-1 uppercase opacity-70">
-                  Title Type
+
+            <div className="flex-grow space-y-6">
+              <div className="space-y-2">
+                <label className="text-xs font-bold tracking-widest text-foreground ml-1 leading-tight">
+                  Title Name
                 </label>
-                <div className="w-auto sm:max-w-xs max-w-full">
-                  <Select
-                    value={formData.titleType}
-                    onChange={(val) => setFormData({ ...formData, titleType: val as TitleType })}
-                    options={[...titleTypeOptions]}
-                    className="h-12 border-2 border-border/60 rounded-xl font-bold text-foreground text-sm shadow-sm w-full"
-                  />
-                </div>
+                <input
+                  name="Title name"
+                  autoComplete="off"
+                  placeholder="Enter name..."
+                  value={formData.titleName}
+                  onChange={(e) =>
+                    setFormData({ ...formData, titleName: e.target.value })
+                  }
+                  className="h-12 w-full px-4 border-2 border-border rounded-xl font-bold text-foreground text-sm focus:border-primary transition-all shadow-sm"
+                />
               </div>
-              <div className="flex gap-4 mb-1">
-                <div className="flex-1">
-                  <label className="text-xs font-bold tracking-widest text-foreground ml-1 uppercase">
-                    Status
+
+              <div className="w-full">
+                <div className="space-y-2 mb-5">
+                  <label className="text-xs font-bold tracking-widest text-muted-foreground ml-1 uppercase opacity-70">
+                    Title Type
                   </label>
+                  <div className="w-auto sm:max-w-xs max-w-full">
+                    <TitleTypeSelect
+                      value={formData.titleType}
+                      onChange={(val) =>
+                        setFormData({
+                          ...formData,
+                          titleType: val as TitleType,
+                        })
+                      }
+                      className="h-12 border-2 border-border/60 rounded-xl font-bold text-foreground text-sm shadow-sm w-full"
+                    />
+                  </div>
                 </div>
-                <div className="w-[112px] flex-shrink-0">
-                  <label className="text-xs font-bold tracking-widest text-foreground uppercase text-center block">
-                    Rating
-                  </label>
+
+                <div className="flex gap-4 mb-1">
+                  <div className="flex-1">
+                    <label className="text-xs font-bold tracking-widest text-foreground ml-1 uppercase">
+                      Status
+                    </label>
+                  </div>
+                  <div className="w-[112px] flex-shrink-0">
+                    <label className="text-xs font-bold tracking-widest text-foreground uppercase text-center block">
+                      Rating
+                    </label>
+                  </div>
                 </div>
-              </div>
-              <div className="flex gap-4">
-                <div className="flex-1 min-w-0">
-                  <Select
-                    value={formData.status}
-                    onChange={(val) =>
-                      setFormData({ ...formData, status: val as Status })
-                    }
-                    options={[...statusOptions]}
-                    className="h-12 border-2 border-border rounded-xl font-bold text-foreground text-sm shadow-sm"
-                  />
-                </div>
-                <div className="w-[112px] flex-shrink-0">
-                  <input
-                    name="Rating"
-                    autoComplete="off"
-                    placeholder="0.0"
-                    value={formData.rating?.overall?.toString() || ""}
-                    onChange={handleRatingChange}
-                    className="h-12 w-full border-2 border-border rounded-xl font-bold text-foreground text-center focus:border-primary transition-all shadow-sm"
-                  />
+
+                <div className="flex gap-4">
+                  <div className="flex-1 min-w-0">
+                    <Select
+                      value={formData.status}
+                      onChange={(val) =>
+                        setFormData({ ...formData, status: val as Status })
+                      }
+                      options={[...statusOptions]}
+                      className="h-12 border-2 border-border rounded-xl font-bold text-foreground text-sm shadow-sm"
+                      triggerColorClass={getStatusColor(formData.status)}
+                      getOptionClass={getStatusColor}
+                    />
+                  </div>
+                  <div className="w-[112px] flex-shrink-0">
+                    <input
+                      name="Rating"
+                      autoComplete="off"
+                      placeholder="0.0"
+                      value={formData.rating?.overall?.toString() || ""}
+                      onChange={handleRatingChange}
+                      className="h-12 w-full border-2 border-border rounded-xl font-bold text-foreground text-center focus:border-primary transition-all shadow-sm"
+                    />
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-        <div className="flex flex-col gap-3 pt-6 border-t border-border">
-          <div className="flex gap-4"></div>
+
+        <div className="pt-4 bg-background shrink-0 flex flex-col gap-3 border-t border-border mt-2">
+          <div className="flex gap-4">
+            <Button
+              onClick={onClose}
+              className="flex-1 h-14 rounded-xl bg-card text-foreground !font-bold tracking-wider hover:bg-card transition-all active:scale-95 shadow-sm"
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handleSave}
+              disabled={isCreating}
+              className="flex-[2] h-14 rounded-xl bg-primary text-foreground !font-bold tracking-wider shadow-[0_4px_0_0_#d97706] hover:primary-hover active:translate-y-[2px] active:shadow-none transition-all disabled:opacity-50"
+            >
+              {isCreating ? "Saving..." : "Save Title"}
+            </Button>
+          </div>
+
           <Button
-            onClick={onClose}
-            className="flex-1 h-14 rounded-xl bg-card text-foreground !font-bold tracking-wider hover:bg-card transition-all active:scale-95 shadow-sm"
+            onClick={handleClear}
+            variant="text-only"
+            className="flex items-center gap-2 text-[10px] tracking-widest text-foreground hover:text-danger transition-colors uppercase py-2 px-4 self-start"
           >
-            Cancel
-          </Button>
-          <Button
-            onClick={handleSave}
-            disabled={isCreating}
-            className="flex-[2] h-14 rounded-xl bg-primary text-foreground !font-bold tracking-wider shadow-[0_4px_0_0_#d97706] hover:primary-hover active:translate-y-[2px] active:shadow-none transition-all disabled:opacity-50"
-          >
-            {isCreating ? "Saving..." : "Save Title"}
+            <DeleteSweepIcon sx={{ fontSize: 16 }} />
+            Clear Form Data
           </Button>
         </div>
-        <Button
-          onClick={handleClear}
-          variant="text-only"
-          className="flex items-center gap-2 text-[10px] tracking-widest text-foreground hover:text-danger transition-colors uppercase py-2 px-4"
-        >
-          <DeleteSweepIcon sx={{ fontSize: 16 }} />
-          Clear Form Data
-        </Button>
       </div>
-    </Modal >
+    </Modal>
   );
 };

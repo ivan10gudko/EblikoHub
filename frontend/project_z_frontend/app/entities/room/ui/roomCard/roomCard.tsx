@@ -3,6 +3,7 @@ import GroupIcon from "@mui/icons-material/Group";
 import type { RoomShort } from "~/entities/room/model/room.types";
 import { useRoomActions } from "../../hooks/useRoomActions";
 import { RoomActionsMenu } from "../roomActoinsMenu";
+
 interface RoomCardProps {
   room: RoomShort;
   onClick?: () => void;
@@ -22,7 +23,8 @@ export const RoomCard = ({ room, onClick }: RoomCardProps) => {
       onClick={onClick}
       className="group flex flex-col w-full rounded-2xl border border-border bg-card transition-all hover:border-primary cursor-pointer"
     >
-      <div className="relative h-40 w-full overflow-hidden rounded-t-2xl hover:scale-[1.3] hover:z-10 duration-500 transition-transform hover:translate-y-5 ">
+      
+      <div className="relative h-40 w-full overflow-hidden rounded-t-2xl hover:rounded-none hover:scale-[1.2] hover:z-10 origin-top duration-500 transition-all">
         <img
           src={room.imageUrl || DEFAULT_IMAGE_PATH}
           alt={room.roomName}

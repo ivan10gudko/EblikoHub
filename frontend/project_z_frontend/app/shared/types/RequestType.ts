@@ -1,1 +1,5 @@
-export type RequestType = 'JOIN_REQUEST' | 'INVITE' | 'OWNER';
+export enum RequestType {
+    JOIN_REQUEST = 'JOIN_REQUEST',
+    INVITE = 'INVITE',
+    OWNER = 'OWNER',
+} 

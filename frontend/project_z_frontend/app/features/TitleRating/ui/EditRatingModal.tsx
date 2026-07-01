@@ -11,7 +11,7 @@ interface EditRatingModalProps {
   isOpen: boolean;
   onClose: () => void;
   isOwn: boolean;
-  onTitleChange?: (newTitleId: number) => void; // Нова функція для зміни аніме
+  onTitleChange?: (newTitleId: number) => void;
 }
 
 export const EditRatingModal = ({
@@ -71,6 +71,7 @@ export const EditRatingModal = ({
         <RatingEditorContent
           titleId={title.titleId}
           ratings={localRatings}
+          avgRating={title.avgRating || 0}
           onChange={setLocalRatings}
           isSaving={false}
           onSave={handleSave}

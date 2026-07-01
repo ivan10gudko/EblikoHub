@@ -7,10 +7,12 @@ import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
 import project_z.demo.enums.RequestStatus;
+import project_z.demo.enums.RequestType;
 import project_z.demo.enums.RoomRole;
 import project_z.demo.repositories.FriendshipRepository;
 import project_z.demo.repositories.RoomMemberRepository;
 import project_z.demo.repositories.RoomRepository;
+import project_z.demo.repositories.RoomRequestRepository;
 import project_z.demo.repositories.SeasonRepository;
 import project_z.demo.repositories.TitleRepository;
 
@@ -18,6 +20,7 @@ import project_z.demo.repositories.TitleRepository;
 @RequiredArgsConstructor
 public class SecurityService {
 
+    private final RoomRequestRepository roomRequestRepository;
     private final TitleRepository titleRepository;
     private final RoomRepository roomRepository;
     private final SeasonRepository seasonRepository;
@@ -69,7 +72,7 @@ public class SecurityService {
     }
 
     public boolean hasRole(UUID userId, String role) {
-        return false; 
+        return false;
     }
 
     public boolean isAdminOrOwner(Long roomId) {
@@ -78,9 +81,48 @@ public class SecurityService {
                 .map(member -> member.getRole() == RoomRole.OWNER || member.getRole() == RoomRole.ADMIN)
                 .orElse(false);
     }
-    
+
     public boolean isRoomMember(Long roomId) {
         UUID currentUserId = getCurrentUserId();
         return roomMemberRepository.existsByRoom_RoomIdAndUser_UserId(roomId, currentUserId);
+    }
+
+    public boolean isRoomRequestMember(UUID roomRequestId) {
+        UUID currentUserId = getCurrentUserId();
+        return roomRequestRepository.findById(roomRequestId)
+                .map(member -> member.getUser().getUserId().equals(currentUserId) ||
+                        member.getSender().getUserId().equals(currentUserId))
+                .orElse(false);
+    }
+
+   
+
+    public boolean canProcessRequest(UUID roomRequestId) {
+        UUID currentUserId = getCurrentUserId();
+
+        return roomRequestRepository.findById(roomRequestId)
+                .map(request -> {
+                    if (request.getType() == RequestType.JOIN_REQUEST) {
+                        return isAdminOrOwner(request.getRoom().getRoomId());
+                    }
+                    if (request.getType() == RequestType.INVITE) {
+                        return request.getUser().getUserId().equals(currentUserId);
+                    }
+                    return false;
+                })
+                .orElse(false);
+    }
+
+    public boolean canCancel(UUID roomRequestId) {
+        UUID currentUserId = getCurrentUserId();
+
+        return roomRequestRepository.findById(roomRequestId)
+                .map(request -> {
+                    boolean isSender = request.getSender().getUserId().equals(currentUserId);
+                    boolean isRoomAdmin = isAdminOrOwner(request.getRoom().getRoomId());
+
+                    return isSender || isRoomAdmin;
+                })
+                .orElse(false);
     }
 }
