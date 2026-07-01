@@ -1,2 +1,3 @@
 export { RoomSettingGeneralTab } from "./roomSettingGeneralTab";
-export { RoomSettingReadOnlyTab } from "./RoomSettingReadOnlyTab";
+export { RoomSettingGeneralReadOnlyTab } from "./RoomSettingReadOnlyTab";
+export { RoomSettingGeneralWrapper } from "./RoomSettingGeneralWrapper";

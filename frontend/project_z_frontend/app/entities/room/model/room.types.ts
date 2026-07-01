@@ -83,7 +83,12 @@ export interface RoomMemberShort {
     role: RoomRole;
     createdAt: string;
 }
-
+export interface RoomMember{
+    id:string
+    user:UserShort;
+    role:RoomRole
+    cretedAt:string;
+}
 export enum RoomRole {
     OWNER = "OWNER",
     ADMIN = "ADMIN",
