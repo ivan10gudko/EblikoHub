@@ -30,7 +30,6 @@ public class RoomMemberServiceImpl implements RoomMemberService {
     private final Mapper<UserEntity, UserShortDto> userMapper;
     private final RoomBanRepository roomBanRepository;
 
-
     @Override
     @Transactional
     public void leaveRoom(Long roomId, UUID userId) {
@@ -38,7 +37,6 @@ public class RoomMemberServiceImpl implements RoomMemberService {
                 .orElseThrow(() -> new ResourceNotFoundException("Membership not found"));
         roomMemberRepository.delete(member);
     }
-
 
     @Transactional
     public void pinRoom(Long roomId, UUID userId) {
@@ -55,6 +53,7 @@ public class RoomMemberServiceImpl implements RoomMemberService {
     public void unpinAll(UUID userId) {
         roomMemberRepository.unpinAllForUser(userId);
     }
+
     @Override
     public List<UserShortDto> getAcceptedMembers(Long roomId) {
         return roomMemberRepository.findByRoom_RoomId(roomId)
@@ -63,4 +62,11 @@ public class RoomMemberServiceImpl implements RoomMemberService {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public RoomMemberDto getRooMemberByRoomIdAndUserId(Long roomId, UUID userId){
+      RoomMemberEntity roomMemberEntity =  roomMemberRepository.findOneByRoom_RoomIdAndUser_UserId(roomId, userId).orElseThrow(
+        () -> new ResourceNotFoundException("This user dont have a membership in room " + roomId)
+      );
+      return memberMapper.mapTo((roomMemberEntity));
+    }
 }
