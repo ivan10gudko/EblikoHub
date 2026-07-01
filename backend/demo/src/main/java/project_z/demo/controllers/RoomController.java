@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 import project_z.demo.common.QueryParameters.RoomQueryParameters;
 import project_z.demo.dto.RoomDtos.RoomCreateDto;
 import project_z.demo.dto.RoomDtos.RoomDto;
+import project_z.demo.dto.RoomDtos.RoomPatchUpdateDto;
 import project_z.demo.dto.RoomDtos.RoomSearchResultDto;
 import project_z.demo.dto.RoomDtos.RoomShortDto;
 import project_z.demo.security.JwtService;
@@ -84,5 +86,12 @@ public class RoomController {
         }
         roomService.deleteById(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @PreAuthorize("@securityService.isRoomOwner(#roomId)")
+    @PatchMapping(path = "/{roomId}")
+    public ResponseEntity<RoomDto> roomPartialUpdate(
+            @PathVariable("roomId") long roomId, @RequestBody RoomPatchUpdateDto dto) {
+        return new ResponseEntity<>(roomService.roomPartialUpdate(dto, roomId), HttpStatus.OK);
     }
 }
