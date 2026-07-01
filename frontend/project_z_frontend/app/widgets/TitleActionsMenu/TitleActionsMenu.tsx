@@ -24,7 +24,7 @@ interface TitleActionsMenuProps {
   title: TitleRecord;
   isOwn: boolean;
   onDelete?: () => void;
-  onOpenRatingModal?: () => void; // <-- Тепер необов'язковий (додали "?")
+  onOpenRatingModal?: () => void;
 }
 
 export const TitleActionsMenu = ({
@@ -51,8 +51,8 @@ export const TitleActionsMenu = ({
       key: "rating",
       label: "Rating",
       icon: <StarRoundedIcon sx={{ fontSize: 16 }} />,
-      onClick: () => onOpenRatingModal?.(), // <-- Безпечний виклик через "?."
-      show: !!onOpenRatingModal, // <-- Покажеться тільки якщо функція існує
+      onClick: () => onOpenRatingModal?.(),
+      show: !!onOpenRatingModal,і
     },
     {
       key: "seasons",
