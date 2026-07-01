@@ -1,4 +1,3 @@
-
 import type { InfiniteQueryPageParamsOptions } from "@tanstack/react-query";
 import type { QueryParams, RequestStatus, RequestType, Status } from "~/shared/types";
 
@@ -13,7 +12,14 @@ export interface Room {
     roomName: string;
     owner: string;
     members: RoomMemberShort[];
-    createdAt: string;
+    imageUrl?: string;
+    description?: string;
+    createdAt: string; 
+}
+export interface UpdateRoomPayload {
+    roomName: string;
+    imageUrl: string;
+    description: string;
 }
 
 export enum RoomDetailsSortVariants {
@@ -56,7 +62,6 @@ export interface RoomQueryParameters extends QueryParams {
     search?: string;
 }
 
-
 export interface RoomRequestShort {
     id: string;
     room: RoomShort;
@@ -65,8 +70,8 @@ export interface RoomRequestShort {
     status: RequestStatus;
     type: RequestType;
     createdAt: string;
-
 }
+
 export interface RoomRequestCounts {
     incomingCount: number;
     outgoingCount: number;

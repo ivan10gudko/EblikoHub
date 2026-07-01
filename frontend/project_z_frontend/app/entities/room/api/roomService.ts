@@ -1,5 +1,5 @@
 import { apiClient } from "~/shared/api";
-import type { UserShort, Room, RoomCreateDto, RoomQueryParameters, RoomRequestCounts, RoomRequestShort, RoomSearchResult, RoomShort} from "../model/room.types";
+import type { UserShort, Room, RoomCreateDto, RoomQueryParameters, RoomRequestCounts, RoomRequestShort, RoomSearchResult, RoomShort, UpdateRoomPayload} from "../model/room.types";
 import type { PageResponse, RequestStatus, RequestType } from "~/shared/types";
 import type { RoomTitleSummary } from "~/features/manageRooms/model/roomTitleSummary.types";
 
@@ -7,7 +7,7 @@ interface RoomService {
     create(data: RoomCreateDto): Promise<Room>;
     getById(roomId: number): Promise<Room>;
     getByUserId(userId: string, params?: RoomQueryParameters): Promise<PageResponse<RoomShort>>;
-    fullUpdate(id: number, data: Room): Promise<Room>;
+    fullUpdate(id: number, data: UpdateRoomPayload): Promise<Room>;
     patch(id: number, data: Partial<Room>): Promise<Room>;
     delete(id: number): Promise<void>;
     searchRoomByName(roomName: string, params?: RoomQueryParameters): Promise<PageResponse<RoomSearchResult>>;
@@ -44,7 +44,7 @@ export const roomService: RoomService = {
     },
 
     async fullUpdate(id, data) {
-        const { data: response } = await apiClient.put(`/rooms/${id}`, data);
+        const { data: response } = await apiClient.patch(`/rooms/${id}`, data);
         return response;
     },
 
