@@ -106,7 +106,7 @@ public class RoomServiceImpl implements RoomService {
 
     @Override
     public RoomDto findOne(Long id) {
-        RoomEntity room = roomRepository.findById(id)
+        RoomEntity room = roomRepository.findByIdWithMembers(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Room not found"));
         return roomMapper.mapTo(room);
     }

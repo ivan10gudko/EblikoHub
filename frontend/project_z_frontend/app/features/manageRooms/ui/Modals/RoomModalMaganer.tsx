@@ -1,5 +1,5 @@
 import { AddRoomModal } from "~/features/manageRooms";
-import { useRoomModal } from "../hooks/useRoomModal";
+import { useRoomModal } from "../../hooks/useRoomModal";
 
 export const RoomModalManager = () => {
   const { isAddOpen, step, close, setStep } = useRoomModal();
