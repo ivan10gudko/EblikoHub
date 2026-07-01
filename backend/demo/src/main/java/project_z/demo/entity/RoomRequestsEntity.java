@@ -41,7 +41,7 @@ public class RoomRequestsEntity {
     private RoomEntity room;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = true)
+    @JoinColumn(name = "user_id", nullable = false)
     private UserEntity user; 
 
     @ManyToOne

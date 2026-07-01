@@ -12,4 +12,3 @@ export {useRemoveRoomMutation} from "./hooks/useRemoveRoomMutation";
 export {RoomRequestsSidebar} from "./ui/roomRequestsSidebar";
 export {useRoomRequests} from "./hooks/useRoomRequests";
 export {RoomRequestsInvitesTab} from "./ui/roomRequestsTabs/RoomRequestsInvitesTab";
-export {useRoomDetails} from "./hooks/useRoomDetails";

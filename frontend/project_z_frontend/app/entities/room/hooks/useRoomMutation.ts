@@ -5,6 +5,7 @@ import { roomService } from "../api/roomService";
 
 export const useRoomMutation = () => {
     const queryClient = useQueryClient();
+
     const createMutation = useMutation({
         mutationFn: (data: RoomCreateDto) => roomService.create(data),
         onSuccess: () => {

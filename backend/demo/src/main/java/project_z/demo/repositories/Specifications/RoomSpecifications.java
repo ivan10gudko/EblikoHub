@@ -1,20 +1,13 @@
 package project_z.demo.repositories.Specifications;
 
-import java.util.List;
 import java.util.UUID;
 
 import org.springframework.data.jpa.domain.Specification;
-
-import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.Order;
 import jakarta.persistence.criteria.Root;
 import jakarta.persistence.criteria.Subquery;
 import project_z.demo.entity.RoomEntity;
 import project_z.demo.entity.RoomMemberEntity;
-import project_z.demo.entity.RoomTitleEntity;
-import project_z.demo.entity.RoomTitleLinkEntity;
-import project_z.demo.entity.TitleEntity;
-
 public class RoomSpecifications {
 
     public static Specification<RoomEntity> hasMember(UUID userId) {
@@ -97,22 +90,6 @@ public class RoomSpecifications {
             query.orderBy(pinnedOrder, secondaryOrder);
 
             return null;
-        };
-    }
-
-    public static Specification<RoomTitleEntity> hasRoomId(Long roomId) {
-        return (root, query, cb) -> cb.equal(root.get("roomId"), roomId);
-    }
-
-    public static Specification<RoomTitleEntity> hasStatusForMembers(List<UUID> memberIds, String status) {
-        if (status == null)
-            return null;
-        return (root, query, cb) -> {
-            Join<RoomTitleEntity, RoomTitleLinkEntity> linkJoin = root.join("links");
-            Join<RoomTitleLinkEntity, TitleEntity> titleJoin = linkJoin.join("title");
-            return cb.and(
-                    titleJoin.get("user").get("id").in(memberIds),
-                    cb.equal(titleJoin.get("status"), status));
         };
     }
 }

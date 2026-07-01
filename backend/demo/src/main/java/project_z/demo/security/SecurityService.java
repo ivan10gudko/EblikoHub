@@ -95,6 +95,8 @@ public class SecurityService {
                 .orElse(false);
     }
 
+   
+
     public boolean canProcessRequest(UUID roomRequestId) {
         UUID currentUserId = getCurrentUserId();
 
@@ -116,13 +118,10 @@ public class SecurityService {
 
         return roomRequestRepository.findById(roomRequestId)
                 .map(request -> {
-                    if (request.getType() == RequestType.JOIN_REQUEST) {
-                        return request.getSender().getUserId().equals(currentUserId);
-                    }
-                    if (request.getType() == RequestType.INVITE) {
-                        return isAdminOrOwner(request.getRoom().getRoomId());
-                    }
-                    return false;
+                    boolean isSender = request.getSender().getUserId().equals(currentUserId);
+                    boolean isRoomAdmin = isAdminOrOwner(request.getRoom().getRoomId());
+
+                    return isSender || isRoomAdmin;
                 })
                 .orElse(false);
     }

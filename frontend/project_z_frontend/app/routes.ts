@@ -10,12 +10,12 @@ export default [
     layout("./routes/_main.tsx", [
 
         index("./routes/home.tsx"),
-
-        route("about", "./routes/about.tsx"),
+        
+        route("about", "./routes/about.tsx"), 
         route("contact", "./routes/contact.tsx"),
 
-
-        route("privacy", "./routes/privacy.tsx"),
+        
+        route("privacy", "./routes/privacy.tsx"), 
 
         route("watchlist/:userId", "./routes/watchlist.$userId.tsx"),
 
@@ -39,14 +39,12 @@ export default [
             ]),
             ...prefix("rooms", [
                 route("user/:userId", "./routes/rooms._index.tsx"),     // /rooms
+                route(":id", "./routes/rooms.$id.tsx"), // /rooms/:id
                 route("/requests", "./routes/roomRequestsLayouts/room.user.requests.tsx", [
                     index("./routes/roomRequestsLayouts/room.user.requests.add.tsx"),
-                    route("invites", "./routes/roomRequestsLayouts/room.user.requests.invites.tsx"),
-                    route("sent", "./routes/roomRequestsLayouts/room.user.requests.sent.tsx"),
+                    route("invites","./routes/roomRequestsLayouts/room.user.requests.invites.tsx"),
+                    route("sent","./routes/roomRequestsLayouts/room.user.requests.sent.tsx" ),
                 ]), // rooms requests 
-                route(":id", "./routes/roomDetailsLayouts/room.details.main.tsx"), // /rooms/:id
-                route(":id/settings", "./routes/roomDetailsLayouts/room.details.settings.tsx"),
-
             ]),
         ]),
 

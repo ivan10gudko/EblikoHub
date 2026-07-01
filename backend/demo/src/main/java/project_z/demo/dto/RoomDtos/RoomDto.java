@@ -13,7 +13,6 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import project_z.demo.dto.RoomMemberDtos.RoomMemberDto;
 import project_z.demo.dto.UserDtos.UserDto;
 import project_z.demo.dto.UserDtos.UserShortDto;
 
@@ -28,7 +27,7 @@ public class RoomDto {
     private Long roomId;
     private String roomName;
     private UUID owner;
-    private List<RoomMemberDto> members;
+    private List<UserShortDto> members;
     private String imageUrl;
     private LocalDateTime createdAt;
     private String description;

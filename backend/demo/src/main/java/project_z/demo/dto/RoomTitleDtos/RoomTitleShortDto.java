@@ -10,6 +10,8 @@ import project_z.demo.enums.TitleType;
 public class RoomTitleShortDto {
     private UUID id;
 
+    private RoomShortDto room;
+
     private String titleName;
 
     private String imageUrl;
@@ -18,4 +20,5 @@ public class RoomTitleShortDto {
 
     private Long apiTitleId;
     
+    private LocalDateTime createdAt;
 }

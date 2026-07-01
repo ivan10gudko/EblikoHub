@@ -11,7 +11,7 @@ import { useMemo, useState } from "react";
 
 import { Button } from "~/shared/ui/Button";
 import { RoomModalManager } from "~/features/manageRooms";
-import { useRoomModal } from "~/features/manageRooms/hooks/useRoomModal";
+import { useRoomModal } from "~/features/manageRooms/ui/hooks/useRoomModal";
 import { NavLink, useNavigate } from "react-router";
 
 

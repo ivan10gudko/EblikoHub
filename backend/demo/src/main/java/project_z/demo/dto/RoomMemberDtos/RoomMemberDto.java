@@ -10,8 +10,9 @@ import project_z.demo.enums.RoomRole;
 
 @Data
 public class RoomMemberDto {
-    private UUID id;
+    private UUID requestId;
     private UserShortDto user; 
+    private RequestType type;
     private RoomRole role;
     private LocalDateTime createdAt;
 }

@@ -1,13 +1,7 @@
 import axios, { AxiosError } from "axios";
 import { notify, supabase } from "../lib";
-import qs from 'qs';
 
 export const apiClient = axios.create({
-    paramsSerializer: {
-        serialize: (params) => {
-            return qs.stringify(params, { arrayFormat: 'repeat' });
-        }
-    },
     baseURL: import.meta.env.VITE_API_URL || '/api/v1',
     headers: {
         "Content-Type": "application/json",

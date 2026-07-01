@@ -1,32 +1,20 @@
 
-import type { InfiniteQueryPageParamsOptions } from "@tanstack/react-query";
-import type { QueryParams, RequestStatus, RequestType, Status } from "~/shared/types";
+import type { QueryParams, RequestStatus, RequestType } from "~/shared/types";
 
-export interface UserShort {
+export interface MemberShort {
     userId: string;
     name: string;
     nameTag: string;
     imageUrl?: string;
 }
+
 export interface Room {
     roomId: number;
     roomName: string;
     owner: string;
-    members: RoomMemberShort[];
+    members: MemberShort[];
     createdAt: string;
 }
-
-export enum RoomDetailsSortVariants {
-    titleName = "titleName",
-    avgRating = "avgRating",
-    createdAt = "createdAt",
-}
-
-export const roomSortOptions = [
-    { label: "Name", value: RoomDetailsSortVariants.titleName },
-    { label: "Average room rating", value: RoomDetailsSortVariants.avgRating },
-    { label: "Room title date added", value: RoomDetailsSortVariants.createdAt },
-];
 
 export interface RoomCreateDto {
     roomName: string;
@@ -57,30 +45,27 @@ export interface RoomQueryParameters extends QueryParams {
 }
 
 
-export interface RoomRequestShort {
+export interface RoomMemberDto {
     id: string;
-    room: RoomShort;
-    userId: string;
-    sender: UserShort;
+    receiver: MemberShort;
+    sender: MemberShort;
     status: RequestStatus;
     type: RequestType;
     createdAt: string;
+}
+
+
+export interface RoomRequestShort{
+    id : string;
+    room : RoomShort;
+    userId : string;
+    sender : MemberShort;
+    status: RequestStatus;
+    type : RequestType;
+    createdAt : string;
 
 }
-export interface RoomRequestCounts {
+export interface RoomRequestCounts{
     incomingCount: number;
     outgoingCount: number;
-}
-
-export interface RoomMemberShort {
-    id: string;
-    user: UserShort;
-    role: RoomRole;
-    createdAt: string;
-}
-
-export enum RoomRole {
-    OWNER = "OWNER",
-    ADMIN = "ADMIN",
-    MEMBER = "MEMBER",
 }
