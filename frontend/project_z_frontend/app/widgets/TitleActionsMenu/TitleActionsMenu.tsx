@@ -52,7 +52,7 @@ export const TitleActionsMenu = ({
       label: "Rating",
       icon: <StarRoundedIcon sx={{ fontSize: 16 }} />,
       onClick: () => onOpenRatingModal?.(),
-      show: !!onOpenRatingModal,і
+      show: !!onOpenRatingModal,
     },
     {
       key: "seasons",
