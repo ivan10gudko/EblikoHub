@@ -11,7 +11,6 @@ import type { TitleRecord } from "~/entities/titleRecord";
 import StarRoundedIcon from "@mui/icons-material/StarRounded";
 import { EditSeasonsModal } from "~/entities/season";
 import ViewListIcon from "@mui/icons-material/ViewList";
-import { EditRatingModal } from "~/features/TitleRating";
 
 interface ActionItem {
   key: string;
@@ -25,7 +24,7 @@ interface TitleActionsMenuProps {
   title: TitleRecord;
   isOwn: boolean;
   onDelete?: () => void;
-  onOpenRatingModal: () => void; 
+  onOpenRatingModal?: () => void;
 }
 
 export const TitleActionsMenu = ({
@@ -52,8 +51,8 @@ export const TitleActionsMenu = ({
       key: "rating",
       label: "Rating",
       icon: <StarRoundedIcon sx={{ fontSize: 16 }} />,
-      onClick: onOpenRatingModal,
-      show: true,
+      onClick: () => onOpenRatingModal?.(),
+      show: !!onOpenRatingModal,і
     },
     {
       key: "seasons",
@@ -105,8 +104,6 @@ export const TitleActionsMenu = ({
           isOwn={isOwn}
         />
       )}
-      
-      
     </>
   );
 };
