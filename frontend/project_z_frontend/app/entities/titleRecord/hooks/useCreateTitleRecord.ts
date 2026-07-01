@@ -1,22 +1,25 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, type MutateOptions } from "@tanstack/react-query";
 import { titleRecordService } from "../api/titleRecordService";
 import { notify, queryClient } from "~/shared/lib";
-import type { CreateTitleRecord } from "../model/titleRecord";
+import type { CreateTitleRecord, TitleRecord } from "../model/titleRecord";
+import { getErrorMessage } from "~/shared/utils";
+
 export const useCreateTitleRecord = () => {
+  const createMutation = useMutation({
+    mutationFn: (title: CreateTitleRecord) => titleRecordService.post(title),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['titles'] });
+    },
+    onError: (error: unknown) => {
+      notify.error(getErrorMessage(error, "Something went wrong"));
+    },
+  });
 
-    const createMutation = useMutation({
-        mutationFn: (title: CreateTitleRecord) => titleRecordService.post(title),
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['titles'] });
-        },
-        onError: (error: any) => {
-            const message = error.response?.data?.message || "Something went wrong";
-            notify.error(message);
-        }
-    });
-
-    return {
-        createNewTitleRecord: (title: CreateTitleRecord, options?: any) => createMutation.mutate(title, options),
-        isCreating: createMutation.isPending
-    };
+  return {
+    createNewTitleRecord: (
+      title: CreateTitleRecord,
+      options?: MutateOptions<TitleRecord, Error, CreateTitleRecord>,
+    ) => createMutation.mutate(title, options),
+    isCreating: createMutation.isPending,
+  };
 };

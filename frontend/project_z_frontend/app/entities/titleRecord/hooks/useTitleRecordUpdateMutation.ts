@@ -1,6 +1,11 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { titleRecordService, type TitleRecord } from "~/entities/titleRecord";
 import { notify } from "~/shared/lib";
+import { getErrorMessage } from "~/shared/utils";
+
+const notifyMutationError = (error: unknown, fallback: string) => {
+  notify.error(getErrorMessage(error, fallback));
+};
 
 export const useUpdateTitleRecord = (titleId: number) => {
   const queryClient = useQueryClient();
@@ -15,9 +20,9 @@ export const useUpdateTitleRecord = (titleId: number) => {
     onSuccess: () => {
       refreshAllCaches();
     },
-    onError: (error: any) => {
-      notify.error(error.response?.data?.message || "Failed to save changes");
-    }
+    onError: (error: unknown) => {
+      notifyMutationError(error, "Failed to save changes");
+    },
   });
 
   const pinMutation = useMutation({
@@ -26,10 +31,10 @@ export const useUpdateTitleRecord = (titleId: number) => {
       refreshAllCaches();
       notify.success("Pinned to top!");
     },
-    onError: (error: any) => {
+    onError: (error: unknown) => {
       console.error(error);
-      notify.error(error.response?.data?.message || "Error while pinning");
-    }
+      notifyMutationError(error, "Error while pinning");
+    },
   });
 
   const unpinMutation = useMutation({
@@ -38,16 +43,19 @@ export const useUpdateTitleRecord = (titleId: number) => {
       refreshAllCaches();
       notify.success("Unpinned!");
     },
-    onError: (error: any) => {
-      notify.error(error.response?.data?.message || "Error while unpinning");
-    }
+    onError: (error: unknown) => {
+      notifyMutationError(error, "Error while unpinning");
+    },
   });
 
   const deleteMutation = useMutation({
     mutationFn: () => titleRecordService.delete(titleId),
     onSuccess: () => {
       refreshAllCaches();
-    }
+    },
+    onError: (error: unknown) => {
+      notifyMutationError(error, "Failed to delete title");
+    },
   });
 
   return {
@@ -58,6 +66,6 @@ export const useUpdateTitleRecord = (titleId: number) => {
     pinTitle: pinMutation.mutate,
     isPinning: pinMutation.isPending,
     unpinTitle: () => unpinMutation.mutate(),
-    isUnpinning: unpinMutation.isPending
+    isUnpinning: unpinMutation.isPending,
   };
 };

@@ -2,6 +2,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { UpdateSeasonDto, Season, DraftSeason } from "../model/season.types";
 import { seasonService } from "../api/SeasonService";
 import { notify } from "~/shared/lib";
+import { getErrorMessage } from "~/shared/utils";
 
 export const useSeasonActions = (titleId: number, onClose?: () => void) => {
   const queryClient = useQueryClient();
@@ -17,8 +18,8 @@ export const useSeasonActions = (titleId: number, onClose?: () => void) => {
       notify.success("Updated!");
       if (onClose) onClose();
     },
-    onError: (error: any) => {
-      notify.error(error.response?.data?.message || "Sync failed");
+    onError: (error: unknown) => {
+      notify.error(getErrorMessage(error, "Sync failed"));
     }
   });
 
@@ -30,8 +31,8 @@ export const useSeasonActions = (titleId: number, onClose?: () => void) => {
         old?.map((s) => (s.seasonId === updatedSeason.seasonId ? updatedSeason : s))
       );
     },
-    onError: (error: any) => {
-      notify.error(error.response?.data?.message || "Update failed");
+    onError: (error: unknown) => {
+      notify.error(getErrorMessage(error, "Update failed"));
     }
   });
 
@@ -43,8 +44,8 @@ export const useSeasonActions = (titleId: number, onClose?: () => void) => {
       );
       notify.success("Season deleted");
     },
-    onError: (error: any) => {
-      notify.error(error.response?.data?.message || "Delete failed");
+    onError: (error: unknown) => {
+      notify.error(getErrorMessage(error, "Delete failed"));
     }
   });
 

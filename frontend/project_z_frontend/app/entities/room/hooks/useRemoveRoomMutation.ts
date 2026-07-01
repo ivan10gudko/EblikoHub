@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { roomService } from "~/entities/room/api/roomService";
 import { notify } from "~/shared/lib";
+import { getErrorMessage } from "~/shared/utils";
 
 export const useRemoveRoomMutation = (roomId: number, isOwner: boolean) => {
   const queryClient = useQueryClient();
@@ -11,8 +12,8 @@ export const useRemoveRoomMutation = (roomId: number, isOwner: boolean) => {
       queryClient.invalidateQueries({ queryKey: ['rooms'] });
       notify.success(isOwner ? "Room deleted successfully" : "Left the room successfully");
     },
-    onError: (error: any) => {
-      notify.error(error.response?.data?.message || "Something went wrong");
+    onError: (error: unknown) => {
+      notify.error(getErrorMessage(error, "Something went wrong"));
     }
   });
 };

@@ -5,10 +5,7 @@ import type { FriendActionType } from "../types/friends.types";
 import { RequestStatus, type PageResponse } from "~/shared/types";
 import { updateInfiniteQuery } from "~/shared/helpers/updateInfinityQuery";
 import type { UserDtoWithFriendshipStatus } from "~/entities/friendship";
-
-const getErrorMessage = (error: any, defaultMessage: string): string => {
-    return error?.response?.data?.message || error?.message || defaultMessage;
-};
+import { getErrorMessage } from "~/shared/utils";
 
 export const useFriends = (userId: string, activeTab: string) => {
     const queryClient = useQueryClient();
@@ -43,7 +40,7 @@ export const useFriends = (userId: string, activeTab: string) => {
 
             return {};
         },
-        onError: (err: any) => {
+        onError: (err: unknown) => {
             queryClient.invalidateQueries({ queryKey: ["user_friendship_search"] });
 
             notify.error(getErrorMessage(err, "Action failed"));

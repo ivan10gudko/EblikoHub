@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient, type InfiniteData, type QueryKey
 import { roomService } from "~/entities/room/api/roomService";
 import { updateInfiniteQuery } from "~/shared/helpers/updateInfinityQuery";
 import { notify } from "~/shared/lib";
+import { getErrorMessage } from "~/shared/utils";
 import type { PageResponse } from "~/shared/types";
 import type { RoomSearchResult } from "../model/room.types";
 
@@ -20,11 +21,11 @@ export const useRoomRequests = ( roomId?: number) => {
       queryClient.invalidateQueries({ queryKey: roomListKey });
       queryClient.invalidateQueries({ queryKey: requestsKey });
     },
-    onError: (err: any, _variables: any, context?: MutationContext) => {
+    onError: (err: unknown, _variables: unknown, context?: MutationContext) => {
       if (context?.previousData) {
         queryClient.setQueriesData({ queryKey: searchKey }, context.previousData);
       }
-      notify.error(err?.response?.data?.message || "Something went wrong");
+      notify.error(getErrorMessage(err, "Something went wrong"));
     }
   };
 

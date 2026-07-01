@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient, type UseMutationOptions } from "@tanstack/react-query";
 import type { Room, RoomCreateDto } from "~/entities/room/model/room.types";
 import { notify } from "~/shared/lib";
+import { getErrorMessage } from "~/shared/utils";
 import { roomService } from "../api/roomService"; 
 
 export const useRoomMutation = () => {
@@ -11,9 +12,8 @@ export const useRoomMutation = () => {
             queryClient.invalidateQueries({ queryKey: ['rooms'] });
             notify.success("Room created, invites was sent!");
         },
-        onError: (error: any) => {
-            const message = error.response?.data?.message || "Something went wrong";
-            notify.error(message);
+        onError: (error: unknown) => {
+            notify.error(getErrorMessage(error, "Something went wrong"));
         }
     });
 

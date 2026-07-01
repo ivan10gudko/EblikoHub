@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import type { CreateSeasonDto, Season } from "../model/season.types";
 import { seasonService } from "../api/SeasonService";
 import { notify } from "~/shared/lib";
+import { getErrorMessage } from "~/shared/utils";
 
 export const useSeasons = (titleId: number) => {
   const queryClient = useQueryClient();
@@ -22,8 +23,8 @@ export const useSeasons = (titleId: number) => {
       );
       notify.success("Season added!");
     },
-    onError: (error: any) => {
-      notify.error(error.response?.data?.message || "Failed to add season");
+    onError: (error: unknown) => {
+      notify.error(getErrorMessage(error, "Failed to add season"));
     }
   });
 

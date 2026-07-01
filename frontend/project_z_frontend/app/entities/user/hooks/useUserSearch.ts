@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import axios from "axios";
 import type { UserProfile } from "../model/user.types";
 import { userService } from "../api/UserService";
 
@@ -58,8 +59,8 @@ export const useUserSearch = (query: string, page = 0, size = 10) => {
                         isLast: response.last
                     });
                 }
-            } catch (err: any) {
-                if (err.response?.status === 404) {
+            } catch (err: unknown) {
+                if (axios.isAxiosError(err) && err.response?.status === 404) {
                     setSearchResults([]);
                 } else {
                     setError("Something went wrong while searching...");
