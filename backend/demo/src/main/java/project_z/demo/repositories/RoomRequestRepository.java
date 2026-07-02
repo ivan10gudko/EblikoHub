@@ -16,43 +16,45 @@ import project_z.demo.enums.RequestType;
 @Repository
 public interface RoomRequestRepository extends JpaRepository<RoomRequestsEntity, UUID> {
 
-    Optional<RoomRequestsEntity> findByRoom_RoomIdAndUser_UserId(Long roomId, UUID userId);
+        Optional<RoomRequestsEntity> findByRoom_RoomIdAndUser_UserId(Long roomId, UUID userId);
 
-    List<RoomRequestsEntity> findByRoom_RoomIdAndStatus(Long roomId, RequestStatus status);
+        List<RoomRequestsEntity> findByRoom_RoomIdAndStatus(Long roomId, RequestStatus status);
 
-    List<RoomRequestsEntity> findByUser_UserId(UUID userId);
+        List<RoomRequestsEntity> findByUser_UserId(UUID userId);
 
-    List<RoomRequestsEntity> findBySender_UserId(UUID senderId);
+        List<RoomRequestsEntity> findByRoom_RoomIdAndStatusAndType(Long roomId, RequestStatus status, RequestType type);
 
-    boolean existsByRoom_RoomIdAndUser_UserId(Long roomId, UUID userId);
+        List<RoomRequestsEntity> findBySender_UserId(UUID senderId);
 
-    List<RoomRequestsEntity> findByUser_UserIdAndStatusAndType(UUID userId, RequestStatus status, RequestType type);
+        boolean existsByRoom_RoomIdAndUser_UserId(Long roomId, UUID userId);
 
-    @Query("SELECT new project_z.demo.dto.RoomRequestsDtos.RoomRequestCountsDto(" +
-            "COUNT(DISTINCT r.id) FILTER (WHERE r.user.userId = :userId AND r.status = 'PENDING'), " +
-            "COUNT(DISTINCT r.id) FILTER (WHERE r.sender.userId = :userId AND r.type = 'JOIN_REQUEST' AND r.status = 'PENDING')) "
-            +
-            "FROM RoomRequestsEntity r " +
-            "WHERE (r.user.userId = :userId OR r.sender.userId = :userId) " +
-            "AND r.status = 'PENDING'")
-    RoomRequestCountsDto getRoomRequestCounts(@Param("userId") UUID userId);
+        List<RoomRequestsEntity> findByUser_UserIdAndStatusAndType(UUID userId, RequestStatus status, RequestType type);
 
-    @Query("SELECT r FROM RoomRequestsEntity r WHERE " +
-            "r.status = :status " +
-            "AND r.type = :type " +
-            "AND (r.user.userId = :userId)")
-    List<RoomRequestsEntity> findIncomingRequests(
-            @Param("userId") UUID userId,
-            @Param("status") RequestStatus status,
-            @Param("type") RequestType type);
+        @Query("SELECT new project_z.demo.dto.RoomRequestsDtos.RoomRequestCountsDto(" +
+                        "COUNT(DISTINCT r.id) FILTER (WHERE r.user.userId = :userId AND r.status = 'PENDING'), " +
+                        "COUNT(DISTINCT r.id) FILTER (WHERE r.sender.userId = :userId AND r.type = 'JOIN_REQUEST' AND r.status = 'PENDING')) "
+                        +
+                        "FROM RoomRequestsEntity r " +
+                        "WHERE (r.user.userId = :userId OR r.sender.userId = :userId) " +
+                        "AND r.status = 'PENDING'")
+        RoomRequestCountsDto getRoomRequestCounts(@Param("userId") UUID userId);
 
-    @Query("SELECT r FROM RoomRequestsEntity r WHERE " +
-            "r.status = :status " +
-            "AND (:type IS NULL OR r.type = :type) " +
-            "AND r.sender.userId = :userId")
-    List<RoomRequestsEntity> findOutgoingRequests(
-            @Param("userId") UUID userId,
-            @Param("status") RequestStatus status,
-            @Param("type") RequestType type);
+        @Query("SELECT r FROM RoomRequestsEntity r WHERE " +
+                        "r.status = :status " +
+                        "AND r.type = :type " +
+                        "AND (r.user.userId = :userId)")
+        List<RoomRequestsEntity> findIncomingRequests(
+                        @Param("userId") UUID userId,
+                        @Param("status") RequestStatus status,
+                        @Param("type") RequestType type);
+
+        @Query("SELECT r FROM RoomRequestsEntity r WHERE " +
+                        "r.status = :status " +
+                        "AND (:type IS NULL OR r.type = :type) " +
+                        "AND r.sender.userId = :userId")
+        List<RoomRequestsEntity> findOutgoingRequests(
+                        @Param("userId") UUID userId,
+                        @Param("status") RequestStatus status,
+                        @Param("type") RequestType type);
 
 }

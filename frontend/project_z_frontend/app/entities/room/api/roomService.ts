@@ -1,5 +1,5 @@
 import { apiClient } from "~/shared/api";
-import type { UserShort, Room, RoomCreateDto, RoomQueryParameters, RoomRequestCounts, RoomRequestShort, RoomSearchResult, RoomShort, UpdateRoomPayload} from "../model/room.types";
+import type { UserShort, Room, RoomCreateDto, RoomQueryParameters, RoomRequestCounts, RoomRequestShort, RoomSearchResult, RoomShort, UpdateRoomPayload, RequestsToRoomResponse } from "../model/room.types";
 import type { PageResponse, RequestStatus, RequestType } from "~/shared/types";
 import type { RoomTitleSummary } from "~/features/manageRooms/model/roomTitleSummary.types";
 
@@ -17,6 +17,7 @@ interface RoomService {
     leave(id: number): Promise<void>;
     getAcceptedMembers(roomId: number | string): Promise<UserShort[]>;
     getRequests(userId: string, status: RequestStatus, type: RequestType): Promise<RoomRequestShort[]>;
+    getRoomRequests(roomId: number, status: string, type: string): Promise<RequestsToRoomResponse>;
     joinRoom(roomId: number | string): Promise<void>;
     inviteUser(roomId: number | string, receiverId: string): Promise<void>;
     acceptRequest(roomRequestId: string): Promise<void>;
@@ -88,6 +89,12 @@ export const roomService: RoomService = {
         });
         return data;
     },
+    async getRoomRequests(roomId, status, type) {
+        const { data } = await apiClient.get(`/rooms/requests/${roomId}`, {
+            params: { status, type }
+        });
+        return data;
+    },
 
     async joinRoom(roomId) {
         await apiClient.post(`/rooms/requests/join/${roomId}`);
@@ -109,7 +116,7 @@ export const roomService: RoomService = {
     async cancelRequest(roomRequestId) {
         await apiClient.delete(`/rooms/requests/cancelRequest/${roomRequestId}`);
     },
-    
+
     async getRequestsCountsByUserId(userId) {
         const { data } = await apiClient.get(`/rooms/requests/requestCounts/user/${userId}`);
         return data;

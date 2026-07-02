@@ -18,7 +18,6 @@ export const useRoomMutation = () => {
         }
     });
 
-    // Використовуємо метод fullUpdate, який точно є у вашому сервісі
     const updateMutation = useMutation({
         mutationFn: ({ id, data }: { id: number; data: UpdateRoomPayload }) => 
             roomService.fullUpdate(id, data),
@@ -40,7 +39,6 @@ export const useRoomMutation = () => {
         ) => createMutation.mutate(data, options),
         isCreating: createMutation.isPending,
 
-        // Повертаємо функцію оновлення
         updateRoom: (
             id: number,
             data: UpdateRoomPayload,
