@@ -83,7 +83,6 @@ export interface RequestsToRoomResponse{
     roomId:number;
     requests:RoomRequestShortWithUser[];
 }
-
 export interface RoomRequestCounts {
     incomingCount: number;
     outgoingCount: number;

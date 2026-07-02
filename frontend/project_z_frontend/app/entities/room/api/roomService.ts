@@ -1,15 +1,7 @@
 import { apiClient } from "~/shared/api";
-import type { UserShort, Room, RoomCreateDto, RoomQueryParameters, RoomRequestCounts, RoomRequestShort, RoomSearchResult, RoomShort, UpdateRoomPayload, UserWithRelationsToRoomDto} from "../model/room.types";
+import type { UserShort, Room, RoomCreateDto, RoomQueryParameters, RoomRequestCounts, RoomRequestShort, RoomSearchResult, RoomShort, UpdateRoomPayload, UserWithRelationsToRoomDto,RequestsToRoomResponse} from "../model/room.types";
 import type { PageResponse, RequestStatus, RequestType } from "~/shared/types";
 
-
-interface RequestsToRoomResponse {
-    requests: any[];
-    last: boolean;
-    number: number;
-    totalElements: number;
-    totalPages: number;
-}
 
 interface RoomService {
     create(data: RoomCreateDto): Promise<Room>;
@@ -25,6 +17,7 @@ interface RoomService {
     leave(id: number): Promise<void>;
     getAcceptedMembers(roomId: number | string): Promise<UserShort[]>;
     getRequests(userId: string, status: RequestStatus, type: RequestType): Promise<RoomRequestShort[]>;
+    getRoomRequests(roomId: number, status: string, type: string): Promise<RequestsToRoomResponse>;
     joinRoom(roomId: number | string): Promise<void>;
     inviteUser(roomId: number | string, receiverId: string): Promise<void>;
     acceptRequest(roomRequestId: string): Promise<void>;
@@ -100,6 +93,12 @@ export const roomService: RoomService = {
         });
         return data;
     },
+    async getRoomRequests(roomId, status, type) {
+        const { data } = await apiClient.get(`/rooms/requests/${roomId}`, {
+            params: { status, type }
+        });
+        return data;
+    },
 
     async joinRoom(roomId) {
         await apiClient.post(`/rooms/requests/join/${roomId}`);
@@ -122,7 +121,7 @@ export const roomService: RoomService = {
     async cancelRequest(roomRequestId) {
         await apiClient.delete(`/rooms/requests/cancelRequest/${roomRequestId}`);
     },
-    
+
     async getRequestsCountsByUserId(userId) {
         const { data } = await apiClient.get(`/rooms/requests/requestCounts/user/${userId}`);
         return data;
@@ -137,13 +136,6 @@ export const roomService: RoomService = {
         await apiClient.post(`/rooms/unpin`);
     },
 
-    // Реалізація нових методів бекенду
-    async getRoomRequests(roomId, status, type) {
-        const { data } = await apiClient.get(`/rooms/requests/${roomId}`, {
-            params: { status, type }
-        });
-        return data;
-    },
 
     async searchUsersForRoom(roomId, name, params) {
         const { data } = await apiClient.get(`/rooms/${roomId}/members/users/search`, {
