@@ -89,7 +89,11 @@ public class RoomRequestServiceImpl implements RoomRequestService {
 
         RoomMemberEntity member = new RoomMemberEntity();
         member.setRoom(request.getRoom());
-        member.setUser(request.getUser());
+        if (request.getType() == RequestType.JOIN_REQUEST) {
+            member.setUser(request.getSender());
+        } else {
+            member.setUser(request.getUser());
+        }
         member.setRole(RoomRole.MEMBER);
         roomMemberRepository.save(member);
         roomRequestRepository.delete(request);
