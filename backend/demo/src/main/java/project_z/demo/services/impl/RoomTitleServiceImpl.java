@@ -27,14 +27,17 @@ import project_z.demo.Mappers.impl.RoomTitleMappers.RoomTitleDetailsMapper;
 import project_z.demo.Mappers.impl.RoomTitleMappers.RoomTitleSummaryMapper;
 import project_z.demo.common.Exceptions.ResourceNotFoundException;
 import project_z.demo.common.QueryParameters.QueryParameters;
-import project_z.demo.common.QueryParameters.RoomTitlesQueryParameters;
+import project_z.demo.common.QueryParameters.RoomTitlesQueryParameters.RoomTitlesQueryParameters;
+import project_z.demo.common.QueryParameters.RoomTitlesQueryParameters.RoomTitlesWithSearchQueryParameters;
 import project_z.demo.dto.RoomTitleDtos.RoomTitleCreateDto;
 import project_z.demo.dto.RoomTitleDtos.RoomTitleDetailsDto;
 import project_z.demo.dto.RoomTitleDtos.RoomTitleShortDto;
 import project_z.demo.dto.RoomTitleDtos.RoomTitleSummaryDto;
 import project_z.demo.dto.RoomTitleDtos.RoomTitleUpdateDto;
 import project_z.demo.dto.RoomTitleDtos.RoomTitleUserIdAndTitleStatusDto;
+import project_z.demo.dto.RoomTitleDtos.RoomTitleWithUserLinksDto;
 import project_z.demo.dto.RoomTitleDtos.RoomTitlesResponseDto;
+import project_z.demo.dto.RoomTitleLinkDtos.RoomTitleLinkShortDto;
 import project_z.demo.dto.TitleDtos.TitleDto;
 import project_z.demo.dto.TitleDtos.TitleSameCriteriaDto;
 import project_z.demo.dto.TitleDtos.TitleShortDto;
@@ -73,6 +76,8 @@ public class RoomTitleServiceImpl implements RoomTitleService {
     private final RoomTitleLinkRepository linkRepository;
     private final RoomTitleSummaryMapper roomTitleSummaryMapper;
     private final Mapper<RoomTitleEntity, RoomTitleDetailsDto> roomTitleDetailsMapper;
+    private final Mapper<RoomTitleEntity, RoomTitleWithUserLinksDto> roomTitleWithUserLinksMapper;
+    private final Mapper<RoomTitleLinkEntity, RoomTitleLinkShortDto> roomTitleLinkShortMapper;
 
     @Override
     @Transactional
@@ -172,4 +177,29 @@ public class RoomTitleServiceImpl implements RoomTitleService {
         return titlePage.map(roomTitleDetailsMapper::mapTo);
     }
 
+    @Override
+    public Page<RoomTitleWithUserLinksDto> getRoomTitlesWithUserLinks(long roomId, UUID userId,
+            RoomTitlesWithSearchQueryParameters queryParameters) {
+        Pageable pageable = PagingHelper.toPageable(queryParameters);
+        Specification<RoomTitleEntity> spec = Specification
+                .where(RoomTitleSpecifications.hasRoomId(roomId))
+                .and(RoomTitleSpecifications.hasTitleNameLike(queryParameters.getSearch()));
+
+        Page<RoomTitleEntity> titlePage = repository.findAll(spec, pageable);
+        List<UUID> titleIds = titlePage.getContent().stream().map(RoomTitleEntity::getId).toList();
+
+        List<RoomTitleLinkEntity> links = linkRepository.findByRoomTitle_IdInAndUserTitleRecord_User_UserId(titleIds,
+                userId);
+
+        Map<UUID, List<RoomTitleLinkEntity>> linksMap = links.stream()
+                .collect(Collectors.groupingBy(l -> l.getRoomTitle().getId()));
+
+        return titlePage.map(entity -> {
+            RoomTitleWithUserLinksDto dto = roomTitleWithUserLinksMapper.mapTo(entity);
+            dto.setLinks(linksMap.getOrDefault(entity.getId(), List.of()).stream()
+                    .map(roomTitleLinkShortMapper::mapTo)
+                    .collect(Collectors.toList()));
+            return dto;
+        });
+    }
 }

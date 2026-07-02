@@ -10,17 +10,20 @@ import org.springframework.web.bind.annotation.*;
 
 import io.swagger.v3.oas.models.parameters.QueryParameter;
 import project_z.demo.common.QueryParameters.QueryParameters;
-import project_z.demo.common.QueryParameters.RoomTitlesQueryParameters;
+import project_z.demo.common.QueryParameters.RoomTitlesQueryParameters.RoomTitlesQueryParameters;
+import project_z.demo.common.QueryParameters.RoomTitlesQueryParameters.RoomTitlesWithSearchQueryParameters;
 import project_z.demo.dto.RoomTitleDtos.RoomTitleCreateDto;
 import project_z.demo.dto.RoomTitleDtos.RoomTitleDetailsDto;
 import project_z.demo.dto.RoomTitleDtos.RoomTitleSummaryDto;
 import project_z.demo.dto.RoomTitleDtos.RoomTitleUpdateDto;
+import project_z.demo.dto.RoomTitleDtos.RoomTitleWithUserLinksDto;
 import project_z.demo.dto.RoomTitleDtos.RoomTitlesResponseDto;
 import project_z.demo.security.SecurityService;
 import project_z.demo.services.RoomTitleService;
 
 import java.util.List;
 import java.util.UUID;
+
 
 
 
@@ -56,6 +59,12 @@ public class RoomTitleController {
             @PathVariable Long roomId) {
         return ResponseEntity.ok(roomTitleService.findAllByRoom(roomId));
     }
+
+    @GetMapping("/getRoomTitlesWithUserLinks/{userId}")
+    public ResponseEntity<Page<RoomTitleWithUserLinksDto>> getRoomTitlesWithUserLinks(@PathVariable("roomId") long roomId, @PathVariable("userId") UUID userId, RoomTitlesWithSearchQueryParameters queryParameters)  {
+        return new ResponseEntity<>(roomTitleService.getRoomTitlesWithUserLinks(roomId, userId, queryParameters), HttpStatus.OK);
+    }
+    
 
     @PutMapping("/{titleId}")
     @PreAuthorize("@securityService.isAdminOrOwner(#roomId)")
