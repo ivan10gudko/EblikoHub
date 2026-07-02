@@ -5,7 +5,7 @@ import { notify } from "~/shared/lib";
 import type { PageResponse } from "~/shared/types";
 import type { RoomSearchResult } from "../model/room.types";
 
-export const useRoomRequests = ( roomId?: number) => {
+export const useRoomRequests = (roomId?: number) => {
   const queryClient = useQueryClient();
   const searchKey: QueryKey = ['room_search'];
   const roomListKey: QueryKey = ['rooms'];
@@ -76,13 +76,20 @@ export const useRoomRequests = ( roomId?: number) => {
       roomService.cancelRequest(roomRequestId),
     onSuccess: () => notify.success("Request cancelled!")
   });
-
+  const inviteMutation = useMutation({
+    ...mutationConfig,
+    mutationFn: ({ roomId, receiverId }: { roomId: number; receiverId: string }) =>
+      roomService.inviteUser(roomId, receiverId),
+    onSuccess: () => notify.success("Invite sent successfully!"),
+  });
   return {
     joinRoom: joinMutation.mutate,
     isJoining: joinMutation.isPending,
     cancelRequest: cancelMutation.mutate,
     acceptRequest: acceptMutation.mutate,
     rejectRequest: rejectMutation.mutate,
+    sendInvite: inviteMutation.mutate, 
+    isSendingInvite: inviteMutation.isPending,
     isPendingAction: acceptMutation.isPending || rejectMutation.isPending
   };
 };
