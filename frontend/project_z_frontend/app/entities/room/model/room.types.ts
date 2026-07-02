@@ -106,3 +106,24 @@ export enum RoomRole {
     ADMIN = "ADMIN",
     MEMBER = "MEMBER",
 }
+
+export enum RoomRelationStatus {
+    MEMBER = "MEMBER",
+    NOT_MEMBER = "NOT_MEMBER",
+    BLOCKED = "BLOCKED",
+}
+
+export interface UserWithRelationsToRoomDto {
+    user: UserShort;
+    relationStatus: RoomRelationStatus;
+    activeRequest: RoomRequestShortWithoutRoomDto | null;
+}
+
+export interface RoomRequestShortWithoutRoomDto {
+    id: string;
+    userId: string;
+    sender: UserShort;
+    status: RequestStatus;
+    type: RequestType;
+    createdAt: string;
+}
