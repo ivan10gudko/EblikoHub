@@ -20,6 +20,6 @@ public interface RoomTitleEntityRepository
     boolean existsByRoom_RoomIdAndApiTitleId(Long roomId, Long apiTitleId);
 
     void deleteByIdAndRoom_RoomId(UUID id, Long roomId);
-    
+
     Page<RoomTitleEntity> findAllPagedByRoom_RoomId(Long roomId, Pageable pageable);
 }

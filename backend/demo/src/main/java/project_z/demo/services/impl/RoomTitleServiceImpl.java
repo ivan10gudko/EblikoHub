@@ -206,5 +206,4 @@ public class RoomTitleServiceImpl implements RoomTitleService {
             return dto;
         });
     }
-
 }
