@@ -47,13 +47,11 @@ public class RoomTitleController {
         return new ResponseEntity<>(roomTitleService.getRoomTitles(roomId, userId, roomTitlesQueryParameters),
                 HttpStatus.OK);
     }
-
     @GetMapping("/getRoomTitlesWithoutLinks")
-    public ResponseEntity<Page<RoomTitleDetailsDto>> getRoomTitlesWithoutLinks(@PathVariable("roomId") long roomId,
-            QueryParameters queryParameters) {
+    public ResponseEntity<Page<RoomTitleDetailsDto>> getRoomTitlesWithoutLinks(@PathVariable("roomId") long roomId, QueryParameters queryParameters) {
         return new ResponseEntity<>(roomTitleService.getRoomTitlesWithoutLinks(roomId, queryParameters), HttpStatus.OK);
     }
-
+    
     @GetMapping
     @PreAuthorize("@securityService.isRoomMember(#roomId)")
     public ResponseEntity<List<RoomTitleDetailsDto>> findAll(
