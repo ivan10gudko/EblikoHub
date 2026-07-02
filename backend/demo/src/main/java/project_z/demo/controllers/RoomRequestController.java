@@ -3,6 +3,7 @@ package project_z.demo.controllers;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.boot.autoconfigure.graphql.GraphQlProperties.Http;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -17,13 +18,16 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
+import project_z.demo.dto.RoomRequestsDtos.RequestsToRoomResponseDto;
 import project_z.demo.dto.RoomRequestsDtos.RoomRequestCountsDto;
 import project_z.demo.dto.RoomRequestsDtos.RoomRequestDetailsDto;
 import project_z.demo.dto.RoomRequestsDtos.RoomRequestShortDto;
+import project_z.demo.dto.RoomRequestsDtos.RoomRequestShortWithUserDto;
 import project_z.demo.enums.RequestStatus;
 import project_z.demo.enums.RequestType;
 import project_z.demo.security.SecurityService;
 import project_z.demo.services.RoomRequestService;
+import org.springframework.web.bind.annotation.RequestBody;
 
 @RestController
 @RequestMapping("/api/v1/rooms/requests")
@@ -38,6 +42,14 @@ public class RoomRequestController {
             @RequestParam("type") RequestType type) {
         UUID userId = securityService.getCurrentUserId();
         return ResponseEntity.ok(roomRequestService.getRequestsByUserId(userId, status, type));
+    }
+
+    @GetMapping("/{roomId}")
+    public ResponseEntity<RequestsToRoomResponseDto> getRoomRequests(
+        @RequestParam("status") RequestStatus status,
+            @PathVariable("roomId") long roomId,
+            @RequestParam("type") RequestType type) {
+        return new ResponseEntity<>(roomRequestService.getRequestsByRoomId(roomId, status,type), HttpStatus.OK) ;
     }
 
     @GetMapping("/requestCounts/user/{userId}")

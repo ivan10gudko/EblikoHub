@@ -71,7 +71,18 @@ export interface RoomRequestShort {
     type: RequestType;
     createdAt: string;
 }
-
+export interface RoomRequestShortWithUser{
+    id:string;
+    user:UserShort
+    sender:UserShort;
+    status:RequestStatus;
+    type:RequestType;
+    createdAt:string;
+}
+export interface RequestsToRoomResponse{
+    roomId:number;
+    requests:RoomRequestShortWithUser[];
+}
 export interface RoomRequestCounts {
     incomingCount: number;
     outgoingCount: number;
@@ -87,8 +98,9 @@ export interface RoomMember{
     id:string
     user:UserShort;
     role:RoomRole
-    cretedAt:string;
+    createdAt:string;
 }
+
 export enum RoomRole {
     OWNER = "OWNER",
     ADMIN = "ADMIN",
