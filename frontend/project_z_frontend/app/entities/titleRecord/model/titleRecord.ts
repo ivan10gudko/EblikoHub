@@ -22,6 +22,12 @@ export enum TitleType {
     MOVIE = "MOVIE",
     SERIES = "SERIES"
 }
+export interface TitleVisual {
+    titleId: number;
+    apiTitleId: number;
+    titleName: string;
+    imageUrl: string;
+}
 
 export const titleTypeOptions = [
     { value: TitleType.ANIME, label: "Anime" },
