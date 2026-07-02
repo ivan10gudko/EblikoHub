@@ -8,6 +8,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import io.swagger.v3.oas.models.parameters.QueryParameter;
+import project_z.demo.common.QueryParameters.QueryParameters;
 import project_z.demo.common.QueryParameters.RoomTitlesQueryParameters;
 import project_z.demo.dto.RoomTitleDtos.RoomTitleCreateDto;
 import project_z.demo.dto.RoomTitleDtos.RoomTitleDetailsDto;
@@ -19,6 +21,7 @@ import project_z.demo.services.RoomTitleService;
 
 import java.util.List;
 import java.util.UUID;
+
 
 
 @RestController
@@ -41,6 +44,10 @@ public class RoomTitleController {
     public ResponseEntity<RoomTitlesResponseDto> getMethodName(@PathVariable("roomId") Long roomId, RoomTitlesQueryParameters roomTitlesQueryParameters) {
         UUID userId = securityService.getCurrentUserId();
         return  new ResponseEntity<>(roomTitleService.getRoomTitles(roomId, userId, roomTitlesQueryParameters), HttpStatus.OK);
+    }
+    @GetMapping("/getRoomTitlesWithoutLinks")
+    public ResponseEntity<Page<RoomTitleDetailsDto>> getRoomTitlesWithoutLinks(@PathVariable("roomId") long roomId, QueryParameters queryParameters) {
+        return new ResponseEntity<>(roomTitleService.getRoomTitlesWithoutLinks(roomId, queryParameters), HttpStatus.OK);
     }
     
     @GetMapping

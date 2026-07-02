@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -17,11 +18,15 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import io.swagger.v3.oas.models.parameters.QueryParameter;
 import lombok.RequiredArgsConstructor;
 import project_z.demo.JavaUtil.PagingHelper;
 import project_z.demo.JavaUtil.TitleSortingUtils;
 import project_z.demo.Mappers.Mapper;
+import project_z.demo.Mappers.impl.RoomTitleMappers.RoomTitleDetailsMapper;
+import project_z.demo.Mappers.impl.RoomTitleMappers.RoomTitleSummaryMapper;
 import project_z.demo.common.Exceptions.ResourceNotFoundException;
+import project_z.demo.common.QueryParameters.QueryParameters;
 import project_z.demo.common.QueryParameters.RoomTitlesQueryParameters;
 import project_z.demo.dto.RoomTitleDtos.RoomTitleCreateDto;
 import project_z.demo.dto.RoomTitleDtos.RoomTitleDetailsDto;
@@ -66,6 +71,8 @@ public class RoomTitleServiceImpl implements RoomTitleService {
     private final Mapper<UserEntity, UserShortDto> userShortMapper;
     private final SecurityService securityService;
     private final RoomTitleLinkRepository linkRepository;
+    private final RoomTitleSummaryMapper roomTitleSummaryMapper;
+    private final Mapper<RoomTitleEntity, RoomTitleDetailsDto> roomTitleDetailsMapper;
 
     @Override
     @Transactional
@@ -112,7 +119,6 @@ public class RoomTitleServiceImpl implements RoomTitleService {
         if (roomId == null) {
             throw new ResourceNotFoundException("room not found");
         }
-        System.out.println(params.getMemberIds());
         Specification<RoomTitleStatsView> spec = Specification
                 .where(RoomTitleStatsSpecifications.hasRoomId(roomId))
                 .and(RoomTitleStatsSpecifications
@@ -151,51 +157,19 @@ public class RoomTitleServiceImpl implements RoomTitleService {
                 return null;
 
             Double avg = statsView.getAvgRating() != null ? statsView.getAvgRating() : 0.0;
-            return mapToDto(entity, avg, linksByTitleId, currentUserId, params.getStatus());
+            return roomTitleSummaryMapper.mapTo(entity, avg, linksByTitleId, currentUserId, params.getStatus());
         });
 
         return new RoomTitlesResponseDto(page, usersCache);
     }
 
-    private RoomTitleSummaryDto mapToDto(
-            RoomTitleEntity entity,
-            Double avg,
-            Map<UUID, List<RoomTitleLinkEntity>> linksByTitleId,
-            UUID currentUserId,
-            TitleStatus targetStatus) {
-        List<RoomTitleLinkEntity> linksForTitle = linksByTitleId.getOrDefault(entity.getId(), List.of());
+    @Override
+    public Page<RoomTitleDetailsDto> getRoomTitlesWithoutLinks(Long roomId, QueryParameters params) {
+        Pageable pageable = PagingHelper.toPageable(params);
 
-        List<RoomTitleUserIdAndTitleStatusDto> participation = linksForTitle.stream()
-                .sorted(Comparator
-                        .comparing((RoomTitleLinkEntity l) -> {
-                            TitleStatus currentStatus = l.getUserTitleRecord().getStatus();
+        Page<RoomTitleEntity> titlePage = repository.findAllPagedByRoom_RoomId(roomId, pageable);
 
-                            if (targetStatus != null) {
-                                return (currentStatus == targetStatus) ? "0" : "1";
-                            }
-
-                            return String.valueOf(TitleSortingUtils.STATUS_PRIORITY.getOrDefault(currentStatus, 99));
-                        })
-                        .thenComparing(l -> l.getUserTitleRecord().getUser().getName()))
-                .map(link -> new RoomTitleUserIdAndTitleStatusDto(
-                        link.getUserTitleRecord().getUser().getUserId(),
-                        link.getUserTitleRecord().getStatus()))
-                .collect(Collectors.toList());
-
-        Optional<RoomTitleLinkEntity> myLink = Optional.empty();
-        for (RoomTitleLinkEntity link : linksForTitle) {
-            if (link.getUserTitleRecord().getUser().getUserId().equals(currentUserId)) {
-                myLink = Optional.of(link);
-                break;
-            }
-        }
-
-        return new RoomTitleSummaryDto(
-                entity.getId(),
-                roomTitleShortMapper.mapTo(entity),
-                avg,
-                myLink.map(l -> l.getUserTitleRecord().getStatus()).orElse(null),
-                myLink.map(l -> titleMapper.mapTo(l.getUserTitleRecord())).orElse(null),
-                participation);
+        return titlePage.map(roomTitleDetailsMapper::mapTo);
     }
+
 }
