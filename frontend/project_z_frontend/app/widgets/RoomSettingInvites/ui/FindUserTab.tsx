@@ -2,7 +2,7 @@ import { useState } from "react";
 import SearchIcon from "@mui/icons-material/Search";
 
 import { useRoomRequests } from "~/entities/room/hooks/useRoomRequests";
-import type { UserShort } from "~/entities/room/model/room.types"; // Використовуємо UserShort з нових типів
+import type { UserShort, UserWithRelationsToRoomDto } from "~/entities/room/model/room.types"; // Використовуємо UserShort з нових типів
 import { useRoomUserSearch } from "~/entities/room";
 import { UserSearchDropdown, UserShortRow } from "~/entities/user";
 
@@ -13,26 +13,26 @@ interface FindUserTabProps {
 export const FindUserTab = ({ roomId }: FindUserTabProps) => {
   const [query, setQuery] = useState("");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  
+
   // Зберігаємо список успішно запрошених юзерів у цій сесії
   const [invitedUsers, setInvitedUsers] = useState<UserShort[]>([]);
 
   // Хук нескінченного пошуку від Головастого
   const { data, isLoading: isSearchLoading, error: searchError } = useRoomUserSearch(roomId, query);
-  
+
   // Дістаємо правильні методи та лоадери з нашого хука
   const { sendInvite, isSendingInvite } = useRoomRequests(roomId);
 
   // Перетворюємо сторінки пагінації у плоский масив
   const searchResults = data?.pages.flatMap((page) => page.content || []) || [];
 
-  const handleSelectUser = (user: UserShort) => {
-    // Викликаємо правильну мутацію, прокидуючи roomId з пропсів та receiverId з об'єкта юзера
+  const handleSelectUser = (item: UserWithRelationsToRoomDto) => {
+    const user = item.user;
+
     sendInvite(
       { roomId, receiverId: user.userId },
       {
         onSuccess: () => {
-          // Якщо такого юзера ще немає в списку запрошених сесії, додаємо його
           if (!invitedUsers.some((u) => u.userId === user.userId)) {
             setInvitedUsers((prev) => [...prev, user]);
           }
@@ -66,8 +66,14 @@ export const FindUserTab = ({ roomId }: FindUserTabProps) => {
         {/* Дропдаун тепер отримує правильні результати з PageResponse структурою */}
         {isDropdownOpen && query.trim().length > 0 && (
           <div className="w-full max-w-md absolute top-[76px] left-0">
-            <UserSearchDropdown
+            <UserSearchDropdown<UserWithRelationsToRoomDto>
               results={searchResults}
+              mapToDisplayItem={(r) => ({
+                userId: r.user.userId,
+                name: r.user.name,
+                nameTag: r.user.nameTag,
+                img: r.user.imageUrl
+              })}
               isLoading={isSearchLoading || isSendingInvite}
               onSelect={handleSelectUser}
               onClose={() => setIsDropdownOpen(false)}

@@ -34,6 +34,12 @@ export const MembersStep = ({
       {searchResults.length > 0 && (
         <UserSearchDropdown
           results={searchResults}
+          mapToDisplayItem={(p) => ({
+            userId: p.userId,
+            name: p.name,
+            nameTag: p.nameTag,
+            img: p.img
+          })}
           onSelect={onSelect}
           isLoading={isLoading}
         />
@@ -44,7 +50,7 @@ export const MembersStep = ({
       <h4 className="text-xs font-bold uppercase text-muted-foreground mb-3 shrink-0">
         Added Members ({addedUsers.length})
       </h4>
-      
+
       <div className="flex-1 overflow-y-auto pr-1 custom-scrollbar space-y-2">
         {addedUsers.length === 0 ? (
           <p className="text-sm text-muted-foreground italic text-center mt-10">
