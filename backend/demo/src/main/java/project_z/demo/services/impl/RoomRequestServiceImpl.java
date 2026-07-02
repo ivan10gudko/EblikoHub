@@ -6,11 +6,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import project_z.demo.Mappers.Mapper;
+import project_z.demo.Mappers.impl.RoomRequestMappers.RequestsToRoomResponseDtoMapper;
 import project_z.demo.common.Exceptions.ResourceNotFoundException;
 import project_z.demo.common.Exceptions.RoomMembersExceptions.RoomMembersConflictException;
+import project_z.demo.dto.RoomRequestsDtos.RequestsToRoomResponseDto;
 import project_z.demo.dto.RoomRequestsDtos.RoomRequestCountsDto;
 import project_z.demo.dto.RoomRequestsDtos.RoomRequestDetailsDto;
 import project_z.demo.dto.RoomRequestsDtos.RoomRequestShortDto;
+import project_z.demo.dto.RoomRequestsDtos.RoomRequestShortWithUserDto;
 import project_z.demo.entity.*;
 import project_z.demo.enums.RequestStatus;
 import project_z.demo.enums.RequestType;
@@ -32,6 +35,8 @@ public class RoomRequestServiceImpl implements RoomRequestService {
     private final RoomBanRepository roomBanRepository;
     private final Mapper<RoomRequestsEntity, RoomRequestDetailsDto> requestMapper;
     private final Mapper<RoomRequestsEntity, RoomRequestShortDto> requestShortMapper;
+    private final Mapper<RoomRequestsEntity,RoomRequestShortWithUserDto> requestShortWithUserMapper;
+    private final RequestsToRoomResponseDtoMapper requestsToRoomResponseDtoMapper;
 
     @Transactional
     public void sendRequest(UUID senderId, UUID receiverId, long roomId, RequestType type) {
@@ -109,17 +114,27 @@ public class RoomRequestServiceImpl implements RoomRequestService {
     @Override
     @Transactional(readOnly = true)
     public List<RoomRequestShortDto> getRequestsByUserId(UUID userId, RequestStatus status, RequestType type) {
-        if(type.equals(RequestType.JOIN_REQUEST)){
+        if (type.equals(RequestType.JOIN_REQUEST)) {
             return roomRequestRepository.findOutgoingRequests(userId, status, type)
-                .stream()
-                .map(requestShortMapper::mapTo)
-                .collect(Collectors.toList());
-        }
-        else{
+                    .stream()
+                    .map(requestShortMapper::mapTo)
+                    .collect(Collectors.toList());
+        } else {
             return roomRequestRepository.findIncomingRequests(userId, status, type)
-                .stream()
-                .map(requestShortMapper::mapTo)
-                .collect(Collectors.toList());
+                    .stream()
+                    .map(requestShortMapper::mapTo)
+                    .collect(Collectors.toList());
         }
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public RequestsToRoomResponseDto getRequestsByRoomId(Long roomId, RequestStatus status, RequestType type) {
+        List<RoomRequestsEntity> requests = roomRequestRepository.findByRoom_RoomIdAndStatusAndType(roomId, status, type);
+
+        List<RoomRequestShortWithUserDto> dtos =  requests.stream()
+                .map(requestShortWithUserMapper::mapTo)
+                .collect(Collectors.toList());
+        return requestsToRoomResponseDtoMapper.mapTo(dtos, roomId);
     }
 }
