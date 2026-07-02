@@ -1,34 +1,22 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import PushPinIcon from "@mui/icons-material/PushPin";
-import {
-  StatusSelect,
-  TitleTypeThemes,
-  type TitleRecord,
-} from "~/entities/titleRecord";
+import { StatusSelect, TitleTypeThemes, type TitleRecord } from "~/entities/titleRecord";
 import { useUpdateTitleRecord } from "~/entities/titleRecord/hooks/useTitleRecordUpdateMutation";
 import { CompactRate } from "~/shared/ui/CompactRate";
 import { TitleActionsMenu } from "../../TitleActionsMenu";
 import type { Rating } from "~/shared/types";
-import {
-  useTitleFilterStore,
-  type TitleSortType,
-} from "~/features/titleFilter/store/titleFilter.store";
+import { useTitleFilterStore, type TitleSortType } from "~/features/titleFilter/store/titleFilter.store";
 
 interface PinnedWatchlistRowProps {
   title: TitleRecord;
   onOpenRatingModal: () => void;
 }
 
-export const PinnedWatchlistRow = ({
-  title,
-  onOpenRatingModal,
-}: PinnedWatchlistRowProps) => {
+export const PinnedWatchlistRow = ({ title, onOpenRatingModal }: PinnedWatchlistRowProps) => {
   const navigate = useNavigate();
   const [tempTitleName, setTempTitleName] = useState(title.titleName);
-  const { unpinTitle, deleteTitle, updateTitle } = useUpdateTitleRecord(
-    title.titleId,
-  );
+  const { unpinTitle, deleteTitle, updateTitle } = useUpdateTitleRecord(title.titleId);
   const sortBy = useTitleFilterStore((state) => state.sortBy);
   const isAvgView = sortBy === ("avgRating" as TitleSortType);
 
@@ -42,20 +30,27 @@ export const PinnedWatchlistRow = ({
 
   return (
     <div
-      className={`group/pinned flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-4 bg-primary/5 p-3 rounded-xl border-2 border-primary/40 shadow-md transition-all duration-300 w-full relative ${themeClasses}`}
+      className={`group/pinned flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-4 bg-primary/5 p-2 rounded-xl border border-primary/40 shadow-md transition-all duration-300 w-full relative ${themeClasses}`}
     >
-      <div className="absolute -top-2.5 left-4 bg-primary text-background text-[9px] uppercase tracking-wider font-black px-2 py-0.5 rounded-full shadow-sm">
+      
+      <div className="absolute -top-2.5 left-4 bg-primary text-background text-[9px] uppercase tracking-wider font-black px-2 py-0.5 rounded-full shadow-sm z-10 pointer-events-none">
         Pinned Title
       </div>
 
-      <div className="flex items-center flex-1 gap-3 min-w-0">
+      
+      <div className="flex items-center flex-1 gap-1.5 min-w-0">
+        
+        
+        <div className="flex items-center justify-center h-10 w-5 select-none flex-shrink-0" />
+
+        
         <button
           type="button"
           onClick={(e) => {
             e.stopPropagation();
             unpinTitle();
           }}
-          className="flex items-center justify-center h-10 w-6 text-primary hover:text-destructive transition-colors cursor-pointer pl-1"
+          className="flex items-center justify-center h-10 w-5 text-primary transition-colors cursor-pointer shrink-0"
           title="Unpin title"
         >
           <PushPinIcon
@@ -64,7 +59,8 @@ export const PinnedWatchlistRow = ({
           />
         </button>
 
-        <div className="relative h-10 w-16 flex-shrink-0 transition-transform duration-500 hover:scale-[3.0] hover:z-10 cursor-pointer">
+        
+        <div className="relative h-10 w-16 ml-1 flex-shrink-0 transition-transform duration-500 hover:scale-[3.0] hover:z-10 cursor-pointer">
           <img
             src={title.imageUrl || DEFAULT_IMAGE_PATH}
             onClick={handleImageClick}
@@ -73,6 +69,7 @@ export const PinnedWatchlistRow = ({
           />
         </div>
 
+        
         <div className="flex-1 min-w-0">
           <input
             name="Title name"
@@ -88,13 +85,14 @@ export const PinnedWatchlistRow = ({
         </div>
       </div>
 
+      
       <div className="flex items-center justify-between sm:justify-end gap-3 sm:w-auto mt-2 sm:mt-0">
         <div className="flex-shrink-0 w-32 sm:w-40">
           <StatusSelect
             variant="page"
             initialData={title}
             titleRecord={title}
-            className="h-9 text-xs font-bold bg-transparent rounded-lg border-primary/20"
+            className="h-9 text-xs font-bold bg-transparent rounded-lg"
           />
         </div>
 
