@@ -36,7 +36,7 @@ interface TitleRecordService {
     moveToPlanned(options: ActionOptions): Promise<TitleRecord>;
     markAsWatched(options: ActionOptions): Promise<TitleRecord>;
     markAsDropped(options: ActionOptions): Promise<TitleRecord>;
-getTitleStats(userId: string): Promise<TitleStats>;
+    getTitleStats(userId: string): Promise<TitleStats>;
     saveAction(options: ActionOptions & { data: Partial<TitleRecord> }): Promise<TitleRecord>;
 }
 
