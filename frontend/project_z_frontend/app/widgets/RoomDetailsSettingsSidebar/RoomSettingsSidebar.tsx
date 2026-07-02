@@ -22,7 +22,6 @@ const getLinkClass = (isActive: boolean) =>
       : "text-foreground/80 border-border/40 bg-background-muted/20 hover:bg-background-muted/60 hover:text-foreground hover:border-primary/50 hover:translate-x-1"
   }`;
 
-// Зменшені падінги та шрифт для підпунктів інвайтів
 const getSubLinkClass = (isActive: boolean) =>
   `flex items-center gap-3.5 px-5 py-2 rounded-xl font-medium transition-all duration-200 border w-full ${
     isActive
@@ -57,6 +56,15 @@ export const RoomSettingsSidebar = ({ roomId, role }: RoomSettingsSidebarProps) 
 
   const hasInvitesAccess = [RoomRole.OWNER, RoomRole.ADMIN].includes(role);
 
+  const handleInvitesToggle = () => {
+    if (isInvitesOpen && isInvitesActive) {
+      setIsInvitesOpen(false);
+    } else {
+      setIsInvitesOpen(true);
+      navigate(`/rooms/${roomId}/settings/invites`);
+    }
+  };
+
   return (
     <Sidebar className="hidden md:flex flex-col p-5 gap-3 h-[calc(100vh-40px)] ml-5 my-5 shrink-0 backdrop-blur-md rounded-3xl md:min-h-[calc(100vh-64px)] w-80">
       <nav className="flex flex-col gap-3.5">
@@ -78,7 +86,7 @@ export const RoomSettingsSidebar = ({ roomId, role }: RoomSettingsSidebarProps) 
           <div className="flex flex-col gap-1 w-full">
             <button
               type="button"
-              onClick={() => setIsInvitesOpen(!isInvitesOpen)}
+              onClick={handleInvitesToggle}
               className={getLinkClass(isInvitesActive)}
             >
               <span className="flex items-center justify-between w-full">
@@ -100,9 +108,13 @@ export const RoomSettingsSidebar = ({ roomId, role }: RoomSettingsSidebarProps) 
             >
               <div className="overflow-hidden flex flex-col gap-1">
                 
-                {/* 1. Find User */}
-                <NavLink to={`/rooms/${roomId}/settings/invites/find`} className={({ isActive }) => getSubLinkClass(isActive)}>
-                  {({ isActive }) => (
+                {/* 1. Find User — Тепер веде на базову index-адресу без /find */}
+                <NavLink 
+                  to={`/rooms/${roomId}/settings/invites`} 
+                  end
+                  className={({ isActive }) => getSubLinkClass(isActive)}
+                >
+                  {() => (
                     <span className="flex items-center gap-3.5 w-full">
                       <PersonSearchIcon className="text-primary scale-105 opacity-90" />
                       <span className="text-sm tracking-wide">Find User</span>
@@ -112,7 +124,7 @@ export const RoomSettingsSidebar = ({ roomId, role }: RoomSettingsSidebarProps) 
 
                 {/* 2. Join Requests */}
                 <NavLink to={`/rooms/${roomId}/settings/invites/requests`} className={({ isActive }) => getSubLinkClass(isActive)}>
-                  {({ isActive }) => (
+                  {() => (
                     <span className="flex items-center gap-3.5 w-full">
                       <GroupAddIcon className="text-primary scale-105 opacity-90" />
                       <span className="text-sm tracking-wide">Join Requests</span>
@@ -122,7 +134,7 @@ export const RoomSettingsSidebar = ({ roomId, role }: RoomSettingsSidebarProps) 
 
                 {/* 3. Sent */}
                 <NavLink to={`/rooms/${roomId}/settings/invites/sent`} className={({ isActive }) => getSubLinkClass(isActive)}>
-                  {({ isActive }) => (
+                  {() => (
                     <span className="flex items-center gap-3.5 w-full">
                       <OutboxIcon className="text-primary scale-105 opacity-90" />
                       <span className="text-sm tracking-wide">Sent</span>
