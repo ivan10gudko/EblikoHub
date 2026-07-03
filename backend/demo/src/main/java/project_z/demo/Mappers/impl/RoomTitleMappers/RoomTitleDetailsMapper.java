@@ -15,8 +15,16 @@ public class RoomTitleDetailsMapper implements Mapper<RoomTitleEntity, RoomTitle
     private ModelMapper modelMapper;
 
     @Override
-    public RoomTitleDetailsDto mapTo(RoomTitleEntity friendshipEntity) {
-        return modelMapper.map(friendshipEntity, RoomTitleDetailsDto.class);
+    public RoomTitleDetailsDto mapTo(RoomTitleEntity entity) {
+        RoomTitleDetailsDto dto = new RoomTitleDetailsDto();
+        dto.setId(entity.getId());
+        dto.setTitleName(entity.getTitleName());
+        dto.setImageUrl(entity.getImageUrl());
+        dto.setTitleType(entity.getTitleType());
+        dto.setApiTitleId(entity.getApiTitleId());
+        dto.setAddedByUserId(entity.getAddedByUserId());
+        dto.setCreatedAt(entity.getCreatedAt());
+        return dto;
     }
 
     @Override

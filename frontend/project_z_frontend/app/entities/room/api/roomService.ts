@@ -1,5 +1,5 @@
 import { apiClient } from "~/shared/api";
-import type { UserShort, Room, RoomCreateDto, RoomQueryParameters, RoomRequestCounts, RoomRequestShort, RoomSearchResult, RoomShort, UpdateRoomPayload} from "../model/room.types";
+import type { UserShort, Room, RoomCreateDto, RoomQueryParameters, RoomRequestCounts, RoomRequestShort, RoomSearchResult, RoomShort, UpdateRoomPayload, UserWithRelationsToRoomDto} from "../model/room.types";
 import type { PageResponse, RequestStatus, RequestType } from "~/shared/types";
 
 // Очікувана відповідь від бекенду для запитів кімнати
@@ -36,7 +36,7 @@ interface RoomService {
     
     // Нові методи від Головастого
     getRoomRequests(roomId: number, status: RequestStatus, type: RequestType): Promise<RequestsToRoomResponse>;
-    searchUsersForRoom(roomId: number, name: string, params?: any): Promise<any>;
+    searchUsersForRoom(roomId: number, name: string, params?: any): Promise<PageResponse<UserWithRelationsToRoomDto>>;
 }
 
 export const roomService: RoomService = {

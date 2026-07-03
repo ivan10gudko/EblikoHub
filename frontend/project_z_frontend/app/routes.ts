@@ -50,9 +50,12 @@ export default [
                 
                 route(":id/settings", "./routes/roomSettingsLayouts/room.settings.index.tsx", [
                     route("general", "./routes/roomSettingsLayouts/room.settings.general.tsx"),
-                    route("titles", "./routes/roomSettingsLayouts/room.settings.titles.tsx"),
+                    route("titles", "./routes/roomSettingsLayouts/room.settings.titles.tsx",[
+                        index( "./routes/roomSettingsLayouts/roomSettingsTitlesLayouts/room.settings.titles.roomTitles.tsx"),
+                        route("titleLinks", "./routes/roomSettingsLayouts/roomSettingsTitlesLayouts/room.settings.titles.titleLinks.tsx"),
+                    ]),
                     
-                    // Виправлений чистий блок інвайтів без конфліктного /find
+                    // Виправлений чистий блок інвайтів без конфліктного /find 
                     route("invites", "./routes/roomSettingsLayouts/room.settings.requests.tsx", [
                         index("./routes/roomSettingsLayouts/roomSettingsRequestsLayouts/room.settings.requests.find.tsx"),
                         route("requests", "./routes/roomSettingsLayouts/roomSettingsRequestsLayouts/room.settings.requests.requests.tsx"),

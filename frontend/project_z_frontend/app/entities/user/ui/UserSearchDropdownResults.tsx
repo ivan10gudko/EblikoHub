@@ -4,18 +4,25 @@ import SearchOffIcon from "@mui/icons-material/SearchOff";
 import { UserAvatar } from "./UserAvatar";
 import type { UserProfile } from "../model/user.types";
 
-
-interface UserSearchDropdownProps<T extends UserProfile> {
-  results: T[]; 
-  onSelect: (user: T) => void; 
+interface SearchDisplayItem {
+  userId: string;     
+  name: string;
+  nameTag: string;
+  img?:string;
+}
+interface UserSearchDropdownProps<T> {
+  results: T[];
+  mapToDisplayItem: (item: T) => SearchDisplayItem;
+  onSelect: (item: T) => void;
   onClose?: () => void;
   isLoading?: boolean;
 }
 
-export const UserSearchDropdown = <T extends UserProfile>({
+export const UserSearchDropdown = <T,>({
   results,
   onSelect,
   onClose,
+  mapToDisplayItem,
   isLoading,
 }: UserSearchDropdownProps<T>) => {
   return (
@@ -49,30 +56,26 @@ export const UserSearchDropdown = <T extends UserProfile>({
             <p className="text-sm">No users found</p>
           </div>
         ) : (
-          results.map((user, index) => {
-            // Універсально витягуємо поля завдяки fallback-варіантам
-            const uId = user.userId || `fallback-id-${index}`;
-            const uName = user.name  || "User";
-            const uNameTag = user.nameTag || "username";
-            const uImg = user.img;
+          results.map((user) => {
+            const display = mapToDisplayItem(user);
 
             return (
               <div
                 onClick={() => onSelect(user)}
-                key={uId}
+                key={display.userId}
                 className="flex items-center gap-3 p-4 hover:bg-background-muted cursor-pointer transition-colors border-b border-border last:border-0"
               >
-                <UserAvatar name={uName} src={uImg} size="sm" />
-                
+                <UserAvatar name={display.name} src={display.img} size="sm" />
+
                 <div className="flex-grow min-w-0">
                   <p className="font-bold text-foreground text-sm truncate">
-                    {uName}
+                    {display.name}
                   </p>
                   <p className="text-[10px] text-muted-foreground uppercase tracking-wider">
-                    @{uNameTag}
+                    @{display.nameTag}
                   </p>
                 </div>
-                
+
                 <Button className="p-1 hover:bg-primary/20 rounded-full transition-colors">
                   <AddCircleOutlineIcon
                     className="text-primary"

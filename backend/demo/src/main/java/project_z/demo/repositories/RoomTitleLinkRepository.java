@@ -15,6 +15,9 @@ public interface RoomTitleLinkRepository extends JpaRepository<RoomTitleLinkEnti
 
         List<RoomTitleLinkEntity> findByRoomTitle_Id(UUID roomTitleId);
 
+        List<RoomTitleLinkEntity> findByRoomTitle_IdInAndUserTitleRecord_User_UserId(List<UUID> roomTitleIds,
+                        UUID userId);
+
         List<RoomTitleLinkEntity> findByUserTitleRecord_User_UserIdAndRoomTitle_Room_RoomId(UUID userId, Long roomId);
 
         void deleteByUserTitleRecord_TitleIdAndRoomTitle_Id(Long titleId, UUID roomTitleId);
