@@ -1,6 +1,5 @@
 import { apiClient } from "~/shared/api";
 import type { PageResponse } from "~/shared/types";
-import type { TitleType } from "~/entities/titleRecord";
 import type { 
     RoomTitleQueryParameters, 
     RoomTitlesResponse, 
@@ -10,12 +9,11 @@ import type {
     RoomTitleCreateRequest
 } from "../model/roomTitle.types";
 
-
-
 export interface RoomTitlesService {
     getRoomTitles(roomId: number, params: RoomTitleQueryParameters): Promise<RoomTitlesResponse>;
     getRoomTitlesWithUserLinks(roomId: number, userId: string, params: RoomTitleWithSearchQueryParams): Promise<PageResponse<RoomTitleWithUserLinks>>;
     createTitle(roomId: number, dto: RoomTitleCreateRequest): Promise<RoomTitleDetails>;
+    updateTitle(roomId: number, titleId: string, dto: RoomTitleCreateRequest): Promise<RoomTitleDetails>;
     deleteTitle(roomId: number, titleId: string): Promise<void>;
     findAll(roomId: number): Promise<RoomTitleDetails[]>;
 }
@@ -33,6 +31,11 @@ export const roomTitleService: RoomTitlesService = {
 
     async createTitle(roomId, dto) {
         const { data } = await apiClient.post<RoomTitleDetails>(`/rooms/${roomId}/titles`, dto);
+        return data;
+    },
+
+    async updateTitle(roomId, titleId, dto) {
+        const { data } = await apiClient.put<RoomTitleDetails>(`/rooms/${roomId}/titles/${titleId}`, dto);
         return data;
     },
 

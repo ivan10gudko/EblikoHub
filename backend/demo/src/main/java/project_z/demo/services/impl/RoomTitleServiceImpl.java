@@ -25,6 +25,7 @@ import project_z.demo.JavaUtil.TitleSortingUtils;
 import project_z.demo.Mappers.Mapper;
 import project_z.demo.Mappers.impl.RoomTitleMappers.RoomTitleDetailsMapper;
 import project_z.demo.Mappers.impl.RoomTitleMappers.RoomTitleSummaryMapper;
+import project_z.demo.Mappers.impl.RoomTitleMappers.RoomTitleUpdateMapperImpl;
 import project_z.demo.common.Exceptions.ResourceNotFoundException;
 import project_z.demo.common.QueryParameters.QueryParameters;
 import project_z.demo.common.QueryParameters.RoomTitlesQueryParameters.RoomTitlesQueryParameters;
@@ -65,7 +66,7 @@ public class RoomTitleServiceImpl implements RoomTitleService {
     private final RoomRepository roomRepository;
     private final RoomTitleEntityRepository repository;
     private final Mapper<RoomTitleEntity, RoomTitleDetailsDto> mapper;
-    private final Mapper<RoomTitleEntity, RoomTitleUpdateDto> updateMapper;
+    private final RoomTitleUpdateMapperImpl updateMapper;
     private final Mapper<RoomTitleEntity, RoomTitleCreateDto> createMapper;
     private final Mapper<RoomTitleEntity, RoomTitleShortDto> roomTitleShortMapper;
     private final RoomTitleStatsRepository roomTitleStatsRepository;
@@ -114,8 +115,11 @@ public class RoomTitleServiceImpl implements RoomTitleService {
 
     @Override
     @Transactional
-    public RoomTitleDetailsDto update(UUID userId, RoomTitleUpdateDto dto) {
-        RoomTitleEntity roomTitleEntity = updateMapper.mapFrom(dto);
+    public RoomTitleDetailsDto update(UUID titleId, RoomTitleUpdateDto dto) {
+        RoomTitleEntity entity = repository.findById(titleId).orElseThrow(
+                () -> new ResourceNotFoundException("Room Title not found"));
+
+        RoomTitleEntity roomTitleEntity = updateMapper.mapFrom(entity, dto);
         return mapper.mapTo(repository.save(roomTitleEntity));
     }
 

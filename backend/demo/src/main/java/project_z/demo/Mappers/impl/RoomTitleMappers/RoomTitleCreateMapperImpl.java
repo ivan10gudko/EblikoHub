@@ -19,7 +19,11 @@ public class RoomTitleCreateMapperImpl implements Mapper<RoomTitleEntity, RoomTi
     }
 
     @Override
-    public RoomTitleEntity mapFrom(RoomTitleCreateDto friendshipDetailsDto) {
-        return modelMapper.map(friendshipDetailsDto, RoomTitleEntity.class);
+    public RoomTitleEntity mapFrom(RoomTitleCreateDto dto) {
+        return new RoomTitleEntity().builder().apiTitleId(dto.getApiTitleId())
+                .imageUrl(dto.getImageUrl())
+                .titleName(dto.getTitleName())
+                .titleType(dto.getTitleType())
+                .build();
     }
 }
