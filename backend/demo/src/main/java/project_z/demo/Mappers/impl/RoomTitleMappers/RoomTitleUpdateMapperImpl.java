@@ -9,17 +9,19 @@ import project_z.demo.dto.RoomTitleDtos.RoomTitleUpdateDto;
 import project_z.demo.entity.RoomTitleEntity;
 
 @Component
-public class RoomTitleUpdateMapperImpl implements Mapper<RoomTitleEntity, RoomTitleUpdateDto> {
+public class RoomTitleUpdateMapperImpl {
     @Autowired
     private ModelMapper modelMapper;
 
-    @Override
     public RoomTitleUpdateDto mapTo(RoomTitleEntity friendshipEntity) {
         return modelMapper.map(friendshipEntity, RoomTitleUpdateDto.class);
     }
 
-    @Override
-    public RoomTitleEntity mapFrom(RoomTitleUpdateDto friendshipDetailsDto) {
-        return modelMapper.map(friendshipDetailsDto, RoomTitleEntity.class);
+    public RoomTitleEntity mapFrom(RoomTitleEntity entity, RoomTitleUpdateDto dto) {
+        entity.setApiTitleId(dto.getApiTitleId());
+        entity.setImageUrl(dto.getImageUrl());
+        entity.setTitleName(dto.getTitleName());
+        entity.setTitleType(dto.getTitleType());
+        return entity;
     }
 }
