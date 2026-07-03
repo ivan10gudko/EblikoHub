@@ -16,10 +16,13 @@ export interface RoomTitleShort {
     apiTitleId: number;
 }
 export interface RoomTitleDetails {
-    id: string;
-    title:TitleShortDto;
-    roomTitle:RoomTitleShort;
-    createdAt: string; 
+  id: string; 
+  titleName: string;
+  imageUrl?: string | null;
+  titleType: TitleType;
+  apiTitleId?: number | null;
+  addedByUserId: string;
+  createdAt: string; 
 }
 export interface RoomTitleLinkShort {
     id: string;
