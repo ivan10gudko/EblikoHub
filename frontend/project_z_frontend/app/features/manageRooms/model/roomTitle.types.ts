@@ -71,3 +71,9 @@ export interface RoomTitlesResponse {
     content: PageResponse<RoomTitleSummary>;
     usersCache: Record<string, UserShort>;
 }
+export interface RoomTitleCreateRequest {
+    titleName: string;
+    imageUrl?: string | null;
+    titleType: TitleType;
+    apiTitleId: number;
+}
