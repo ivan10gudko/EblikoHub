@@ -75,5 +75,11 @@ export interface RoomTitleCreateRequest {
     titleName: string;
     imageUrl?: string | null;
     titleType: TitleType;
-    apiTitleId: number;
+    apiTitleId?: number;
+}
+export interface RoomTitleLinkDetailsDto {
+    id: string;
+    title: TitleShortDto;
+    roomTitle: RoomTitleShort;
+    createdAt: string;
 }

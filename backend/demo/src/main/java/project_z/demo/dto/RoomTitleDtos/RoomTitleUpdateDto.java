@@ -6,7 +6,6 @@ import project_z.demo.enums.TitleType;
 
 @Data
 public class RoomTitleUpdateDto {
-    private RoomShortDto room;
 
     private String titleName;
 
