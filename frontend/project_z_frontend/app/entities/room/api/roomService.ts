@@ -1,6 +1,16 @@
 import { apiClient } from "~/shared/api";
-import type { UserShort, Room, RoomCreateDto, RoomQueryParameters, RoomRequestCounts, RoomRequestShort, RoomSearchResult, RoomShort, UpdateRoomPayload, RequestsToRoomResponse, UserWithRelationsToRoomDto } from "../model/room.types";
-import type { PageResponse, QueryParams, RequestStatus, RequestType } from "~/shared/types";
+import type { UserShort, Room, RoomCreateDto, RoomQueryParameters, RoomRequestCounts, RoomRequestShort, RoomSearchResult, RoomShort, UpdateRoomPayload, UserWithRelationsToRoomDto} from "../model/room.types";
+import type { PageResponse, RequestStatus, RequestType } from "~/shared/types";
+
+
+interface RequestsToRoomResponse {
+    requests: any[];
+    last: boolean;
+    number: number;
+    totalElements: number;
+    totalPages: number;
+}
+
 interface RoomService {
     create(data: RoomCreateDto): Promise<Room>;
     getById(roomId: number): Promise<Room>;

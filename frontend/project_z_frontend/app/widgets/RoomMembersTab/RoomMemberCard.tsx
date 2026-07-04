@@ -4,14 +4,13 @@ import IconButton from "@mui/material/IconButton";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
-import ShieldIcon from "@mui/icons-material/Shield";
-import StarIcon from "@mui/icons-material/Star";
 import GavelIcon from "@mui/icons-material/Gavel";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
-import PersonIcon from "@mui/icons-material/Person";
 import { UserAvatar } from "~/entities/user";
-import type { RoomMemberShort } from "~/entities/room/model/room.types";
+
+import { RoomRole, type RoomMemberShort } from "~/entities/room/model/room.types";
+import { RoomMemberRoleBadge } from "~/features/manageRooms/ui/RoomMemberRoleBadge";
 
 interface RoomMemberCardProps {
     member: RoomMemberShort;
@@ -36,19 +35,12 @@ export const RoomMemberCard: React.FC<RoomMemberCardProps> = ({
     const avatarSrc = userData?.img;
 
     const isOwner = member.role === "OWNER" || (Boolean(realUserId) && String(realUserId) === String(roomOwnerId));
-    const isAdmin = member.role === "ADMIN" && !isOwner;
     const isSelf = String(realUserId) === String(currentUserId);
-
     const canManage = isCurrentUserAdmin && !isSelf && !isOwner;
 
     const handleOpenMenu = (event: React.MouseEvent<HTMLElement>) => {
         event.stopPropagation();
         setAnchorEl(event.currentTarget);
-    };
-
-    const handleCloseMenu = (event?: React.MouseEvent | React.SyntheticEvent) => {
-        if (event) event.stopPropagation();
-        setAnchorEl(null);
     };
 
     const handleAction = (event: React.MouseEvent, actionType: string) => {
@@ -79,28 +71,13 @@ export const RoomMemberCard: React.FC<RoomMemberCardProps> = ({
                 </div>
 
                 {nameTag && (
-                    <span className="text-xs text-muted-foreground/70 truncate mt-0.5 font-medium">
+                    <span className="text-xs text-foreground-muted truncate mt-0.5 font-medium">
                         @{nameTag}
                     </span>
                 )}
 
                 <div className="flex items-center gap-1 mt-2">
-                    {isOwner ? (
-                        <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full border text-[10px] font-medium bg-amber-500/10 border-amber-500/20 text-amber-500">
-                            <StarIcon style={{ fontSize: "14px", marginTop: "-1px" }} />
-                            <span className="leading-none">Owner</span>
-                        </span>
-                    ) : isAdmin ? (
-                        <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full border text-[10px] font-medium bg-blue-500/10 border-blue-500/20 text-blue-400">
-                            <ShieldIcon style={{ fontSize: "14px", marginTop: "-1px" }} />
-                            <span className="leading-none">Admin</span>
-                        </span>
-                    ) : (
-                        <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full border text-[10px] font-medium bg-white/5 border-white/10 text-white/50">
-                            <PersonIcon style={{ fontSize: "14px", marginTop: "-1px" }} />
-                            <span className="leading-none">Member</span>
-                        </span>
-                    )}
+                    <RoomMemberRoleBadge role={member.role} />
                 </div>
             </div>
 
@@ -140,8 +117,8 @@ export const RoomMemberCard: React.FC<RoomMemberCardProps> = ({
                             },
                         }}
                     >
-                        {member.role === "ADMIN" ? (
-                            <MenuItem onClick={(e) => handleAction(e, "demote")} className="gap-2.5 text-xs! font-medium! py-2">
+                        {member.role === RoomRole.ADMIN ? (
+                            <MenuItem onClick={(e) => handleAction(e, "demote")} className="gap-2.5 text-xs!  font-medium! py-2">
                                 <ArrowDownwardIcon sx={{ fontSize: 16, color: "var(--foreground-muted)" }} />
                                 Demote to Member
                             </MenuItem>
@@ -152,9 +129,10 @@ export const RoomMemberCard: React.FC<RoomMemberCardProps> = ({
                             </MenuItem>
                         )}
 
+                        
                         <div className="border-t border-(--border)/60 my-1" />
 
-                        <MenuItem onClick={(e) => handleAction(e, "ban")} className="gap-2.5 !text-xs !font-medium !text-red-600 py-2">
+                        <MenuItem onClick={(e) => handleAction(e, "ban")} className="gap-2.5 !text-xs !font-medium !text-danger py-2">
                             <GavelIcon sx={{ fontSize: 16 }} />
                             Ban User
                         </MenuItem>
