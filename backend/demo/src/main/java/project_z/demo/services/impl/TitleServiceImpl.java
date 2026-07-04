@@ -7,6 +7,7 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
@@ -22,10 +23,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import lombok.RequiredArgsConstructor;
 import project_z.demo.JavaUtil.BeanUtilsHelper;
 import project_z.demo.JavaUtil.PagingHelper;
 import project_z.demo.JavaUtil.PatchHelper;
 import project_z.demo.Mappers.Mapper;
+import project_z.demo.Mappers.impl.TitleMappers.TitleShortWithLinksToRoomTitleMapper;
 import project_z.demo.Mappers.impl.TitleMappers.TitleStatsMapper;
 import project_z.demo.common.Exceptions.ResourceNotFoundException;
 import project_z.demo.common.Exceptions.TitleWithThatMalIdAlreadyExistsException;
@@ -36,27 +39,36 @@ import project_z.demo.dto.TitleDtos.TitleBatchCreateDto;
 import project_z.demo.dto.TitleDtos.TitleDto;
 import project_z.demo.dto.TitleDtos.TitlePatchUpdateDto;
 import project_z.demo.dto.TitleDtos.TitleSameCriteriaDto;
+import project_z.demo.dto.TitleDtos.TitleShortDto;
+import project_z.demo.dto.TitleDtos.TitleShortWithLinksToRoomTitleDto;
 import project_z.demo.dto.TitleDtos.TitleStatsDto;
+import project_z.demo.entity.RoomTitleLinkEntity;
 import project_z.demo.entity.SeasonEntity;
 import project_z.demo.entity.TitleEntity;
 import project_z.demo.entity.UserEntity;
 import project_z.demo.enums.TitleStatus;
 import project_z.demo.enums.TitleType;
 import project_z.demo.repositories.Specifications.TitleSpecifications;
+import project_z.demo.repositories.RoomTitleLinkRepository;
 import project_z.demo.repositories.TitleRepository;
 import project_z.demo.repositories.UserRepository;
 import project_z.demo.security.JwtService;
+import project_z.demo.services.RoomTitleLinkService;
 import project_z.demo.services.SeasonService;
 import project_z.demo.services.TitleService;
 import org.springframework.data.domain.Sort;
 
 @Service
+@RequiredArgsConstructor
 public class TitleServiceImpl implements TitleService {
 
     private final TitleSeachServiceImpl titleSeachServiceImpl;
     private final SeasonService seasonService;
     private final PatchHelper patchHelper;
     private final TitleStatsMapper titleStatsMapper;
+    private final Mapper<TitleEntity, TitleShortDto> titleShortMapper;
+    private final RoomTitleLinkRepository roomTitleLinkRepository;
+    private final TitleShortWithLinksToRoomTitleMapper titleShortWithLinksToRoomTitleMapper;
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -70,14 +82,6 @@ public class TitleServiceImpl implements TitleService {
     private JwtService jwtService;
     @Autowired
     private Mapper<TitleEntity, TitleDto> titleMapper;
-
-    TitleServiceImpl(SeasonService seasonService, TitleSeachServiceImpl titleSeachServiceImpl,
-            PatchHelper patchHelper, TitleStatsMapper titleStatsMapper) {
-        this.seasonService = seasonService;
-        this.titleSeachServiceImpl = titleSeachServiceImpl;
-        this.patchHelper = patchHelper;
-        this.titleStatsMapper = titleStatsMapper;
-    }
 
     @Override
     public TitleEntity createTitle(TitleEntity title) {
@@ -148,6 +152,39 @@ public class TitleServiceImpl implements TitleService {
 
             return dto;
         });
+    }
+
+    @Override
+    public Page<TitleDto> findAllWithLinksByUserIdAndRoomId(TitleQueryParameters params,
+            UUID userId, long roomId) {
+        Pageable pageable = PagingHelper.toPageable(params);
+
+        Specification<TitleEntity> spec = Specification
+                .where(TitleSpecifications.belongsToUser(userId))
+                .and(TitleSpecifications.hasStatus(params.getStatus()))
+                .and(TitleSpecifications.hasName(params.getSearch()))
+                .and(TitleSpecifications.hasTitleTypes(params.getTypes()))
+                .and(TitleSpecifications.notLinkedToRoom(roomId, userId));
+
+        Pageable finalPageable;
+        boolean isAvgSort = "avgRating".equals(params.getSortBy());
+
+        if (isAvgSort) {
+            spec = spec.and(TitleSpecifications.sortByAvgRating(params.getOrder()));
+            finalPageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.unsorted());
+        } else if ("rating".equals(params.getSortBy())) {
+            spec = spec.and(TitleSpecifications.sortByRating(params.getOrder()));
+            finalPageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.unsorted());
+        } else {
+            Sort finalSort = Sort.by(Sort.Direction.DESC, "isPinned").and(pageable.getSort());
+            finalPageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), finalSort);
+        }
+
+        Page<TitleEntity> titlesPage = titleRepository.findAll(spec, finalPageable);
+
+
+
+        return titlesPage.map(title -> titleMapper.mapTo(title));
     }
 
     @Override

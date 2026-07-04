@@ -11,6 +11,8 @@ import project_z.demo.dto.TitleDtos.SameCriteriaRatingResponse;
 import project_z.demo.dto.TitleDtos.TitleBatchCreateDto;
 import project_z.demo.dto.TitleDtos.TitleDto;
 import project_z.demo.dto.TitleDtos.TitlePatchUpdateDto;
+import project_z.demo.dto.TitleDtos.TitleShortDto;
+import project_z.demo.dto.TitleDtos.TitleShortWithLinksToRoomTitleDto;
 import project_z.demo.dto.TitleDtos.TitleStatsDto;
 import project_z.demo.entity.SeasonEntity;
 import project_z.demo.entity.TitleEntity;
@@ -41,6 +43,8 @@ public interface TitleService {
     TitleEntity findUserTitleByMalId(Integer titleMalId, String token);
 
     List<TitleEntity> findAllByMalIdInUserRooms(Integer titleMalId, String token);
+
+    Page<TitleDto> findAllWithLinksByUserIdAndRoomId(TitleQueryParameters params,UUID userId, long roomId);
 
     Page<TitleDto> findAllByUserId(TitleQueryParameters parameters, UUID userId);
 

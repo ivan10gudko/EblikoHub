@@ -1,5 +1,4 @@
 import type { UserShort } from "~/entities/room";
-import type { Title } from "~/entities/title/model/animeTitle.types";
 import type { TitleShortDto, TitleType, TitleVisual } from "~/entities/titleRecord";
 import type { PageResponse, QueryParams, Status } from "~/shared/types";
 
@@ -12,17 +11,17 @@ export interface RoomTitleShort {
     id: string;
     titleName: string;
     imageUrl: string;
-    type: TitleType;
+    titleType: TitleType;
     apiTitleId: number;
 }
 export interface RoomTitleDetails {
-  id: string; 
+  id: string;
   titleName: string;
   imageUrl?: string | null;
   titleType: TitleType;
   apiTitleId?: number | null;
   addedByUserId: string;
-  createdAt: string; 
+  createdAt: string;
 }
 export interface RoomTitleLinkShort {
     id: string;
@@ -30,7 +29,16 @@ export interface RoomTitleLinkShort {
     roomTitleId: string;
     createdAt: string;
 }
-
+export interface RoomTitleLinkCreate{
+    titleId:number;
+    roomTitleId:string;
+}
+export interface RoomTitleLinkDetails{
+    id:string;
+    title:TitleShortDto;
+    roomTitle:RoomTitleShort;
+    createdAt:string;
+}
 export interface RoomTitleWithSearchQueryParams extends QueryParams{
     search?:string;
 }
@@ -51,17 +59,6 @@ export interface RoomTitleSummary {
     myStatus: Status;
     myTitleInfo: TitleShortDto
     userParticipation: RoomTitleUserIdAndTitleStatus[]
-}
-export interface RoomTitleShort {
-    id: string;
-
-    titleName: string;
-
-    imageUrl: string;
-
-    titleType: TitleType;
-
-    apiTitleId: number;
 }
 export interface RoomTitleUserIdAndTitleStatus {
     userId: string;
