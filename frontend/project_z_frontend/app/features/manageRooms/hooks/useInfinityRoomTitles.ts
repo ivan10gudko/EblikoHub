@@ -1,9 +1,10 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
 import type { RoomTitleQueryParameters } from "../model/roomTitle.types";
 import { roomTitleService } from "../api/roomTitleService";
+import { roomTitleKeys } from "../model/roomTitle.queryKeys";
 
 export const useInfiniteRoomTitles = (roomId: number, params: RoomTitleQueryParameters) => {
-    const queryKey = ['room-titles', roomId, params];
+    const queryKey = roomTitleKeys.list(roomId, params);
     return useInfiniteQuery({
         queryKey,
         queryFn: ({ pageParam }) => {

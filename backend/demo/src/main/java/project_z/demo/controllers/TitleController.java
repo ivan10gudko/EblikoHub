@@ -18,11 +18,14 @@ import project_z.demo.dto.TitleDtos.TitleBatchCreateDto;
 import project_z.demo.dto.TitleDtos.TitleDto;
 import project_z.demo.dto.TitleDtos.TitlePatchUpdateDto;
 import project_z.demo.dto.TitleDtos.TitlePositionUpdateDto;
+import project_z.demo.dto.TitleDtos.TitleShortDto;
+import project_z.demo.dto.TitleDtos.TitleShortWithLinksToRoomTitleDto;
 import project_z.demo.dto.TitleDtos.TitleStatsDto;
 import project_z.demo.entity.TitleEntity;
 import project_z.demo.security.JwtService;
 import project_z.demo.services.TitleService;
 import project_z.demo.services.UserService;
+
 
 @RestController
 @RequestMapping("/api/v1/titles")
@@ -83,6 +86,12 @@ public class TitleController {
     public Page<TitleDto> getTitleListByUserId(@PathVariable("userId") UUID userId, TitleQueryParameters params) {
         return titleService.findAllByUserId(params, userId);
     }
+
+    @GetMapping("/getTitleWithNoLinks/{userId}")
+     public Page<TitleDto> getTitleListWithLinksByUserIdAndRoomId(@PathVariable("userId") UUID userId, @RequestParam("roomId") long roomId, TitleQueryParameters params) {
+        return titleService.findAllWithLinksByUserIdAndRoomId(params, userId, roomId);
+    }
+    
 
     @GetMapping(path = "/mal/{titleMalId}")
     public ResponseEntity<TitleDto> getUserTitleByMalId(@PathVariable("titleMalId") Integer titleMalId,

@@ -19,6 +19,7 @@ export interface RateOptions extends ActionOptions {
 interface TitleRecordService {
 
     get(userId: string, params?: TitleParams): Promise<PageResponse<TitleRecord>>;
+    getTitlesWithNoLinksToRoom(userId: string, roomId: number, params?: TitleParams): Promise<PageResponse<TitleRecord>>;
     post(titleData: CreateTitleRecord): Promise<TitleRecord>;
     put(titleId: number, titleData: TitleRecord): Promise<TitleRecord>;
     patch(titleId: number, titleData: Partial<TitleRecord>): Promise<TitleRecord>;
@@ -28,8 +29,8 @@ interface TitleRecordService {
     getWatched(userId: string): Promise<Array<TitleRecord>>;
     getPlanned(userId: string): Promise<Array<TitleRecord>>;
     getByApiTitleId(jikanId: number): Promise<TitleRecord>;
-    pinTitle(titleId : number) : Promise<TitleRecord>;
-    unpin() : Promise<void>;
+    pinTitle(titleId: number): Promise<TitleRecord>;
+    unpin(): Promise<void>;
     getSameCriteriaRating(titleId: number, category: string, currentRating: number): Promise<SameCriteriaRating>;
     rate(options: RateOptions): Promise<TitleRecord>;
     clearRating(options: ActionOptions): Promise<TitleRecord>;
@@ -48,6 +49,16 @@ export const titleRecordService: TitleRecordService = {
 
         return response.data;
     },
+    async getTitlesWithNoLinksToRoom(userId, roomId, params) {
+        const { data } = await apiClient.get(`/titles/getTitleWithNoLinks/${userId}`, {
+            params: {
+                roomId,
+                ...params
+            }
+        })
+        return data;
+    },
+
     async getSameCriteriaRating(titleId, category, currentRating) {
         const response = await apiClient.get(`/titles/${titleId}/getSameCriteriaRating`, {
             params: {
@@ -59,11 +70,11 @@ export const titleRecordService: TitleRecordService = {
 
         return response.data;
     },
-    async pinTitle(titleId){
+    async pinTitle(titleId) {
         const response = await apiClient.post(`/titles/${titleId}/pinTitle`);
         return response.data;
     },
-    async unpin(){
+    async unpin() {
         await apiClient.post("/titles/unpin");
     },
     async post(titleData) {
