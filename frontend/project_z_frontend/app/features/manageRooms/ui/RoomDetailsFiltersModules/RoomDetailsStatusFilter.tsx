@@ -7,7 +7,7 @@ export const RoomDetailsStatusFilter = () => {
 
     return (
         <div className="flex flex-col gap-2">
-            <label className="text-[10px] uppercase font-bold text-muted-foreground">Status</label>
+            <label className="text-[12px] uppercase font-bold text-muted-foreground">Status</label>
             <div className="flex flex-wrap gap-1.5">
                 {statusOptionsFilters.map(s => {
                     const isActive = (status ?? undefined) === (s.value ?? undefined);

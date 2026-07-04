@@ -5,7 +5,7 @@ export interface UserShort {
     userId: string;
     name: string;
     nameTag: string;
-    imageUrl?: string;
+    img?: string;
 }
 export interface Room {
     roomId: number;

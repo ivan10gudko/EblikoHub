@@ -28,7 +28,7 @@ export const useRoomRequests = (roomId?: number) => {
     }
   };
 
-  // 1. Мутація для входу в кімнату (запит від юзера)
+ 
   const joinMutation = useMutation<void, Error, void, MutationContext>({
     ...mutationConfig,
     mutationFn: () => roomId ? roomService.joinRoom(roomId) : Promise.reject("Room ID required"),
@@ -57,7 +57,7 @@ export const useRoomRequests = (roomId?: number) => {
     onSuccess: () => notify.success("Sent join request!")
   });
 
-  // 2. Мутація для прийняття запиту адміном
+  
   const acceptMutation = useMutation({
     ...mutationConfig,
     mutationFn: ({ roomRequestId }: { roomRequestId: string }) =>
@@ -65,7 +65,7 @@ export const useRoomRequests = (roomId?: number) => {
     onSuccess: () => notify.success("Request accepted!")
   });
 
-  // 3. Мутація для відхилення запиту адміном
+  
   const rejectMutation = useMutation({
     ...mutationConfig,
     mutationFn: ({ roomRequestId }: { roomRequestId: string }) =>
@@ -73,7 +73,7 @@ export const useRoomRequests = (roomId?: number) => {
     onSuccess: () => notify.success("Request rejected!")
   });
 
-  // 4. Мутація для скасування запиту користувачем
+  
   const cancelMutation = useMutation({
     ...mutationConfig,
     mutationFn: ({ roomRequestId }: { roomRequestId: string }) =>
