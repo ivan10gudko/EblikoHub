@@ -21,5 +21,6 @@ public class TitleVisualMapperImpl implements Mapper<TitleEntity, TitleVisualDto
     @Override
     public TitleEntity mapFrom(TitleVisualDto titleDto) {
         return modelMapper.map(titleDto, TitleEntity.class);
-    }    
+    }
+    
 }
