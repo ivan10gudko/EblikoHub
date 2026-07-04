@@ -15,7 +15,6 @@ export default function RoomSettingsRequestsPage() {
         return <div className="p-10 text-white">Loading settings...</div>;
     }
 
-    // Рендеримо велику обгортку з кнопками, а всередину прокидаємо Outlet з контекстом даних
     return (
        
         <Outlet context={{ room, role: roomMember.role }} />

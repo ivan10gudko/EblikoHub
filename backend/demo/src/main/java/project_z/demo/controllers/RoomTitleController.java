@@ -69,6 +69,11 @@ public class RoomTitleController {
                 HttpStatus.OK);
     }
 
+    @GetMapping("/getRoomTitlesWithLinks")
+    public ResponseEntity<Page<RoomTitleWithUserLinksDto>> getRoomTitlesWithLinks(@PathVariable("roomId") long roomId, @PathVariable("userId") UUID userId, RoomTitlesWithSearchQueryParameters queryParameters)  {
+        return new ResponseEntity<>(roomTitleService.getRoomTitlesWithUserLinks(roomId, userId, queryParameters), HttpStatus.OK);
+    }
+
     @PutMapping("/{titleId}")
     @PreAuthorize("@securityService.isAdminOrOwner(#roomId)")
     public ResponseEntity<RoomTitleDetailsDto> update(

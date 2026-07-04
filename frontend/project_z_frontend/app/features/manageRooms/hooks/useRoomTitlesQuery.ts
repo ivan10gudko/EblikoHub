@@ -9,6 +9,6 @@ export const useRoomTitlesQuery = (roomId: number) => {
         order,
         types,
         memberIds,
-        ...(status && { titleStatus: status })
+        ...(status && { status })
     });
 };

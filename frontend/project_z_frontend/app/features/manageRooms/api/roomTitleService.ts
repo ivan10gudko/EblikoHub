@@ -1,12 +1,14 @@
 import { apiClient } from "~/shared/api";
 import type { PageResponse } from "~/shared/types";
-import type { 
-    RoomTitleQueryParameters, 
-    RoomTitlesResponse, 
-    RoomTitleWithSearchQueryParams, 
+import type {
+    RoomTitleQueryParameters,
+    RoomTitlesResponse,
+    RoomTitleWithSearchQueryParams,
     RoomTitleWithUserLinks,
-    RoomTitleDetails, 
-    RoomTitleCreateRequest
+    RoomTitleDetails,
+    RoomTitleCreateRequest,
+    RoomTitleLinkCreate,
+    RoomTitleLinkDetails
 } from "../model/roomTitle.types";
 
 export interface RoomTitlesService {
@@ -16,6 +18,10 @@ export interface RoomTitlesService {
     updateTitle(roomId: number, titleId: string, dto: RoomTitleCreateRequest): Promise<RoomTitleDetails>;
     deleteTitle(roomId: number, titleId: string): Promise<void>;
     findAll(roomId: number): Promise<RoomTitleDetails[]>;
+
+
+    //links
+    createRoomTitleLink(roomId: number, dto: RoomTitleLinkCreate): Promise<RoomTitleLinkDetails>;
 }
 
 export const roomTitleService: RoomTitlesService = {
@@ -46,5 +52,13 @@ export const roomTitleService: RoomTitlesService = {
     async findAll(roomId) {
         const { data } = await apiClient.get<RoomTitleDetails[]>(`/rooms/${roomId}/titles`);
         return data;
-    }
+    },
+
+
+    //links
+
+    async createRoomTitleLink(roomId, dto) {
+        const { data } = await apiClient.post(`/rooms/${roomId}/links`, dto);
+        return data;
+    },
 };
