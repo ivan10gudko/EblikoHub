@@ -1,6 +1,7 @@
 import * as Popover from '@radix-ui/react-popover';
 import { type RoomMemberShort } from "~/entities/room/model/room.types";
 import { UserAvatar } from '~/entities/user';
+
 interface UserMultiSelectProps {
   members: RoomMemberShort[];
   selectedIds: string[];
@@ -20,10 +21,14 @@ export const RoomMemberMultiSelect = ({ members, selectedIds, onChange }: UserMu
 
   return (
     <div className="flex flex-col gap-2">
-      <div className="flex flex-wrap gap-1.5 pb-1 min-h-[32px] custom-scrollbar overflow-x-auto">
+      
+      <div className="flex flex-nowrap gap-1.5 pb-1 w-full custom-scrollbar overflow-x-auto overflow-y-hidden items-center">
         {selectedUsers.map(userMember => (
-          <div key={userMember.user.userId} className="flex items-center gap-1 bg-muted px-2 py-1 rounded-full text-xs whitespace-nowrap">
-            <UserAvatar size='min' name={userMember.user.name} src={userMember.user.imageUrl} />
+          <div 
+            key={userMember.user.userId} 
+            className="user-card-item flex items-center gap-1 px-2.5 hover:text-primary border border-border bg-card hover:bg-primary/10 rounded-lg py-1 hover:border-primary/30 text-xs whitespace-nowrap text-foreground"
+          >
+            <UserAvatar size='min' name={userMember.user.name} src={userMember.user.img} />
             <span>{userMember.user.name}</span>
           </div>
         ))}
@@ -31,27 +36,32 @@ export const RoomMemberMultiSelect = ({ members, selectedIds, onChange }: UserMu
 
       <Popover.Root>
         <Popover.Trigger asChild>
-          <div className="w-full bg-background border border-border p-2.5 rounded-lg text-xs text-muted-foreground cursor-pointer hover:border-primary transition-colors">
+         
+          <div className="user-card-item w-69 p-2.5 border border-border rounded-lg text-xs text-foreground cursor-pointer">
             {selectedIds.length > 0 ? `${selectedIds.length} users selected` : "Select users..."}
           </div>
         </Popover.Trigger>
 
         <Popover.Content
-          className="w-72 bg-background border border-border p-2 rounded-xl shadow-xl z-50"
+          className="w-72 bg-background border border-border p-1.5 rounded-xl shadow-2xl z-50 animate-enter"
           sideOffset={8}
           align="start"
         >
-          <div className="flex flex-col gap-1 max-h-[250px] overflow-y-auto">
+          <div className="flex flex-col gap-1 max-h-[250px] overflow-y-auto pr-1 hide-scrollbar">
             {members.map(member => {
               const isSelected = selectedIds.includes(member.user.userId);
               return (
                 <div
                   key={member.user.userId}
                   onClick={() => handleToggle(member.user.userId)}
-                  className={`flex items-center gap-3 p-2 rounded-lg cursor-pointer transition-colors ${isSelected ? 'bg-primary/10 text-primary' : 'hover:bg-muted text-foreground'
-                    }`}
+                
+                  className={`flex items-center gap-3 p-2 rounded-xl cursor-pointer transition-colors ${
+                    isSelected 
+                      ? 'bg-primary/10 text-primary font-bold' 
+                      : 'bg-card hover:bg-primary/10 border border-border hover:border-primary/30  text-foreground hover:text-primary'
+                  }`}
                 >
-                  <UserAvatar size='min' name={member.user.name} src={member.user.imageUrl} />
+                  <UserAvatar size='min' name={member.user.name} src={member.user.img} />
                   <span className="text-sm font-medium">{member.user.name}</span>
                 </div>
               );
