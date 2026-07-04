@@ -2,9 +2,9 @@ import { apiClient } from "~/shared/api";
 import type { UserShort, Room, RoomCreateDto, RoomQueryParameters, RoomRequestCounts, RoomRequestShort, RoomSearchResult, RoomShort, UpdateRoomPayload, UserWithRelationsToRoomDto} from "../model/room.types";
 import type { PageResponse, RequestStatus, RequestType } from "~/shared/types";
 
-// Очікувана відповідь від бекенду для запитів кімнати
+
 interface RequestsToRoomResponse {
-    content: any[];
+    requests: any[];
     last: boolean;
     number: number;
     totalElements: number;
@@ -34,7 +34,7 @@ interface RoomService {
     pinRoom(roomId: number): Promise<RoomShort>;
     unpin(): Promise<void>;
     
-    // Нові методи від Головастого
+    
     getRoomRequests(roomId: number, status: RequestStatus, type: RequestType): Promise<RequestsToRoomResponse>;
     searchUsersForRoom(roomId: number, name: string, params?: any): Promise<PageResponse<UserWithRelationsToRoomDto>>;
 }
