@@ -74,7 +74,7 @@ export const JoinRequestsTab = ({ roomId }: JoinRequestsTabProps) => {
                   <Button
                     disabled={isPendingAction}
                     onClick={() => rejectRequest({ roomRequestId: requestId }, { onSuccess: () => refetch() })}
-                    className="px-3 py-1.5 bg-card hover:bg-background-muted/60 text-foreground/70 rounded-lg text-xs font-semibold border border-border transition-all disabled:opacity-50 cursor-pointer whitespace-nowrap"
+                    className="w-full border border-danger/40 text-foreground/70 hover:bg-danger/20 hover:text-danger gap-2 px-4 py-2 rounded-xl bg-danger/40 "
                   >
                     Reject
                   </Button>

@@ -44,7 +44,7 @@ export const RoomTitlesManager = ({ roomId }: { roomId: number }) => {
 
                 <button
                     onClick={() => setIsAddModalOpen(true)}
-                    className="px-4 py-2 bg-primary text-primary-foreground rounded-lg font-medium hover:bg-primary/90 transition-colors"
+                    className="h-10  px-4  py-1.5 bg-primary/10 hover:bg-primary/20 text-primary rounded-xl text-xs font-bold border border-primary/30 transition-all disabled:opacity-50 cursor-pointer whitespace-nowrap"
                 >
                     + Add Title
                 </button>
