@@ -13,4 +13,5 @@ public interface RoomBanService {
     RoomBanDetailsDto create(RoomBanCreateDto ban,Long roomId);
     List<RoomBanDetailsDto> findAllByRoom(Long roomId);
     boolean isBanned(Long roomId, UUID userId);
+    void unban(UUID id);
 }

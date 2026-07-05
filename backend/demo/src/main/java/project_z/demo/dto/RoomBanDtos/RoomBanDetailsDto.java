@@ -5,14 +5,14 @@ import java.util.UUID;
 
 import lombok.Data;
 import project_z.demo.dto.RoomDtos.RoomShortDto;
-import project_z.demo.dto.UserDtos.UserDto;
+import project_z.demo.dto.UserDtos.UserShortDto;
 @Data
 public class RoomBanDetailsDto {
     private UUID id;
 
-    private RoomShortDto room;
+    private long roomId;
 
-    private UserDto user;
+    private UserShortDto user;
 
     private String reason;
 

@@ -13,9 +13,12 @@ import lombok.RequiredArgsConstructor;
 import project_z.demo.Mappers.Mapper;
 import project_z.demo.common.Exceptions.ResourceNotFoundException;
 import project_z.demo.dto.RoomMemberDtos.RoomMemberDto;
+import project_z.demo.dto.RoomMemberDtos.RoomMemberIdDto;
 import project_z.demo.dto.UserDtos.UserShortDto;
+import project_z.demo.entity.RoomEntity;
 import project_z.demo.entity.RoomMemberEntity;
 import project_z.demo.entity.UserEntity;
+import project_z.demo.enums.RoomRole;
 import project_z.demo.repositories.RoomBanRepository;
 import project_z.demo.repositories.RoomMemberRepository;
 import project_z.demo.repositories.RoomRepository;
@@ -29,6 +32,7 @@ public class RoomMemberServiceImpl implements RoomMemberService {
     private final Mapper<RoomMemberEntity, RoomMemberDto> memberMapper;
     private final Mapper<UserEntity, UserShortDto> userMapper;
     private final RoomBanRepository roomBanRepository;
+    private final RoomRepository roomRepository;
 
     @Override
     @Transactional
@@ -69,4 +73,21 @@ public class RoomMemberServiceImpl implements RoomMemberService {
       );
       return memberMapper.mapTo((roomMemberEntity));
     }
+
+    @Override
+    @Transactional
+    public RoomMemberDto leaveOwner(long roomId, RoomMemberIdDto dto, UUID currentUserId){
+        RoomEntity roomEntity = roomRepository.findById(roomId).orElseThrow(
+            () -> new ResourceNotFoundException("Room not found")
+        );
+        RoomMemberEntity ownerEntity = roomMemberRepository.findOneByRoom_RoomIdAndUser_UserId(roomId,currentUserId).orElseThrow();
+        RoomMemberEntity userToPromoteToOnwerEntity = roomMemberRepository.findById(dto.getRoomMemberId()).orElseThrow(
+            () -> new ResourceNotFoundException("User to promote to owner not found")
+        );
+
+        userToPromoteToOnwerEntity.setRole(RoomRole.OWNER);
+        roomMemberRepository.delete(ownerEntity);
+        return memberMapper.mapTo( roomMemberRepository.save(userToPromoteToOnwerEntity));
+    }
+
 }

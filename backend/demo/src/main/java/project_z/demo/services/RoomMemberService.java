@@ -6,6 +6,7 @@ import java.util.UUID;
 import org.springframework.stereotype.Service;
 
 import project_z.demo.dto.RoomMemberDtos.RoomMemberDto;
+import project_z.demo.dto.RoomMemberDtos.RoomMemberIdDto;
 import project_z.demo.dto.UserDtos.UserShortDto;
 
 @Service
@@ -15,4 +16,5 @@ public interface RoomMemberService {
     void unpinAll(UUID userId);
     RoomMemberDto getRooMemberByRoomIdAndUserId(Long roomId, UUID userId);
     List<UserShortDto> getAcceptedMembers(Long roomId);
+    RoomMemberDto leaveOwner(long roomId, RoomMemberIdDto dto, UUID currentUserId);
 }
