@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import lombok.RequiredArgsConstructor;
 import project_z.demo.common.QueryParameters.UserQueryParameters;
 import project_z.demo.dto.RoomMemberDtos.RoomMemberDto;
+import project_z.demo.dto.RoomMemberDtos.RoomMemberIdDto;
 import project_z.demo.dto.UserDtos.UserShortDto;
 import project_z.demo.dto.UserDtos.UserWithRelationsToRoomDto;
 import project_z.demo.security.JwtService;
@@ -27,6 +28,8 @@ import project_z.demo.services.RoomMemberService;
 import project_z.demo.services.UserService;
 
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestBody;
+
 
 @RestController
 @RequestMapping("/api/v1/rooms/{roomId}/members")
@@ -71,4 +74,14 @@ public class RoomMemberController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
+    @PostMapping("/leaveAsAnOwner")
+    @PreAuthorize("@securityService.isRoomOwner(#roomId)")
+    public ResponseEntity<RoomMemberDto> leaveAsAnOwner(
+        @RequestHeader ("Authorization") UUID userId,
+        @PathVariable("roomId") Long roomId,
+        @RequestBody RoomMemberIdDto dto){
+
+            return new ResponseEntity<>(roomMemberService.leaveOwner(roomId,dto,userId),HttpStatus.OK);
+        }
+    
 }
