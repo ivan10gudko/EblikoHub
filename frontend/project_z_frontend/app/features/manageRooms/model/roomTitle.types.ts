@@ -80,3 +80,17 @@ export interface RoomTitleLinkDetailsDto {
     roomTitle: RoomTitleShort;
     createdAt: string;
 }
+
+export interface RoomBanCreateDto {
+    userId: string;
+    reason: string;
+}
+
+export interface RoomBanDetailsDto {
+    id: string;
+    roomId: number;
+    user: UserShort;
+    reason: string;
+    bannedByUserId: string;
+    createdAt: string;
+}
