@@ -74,7 +74,7 @@ export const SentInvitesTab = ({ roomId }: SentInvitesTabProps) => {
                   <Button
                     disabled={isPendingAction}
                     onClick={() => cancelRequest({ roomRequestId: requestId }, { onSuccess: () => refetch() })}
-                    className="px-3 py-1.5 bg-danger/10 hover:bg-red-500/10 text-red-500 rounded-lg text-xs font-semibold border border-danger/20 transition-all disabled:opacity-50 shrink-0 cursor-pointer whitespace-nowrap"
+                    className="w-full border border-danger/40 text-foreground/70 hover:bg-danger/20 hover:text-danger gap-2 px-4 py-2 rounded-xl bg-danger/40"
                   >
                     Cancel Invite
                   </Button>

@@ -1,13 +1,10 @@
 import { useState } from "react";
 import Modal from "~/shared/ui/Modal/Modal";
 import { Button } from "~/shared/ui/Button";
-import { Select } from "~/shared/ui/Select";
 import { roomTitleService } from "~/features/manageRooms/api/roomTitleService";
 import type { AnimeCardType } from "~/entities/title";
-import {
-    TitleType,
-    titleTypeOptions
-} from "~/entities/titleRecord";
+import { TitleType } from "~/entities/titleRecord";
+import TitleTypeSelect from "~/entities/titleRecord/ui/TitleTypeSelect"; 
 import { notify } from "~/shared/lib";
 import { TitleSearch } from "../TitleModal/components/titleSearch";
 import { ImageUrlEditor } from "~/shared/ui/ImageUrlEditor";
@@ -29,7 +26,6 @@ const INITIAL_FORM = {
 
 export const AddRoomTitleModal = ({ isOpen, onClose, onSuccess, roomId }: AddRoomTitleModalProps) => {
     const [formData, setFormData] = useState(INITIAL_FORM);
-    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const handleImport = (anime: AnimeCardType) => {
         setFormData({
@@ -41,7 +37,7 @@ export const AddRoomTitleModal = ({ isOpen, onClose, onSuccess, roomId }: AddRoo
         notify.success("Title imported successfully!");
     };
 
-    const { addTitle } = useRoomTitleActions(roomId);
+    const { addTitle, isPending } = useRoomTitleActions(roomId); 
 
     const handleSave = () => {
         if (!formData.titleName.trim()) {
@@ -81,7 +77,7 @@ export const AddRoomTitleModal = ({ isOpen, onClose, onSuccess, roomId }: AddRoo
                         </div>
 
                         <div className="flex-grow space-y-6">
-                            {/* Title Name */}
+                          
                             <div className="space-y-2">
                                 <label className="text-xs font-bold tracking-widest text-foreground ml-1 leading-tight uppercase">
                                     Title Name
@@ -100,10 +96,10 @@ export const AddRoomTitleModal = ({ isOpen, onClose, onSuccess, roomId }: AddRoo
                                     Title Type
                                 </label>
                                 <div className="w-full sm:max-w-xs">
-                                    <Select
+                                 
+                                    <TitleTypeSelect
                                         value={formData.titleType}
                                         onChange={(val) => setFormData({ ...formData, titleType: val as TitleType })}
-                                        options={[...titleTypeOptions]}
                                         className="h-12 border-2 border-border/60 rounded-xl font-bold text-foreground text-sm shadow-sm w-full"
                                     />
                                 </div>
@@ -115,16 +111,16 @@ export const AddRoomTitleModal = ({ isOpen, onClose, onSuccess, roomId }: AddRoo
                 <div className="pt-4 bg-background shrink-0 flex gap-4 border-t border-border mt-2">
                     <Button
                         onClick={onClose}
-                        className="flex-1 h-14 rounded-xl bg-card text-foreground !font-bold tracking-wider hover:bg-muted transition-all"
+                        className="flex-1 h-14 rounded-xl bg-card text-foreground !font-bold tracking-wider hover:bg-card transition-all active:scale-95 shadow-sm"
                     >
                         Cancel
                     </Button>
                     <Button
                         onClick={handleSave}
-                        disabled={isSubmitting}
-                        className="flex-[2] h-14 rounded-xl bg-primary text-primary-foreground !font-bold tracking-wider shadow-[0_4px_0_0_#d97706] hover:opacity-90 active:translate-y-[2px] active:shadow-none transition-all"
+                        disabled={isPending}
+                        className="flex-[2] h-14 rounded-xl bg-primary text-foreground !font-bold tracking-wider shadow-[0_4px_0_0_#d97706] hover:primary-hover active:translate-y-[2px] active:shadow-none transition-all disabled:opacity-50"
                     >
-                        {isSubmitting ? "Saving..." : "Save Title"}
+                        {isPending ? "Saving..." : "Save Title"}
                     </Button>
                 </div>
             </div>

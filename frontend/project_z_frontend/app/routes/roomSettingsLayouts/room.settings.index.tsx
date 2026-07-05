@@ -22,7 +22,7 @@ export default function RoomsSettingsIndexLayout() {
     }
 
     return (
-        <div className="flex flex-col md:flex-row gap-4 md:gap-6 p-4 md:p-6 min-h-[calc(100vh-64px)]">
+        <div className="flex flex-col md:flex-rowflex flex-col lg:flex-row gap-6 p-4 sm:p-8 max-w-[1400px] mx-auto min-h-screen bg-background-muted/30 gap-4 md:gap-6 p-4 md:p-6 min-h-[calc(100vh-64px)]">
             <RoomSettingsSidebar
                 roomId={Number(roomId)}
                 role={roomMember.role}

@@ -37,7 +37,7 @@ export const titleTypeOptions = [
     { value: TitleType.HENTAI, label: "Hentai" },
 ];
 export const TitleTypeThemes: Record<TitleType, string> = {
-    [TitleType.ANIME]: "border-border",
+    [TitleType.ANIME]: "border-border hover:border-foreground/30",
     [TitleType.MANGA]: "bg-emerald-500/5 border-emerald-500/20 hover:border-emerald-500/40",
     [TitleType.SERIES]: "bg-purple-500/5 border-purple-500/20 hover:border-purple-500/40",
     [TitleType.MOVIE]: "bg-orange-500/4 border-amber-500/20 hover:border-amber-500/40",
