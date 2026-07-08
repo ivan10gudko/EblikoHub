@@ -20,5 +20,6 @@ public class TitleShortDto {
     private TitleStatus status;
     private String imageUrl;
     private LocalDateTime createdAt;
+    private TitleType type;
 
 }

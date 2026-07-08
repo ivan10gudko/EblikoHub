@@ -6,7 +6,7 @@ import type { AnimeCardType } from "~/entities/title";
 import { TitleType } from "~/entities/titleRecord";
 import TitleTypeSelect from "~/entities/titleRecord/ui/TitleTypeSelect"; 
 import { notify } from "~/shared/lib";
-import { TitleSearch } from "../TitleModal/components/titleSearch";
+import { TitleSearch } from "../../../../widgets/TitleModal/components/titleSearch";
 import { ImageUrlEditor } from "~/shared/ui/ImageUrlEditor";
 import { useRoomTitleActions } from "~/features/manageRooms";
 

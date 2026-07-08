@@ -1,10 +1,9 @@
-import { useState } from "react";
+
 import { MoreVert, Link as LinkIcon, Edit } from "@mui/icons-material";
 import { Dropdown } from "~/shared/ui/DropDown";
 import { DropdownItem, DeleteDropdownItem } from "~/shared/ui/DropDown/DropDown";
-import { ViewLinksModal } from "./ViewLinksModal";
-import { EditRoomTitleModal } from "./EditRoomTitleModal";
 import type { RoomTitleDetails } from "~/features/manageRooms/model/roomTitle.types";
+import { useRoomModal } from "~/features/manageRooms/hooks/useRoomModal";
 
 interface RoomTitleActionMenuProps {
   item: RoomTitleDetails;
@@ -13,15 +12,14 @@ interface RoomTitleActionMenuProps {
   canManage: boolean;
 }
 
-export const RoomTitleActionMenu = ({ 
+export const RoomTitleActionMenu = ({
   item,
-  roomId, 
-  onDelete, 
-  canManage 
+  roomId,
+  onDelete,
+  canManage
 }: RoomTitleActionMenuProps) => {
-  const [isLinksModalOpen, setIsLinksModalOpen] = useState(false);
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-
+  const { openSettingsModal } = useRoomModal();
+  const itemId = String(item.id);
   return (
     <>
       <Dropdown
@@ -32,40 +30,21 @@ export const RoomTitleActionMenu = ({
           </div>
         }
       >
-        <DropdownItem 
-          onClick={() => setIsLinksModalOpen(true)} 
-          icon={<LinkIcon sx={{ fontSize: 16 }} />}
-        >
+        <DropdownItem onClick={() => openSettingsModal('all-links', itemId)} icon={<LinkIcon sx={{ fontSize: 16 }} />}>
           View Links
         </DropdownItem>
-        
-        {canManage && (
-          <>
-            <DropdownItem 
-              onClick={() => setIsEditModalOpen(true)} 
-              icon={<Edit sx={{ fontSize: 16 }} />}
-            >
-              Edit
-            </DropdownItem>
-            <div className="h-px bg-border my-1" />
-            <DeleteDropdownItem onDelete={onDelete} />
-          </>
-        )}
-      </Dropdown>
 
-      <ViewLinksModal 
-        isOpen={isLinksModalOpen} 
-        onClose={() => setIsLinksModalOpen(false)} 
-        roomId={roomId} 
-        roomTitleId={item.id} 
-      />
+      {canManage && (
+        <>
+          <DropdownItem onClick={() => openSettingsModal('edit-title', itemId)} icon={<Edit sx={{ fontSize: 16 }} />}>
+            Edit
+          </DropdownItem>
+          <div className="h-px bg-border my-1" />
+          <DeleteDropdownItem onDelete={onDelete} />
+        </>
+      )}
+    </Dropdown >
 
-      <EditRoomTitleModal 
-        isOpen={isEditModalOpen}
-        onClose={() => setIsEditModalOpen(false)}
-        roomId={roomId}
-        item={item}
-      />
     </>
   );
 };

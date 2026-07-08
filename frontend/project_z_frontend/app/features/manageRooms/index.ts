@@ -13,3 +13,4 @@ export type {
     RoomTitleLinkCreate,
     RoomTitleWithSearchQueryParams,
 } from "./model/roomTitle.types";
+export {useRoomTitleLinks} from "./hooks/useRoomTitleLinks";

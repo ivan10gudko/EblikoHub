@@ -10,7 +10,7 @@ interface ViewLinksModalProps {
   roomTitleId: string;
 }
 
-export const ViewLinksModal = ({ isOpen, onClose, roomId, roomTitleId }: ViewLinksModalProps) => {
+export const ViewAllRoomTitleLinksModal = ({ isOpen, onClose, roomId, roomTitleId }: ViewLinksModalProps) => {
   const [links, setLinks] = useState<RoomTitleLinkDetailsDto[]>([]);
   const [loading, setLoading] = useState(false);
 

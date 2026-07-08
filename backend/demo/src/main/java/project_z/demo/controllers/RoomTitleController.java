@@ -24,6 +24,7 @@ import project_z.demo.services.RoomTitleService;
 import java.util.List;
 import java.util.UUID;
 
+
 @RestController
 @RequestMapping("/api/v1/rooms/{roomId}/titles")
 @RequiredArgsConstructor
@@ -73,7 +74,11 @@ public class RoomTitleController {
     public ResponseEntity<Page<RoomTitleWithUserLinksDto>> getRoomTitlesWithLinks(@PathVariable("roomId") long roomId, @PathVariable("userId") UUID userId, RoomTitlesWithSearchQueryParameters queryParameters)  {
         return new ResponseEntity<>(roomTitleService.getRoomTitlesWithUserLinks(roomId, userId, queryParameters), HttpStatus.OK);
     }
-
+    @GetMapping("/{titleId}")
+    public ResponseEntity<RoomTitleDetailsDto> getRoomTitleDetailsById(@PathVariable UUID titleId) {
+        return new ResponseEntity<>(roomTitleService.findById(titleId), HttpStatus.OK);
+    }
+    
     @PutMapping("/{titleId}")
     @PreAuthorize("@securityService.isAdminOrOwner(#roomId)")
     public ResponseEntity<RoomTitleDetailsDto> update(

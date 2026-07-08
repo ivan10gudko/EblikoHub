@@ -1,16 +1,16 @@
 import { useState, useEffect } from "react";
 import { roomTitleService } from "~/features/manageRooms/api/roomTitleService";
 import type { RoomTitleDetails } from "~/features/manageRooms/model/roomTitle.types";
-import { AddRoomTitleModal } from "./AddRoomTitleModal";
+import { AddRoomTitleModal } from "../../features/manageRooms/ui/Modals/AddRoomTitleModal";
 import { RoomTitleItem } from "./RoomTitleItem";
 import { useAuthStore } from "~/features/auth";
 import { RoomRole, useRoomDetails } from "~/entities/room";
 import { useQuery } from "@tanstack/react-query";
+import { useRoomModal } from "~/features/manageRooms/hooks/useRoomModal";
 
 export const RoomTitlesManager = ({ roomId }: { roomId: number }) => {
     const { userId } = useAuthStore();
-    const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-
+    const { openSettingsModal } = useRoomModal();
     const [isCurrentUserAdmin, setIsCurrentUserAdmin] = useState(false);
 
     const DEFAULT_IMAGE_PATH = "/defaultTitleRecordImage.jpg";
@@ -43,7 +43,7 @@ export const RoomTitlesManager = ({ roomId }: { roomId: number }) => {
                 </div>
 
                 <button
-                    onClick={() => setIsAddModalOpen(true)}
+                    onClick={() => openSettingsModal('add-room-title', String(roomId))}
                     className="h-10  px-4  py-1.5 bg-primary/10 hover:bg-primary/20 text-primary rounded-xl text-xs font-bold border border-primary/30 transition-all disabled:opacity-50 cursor-pointer whitespace-nowrap"
                 >
                     + Add Title
@@ -69,13 +69,6 @@ export const RoomTitlesManager = ({ roomId }: { roomId: number }) => {
                     ))}
                 </div>
             )}
-
-            <AddRoomTitleModal
-                isOpen={isAddModalOpen}
-                onClose={() => setIsAddModalOpen(false)}
-                onSuccess={() => refetch()}
-                roomId={roomId}
-            />
         </div>
     );
 };

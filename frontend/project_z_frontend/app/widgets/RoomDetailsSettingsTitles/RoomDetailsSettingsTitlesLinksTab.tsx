@@ -17,7 +17,7 @@ export const RoomDetailsSettingsTitlesLinks = ({ userId, roomId }: { userId: str
     const [draggingTitleId, setDraggingTitleId] = useState<string | null>(null);
     const allTitles = data?.pages.flatMap(page => page.content) ?? [];
     const [isWatchlistModeToggleActive, setWatchlistModeToggleActive] = useState(false);
-    const { createLink } = useRoomTitleLinkActions(Number(roomId), userId);
+    const { createLink } = useRoomTitleLinkActions(Number(roomId));
     const onDragEnd = (result: DropResult) => {
         const { source, destination, draggableId } = result;
 

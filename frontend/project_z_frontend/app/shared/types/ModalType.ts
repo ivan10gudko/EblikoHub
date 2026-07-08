@@ -1,1 +1,1 @@
-export type ModalType = 'edit' | 'delete' | 'add';
+export type ModalType = 'edit' | 'delete' | 'add' | 'add-room-title';
