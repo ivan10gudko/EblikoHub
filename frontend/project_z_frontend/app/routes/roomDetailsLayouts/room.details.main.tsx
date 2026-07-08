@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import { useParams } from "react-router";
 import { useRoomDetails } from "~/entities/room";
-import { RoomDetailsSidebar, useRoomTitlesQuery } from "~/features/manageRooms";
+import { RoomDetailsSidebar, RoomModalManager, useRoomTitlesQuery } from "~/features/manageRooms";
 import { useRoomDetailsFilterStore } from "~/features/manageRooms/store/roomDetailsFilter.store";
 
 export default function RoomDetailsMainPage() {
@@ -29,7 +29,6 @@ export default function RoomDetailsMainPage() {
         <div className="flex flex-col lg:flex-row gap-6 p-5 sm:p-8 max-w-[1400px] mx-auto min-h-screen bg-background-muted/30">
             
             <RoomDetailsSidebar room={room} />
-            
         </div>
     );
 }

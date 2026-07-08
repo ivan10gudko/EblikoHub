@@ -16,7 +16,7 @@ public interface RoomTitleLinkService {
 
     List<RoomTitleLinkDetailsDto> findUserLinksInRoom(UUID userId, Long roomId);
 
-    void deleteLink(Long titleId, UUID roomTitleId);
+    void deleteLink(UUID roomTitleLinkId);
 
     void deleteLinksByRoomTitle(UUID roomTitleId);
 }

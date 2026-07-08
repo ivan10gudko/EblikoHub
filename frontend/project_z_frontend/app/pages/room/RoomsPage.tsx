@@ -13,6 +13,8 @@ import { Button } from "~/shared/ui/Button";
 import { RoomModalManager } from "~/features/manageRooms";
 import { useRoomModal } from "~/features/manageRooms/hooks/useRoomModal";
 import { NavLink, useNavigate } from "react-router";
+import { RoomTitlesManager } from "~/widgets/RoomDetailsSettingsTitles/RoomTitlesManager";
+import { GlobalModalManager } from "~/features/manageRooms/ui/Modals/GlobalRoomManager";
 
 
 export default function RoomsPage({ userId }: { userId: string | null }) {
@@ -25,7 +27,7 @@ export default function RoomsPage({ userId }: { userId: string | null }) {
     sortBy: setSortFromUrl,
     order: setOrderFromUrl,
   });
-  const { open } = useRoomModal();
+  const { openRoomModal } = useRoomModal();
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
     useRoomsQuery(userId ?? null);
   const navigate = useNavigate();
@@ -36,9 +38,6 @@ export default function RoomsPage({ userId }: { userId: string | null }) {
     );
   }, [data]);
 
-  const handleOpenAdd = () => {
-    open('add', '1');
-  };
   const actionButtonsStyles = "w-full flex items-center justify-center gap-2 bg-primary text-foreground py-3 rounded-xl";
   return (
     <div className="flex flex-col lg:flex-row gap-6 p-4 sm:p-8 max-w-[1400px] mx-auto min-h-screen bg-background-muted/30">
@@ -50,10 +49,7 @@ export default function RoomsPage({ userId }: { userId: string | null }) {
             className={actionButtonsStyles}>
             My Requests
           </Button>,
-          <Button
-            onClick={handleOpenAdd}
-            className={actionButtonsStyles}
-          >
+          <Button onClick={() => openRoomModal('add')} className={actionButtonsStyles}>
             <span>Add New Room</span>
           </Button>
 
@@ -76,7 +72,7 @@ export default function RoomsPage({ userId }: { userId: string | null }) {
           />
         </div>
       </main>
-      <RoomModalManager />
+      <GlobalModalManager />
     </div>
 
   );

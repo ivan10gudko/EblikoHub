@@ -62,7 +62,7 @@ export interface TitleParams extends QueryParams {
     types?: TitleType[];
 }
 
-export interface TitleShortDto {
+export interface TitleRatingComparasionDto {
     titleId: number;
     titleName: string;
     ratingValue: number;
@@ -74,12 +74,21 @@ export interface ManageTitleRecordProps {
     initialData: CreateTitleRecord;
     titleRecord: TitleRecord | null;
 }
-
-export interface SameCriteriaRating {
-    titles: Array<TitleShortDto>;
-    avgRating: number;
+export interface SameCriteriaRating{
+    titles : Array<TitleRatingComparasionDto>;
+    avgRating : number;
 }
 
+export interface TitleShort{
+    titleId: number,
+    apiTitleId?: number,
+    titleName: string,
+    rating?: Rating,
+    status: Status,
+    type: TitleType,
+    imageUrl?: string | null,
+    createdAt: string,
+}
 export const TitleTypeOptionsColors: Record<TitleType, string> = {
     [TitleType.ANIME]: "text-foreground/90",
     [TitleType.MANGA]: "text-green-500/90",

@@ -1,5 +1,5 @@
 import type { UserShort } from "~/entities/room";
-import type { TitleShortDto, TitleType, TitleVisual } from "~/entities/titleRecord";
+import type {TitleShort, TitleType, TitleVisual } from "~/entities/titleRecord";
 import type { PageResponse, QueryParams, Status } from "~/shared/types";
 
 export interface RoomTitleQueryParameters extends QueryParams {
@@ -35,7 +35,7 @@ export interface RoomTitleLinkCreate{
 }
 export interface RoomTitleLinkDetails{
     id:string;
-    title:TitleShortDto;
+    title:TitleShort;
     roomTitle:RoomTitleShort;
     createdAt:string;
 }
@@ -57,7 +57,7 @@ export interface RoomTitleSummary {
     titleInfo: RoomTitleShort
     computedAvgRating: number;
     myStatus: Status;
-    myTitleInfo: TitleShortDto
+    myTitleInfo: TitleShort
     userParticipation: RoomTitleUserIdAndTitleStatus[]
 }
 export interface RoomTitleUserIdAndTitleStatus {
@@ -76,7 +76,7 @@ export interface RoomTitleCreateRequest {
 }
 export interface RoomTitleLinkDetailsDto {
     id: string;
-    title: TitleShortDto;
+    title:  TitleShort;
     roomTitle: RoomTitleShort;
     createdAt: string;
 }
