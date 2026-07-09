@@ -1,7 +1,7 @@
 import { Outlet, redirect, useParams } from "react-router";
 import { useRoomDetails } from "~/entities/room";
 import { useAuthStore } from "~/features/auth";
-import { useRoomMemberByRoomIdAndUserId } from "~/features/manageRooms";
+import { RoomModalManager, useRoomMemberByRoomIdAndUserId } from "~/features/manageRooms";
 import { ErrorScreen } from "~/shared/ui/ErrorScreen";
 import { RoomSettingsSidebar } from "~/widgets/RoomDetailsSettingsSidebar";
 
@@ -32,6 +32,7 @@ export default function RoomsSettingsIndexLayout() {
                     <Outlet />
                 </div>
             </main>
+            <RoomModalManager roomId={Number(roomId)} />
         </div>
     );
 }

@@ -17,7 +17,7 @@ interface EditRoomTitleModalProps {
 
 export const EditRoomTitleModal = ({ isOpen, onClose, roomId, item }: EditRoomTitleModalProps) => {
     const { updateTitle, isPending } = useRoomTitleActions(roomId);
-
+    
     const [formData, setFormData] = useState({
         titleName: item.titleName,
         imageUrl: item.imageUrl || null,

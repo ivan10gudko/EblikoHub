@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import project_z.demo.Mappers.Mapper;
+import project_z.demo.common.Exceptions.ResourceNotFoundException;
 import project_z.demo.common.Exceptions.RoomTitleLinkExceptions.RoomTitleLinkAlreadyExistsException;
 import project_z.demo.dto.RoomTitleLinkDtos.RoomTitleLinkCreateDto;
 import project_z.demo.dto.RoomTitleLinkDtos.RoomTitleLinkDetailsDto;
@@ -60,8 +61,11 @@ public class RoomTitleLinkServiceImpl implements RoomTitleLinkService {
 
     @Override
     @Transactional
-    public void deleteLink(Long titleId, UUID roomTitleId) {
-        repository.deleteByUserTitleRecord_TitleIdAndRoomTitle_Id(titleId, roomTitleId);
+    public void deleteLink(UUID roomTitleLinkId) {
+        RoomTitleLinkEntity entity = repository.findById(roomTitleLinkId).orElseThrow(
+            () -> new ResourceNotFoundException("Room title link not found")
+        );
+        repository.delete(entity);
     }
 
     @Override

@@ -1,5 +1,6 @@
 import type { DraggableProvidedDragHandleProps } from "@hello-pangea/dnd";
 import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
+import { useState } from "react";
 import { ReadOnlyStatusBadge, TitleTypeThemes, type TitleRecord } from "~/entities/titleRecord";
 import { CompactRate } from "~/shared/ui/CompactRate";
 
@@ -7,15 +8,14 @@ interface WatchlistDragRowProps {
   title: TitleRecord;
   dragHandleProps?: DraggableProvidedDragHandleProps | null;
 }
-
+const DEFAULT_IMAGE_PATH = "/defaultTitleRecordImage.jpg";
 export const WatchlistRowShort = ({ title, dragHandleProps }: WatchlistDragRowProps) => {
-
   const themeClasses = title.titleType ? TitleTypeThemes[title.titleType] : "";
-  const DEFAULT_IMAGE_PATH = "/defaultTitleRecordImage.jpg";
+
 
   return (
     <div className={`group/row flex items-center gap-4 bg-card p-2 rounded-xl border transition-all duration-300 w-full ${themeClasses}`}>
-      
+
       <div {...dragHandleProps} className="text-muted-foreground/40 group-hover/row:text-muted-foreground/70 cursor-grab active:cursor-grabbing">
         <DragIndicatorIcon sx={{ fontSize: 20 }} />
       </div>
@@ -26,14 +26,14 @@ export const WatchlistRowShort = ({ title, dragHandleProps }: WatchlistDragRowPr
       </div>
 
       <span className="block truncate font-bold text-foreground uppercase text-xs sm:text-sm leading-tight w-full">
-            {title.titleName}
-          </span>
+        {title.titleName}
+      </span>
 
       <div className="flex items-center gap-4">
         <ReadOnlyStatusBadge
           status={title.status}
         />
-        
+
         <CompactRate
           isAvgView={false}
           currentRating={title.rating?.overall}

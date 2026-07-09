@@ -26,7 +26,7 @@ public class RoomTitleLinkController {
         return ResponseEntity.ok(linkService.createLink(dto));
     }
 
-    @GetMapping("/room-title/{roomTitleId}")
+    @GetMapping("/roomTitle/{roomTitleId}")
     @PreAuthorize("@securityService.isRoomMember(#roomId)")
     public ResponseEntity<List<RoomTitleLinkDetailsDto>> findByRoomTitle(
             @PathVariable Long roomId,
@@ -42,13 +42,12 @@ public class RoomTitleLinkController {
         return ResponseEntity.ok(linkService.findUserLinksInRoom(userId, roomId));
     }
 
-    @DeleteMapping("/{titleId}/room-title/{roomTitleId}")
+    @DeleteMapping("/{roomTitleLinkId}")
     @PreAuthorize("@securityService.isRoomMember(#roomId)") 
     public ResponseEntity<Void> deleteLink(
             @PathVariable Long roomId,
-            @PathVariable Long titleId,
-            @PathVariable UUID roomTitleId) {
-        linkService.deleteLink(titleId, roomTitleId);
+            @PathVariable UUID roomTitleLinkId) {
+        linkService.deleteLink(roomTitleLinkId);
         return ResponseEntity.noContent().build();
     }
 
