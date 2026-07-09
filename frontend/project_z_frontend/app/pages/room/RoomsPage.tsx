@@ -38,7 +38,7 @@ export default function RoomsPage({ userId }: { userId: string | null }) {
     );
   }, [data]);
 
-  const actionButtonsStyles = "w-full flex items-center justify-center gap-2 bg-primary text-foreground py-3 rounded-xl";
+  const actionButtonsStyles = "w-full flex items-center justify-center gap-2 bg-primary text-background py-3 rounded-xl";
   return (
     <div className="flex flex-col lg:flex-row gap-6 p-4 sm:p-8 max-w-[1400px] mx-auto min-h-screen bg-background-muted/30">
       <FilterResponsiveWrapper
