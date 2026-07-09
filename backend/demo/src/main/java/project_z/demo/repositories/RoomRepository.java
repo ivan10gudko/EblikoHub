@@ -1,5 +1,6 @@
 package project_z.demo.repositories;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.data.domain.Page;
@@ -33,4 +34,14 @@ public interface RoomRepository extends JpaRepository<RoomEntity, Long>, JpaSpec
             @Param("roomName") String roomName,
             @Param("userId") UUID userId,
             Pageable pageable);
+
+    @Query("SELECT r FROM RoomEntity r " +
+            "LEFT JOIN FETCH r.members m " +
+            "LEFT JOIN FETCH m.user " +
+            "WHERE r.id = :id " +
+            "ORDER BY CASE WHEN m.role = 'OWNER' THEN 1 " +
+            "              WHEN m.role = 'ADMIN' THEN 2 " +
+            "              ELSE 3 END, " +
+            "         m.user.name ASC")
+    Optional<RoomEntity> findByIdWithMembers(@Param("id") Long id);
 }

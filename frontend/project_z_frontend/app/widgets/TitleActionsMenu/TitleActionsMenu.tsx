@@ -26,7 +26,7 @@ interface TitleActionsMenuProps {
   title: TitleRecord;
   isOwn: boolean;
   onDelete?: () => void;
-  onOpenRatingModal: () => void; 
+  onOpenRatingModal?: () => void;
 }
 
 export const TitleActionsMenu = ({
@@ -62,8 +62,8 @@ export const TitleActionsMenu = ({
       key: "rating",
       label: "Rating",
       icon: <StarRoundedIcon sx={{ fontSize: 16 }} />,
-      onClick: onOpenRatingModal,
-      show: true,
+      onClick: () => onOpenRatingModal?.(),
+      show: !!onOpenRatingModal,
     },
     {
       key: "seasons",

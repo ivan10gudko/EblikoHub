@@ -26,7 +26,7 @@ public class RoomRequestShortMapper implements Mapper<RoomRequestsEntity, RoomRe
         return RoomRequestShortDto.builder()
                 .id(entity.getId())
                 .room(roomMapper.mapTo(entity.getRoom()))
-                .userId(entity.getUser().getUserId())
+                .userId(entity.getUser() != null ? entity.getUser().getUserId() : null)
                 .sender(userMapper.mapTo(entity.getSender()))
                 .status(entity.getStatus())
                 .type(entity.getType())
