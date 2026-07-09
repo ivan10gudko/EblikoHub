@@ -48,15 +48,15 @@ export const RoomDetailsSidebar = ({ room }: RoomDetailsSidebarProps) => {
           
           <button 
             onClick={() => setIsFiltersOpen(!isFiltersOpen)}
-            className="text-sm font-bold flex items-center justify-between w-full text-foreground hover:text-primary transition-colors cursor-pointer text-left"
+            className="text-sm p-0.5 font-bold flex items-center justify-between rounded-lg  border border-border w-full text-foreground hover:text-primary transition-colors cursor-pointer text-left "
           >
-            <span className="flex items-center gap-2 rounded-lg  px-2 py-1 text-primary transition-colors hover:text-primary/60">
+            <span className="flex items-center gap-2 rounded-lg  px-2 py-1 text-primary/90 transition-colors hover:text-primary/60">
               <FilterListIcon className="text-ms" /> Group Filters             
             </span>
             {isFiltersOpen ? (
-              <KeyboardArrowUpIcon fontSize="small" className="text-primary hover:text-primary/60" />
+              <KeyboardArrowUpIcon fontSize="small" className="text-foreground" />
             ) : (
-              <KeyboardArrowDownIcon fontSize="small" className="text-primary hover:text-primary/60" />
+              <KeyboardArrowDownIcon fontSize="small" className="text-foreground" />
             )}
           </button>
 

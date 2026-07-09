@@ -35,7 +35,7 @@ export const RoomTitlesManager = ({ roomId }: { roomId: number }) => {
     }
 
     return (
-        <div className="p-6 bg-card rounded-xl border border-border shadow-sm">
+        <div className="flex flex-col gap-4">
             <div className="flex items-center justify-between mb-6">
                 <div>
                     <h2 className="text-xl font-semibold text-foreground">Room Titles</h2>
