@@ -8,9 +8,10 @@ import { useTitleFilterStore, type TitleSortType } from "~/features/titleFilter/
 interface PinnedWatchlistRowReadOnlyProps {
   title: TitleRecord;
   onOpenRatingModal: (title: TitleRecord) => void;
+  onRowClick: (title: TitleRecord) => void;
 }
 
-export const PinnedWatchlistRowReadOnly = ({ title, onOpenRatingModal }: PinnedWatchlistRowReadOnlyProps) => {
+export const PinnedWatchlistRowReadOnly = ({ title, onOpenRatingModal, onRowClick }: PinnedWatchlistRowReadOnlyProps) => {
   const navigate = useNavigate();
   const themeClasses = title.titleType ? TitleTypeThemes[title.titleType] : "";
   const sortBy = useTitleFilterStore((state) => state.sortBy);
@@ -23,7 +24,8 @@ export const PinnedWatchlistRowReadOnly = ({ title, onOpenRatingModal }: PinnedW
 
   return (
     <div
-      className={`flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-4 bg-primary/5 p-2 rounded-xl border border-primary/40 shadow-md transition-all duration-300 w-full min-w-0 relative ${themeClasses}`}
+      onClick={() => onRowClick(title)}
+      className={`flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-4 bg-primary/5 p-3 rounded-xl border-2 border-primary/40 shadow-md transition-all duration-300 w-full min-w-0 relative cursor-pointer hover:border-primary/60 ${themeClasses}`}
     >
       
       <div className="absolute -top-2.5 left-4 bg-primary text-background text-[9px] uppercase tracking-wider font-black px-2 py-0.5 rounded-full shadow-sm z-10 pointer-events-none">
@@ -54,8 +56,7 @@ export const PinnedWatchlistRowReadOnly = ({ title, onOpenRatingModal }: PinnedW
         </div>
       </div>
       
-      
-      <div className="flex items-center justify-between sm:justify-end gap-3 sm:w-auto mt-2 sm:mt-0 flex-shrink-0">
+      <div className="flex items-center justify-between sm:justify-end gap-3 sm:w-auto mt-2 sm:mt-0 flex-shrink-0" onClick={(e) => e.stopPropagation()}>
         <ReadOnlyStatusBadge status={title.status} />
 
         <div className="pointer-events-none opacity-90 flex-shrink-0">

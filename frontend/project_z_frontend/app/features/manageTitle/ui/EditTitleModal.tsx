@@ -31,19 +31,13 @@ export const EditTitleModal = ({
   onClose,
 }: EditTitleModalProps) => {
   const [titleName, setTitleName] = useState(title.titleName);
-  const [imageUrl, setImageUrl] = useState<string | null>(
-    title.imageUrl ?? null,
-  );
+  const [imageUrl, setImageUrl] = useState<string | null>(title.imageUrl ?? null);
   const [status, setStatus] = useState<Status>(title.status);
-  const [rating, setRating] = useState<number | undefined>(
-    title.rating?.overall,
-  );
-  const [titleType, setTitleType] = useState<TitleType>(
-    title.titleType ?? TitleType.ANIME,
-  );
+  const [rating, setRating] = useState<number | undefined>(title.rating?.overall);
+  const [titleType, setTitleType] = useState<TitleType>(title.titleType ?? TitleType.ANIME);
+  const [description, setDescription] = useState(title.description ?? "");
 
   const { updateTitle, isUpdating } = useUpdateTitleRecord(title.titleId);
-
   useEffect(() => {
     if (isOpen) {
       setTitleName(title.titleName);
@@ -51,21 +45,22 @@ export const EditTitleModal = ({
       setStatus(title.status);
       setRating(title.rating?.overall);
       setTitleType(title.titleType ?? TitleType.ANIME);
+      setDescription(title.description ?? "");
     }
-  }, [isOpen, title]);
+  }, [isOpen]);
 
   const handleSave = (shouldCloseAfter = true) => {
     if (!titleName.trim()) {
       notify.error("Title name cannot be empty");
       return;
     }
-
     const hasChanges =
       titleName !== title.titleName ||
       imageUrl !== title.imageUrl ||
       status !== title.status ||
       rating !== title.rating?.overall ||
-      titleType !== title.titleType;
+      titleType !== title.titleType ||
+      description !== (title.description ?? "");
 
     if (!hasChanges) {
       if (shouldCloseAfter) onClose();
@@ -91,10 +86,11 @@ export const EditTitleModal = ({
         status,
         rating: finalRating as Rating,
         titleType,
+        description,
       },
       {
         onSuccess: () => {
-          notify.success("Changes saved automatically");
+          notify.success("Changes saved successfully");
           if (shouldCloseAfter) onClose();
         },
         onError: () => {
@@ -127,6 +123,19 @@ export const EditTitleModal = ({
                 onChange={(val) => setTitleName(val)}
                 placeholder="Enter custom name..."
                 className="h-12 border-2 p-3 border-border focus:border-primary rounded-xl font-bold"
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="text-xs font-bold tracking-widest text-muted-foreground ml-1 uppercase opacity-70 block">
+                Description
+              </label>
+              <textarea
+                name="Description"
+                placeholder="Enter title description, plot summary or your notes..."
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                rows={4}
+                className="w-full p-4 border-2 border-border focus:border-primary rounded-xl font-medium text-foreground text-sm bg-background/50 hover:border-border/80 focus:bg-background transition-all shadow-sm resize-none custom-scrollbar outline-none focus:ring-2 focus:ring-primary/10"
               />
             </div>
 

@@ -11,6 +11,8 @@ import type { TitleRecord } from "~/entities/titleRecord";
 import StarRoundedIcon from "@mui/icons-material/StarRounded";
 import { EditSeasonsModal } from "~/entities/season";
 import ViewListIcon from "@mui/icons-material/ViewList";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import { ViewTitleModal } from "~/entities/titleRecord/ui/ViewTitleModal";
 
 interface ActionItem {
   key: string;
@@ -35,11 +37,20 @@ export const TitleActionsMenu = ({
 }: TitleActionsMenuProps) => {
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isSeasonsOpen, setIsSeasonsOpen] = useState(false);
+  const [isViewOpen, setIsViewOpen] = useState(false);
 
   const handleCloseEdit = () => setIsEditOpen(false);
   const handleCloseSeasons = () => setIsSeasonsOpen(false);
+  const handleCloseView = () => setIsViewOpen(false);
 
   const actions: ActionItem[] = [
+    {
+      key: "view",
+      label: "View Details",
+      icon: <VisibilityIcon sx={{ fontSize: 16 }} />,
+      onClick: () => setIsViewOpen(true),
+      show: true,
+    },
     {
       key: "edit",
       label: "Edit Record",
@@ -88,13 +99,11 @@ export const TitleActionsMenu = ({
           </>
         )}
       </Dropdown>
-
       <EditTitleModal
         title={title}
         isOpen={isEditOpen}
         onClose={handleCloseEdit}
       />
-      
       {isSeasonsOpen && (
         <EditSeasonsModal
           titleId={title.titleId}
@@ -102,6 +111,15 @@ export const TitleActionsMenu = ({
           isOpen={isSeasonsOpen}
           onClose={handleCloseSeasons}
           isOwn={isOwn}
+        />
+      )}
+      {isViewOpen && (
+        <ViewTitleModal
+          title={title}
+          isOpen={isViewOpen}
+          onClose={handleCloseView}
+          isOwn={isOwn}
+          onEditClick={() => setIsEditOpen(true)}
         />
       )}
     </>

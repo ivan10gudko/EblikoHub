@@ -30,6 +30,7 @@ const INITIAL_FORM_DATA: CreateTitleRecord = {
   imageUrl: null,
   rating: undefined,
   pinned: false,
+  description: "",
 };
 
 export const AddTitleModal = ({ isOpen, onClose }: AddTitleModalProps) => {
@@ -121,10 +122,27 @@ export const AddTitleModal = ({ isOpen, onClose }: AddTitleModalProps) => {
                   onChange={(e) =>
                     setFormData({ ...formData, titleName: e.target.value })
                   }
-                  className="h-12 w-full px-4 border-2 border-border rounded-xl font-bold text-foreground text-sm focus:border-primary transition-all shadow-sm"
+                  className="h-12 w-full px-4 border-2 border-border rounded-xl font-bold text-foreground text-sm focus:border-primary transition-all shadow-sm outline-none"
                 />
               </div>
 
+              {/* ВИПРАВЛЕНО ТА СТИЛІЗОВАНО: Опис (Description) */}
+              <div className="space-y-2">
+                <label className="text-xs font-bold tracking-widest text-muted-foreground ml-1 uppercase opacity-70 block">
+                  Description
+                </label>
+                <textarea
+                  name="Description"
+                  placeholder="Enter title description, plot summary or your notes..."
+                  value={formData.description}
+                  onChange={(e) =>
+                    setFormData({ ...formData, description: e.target.value })
+                  }
+                  rows={4}
+                  className="w-full p-4 border-2 border-border focus:border-primary rounded-xl font-medium text-foreground text-sm bg-background/50 hover:border-border/80 focus:bg-background transition-all shadow-sm resize-none custom-scrollbar outline-none focus:ring-2 focus:ring-primary/10"
+                />
+              </div>
+              
               <div className="w-full">
                 <div className="space-y-2 mb-5">
                   <label className="text-xs font-bold tracking-widest text-muted-foreground ml-1 uppercase opacity-70">
@@ -177,7 +195,7 @@ export const AddTitleModal = ({ isOpen, onClose }: AddTitleModalProps) => {
                       placeholder="0.0"
                       value={formData.rating?.overall?.toString() || ""}
                       onChange={handleRatingChange}
-                      className="h-12 w-full border-2 border-border rounded-xl font-bold text-foreground text-center focus:border-primary transition-all shadow-sm"
+                      className="h-12 w-full border-2 border-border rounded-xl font-bold text-foreground text-center focus:border-primary transition-all shadow-sm outline-none"
                     />
                   </div>
                 </div>

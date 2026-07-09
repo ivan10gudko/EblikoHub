@@ -4,15 +4,15 @@ import { CompactRate } from "~/shared/ui/CompactRate";
 import { TitleActionsMenu } from "../../TitleActionsMenu";
 import { useTitleFilterStore, type TitleSortType } from "~/features/titleFilter/store/titleFilter.store";
 
-
 interface WatchlistRowReadOnlyProps {
   title: TitleRecord;
   index: number;       
   showNumber: boolean; 
   onOpenRatingModal: (title: TitleRecord) => void;
+  onRowClick: (title: TitleRecord) => void;
 }
 
-export const WatchlistRowReadOnly = ({ title, index, showNumber,onOpenRatingModal }: WatchlistRowReadOnlyProps) => {
+export const WatchlistRowReadOnly = ({ title, index, showNumber, onOpenRatingModal, onRowClick }: WatchlistRowReadOnlyProps) => {
   const navigate = useNavigate();
 
   const handleImageClick = (e: React.MouseEvent) => {
@@ -26,23 +26,20 @@ export const WatchlistRowReadOnly = ({ title, index, showNumber,onOpenRatingModa
 
   return (
     <div
-      className={`flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-4 bg-card p-2 rounded-xl border transition-all duration-300 w-full min-w-0 ${themeClasses} ${
+      onClick={() => onRowClick(title)}
+      className={`flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-4 bg-card p-2 rounded-xl border transition-all duration-300 w-full min-w-0 cursor-pointer hover:border-border/80 ${themeClasses} ${
         title.pinned ? "border-primary/30" : ""
       }`}
     >
       <div className="flex items-center flex-1 gap-3 min-w-0 max-w-full">
-        
-        
         {showNumber && !title.pinned && (
           <div className="flex items-center justify-center h-10 w-6 pl-1 select-none flex-shrink-0">
-            
             <span translate="no" className="text-gray-400 font-bold text-sm sm:text-base">
               {index + 1}
             </span>
           </div>
         )}
 
-        
         {showNumber && title.pinned && <div className="w-6 pl-1 flex-shrink-0" />}
 
         <div className="relative h-10 w-16 flex-shrink-0 transition-transform duration-500 hover:scale-[3.0] hover:z-10 cursor-pointer">
@@ -61,8 +58,7 @@ export const WatchlistRowReadOnly = ({ title, index, showNumber,onOpenRatingModa
         </div>
       </div>
 
-      <div className="flex items-center justify-between sm:justify-end gap-3 sm:w-auto mt-2 sm:mt-0 flex-shrink-0">
-        
+      <div className="flex items-center justify-between sm:justify-end gap-3 sm:w-auto mt-2 sm:mt-0 flex-shrink-0" onClick={(e) => e.stopPropagation()}>
         <ReadOnlyStatusBadge status={title.status} />
 
         <div className="pointer-events-none opacity-90 flex-shrink-0">

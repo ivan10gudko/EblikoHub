@@ -25,6 +25,7 @@ public class TitleDto {
     private String titleName;
     private Map<String, Float> rating;
     private TitleStatus status;
+    private String description;
     private TitleType titleType;
     private Double customOrder;
     private String imageUrl;

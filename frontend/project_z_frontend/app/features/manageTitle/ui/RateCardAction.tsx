@@ -8,7 +8,7 @@ import {
   type MouseEvent,
 } from "react";
 import DoneOutlinedIcon from "@mui/icons-material/DoneOutlined";
-import { useTitleRecordMutation } from '~/entities/titleRecord/hooks/useTitleRecordMutation';
+import { useTitleRecordMutation } from "~/entities/titleRecord/hooks/useTitleRecordMutation";
 import type { ManageTitleRecordProps } from "~/entities/titleRecord";
 
 const RateCardAction = ({
@@ -46,7 +46,7 @@ const RateCardAction = ({
     e.stopPropagation();
 
     const val = e.target.value;
-    // допускаємо тільки числа та крапку
+    // allow only numbers and decimal point, but not more than 1 decimal point
     if (/^[0-9]*\.?[0-9]*$/.test(val)) {
       setValue(val);
       setError("");
