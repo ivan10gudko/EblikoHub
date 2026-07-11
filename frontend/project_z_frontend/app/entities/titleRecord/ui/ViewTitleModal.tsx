@@ -118,7 +118,7 @@ export const ViewTitleModal = ({
           <Button
             onClick={onClose}
             variant="outline"
-            className="text-foreground bg-card border-none flex-1 h-14 rounded-xl font-bold"
+            className="w-full sm:flex-1 h-12 sm:h-14 rounded-xl border-2 border-border bg-background text-foreground/80 font-bold tracking-wide hover:-translate-y-[2px] hover:bg-background-muted hover:text-foreground hover:shadow-[0_4px_0_0_rgba(0,0,0,0.15)] dark:hover:shadow-[0_4px_0_0_var(--color-border)] active:translate-y-0 active:shadow-none transition-all disabled:opacity-50 disabled:pointer-events-none flex items-center justify-center cursor-pointer"
           >
             Close
           </Button>
@@ -129,7 +129,7 @@ export const ViewTitleModal = ({
                 onClose();
                 onEditClick();
               }}
-              className="flex-[1.5] h-14 rounded-xl bg-primary text-foreground font-black tracking-wide shadow-[0_4px_0_0_#d97706] active:translate-y-[1px] active:shadow-none transition-all flex items-center justify-center gap-2"
+              className="w-full sm:flex-[2] h-12 sm:h-14 rounded-xl bg-primary text-background  font-black tracking-wide shadow-[0_4px_0_0_#d97706] hover:bg-primary/90 hover:shadow-[0_4px_0_0_#b45309] active:translate-y-[2px] active:shadow-[0_2px_0_0_#b45309] transition-all disabled:opacity-50 disabled:pointer-events-none flex items-center justify-center cursor-pointer"
             >
               <EditIcon sx={{ fontSize: 18 }} />
               Edit Details
