@@ -1,7 +1,13 @@
 import type { ComponentProps } from "react";
 import { cn } from "~/shared/lib";
 
-type ButtonVariants = "fill" | "outline" | "text-only" | "cancel" | "save";
+type ButtonVariants =
+  | "fill"
+  | "outline"
+  | "text-only"
+  | "cancel"
+  | "save"
+  | "destructive";
 
 interface ButtonProps extends ComponentProps<"button"> {
   variant?: ButtonVariants;
@@ -17,6 +23,8 @@ const variantStyles: Record<ButtonVariants, string> = {
   cancel:
     "h-12 sm:h-14 rounded-xl border-2 border-border bg-background text-foreground/80 font-bold tracking-wide hover:-translate-y-[2px] hover:bg-background-muted hover:text-foreground hover:shadow-bouncy dark:hover:shadow-[0_4px_0_0_var(--color-border)] active:translate-y-0 active:shadow-none",
   save: "h-12 sm:h-14 rounded-xl bg-primary text-background font-black tracking-wide hover:bg-primary/90 hover:shadow-primary-bouncy active:translate-y-[2px] active:shadow-primary-bouncy-active",
+  destructive:
+    "border-2 border-danger/40 bg-danger/5 text-danger shadow-sm hover:bg-danger hover:text-background hover:border-danger",
 };
 
 const Button = ({

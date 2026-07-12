@@ -3,7 +3,7 @@ import { Button } from "~/shared/ui/Button";
 import SortControl from "./SortControl";
 import StatusFilter from "./StatusFilter";
 import SearchFilter from "./SearchFilter";
-import { Divider } from '@mui/material';
+import { Divider } from "@mui/material";
 import TypeFilter from "./TitleTypeFilter";
 
 interface TitleFiltersProps {
@@ -16,24 +16,17 @@ export const TitleFilters = ({ statusCount, typeCount }: TitleFiltersProps) => {
 
   return (
     <div className="flex flex-col gap-10 p-4 bg-background rounded-2xl shadow-sm border border-border max-h-[calc(100vh-140px)] overflow-y-auto pb-6 hide-scrollbar">
-      <SearchFilter
-        searchQuery={search}
-        setSearchQuery={setSearch}
-      />
-      
+      <SearchFilter searchQuery={search} setSearchQuery={setSearch} />
+
       <SortControl />
-      
+
       <StatusFilter statusCount={statusCount} />
-      
+
       <TypeFilter typeCount={typeCount} />
-      
+
       <Divider sx={{ my: 1 }} />
-      
-      <Button 
-        onClick={reset}
-        variant="outline"
-        className="text-sm hover:bg-background-muted hover:text-danger-hover transition-colors font-medium p-0 h-auto"
-      >
+
+      <Button onClick={reset} variant="destructive">
         Reset all filters
       </Button>
     </div>
