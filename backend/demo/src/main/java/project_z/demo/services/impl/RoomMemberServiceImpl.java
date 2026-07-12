@@ -95,12 +95,26 @@ public class RoomMemberServiceImpl implements RoomMemberService {
     public RoomMemberDto updateMemberRole(UUID currentUserId, long roomId, RoomMemberRoleUpdateDto dto){
         RoomMemberEntity currentUser = roomMemberRepository.findOneByRoom_RoomIdAndUser_UserId(roomId,currentUserId).orElseThrow(
         () -> new ResourceNotFoundException("Room membership not found"));
-
-        if(!currentUser.getRole().equals(RoomRole.OWNER)){
-            throw new AccessDeniedException("Access denied");
-        }
         RoomMemberEntity userMemberToChange = roomMemberRepository.findById(dto.getRoomMemberId()).orElseThrow(
             () -> new ResourceNotFoundException("Room membership to change not found"));
+
+        if (!userMemberToChange.getRoom().getRoomId().equals(roomId)) {
+            throw new AccessDeniedException("This member does not belong to the specified room");
+        }
+
+        if (dto.getRole() == RoomRole.OWNER) {
+            RoomEntity roomEntity = roomRepository.findById(roomId).orElseThrow(
+                () -> new ResourceNotFoundException("Room not found")
+            );
+            roomEntity.setOwner(userMemberToChange.getUser());
+            roomRepository.save(roomEntity);
+
+            currentUser.setRole(RoomRole.MEMBER);
+            roomMemberRepository.save(currentUser);
+
+            userMemberToChange.setRole(RoomRole.OWNER);
+            return memberMapper.mapTo(roomMemberRepository.save(userMemberToChange));
+        }
 
         userMemberToChange.setRole(dto.getRole());
         return memberMapper.mapTo(roomMemberRepository.save(userMemberToChange));
