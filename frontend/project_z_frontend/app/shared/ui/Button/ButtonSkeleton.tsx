@@ -1,28 +1,31 @@
-import React from 'react';
+import type { FC } from "react";
+import { cn } from "~/shared/lib";
+
+type ButtonVariants = "fill" | "outline" | "text-only" | "cancel" | "save";
 
 interface SkeletonProps {
-    type?: "fill" | "outline" | "text-only";
-    className?: string;
+  variant?: ButtonVariants;
+  className?: string;
 }
 
-const ButtonSkeleton: React.FC<SkeletonProps> = ({ 
-    type = "fill",
-    className = ""
-}) => {
-    
-    const baseClasses = "animate-pulse bg-background-muted cursor-default pointer-events-none rounded";
+const skeletonVariants: Record<ButtonVariants, string> = {
+  fill: "h-10 w-24 rounded-lg",
+  outline: "h-10 w-24 rounded-lg",
+  "text-only": "h-6 w-20 rounded",
+  cancel: "w-full sm:flex-1 h-12 sm:h-14 rounded-xl",
+  save: "w-full sm:flex-[2] h-12 sm:h-14 rounded-xl",
+};
 
-    const getShapeClasses = () => {
-        if(type=="text-only") return "h-6 w-20 rounded";
-        
-        return "h-10 w-24 rounded-md";
-    };
-
-    return (
-        <div
-            className={`${baseClasses} ${getShapeClasses()} ${className}`}
-        />
-    );
+const ButtonSkeleton: FC<SkeletonProps> = ({ variant = "fill", className }) => {
+  return (
+    <div
+      className={cn(
+        "animate-pulse bg-background-muted cursor-default pointer-events-none",
+        skeletonVariants[variant],
+        className,
+      )}
+    />
+  );
 };
 
 export default ButtonSkeleton;

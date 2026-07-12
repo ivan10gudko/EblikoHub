@@ -34,7 +34,8 @@ const INITIAL_FORM_DATA: CreateTitleRecord = {
 };
 
 export const AddTitleModal = ({ isOpen, onClose }: AddTitleModalProps) => {
-  const [formData, setFormData] = useState<CreateTitleRecord>(INITIAL_FORM_DATA);
+  const [formData, setFormData] =
+    useState<CreateTitleRecord>(INITIAL_FORM_DATA);
   const { createNewTitleRecord, isCreating } = useCreateTitleRecord();
 
   const handleImport = (anime: AnimeCardType) => {
@@ -93,8 +94,6 @@ export const AddTitleModal = ({ isOpen, onClose }: AddTitleModalProps) => {
     >
       <div className="flex flex-col h-[70vh] px-1 sm:px-0">
         <div className="flex-1 min-h-0 overflow-y-auto pr-1 sm:pr-3 custom-scrollbar space-y-6 p-2">
-          
-       
           <div className="space-y-2">
             <label className="text-xs font-bold tracking-widest text-foreground ml-1 leading-tight uppercase">
               Quick Import via MAL
@@ -103,7 +102,6 @@ export const AddTitleModal = ({ isOpen, onClose }: AddTitleModalProps) => {
           </div>
 
           <div className="flex flex-col md:flex-row gap-8">
-            {/* Ліва колонка — завантажувач обкладинки */}
             <div className="border-t border-border/50 pt-6 md:border-t-0 md:pt-0">
               <ImageUrlEditor
                 imageUrl={formData.imageUrl ?? null}
@@ -111,10 +109,7 @@ export const AddTitleModal = ({ isOpen, onClose }: AddTitleModalProps) => {
               />
             </div>
 
-         
             <div className="flex-grow space-y-6">
-              
-          
               <div className="space-y-2">
                 <label className="text-xs font-bold tracking-widest text-foreground ml-1 leading-tight">
                   Title Name
@@ -131,7 +126,6 @@ export const AddTitleModal = ({ isOpen, onClose }: AddTitleModalProps) => {
                 />
               </div>
 
-          
               <div className="w-full">
                 <div className="space-y-2 mb-5">
                   <label className="text-xs font-bold tracking-widest text-muted-foreground ml-1 uppercase opacity-70">
@@ -190,7 +184,6 @@ export const AddTitleModal = ({ isOpen, onClose }: AddTitleModalProps) => {
                 </div>
               </div>
 
-            
               <div className="space-y-2 pt-2">
                 <label className="text-xs font-bold tracking-widest text-muted-foreground ml-1 uppercase opacity-70 block">
                   Description
@@ -206,24 +199,24 @@ export const AddTitleModal = ({ isOpen, onClose }: AddTitleModalProps) => {
                   className="w-full p-4 border-2 border-border focus:border-primary rounded-xl font-medium text-foreground text-sm bg-background/50 hover:border-border/80 focus:bg-background transition-all shadow-sm resize-none custom-scrollbar outline-none focus:ring-2 focus:ring-primary/10"
                 />
               </div>
-
             </div>
           </div>
         </div>
 
-     
         <div className="pt-4 bg-background shrink-0 flex flex-col gap-3 border-t border-border mt-2">
           <div className="flex gap-4">
             <Button
               onClick={onClose}
-              className="w-full sm:flex-1 h-12 sm:h-14 rounded-xl border-2 border-border bg-background text-foreground/80 font-bold tracking-wide hover:-translate-y-[2px] hover:bg-background-muted hover:text-foreground hover:shadow-[0_4px_0_0_rgba(0,0,0,0.15)] dark:hover:shadow-[0_4px_0_0_var(--color-border)] active:translate-y-0 active:shadow-none transition-all disabled:opacity-50 disabled:pointer-events-none flex items-center justify-center cursor-pointer"
+              variant="cancel"
+              className="w-full sm:flex-1"
             >
               Cancel
             </Button>
             <Button
               onClick={handleSave}
               disabled={isCreating}
-              className="w-full sm:flex-[2] h-12 sm:h-14 rounded-xl bg-primary text-background font-black tracking-wide shadow-[0_4px_0_0_#d97706] hover:bg-primary/90 hover:shadow-[0_4px_0_0_#b45309] active:translate-y-[2px] active:shadow-[0_2px_0_0_#b45309] transition-all disabled:opacity-50 disabled:pointer-events-none flex items-center justify-center cursor-pointer"
+              variant="save"
+              className="w-full sm:flex-2"
             >
               {isCreating ? "Saving..." : "Save Title"}
             </Button>
