@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from "react-router";
-import { ReadOnlyStatusBadge, TitleTypeThemes, type TitleRecord } from "~/entities/titleRecord";
+import { ReadOnlyStatusBadge, TitleTypeThemes, TitlePinnedThemes, type TitleRecord } from "~/entities/titleRecord";
 import { CompactRate } from "~/shared/ui/CompactRate";
 import { TitleActionsMenu } from "../../TitleActionsMenu";
 import { useTitleFilterStore, type TitleSortType } from "~/features/titleFilter/store/titleFilter.store";
@@ -13,9 +13,12 @@ interface PinnedWatchlistRowReadOnlyProps {
 
 export const PinnedWatchlistRowReadOnly = ({ title, onOpenRatingModal, onRowClick }: PinnedWatchlistRowReadOnlyProps) => {
   const navigate = useNavigate();
+  
   const themeClasses = title.titleType ? TitleTypeThemes[title.titleType] : "";
+  const pinnedClasses = title.titleType ? TitlePinnedThemes[title.titleType] : "";
+  
   const sortBy = useTitleFilterStore((state) => state.sortBy);
-  const isAvgView = sortBy === "avgRating" as TitleSortType;
+  const isAvgView = sortBy === ("avgRating" as TitleSortType);
 
   const handleImageClick = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -25,20 +28,15 @@ export const PinnedWatchlistRowReadOnly = ({ title, onOpenRatingModal, onRowClic
   return (
     <div
       onClick={() => onRowClick(title)}
-      className={`flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-4 bg-primary/5 p-3 rounded-xl border-2 border-primary/40 shadow-md transition-all duration-300 w-full min-w-0 relative cursor-pointer hover:border-primary/60 ${themeClasses}`}
+      className={`flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-4 p-3 rounded-xl border-2 transition-all duration-300 w-full min-w-0 relative cursor-pointer ${themeClasses} ${pinnedClasses}`}
     >
-      
       <div className="absolute -top-2.5 left-4 bg-primary text-background text-[9px] uppercase tracking-wider font-black px-2 py-0.5 rounded-full shadow-sm z-10 pointer-events-none">
         Pinned Title
       </div>
 
-      
       <div className="flex items-center flex-1 gap-3 min-w-0 max-w-full">
-        
-        
         <div className="w-6 pl-1 flex-shrink-0" />
 
-        
         <div className="relative h-10 w-16 flex-shrink-0 transition-transform duration-500 hover:scale-[3.0] hover:z-10 cursor-pointer">
           <img
             src={title.imageUrl || "/defaultTitleRecordImage.jpg"}
@@ -48,7 +46,6 @@ export const PinnedWatchlistRowReadOnly = ({ title, onOpenRatingModal, onRowClic
           />
         </div>
 
-       
         <div className="grid flex-1 min-w-0">
           <span className="block truncate font-bold text-foreground uppercase text-xs sm:text-sm leading-tight w-full">
             {title.titleName}

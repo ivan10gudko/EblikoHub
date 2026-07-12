@@ -12,10 +12,11 @@ export interface TitleRecord {
     description: string;
     imageUrl?: string | null,
     customOrder: number,
-    pinned : boolean
+    pinned: boolean
     createdAt: string,
     avgRating?: number;
 }
+
 export enum TitleType {
     ANIME = "ANIME",
     HENTAI = "HENTAI",
@@ -31,12 +32,22 @@ export const titleTypeOptions = [
     { value: TitleType.MOVIE, label: "Movie" },
     { value: TitleType.HENTAI, label: "Hentai" },
 ];
+
 export const TitleTypeThemes: Record<TitleType, string> = {
     [TitleType.ANIME]: "border-border",
     [TitleType.MANGA]: "bg-emerald-500/5 border-emerald-500/20 hover:border-emerald-500/40",
     [TitleType.SERIES]: "bg-purple-500/5 border-purple-500/20 hover:border-purple-500/40",
     [TitleType.MOVIE]: "bg-orange-500/4 border-amber-500/20 hover:border-amber-500/40",
     [TitleType.HENTAI]: "bg-rose-500/5 border-rose-500/20 hover:border-rose-500/40",
+};
+
+
+export const TitlePinnedThemes: Record<TitleType, string> = {
+    [TitleType.ANIME]: "border-primary/70 shadow-[0_0_15px_rgba(255,163,26,0.12)] hover:border-primary",
+    [TitleType.MANGA]: "border-emerald-500/60 shadow-[0_0_15px_rgba(16,185,129,0.15)] hover:border-emerald-500",
+    [TitleType.SERIES]: "border-purple-500/60 shadow-[0_0_15px_rgba(168,85,247,0.15)] hover:border-purple-500",
+    [TitleType.MOVIE]: "border-amber-500/60 shadow-[0_0_15px_rgba(245,158,11,0.15)] hover:border-amber-500",
+    [TitleType.HENTAI]: "border-rose-500/60 shadow-[0_0_15px_rgba(244,63,94,0.15)] hover:border-rose-500",
 };
 
 export interface TitleParams extends QueryParams {
@@ -57,10 +68,12 @@ export interface ManageTitleRecordProps {
     initialData: CreateTitleRecord;
     titleRecord: TitleRecord | null;
 }
-export interface SameCriteriaRating{
-    titles : Array<TitleShortDto>;
-    avgRating : number;
+
+export interface SameCriteriaRating {
+    titles: Array<TitleShortDto>;
+    avgRating: number;
 }
+
 export const TitleTypeOptionsColors: Record<TitleType, string> = {
     [TitleType.ANIME]: "text-foreground/90",
     [TitleType.MANGA]: "text-green-500/90",
@@ -68,8 +81,8 @@ export const TitleTypeOptionsColors: Record<TitleType, string> = {
     [TitleType.MOVIE]: "text-amber-500/90",
     [TitleType.HENTAI]: "text-red-500/90",
 };
-export interface TitleStats {
-  statusCount: Record<string, number>;
-  typeCount: Record<string, number>;
-}
 
+export interface TitleStats {
+    statusCount: Record<string, number>;
+    typeCount: Record<string, number>;
+}
