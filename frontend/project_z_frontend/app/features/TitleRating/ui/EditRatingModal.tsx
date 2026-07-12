@@ -74,7 +74,7 @@ export const EditRatingModal = ({
           ? `Edit Rating "${title.titleName}"`
           : `Rating Overview "${title.titleName}"`
       }
-      maxWidth="max-w-xl"
+      maxWidth="max-w-2xl"
     >
       {isOwn ? (
         <RatingEditorContent

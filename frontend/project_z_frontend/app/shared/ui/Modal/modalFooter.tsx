@@ -18,10 +18,10 @@ export const ModalFooter = ({
   isOwn = true,
 }: ModalFooterProps) => {
   return (
-    <div className="flex flex-col-reverse sm:flex-row gap-2 sm:gap-3 pt-4 sm:pt-6 mt-4 border-t border-border">
+    <div className="flex flex-col-reverse sm:flex-row gap-2 sm:gap-3 pt-4 sm:pt-6 mt-4 border-t border-border shrink-0">
       <Button
-        variant="outline"
-        className="text-foreground bg-card border-none w-full sm:flex-1 h-12 sm:h-14 rounded-xl font-bold"
+        variant="cancel"
+        className="w-full sm:flex-1"
         onClick={onCancel}
         disabled={isSaving}
       >
@@ -30,7 +30,8 @@ export const ModalFooter = ({
 
       {isOwn && (
         <Button
-          className="w-full sm:flex-[2] h-12 sm:h-14 rounded-xl bg-primary text-foreground font-black tracking-wide shadow-[0_4px_0_0_#d97706] active:translate-y-[1px] active:shadow-none transition-all disabled:opacity-50"
+          variant="save"
+          className="w-full sm:flex-2"
           onClick={onSave}
           disabled={isSaving}
         >

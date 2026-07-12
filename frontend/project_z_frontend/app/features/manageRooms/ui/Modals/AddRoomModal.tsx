@@ -115,7 +115,7 @@ export const AddRoomModal = ({
       isOpen={isOpen}
       onClose={onClose}
       title={`Create New Room (${step}/${totalSteps})`}
-      maxWidth="max-w-4xl"
+      maxWidth="max-w-2xl"
     >
       <div className="flex flex-col h-[65vh] px-1 sm:px-0">
         
