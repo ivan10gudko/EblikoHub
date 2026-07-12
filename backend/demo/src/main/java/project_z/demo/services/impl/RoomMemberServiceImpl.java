@@ -14,6 +14,7 @@ import project_z.demo.Mappers.Mapper;
 import project_z.demo.common.Exceptions.ResourceNotFoundException;
 import project_z.demo.dto.RoomMemberDtos.RoomMemberDto;
 import project_z.demo.dto.RoomMemberDtos.RoomMemberIdDto;
+import project_z.demo.dto.RoomMemberDtos.RoomMemberRoleUpdateDto;
 import project_z.demo.dto.UserDtos.UserShortDto;
 import project_z.demo.entity.RoomEntity;
 import project_z.demo.entity.RoomMemberEntity;
@@ -89,5 +90,19 @@ public class RoomMemberServiceImpl implements RoomMemberService {
         roomMemberRepository.delete(ownerEntity);
         return memberMapper.mapTo( roomMemberRepository.save(userToPromoteToOnwerEntity));
     }
+    @Override
+    @Transactional
+    public RoomMemberDto updateMemberRole(UUID currentUserId, long roomId, RoomMemberRoleUpdateDto dto){
+        RoomMemberEntity currentUser = roomMemberRepository.findOneByRoom_RoomIdAndUser_UserId(roomId,currentUserId).orElseThrow(
+        () -> new ResourceNotFoundException("Room membership not found"));
 
+        if(!currentUser.getRole().equals(RoomRole.OWNER)){
+            throw new AccessDeniedException("Access denied");
+        }
+        RoomMemberEntity userMemberToChange = roomMemberRepository.findById(dto.getRoomMemberId()).orElseThrow(
+            () -> new ResourceNotFoundException("Room membership to change not found"));
+
+        userMemberToChange.setRole(dto.getRole());
+        return memberMapper.mapTo(roomMemberRepository.save(userMemberToChange));
+    }
 }

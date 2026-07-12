@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -21,9 +22,11 @@ import lombok.RequiredArgsConstructor;
 import project_z.demo.common.QueryParameters.UserQueryParameters;
 import project_z.demo.dto.RoomMemberDtos.RoomMemberDto;
 import project_z.demo.dto.RoomMemberDtos.RoomMemberIdDto;
+import project_z.demo.dto.RoomMemberDtos.RoomMemberRoleUpdateDto;
 import project_z.demo.dto.UserDtos.UserShortDto;
 import project_z.demo.dto.UserDtos.UserWithRelationsToRoomDto;
 import project_z.demo.security.JwtService;
+import project_z.demo.security.SecurityService;
 import project_z.demo.services.RoomMemberService;
 import project_z.demo.services.UserService;
 
@@ -36,6 +39,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 @RequiredArgsConstructor
 public class RoomMemberController {
     private final UserService userService;
+    private final SecurityService securityService;
     @Autowired
     private RoomMemberService roomMemberService;
 
@@ -62,6 +66,15 @@ public class RoomMemberController {
         Page<UserWithRelationsToRoomDto> users = userService.searchUsersForRoom(name, roomId, queryParameters);
 
         return ResponseEntity.ok(users);
+    }
+    
+    @PatchMapping
+    @PreAuthorize("@securityService.isRoomOwner(#roomId)")
+    public ResponseEntity<RoomMemberDto> updateMemberRole(
+        @PathVariable("roomId") Long roomId,
+        @RequestBody RoomMemberRoleUpdateDto dto){
+        UUID userId = securityService.getCurrentUserId();
+        return new ResponseEntity<>(roomMemberService.updateMemberRole(userId, roomId, dto), HttpStatus.OK);
     }
 
     @DeleteMapping("/leave")
