@@ -107,11 +107,17 @@ export const EditTitleModal = ({
     >
       <div className="flex flex-col max-h-[70vh] h-full justify-between p-2">
         <div className="overflow-y-auto flex-1 pr-2 pb-6 space-y-6 custom-scrollbar min-h-0">
+          
+         
           <div className="flex flex-col sm:flex-row gap-6 items-center sm:items-start text-center sm:text-left">
-            <div className="w-40 h-56 shrink-0 rounded-xl overflow-hidden shadow-md border border-border/40">
-              <ImageUrlEditor imageUrl={imageUrl} onImageChange={setImageUrl} />
-            </div>
+            
+            <img
+              src={imageUrl || "/defaultTitleRecordImage.jpg"}
+              alt={titleName}
+              className="w-40 h-56 object-cover rounded-xl shadow-md border border-border/40 shrink-0"
+            />
 
+           
             <div className="flex-1 space-y-4 w-full text-left">
               <div>
                 <label className="text-xs font-bold tracking-widest text-muted-foreground uppercase opacity-60 block mb-1">
@@ -155,7 +161,7 @@ export const EditTitleModal = ({
               <div className="pt-2">
                 <label className="text-xs font-bold tracking-widest text-muted-foreground uppercase opacity-60 block mb-2">
                   Rating
-                </label>{" "}
+                </label> 
                 <CompactRate
                   currentRating={rating}
                   onRate={(val) => setRating(val)}
@@ -165,6 +171,7 @@ export const EditTitleModal = ({
             </div>
           </div>
 
+          
           <div className="space-y-2 border-t border-border/40 pt-4">
             <label className="text-xs font-bold tracking-widest text-muted-foreground uppercase opacity-60 block mb-1 ml-1">
               Description & Notes
@@ -178,8 +185,20 @@ export const EditTitleModal = ({
               className="w-full p-4 border-2 border-border focus:border-primary rounded-xl font-medium text-foreground text-sm bg-background/50 hover:border-border/80 focus:bg-background transition-all shadow-sm resize-none custom-scrollbar outline-none focus:ring-2 focus:ring-primary/10"
             />
           </div>
+
+         
+          <div className="space-y-2 border-t border-border/40 pt-4">
+            <label className="text-xs font-bold tracking-widest text-muted-foreground uppercase opacity-60 block mb-1 ml-1">
+              Cover Source URL
+            </label>
+            <ImageUrlEditor 
+              imageUrl={imageUrl} 
+              onImageChange={setImageUrl} 
+            />
+          </div>
         </div>
 
+        
         <div className="flex gap-3 pt-4 border-t border-border bg-background mt-auto shrink-0">
           <Button
             onClick={onClose}

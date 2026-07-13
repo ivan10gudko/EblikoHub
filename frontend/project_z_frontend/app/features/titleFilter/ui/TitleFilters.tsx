@@ -26,7 +26,7 @@ export const TitleFilters = ({ statusCount, typeCount }: TitleFiltersProps) => {
 
       <Divider sx={{ my: 1 }} />
 
-      <Button onClick={reset} variant="destructive">
+      <Button onClick={reset} className="w-full border  border-danger/40 text-white/70 hover:bg-danger/15 hover:text-danger gap-2 px-4 py-2 rounded-xl bg-danger/30">
         Reset all filters
       </Button>
     </div>
