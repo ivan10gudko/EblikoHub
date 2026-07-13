@@ -3,10 +3,13 @@ package project_z.demo.services;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
+import project_z.demo.common.QueryParameters.UserQueryParameters;
 import project_z.demo.dto.RoomBanDtos.RoomBanCreateDto;
 import project_z.demo.dto.RoomBanDtos.RoomBanDetailsDto;
+import project_z.demo.dto.UserDtos.UserDtoWithRoomBanStatus;
 
 @Service
 public interface RoomBanService {
@@ -14,4 +17,6 @@ public interface RoomBanService {
     List<RoomBanDetailsDto> findAllByRoom(Long roomId);
     boolean isBanned(Long roomId, UUID userId);
     void unban(UUID id);
+    Page<UserDtoWithRoomBanStatus> searchUsers(Long roomId, UUID currentUserId, UserQueryParameters queryParameters);
 }
+

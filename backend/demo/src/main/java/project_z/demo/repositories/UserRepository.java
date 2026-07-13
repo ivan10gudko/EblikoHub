@@ -48,4 +48,20 @@ public interface UserRepository extends CrudRepository<UserEntity, UUID> {
             @Param("name") String name,
             @Param("currentUserId") UUID currentUserId,
             Pageable pageable);
+
+    @Query(value = """
+            SELECT u,
+            (CASE WHEN b.id IS NOT NULL THEN true ELSE false END) as isBanned,
+            b.id
+            FROM UserEntity u
+            LEFT JOIN RoomBanEntity b ON b.user.userId = u.userId AND b.room.roomId = :roomId
+            WHERE LOWER(u.name) LIKE LOWER(CONCAT('%', :name, '%'))
+            AND u.userId != :currentUserId
+            """, countQuery = "SELECT count(u) FROM UserEntity u WHERE LOWER(u.name) LIKE LOWER(CONCAT('%', :name, '%')) AND u.userId != :currentUserId")
+    Page<Object[]> findUsersWithRoomBanStatus(
+            @Param("name") String name,
+            @Param("roomId") Long roomId,
+            @Param("currentUserId") UUID currentUserId,
+            Pageable pageable);
 }
+

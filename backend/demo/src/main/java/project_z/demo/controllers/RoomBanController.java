@@ -5,8 +5,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.data.domain.Page;
+import project_z.demo.common.QueryParameters.UserQueryParameters;
 import project_z.demo.dto.RoomBanDtos.RoomBanCreateDto;
 import project_z.demo.dto.RoomBanDtos.RoomBanDetailsDto;
+import project_z.demo.dto.UserDtos.UserDtoWithRoomBanStatus;
+import project_z.demo.security.SecurityService;
 import project_z.demo.services.RoomBanService;
 
 import java.util.List;
@@ -18,6 +22,7 @@ import java.util.UUID;
 public class RoomBanController {
 
     private final RoomBanService roomBanService;
+    private final SecurityService securityService;
 
     @GetMapping
     @PreAuthorize("@securityService.isAdminOrOwner(#roomId)")
@@ -46,6 +51,20 @@ public class RoomBanController {
     public ResponseEntity<Void> unban(@PathVariable("roomBanId") UUID roomBanId){
         roomBanService.unban(roomBanId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @GetMapping("/search")
+    @PreAuthorize("@securityService.isAdminOrOwner(#roomId)")
+    public ResponseEntity<Page<UserDtoWithRoomBanStatus>> searchUsers(
+            @PathVariable("roomId") Long roomId,
+            UserQueryParameters queryParameters) {
+
+        UUID currentUserId = securityService.getCurrentUserId();
+
+        Page<UserDtoWithRoomBanStatus> response = roomBanService.searchUsers(
+                roomId, currentUserId, queryParameters);
+
+        return ResponseEntity.ok(response);
     }
     
 }
