@@ -16,6 +16,11 @@ import project_z.demo.entity.RoomBanEntity;
 import project_z.demo.entity.RoomEntity;
 import project_z.demo.entity.RoomMemberEntity;
 import project_z.demo.entity.UserEntity;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import project_z.demo.JavaUtil.PagingHelper;
+import project_z.demo.common.QueryParameters.UserQueryParameters;
+import project_z.demo.dto.UserDtos.UserDtoWithRoomBanStatus;
 import project_z.demo.repositories.RoomBanRepository;
 import project_z.demo.repositories.RoomMemberRepository;
 import project_z.demo.repositories.RoomRepository;
@@ -35,6 +40,7 @@ public class RoomBanServiceImpl implements RoomBanService {
     private final UserRepository userRepository;
     private final Mapper<RoomBanEntity, RoomBanDetailsDto> banMapper;
     private final Mapper<RoomBanEntity, RoomBanCreateDto> banCreateMapper;
+    private final Mapper<Object[], UserDtoWithRoomBanStatus> userWithBanStatusMapper;
 
     @Override
     @Transactional
@@ -78,5 +84,13 @@ public class RoomBanServiceImpl implements RoomBanService {
                 () -> new ResourceNotFoundException("Room ban not found")
         );
         roomBanRepository.delete(roomBanEntity);
+    }
+
+    @Override
+    public Page<UserDtoWithRoomBanStatus> searchUsers(Long roomId, UUID currentUserId,
+            UserQueryParameters queryParameters) {
+        Pageable pageable = PagingHelper.toPageable(queryParameters);
+        return userRepository.findUsersWithRoomBanStatus(queryParameters.getName(), roomId, currentUserId, pageable)
+                .map(userWithBanStatusMapper::mapTo);
     }
 }
