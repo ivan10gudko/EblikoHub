@@ -27,16 +27,16 @@ interface TitleRecordService {
     reindexCustomOrder(userId: string): Promise<void>;
     getWatched(userId: string): Promise<Array<TitleRecord>>;
     getPlanned(userId: string): Promise<Array<TitleRecord>>;
-    getByApiTitleId(jikanId: number): Promise<TitleRecord>;
-    pinTitle(titleId : number) : Promise<TitleRecord>;
-    unpin() : Promise<void>;
+    getByApiTitleId(externalProviderId: number): Promise<TitleRecord>;
+    pinTitle(titleId: number): Promise<TitleRecord>;
+    unpin(): Promise<void>;
     getSameCriteriaRating(titleId: number, category: string, currentRating: number): Promise<SameCriteriaRating>;
     rate(options: RateOptions): Promise<TitleRecord>;
     clearRating(options: ActionOptions): Promise<TitleRecord>;
     moveToPlanned(options: ActionOptions): Promise<TitleRecord>;
     markAsWatched(options: ActionOptions): Promise<TitleRecord>;
     markAsDropped(options: ActionOptions): Promise<TitleRecord>;
-getTitleStats(userId: string): Promise<TitleStats>;
+    getTitleStats(userId: string): Promise<TitleStats>;
     saveAction(options: ActionOptions & { data: Partial<TitleRecord> }): Promise<TitleRecord>;
 }
 
@@ -59,11 +59,11 @@ export const titleRecordService: TitleRecordService = {
 
         return response.data;
     },
-    async pinTitle(titleId){
+    async pinTitle(titleId) {
         const response = await apiClient.post(`/titles/${titleId}/pinTitle`);
         return response.data;
     },
-    async unpin(){
+    async unpin() {
         await apiClient.post("/titles/unpin");
     },
     async post(titleData) {

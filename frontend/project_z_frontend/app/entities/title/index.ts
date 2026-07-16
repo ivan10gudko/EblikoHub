@@ -5,7 +5,7 @@ export {
     getAnimeById,
     getSeasonNow,
     getRecentAnimeRecommendations
-} from './api/jikan.api';
+} from './api/externalProvider.api';
 
 export type { AnimeCardType, Anime } from './model/animeTitle.types';
 
