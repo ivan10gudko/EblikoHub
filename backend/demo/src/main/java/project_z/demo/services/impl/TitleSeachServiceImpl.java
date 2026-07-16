@@ -19,7 +19,7 @@ public class TitleSeachServiceImpl implements TitleSearchService {
   @Override
   public String searchTitle(String text, int page){
     String encodedText = URLEncoder.encode(text, StandardCharsets.UTF_8);
-    String url = apiBaseUrl + "/v1/anime?q=" + encodedText + "&limit=24" + "&page=" + page;
+    String url = apiBaseUrl + "/anime?q=" + encodedText + "&limit=24" + "&page=" + page;
 
     return restTemplate.getForObject(url, String.class);
   }
