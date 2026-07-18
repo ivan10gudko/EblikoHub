@@ -91,6 +91,6 @@ export interface RoomBanDetailsDto {
     roomId: number;
     user: UserShort;
     reason: string;
-    bannedByUserId: string;
+    bannedByUser: UserShort;
     createdAt: string;
 }

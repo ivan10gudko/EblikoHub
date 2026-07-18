@@ -48,7 +48,9 @@ public class RoomBanController {
 
     @DeleteMapping("/{roomBanId}")
     @PreAuthorize("@securityService.isAdminOrOwner(#roomId)")
-    public ResponseEntity<Void> unban(@PathVariable("roomBanId") UUID roomBanId){
+    public ResponseEntity<Void> unban(
+            @PathVariable Long roomId,
+            @PathVariable("roomBanId") UUID roomBanId) {
         roomBanService.unban(roomBanId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }

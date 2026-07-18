@@ -11,8 +11,12 @@ import { UserAvatar } from "~/entities/user";
 
 import { RoomRole, type RoomMemberShort } from "~/entities/room/model/room.types";
 import { RoomMemberRoleBadge } from "~/features/manageRooms/ui/RoomMemberRoleBadge";
+import { useRoomMemberActions } from "~/features/manageRooms/hooks/useRoomMemberActions";
+import { useRoomBanActions } from "~/features/manageRooms/hooks/useRoomBanActions";
+import { notify } from "~/shared/lib";
 
 interface RoomMemberCardProps {
+    roomId: string | number; 
     member: RoomMemberShort;
     roomOwnerId?: string | number;
     currentUserId: string | number;
@@ -20,6 +24,7 @@ interface RoomMemberCardProps {
 }
 
 export const RoomMemberCard: React.FC<RoomMemberCardProps> = ({
+    roomId,
     member,
     roomOwnerId,
     currentUserId,
@@ -28,25 +33,60 @@ export const RoomMemberCard: React.FC<RoomMemberCardProps> = ({
     const navigate = useNavigate();
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
+    const numericRoomId = Number(roomId);
+    const { updateMemberRole, isUpdatingRole } = useRoomMemberActions(numericRoomId);
+    const { banUser, isPending: isBanning } = useRoomBanActions(numericRoomId);
+
     const userData = member.user;
     const realUserId = userData?.userId;
     const displayName = userData?.name || "Unknown User";
     const nameTag = userData?.nameTag;
     const avatarSrc = userData?.img;
 
-    const isOwner = member.role === "OWNER" || (Boolean(realUserId) && String(realUserId) === String(roomOwnerId));
+    const isOwner = member.role === RoomRole.OWNER || (Boolean(realUserId) && String(realUserId) === String(roomOwnerId));
     const isSelf = String(realUserId) === String(currentUserId);
     const canManage = isCurrentUserAdmin && !isSelf && !isOwner;
+    const isActionPending = isUpdatingRole || isBanning;
 
     const handleOpenMenu = (event: React.MouseEvent<HTMLElement>) => {
         event.stopPropagation();
         setAnchorEl(event.currentTarget);
     };
 
-    const handleAction = (event: React.MouseEvent, actionType: string) => {
+    const handleRoleChange = async (event: React.MouseEvent, targetRole: RoomRole) => {
         event.stopPropagation();
         setAnchorEl(null);
-        console.log(`Action: ${actionType} on ${displayName}`);
+
+        try {
+            await updateMemberRole({
+                roomMemberId: member.id,
+                role: targetRole,
+            });
+            notify.success(`Role updated successfully`);
+        } catch {
+            // Помилка логується всередині хука
+        }
+    };
+
+    const handleBanAction = (event: React.MouseEvent) => {
+        event.stopPropagation();
+        setAnchorEl(null);
+
+        if (!realUserId) {
+            notify.error("Cannot ban a user without a valid ID");
+            return;
+        }
+
+        // Передаємо id разом із даними профілю для оптимістичного відображення
+        banUser({
+            userId: String(realUserId),
+            reason: "Banned by Admin via member list",
+            userData: {
+                name: displayName,
+                nameTag: nameTag || undefined,
+                img: avatarSrc
+            }
+        });
     };
 
     return (
@@ -87,6 +127,7 @@ export const RoomMemberCard: React.FC<RoomMemberCardProps> = ({
                         <IconButton
                             size="small"
                             onClick={handleOpenMenu}
+                            disabled={isActionPending}
                             sx={{
                                 color: "var(--foreground-muted)",
                                 padding: "4px",
@@ -118,21 +159,29 @@ export const RoomMemberCard: React.FC<RoomMemberCardProps> = ({
                         }}
                     >
                         {member.role === RoomRole.ADMIN ? (
-                            <MenuItem onClick={(e) => handleAction(e, "demote")} className="gap-2.5 text-xs!  font-medium! py-2">
+                            <MenuItem 
+                                onClick={(e) => handleRoleChange(e, RoomRole.MEMBER)} 
+                                className="gap-2.5 text-xs! font-medium! py-2"
+                            >
                                 <ArrowDownwardIcon sx={{ fontSize: 16, color: "var(--foreground-muted)" }} />
                                 Demote to Member
                             </MenuItem>
                         ) : (
-                            <MenuItem onClick={(e) => handleAction(e, "promote")} className="gap-2.5 text-xs! font-medium! py-2">
+                            <MenuItem 
+                                onClick={(e) => handleRoleChange(e, RoomRole.ADMIN)} 
+                                className="gap-2.5 text-xs! font-medium! py-2"
+                            >
                                 <ArrowUpwardIcon sx={{ fontSize: 16, color: "var(--primary)" }} />
                                 Promote to Admin
                             </MenuItem>
                         )}
-
                         
                         <div className="border-t border-(--border)/60 my-1" />
 
-                        <MenuItem onClick={(e) => handleAction(e, "ban")} className="gap-2.5 !text-xs !font-medium !text-danger py-2">
+                        <MenuItem 
+                            onClick={handleBanAction} 
+                            className="gap-2.5 !text-xs !font-medium !text-danger py-2"
+                        >
                             <GavelIcon sx={{ fontSize: 16 }} />
                             Ban User
                         </MenuItem>

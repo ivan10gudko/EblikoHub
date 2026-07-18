@@ -127,3 +127,7 @@ export interface RoomRequestShortWithoutRoomDto {
     type: RequestType;
     createdAt: string;
 }
+export interface RoomMemberRoleUpdateDto {
+    roomMemberId: string;
+    role: RoomRole;
+}

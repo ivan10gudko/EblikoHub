@@ -47,22 +47,27 @@ public class RoomBanServiceImpl implements RoomBanService {
     public RoomBanDetailsDto create(RoomBanCreateDto banDto, Long roomId) {
         UUID currentUserId = securityService.getCurrentUserId();
 
-        if(currentUserId.equals(banDto.getUserId())){
+        if (currentUserId.equals(banDto.getUserId())) {
             throw new RoomSelfBanException("You cant ban yourself");
         }
 
         UserEntity userBannedByEntity = userRepository.findById(currentUserId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + currentUserId));
+
         RoomEntity roomEntity = roomRepository.findById(roomId)
                 .orElseThrow(() -> new ResourceNotFoundException("no room found with id" + roomId));
-        RoomMemberEntity roomMemberEntity = roomMemberRepository.findOneByRoom_RoomIdAndUser_UserId(roomId, banDto.getUserId())
-                .orElseThrow(() -> new ResourceNotFoundException("Room member not found with id: " + banDto.getUserId()));
+        UserEntity targetUserEntity = userRepository.findById(banDto.getUserId())
+                .orElseThrow(
+                        () -> new ResourceNotFoundException("User to ban not found with id: " + banDto.getUserId()));
+
         RoomBanEntity entity = new RoomBanEntity();
         entity.setReason(banDto.getReason());
         entity.setBannedBy(userBannedByEntity);
-        entity.setUser(roomMemberEntity.getUser());
+        entity.setUser(targetUserEntity);
         entity.setRoom(roomEntity);
-        roomMemberRepository.delete(roomMemberEntity);
+        roomMemberRepository.findOneByRoom_RoomIdAndUser_UserId(roomId, banDto.getUserId())
+                .ifPresent(roomMemberRepository::delete);
+
         return banMapper.mapTo(roomBanRepository.save(entity));
     }
 
@@ -79,10 +84,10 @@ public class RoomBanServiceImpl implements RoomBanService {
     }
 
     @Override
-    public void unban(UUID id){
+    @Transactional
+    public void unban(UUID id) {
         RoomBanEntity roomBanEntity = roomBanRepository.findById(id).orElseThrow(
-                () -> new ResourceNotFoundException("Room ban not found")
-        );
+                () -> new ResourceNotFoundException("Room ban not found"));
         roomBanRepository.delete(roomBanEntity);
     }
 

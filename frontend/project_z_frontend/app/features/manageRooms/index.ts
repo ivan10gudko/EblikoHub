@@ -14,3 +14,4 @@ export type {
     RoomTitleWithSearchQueryParams,
 } from "./model/roomTitle.types";
 export {useRoomTitleLinks} from "./hooks/useRoomTitleLinks";
+export{useInfiniteRoomBanSearch} from "./hooks/useSearchBanUsers"

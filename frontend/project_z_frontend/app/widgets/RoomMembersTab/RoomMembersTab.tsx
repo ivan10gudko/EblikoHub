@@ -1,6 +1,6 @@
 import React from "react";
 import { RoomMemberCard } from "./RoomMemberCard";
-import type { Room } from "~/entities/room/model/room.types";
+import { RoomRole, type Room } from "~/entities/room/model/room.types";
 
 interface RoomMembersTabProps {
     room: Room;
@@ -9,12 +9,11 @@ interface RoomMembersTabProps {
 
 export const RoomMembersTab: React.FC<RoomMembersTabProps> = ({ room, currentUserId }) => {
     const members = room?.members || [];
-    const roomOwnerId =room.owner;
 
     const currentUser = members.find(m => String(m.user?.userId) === String(currentUserId));
-    const currentUserRole = currentUser?.role || "MEMBER";
+    const currentUserRole = currentUser?.role || RoomRole.MEMBER;
 
-    const isCurrentUserAdmin = currentUserRole === "ADMIN" || currentUserRole === "OWNER";
+    const isCurrentUserAdmin = currentUserRole === RoomRole.ADMIN || currentUserRole === RoomRole.OWNER;
 
     if (members.length === 0) {
         return (
@@ -36,6 +35,7 @@ export const RoomMembersTab: React.FC<RoomMembersTabProps> = ({ room, currentUse
                 {members.map((member) => (
                     <RoomMemberCard
                         key={member.user?.userId}
+                        roomId={room.roomId} // Передаємо ID кімнати сюди
                         member={member}
                         roomOwnerId={room.owner}
                         currentUserId={currentUserId}

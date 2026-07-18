@@ -20,7 +20,7 @@ export interface UpdateUserProfile {
     description?: string;
 }
 export interface UserParams extends QueryParams {
-
+   name?:string;
 }
 export interface UserShort {
     userId: string;
@@ -36,4 +36,12 @@ export interface BadgeUser {
 export enum BadgeType {
     DEVELOPER = "DEVELOPER",
     RESPECTED = "RESPECTED"
+}
+export interface UserDtoWithRoomBanStatus{
+    userId: string;
+    name:string;
+    nameTag:string;
+    img?:string;
+    isBanned:boolean;
+    roomBanId:string;
 }

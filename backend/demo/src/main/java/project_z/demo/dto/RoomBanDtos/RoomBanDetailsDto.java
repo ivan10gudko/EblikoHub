@@ -6,6 +6,7 @@ import java.util.UUID;
 import lombok.Data;
 import project_z.demo.dto.RoomDtos.RoomShortDto;
 import project_z.demo.dto.UserDtos.UserShortDto;
+
 @Data
 public class RoomBanDetailsDto {
     private UUID id;
@@ -16,7 +17,7 @@ public class RoomBanDetailsDto {
 
     private String reason;
 
-    private UUID bannedByUserId;
+    private UserShortDto bannedByUser;
 
     private LocalDateTime createdAt;
 
