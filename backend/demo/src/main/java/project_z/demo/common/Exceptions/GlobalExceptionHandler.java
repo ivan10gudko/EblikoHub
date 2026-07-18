@@ -33,6 +33,11 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Map<String, Object>> handleLinkAlreadyExists (RoomTitleLinkAlreadyExistsException ex){
         return buildErrorResponse(ex.getMessage(), HttpStatus.CONFLICT);
     }
+
+    @ExceptionHandler(TitleLinkSuggestionAiErrorException.class)
+    public ResponseEntity<Map<String, Object>> handleTitleLinkSuggestionAiError(TitleLinkSuggestionAiErrorException ex) {
+        return buildErrorResponse(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
     
     @ExceptionHandler(TitleWithThatMalIdAlreadyExistsException.class)
     public ResponseEntity<Map<String, Object>> handleAlreadyExists(TitleWithThatMalIdAlreadyExistsException ex) {
