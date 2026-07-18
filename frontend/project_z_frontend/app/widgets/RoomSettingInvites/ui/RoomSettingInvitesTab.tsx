@@ -10,13 +10,13 @@ import type { ReactNode } from "react";
 interface RoomSettingInvitesTabProps {
   room: Room;
   role: string;
-  children: ReactNode; // Приймаємо вкладений роут як children
+  children: ReactNode; 
 }
 
 export const RoomSettingInvitesTab = ({ room, role, children }: RoomSettingInvitesTabProps) => {
   const { id: roomId } = useParams();
 
-  // Базовий шлях для посилань у табах
+
   const baseUrl = `/rooms/${roomId}/settings/invites`;
 
   return (
@@ -28,7 +28,7 @@ export const RoomSettingInvitesTab = ({ room, role, children }: RoomSettingInvit
         <h1 className="text-2xl font-bold text-white">{room?.roomName || "Invites"}</h1>
       </div>
 
-      {/* Перемикач табів через NavLink — посилання автоматично підсвічуються активними */}
+      
       <div className="flex gap-2 bg-[#1a1a1a] p-1.5 rounded-2xl border border-neutral-800 w-fit">
         <NavLink
           to={`${baseUrl}/find`}
@@ -73,7 +73,7 @@ export const RoomSettingInvitesTab = ({ room, role, children }: RoomSettingInvit
         </NavLink>
       </div>
 
-      {/* Рендеримо сюди поточну активну сторінку роуту */}
+      
       <RoomSettingInvitesWrapper>
         {children}
       </RoomSettingInvitesWrapper>

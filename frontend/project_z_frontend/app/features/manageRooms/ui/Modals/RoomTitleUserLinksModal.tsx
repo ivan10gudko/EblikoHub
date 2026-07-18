@@ -43,7 +43,7 @@ export const RoomTitleUserLinksModal = ({ roomTitleId, onClose, isOpen }: LinksM
                 </div>
 
                 <div className="pt-4 border-t border-border mt-2 shrink-0">
-                    <Button onClick={onClose} className="w-full h-12 rounded-xl !font-bold">
+                    <Button onClick={onClose} className="w-full" variant="cancel">
                         Close
                     </Button>
                 </div>

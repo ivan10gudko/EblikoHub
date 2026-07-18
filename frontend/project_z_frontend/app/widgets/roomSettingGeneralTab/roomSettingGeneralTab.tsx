@@ -106,9 +106,9 @@ export const RoomSettingGeneralTab: React.FC<RoomSettingGeneralTabProps> = ({
         <div className="flex justify-end mt-2 pt-4 border-t border-border">
           <Button
             type="submit"
-            variant="fill"
+            variant="save"
             disabled={isUpdating}
-            className="bg-primary hover:bg-primary-hover text-background font-bold px-8 h-11 rounded-xl text-sm transition-all shadow-lg active:scale-[0.98]"
+            className="h-10 sm:h-12"
           >
             {isUpdating ? "Saving changes..." : "Save changes"}
           </Button>

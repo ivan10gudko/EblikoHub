@@ -11,7 +11,7 @@ interface RoomBansTabProps {
     roomId: string | number;
 }
 
-// Кастомний хук для дебаунсу пошукового запиту
+
 function useDebounce<T>(value: T, delay: number): T {
     const [debouncedValue, setDebouncedValue] = useState<T>(value);
     useEffect(() => {
@@ -24,7 +24,7 @@ function useDebounce<T>(value: T, delay: number): T {
 export const RoomBansTab: React.FC<RoomBansTabProps> = ({ roomId }) => {
     const numericRoomId = Number(roomId);
 
-    // Стейти для введення та відображення UI елементів
+    
     const [targetUsername, setTargetUsername] = useState('');
     const [targetUserId, setTargetUserId] = useState<string | null>(null);
     const [reason, setReason] = useState('');
@@ -32,13 +32,13 @@ export const RoomBansTab: React.FC<RoomBansTabProps> = ({ roomId }) => {
 
     const dropdownRef = useRef<HTMLDivElement>(null);
 
-    // 1. Хук для завантаження поточного чорного списку кімнати
+   
     const { 
         data: bannedUsers = [], 
         isLoading: isLoadingBans 
     } = useRoomBans(numericRoomId);
 
-    // 2. Логіка дебаунсу та хук для інфініт-пошуку користувачів
+   
     const debouncedUsername = useDebounce(targetUsername.trim(), 300);
     const isSearchEnabled = debouncedUsername.length >= 2;
 
@@ -53,18 +53,18 @@ export const RoomBansTab: React.FC<RoomBansTabProps> = ({ roomId }) => {
         limit: 10
     }, isSearchEnabled);
 
-    // Збираємо результати пошуку з усіх сторінок пагінації
+    
     const rawSearchResults = searchData?.pages.flatMap((page) => page.content) || [];
 
-    // Фільтруємо пошук, щоб не показувати вже забанених юзерів
+   
     const filteredSearchResults = rawSearchResults.filter(
         (user) => !bannedUsers.some((ban) => ban.user.userId === user.userId)
     );
 
-    // 3. Хук дій над банацією (create/unban)
+    
     const { banUser, unbanUser, isPending: isMutating } = useRoomBanActions(numericRoomId);
 
-    // Закриття випадаючого списку при кліку за межі компонента
+    
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
             if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
@@ -75,7 +75,7 @@ export const RoomBansTab: React.FC<RoomBansTabProps> = ({ roomId }) => {
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, []);
 
-    // Обробник відправки форми (бан користувача)
+   
     const handleBanUser = async (e: React.FormEvent) => {
         e.preventDefault();
         
@@ -94,26 +94,25 @@ export const RoomBansTab: React.FC<RoomBansTabProps> = ({ roomId }) => {
         try {
             await banUser(payload);
             
-            // Успішне сповіщення (опціонально, бо воно зазвичай є всередині сервісу/мутації, але для надійності UI)
+           
             notify.success("User successfully banned");
 
-            // Очищення форми
             setTargetUsername('');
             setTargetUserId(null);
             setReason('');
             setShowDropdown(false);
         } catch {
-            // Помилка вже обробляється та логується всередині useRoomBanActions
+            
         }
     };
 
-    // Обробник зняття бану
+    
     const handleUnbanUser = async (roomBanId: string) => {
         try {
             await unbanUser(roomBanId);
             notify.success("User successfully unbanned");
         } catch {
-            // Помилка вже обробляється та логується всередині useRoomBanActions
+            
         }
     };
 
@@ -123,7 +122,7 @@ export const RoomBansTab: React.FC<RoomBansTabProps> = ({ roomId }) => {
         setShowDropdown(false);
     };
 
-    // Обробник нескінченного скролу всередині дропдауну
+    
     const handleDropdownScroll = (e: React.UIEvent<HTMLDivElement>) => {
         const target = e.currentTarget;
         if (target.scrollHeight - target.scrollTop <= target.clientHeight + 10) {
@@ -144,7 +143,7 @@ export const RoomBansTab: React.FC<RoomBansTabProps> = ({ roomId }) => {
                 </p>
             </div>
 
-            {/* Форма бану */}
+            
             <form onSubmit={handleBanUser} className="flex flex-col gap-3 p-4 bg-card/30 border border-border rounded-xl backdrop-blur-md relative z-30">
                 <div className="flex gap-3 relative" ref={dropdownRef}>
                     <div className="flex-1 relative">
@@ -162,7 +161,7 @@ export const RoomBansTab: React.FC<RoomBansTabProps> = ({ roomId }) => {
                             className="w-full px-4 py-2.5 text-sm bg-background border border-border focus:border-primary/60 rounded-xl text-foreground placeholder:text-foreground-muted/60 outline-none transition-colors disabled:opacity-50"
                         />
 
-                        {/* Результати пошуку (Дропдаун) */}
+                        
                         {showDropdown && isSearchEnabled && (
                             <div 
                                 onScroll={handleDropdownScroll}
@@ -201,7 +200,7 @@ export const RoomBansTab: React.FC<RoomBansTabProps> = ({ roomId }) => {
                     <button
                         type="submit"
                         disabled={isMutating || !targetUserId}
-                        className="px-5 py-2.5 bg-danger text-white hover:bg-danger/90 disabled:opacity-40 rounded-xl text-sm font-bold tracking-wide transition-all duration-200 active:scale-95 shadow-md shadow-danger/10 shrink-0"
+                        className=" border  border-danger/40 text-white/70 hover:bg-danger/15 hover:text-danger gap-2 px-4 py-2 rounded-xl bg-danger/30 cursor-pointer"
                     >
                         {isMutating ? 'Banning...' : 'Ban User'}
                     </button>
@@ -217,7 +216,7 @@ export const RoomBansTab: React.FC<RoomBansTabProps> = ({ roomId }) => {
                 />
             </form>
 
-            {/* Список забанених */}
+            
             <div className="flex flex-col min-w-0 relative z-10">
                 <h4 className="text-xs font-bold uppercase tracking-wider text-foreground-muted mb-3">
                     Banned Users ({bannedUsers.length})

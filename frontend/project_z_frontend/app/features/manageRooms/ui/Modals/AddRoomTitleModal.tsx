@@ -111,14 +111,14 @@ export const AddRoomTitleModal = ({ isOpen, onClose, onSuccess, roomId }: AddRoo
                 <div className="pt-4 bg-background shrink-0 flex gap-4 border-t border-border mt-2">
                     <Button
                         onClick={onClose}
-                        className="flex-1 h-14 rounded-xl bg-card text-foreground !font-bold tracking-wider hover:bg-card transition-all active:scale-95 shadow-sm"
+                        className="w-full" variant="cancel"
                     >
                         Cancel
                     </Button>
                     <Button
                         onClick={handleSave}
                         disabled={isPending}
-                        className="flex-[2] h-14 rounded-xl bg-primary text-foreground !font-bold tracking-wider shadow-[0_4px_0_0_#d97706] hover:primary-hover active:translate-y-[2px] active:shadow-none transition-all disabled:opacity-50"
+                        className="w-full" variant="save"
                     >
                         {isPending ? "Saving..." : "Save Title"}
                     </Button>
