@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import project_z.demo.dto.RoomTitleLinkDtos.RoomTitleLinkCreateDto;
 import project_z.demo.dto.RoomTitleLinkDtos.RoomTitleLinkDetailsDto;
+import project_z.demo.dto.RoomTitleLinkDtos.SuggestedTitleLinkDto;
 import project_z.demo.entity.RoomTitleLinkEntity;
 
 @Service
@@ -19,4 +20,6 @@ public interface RoomTitleLinkService {
     void deleteLink(UUID roomTitleLinkId);
 
     void deleteLinksByRoomTitle(UUID roomTitleId);
+
+    List<SuggestedTitleLinkDto> suggestLinks(UUID userId, Long roomId);
 }

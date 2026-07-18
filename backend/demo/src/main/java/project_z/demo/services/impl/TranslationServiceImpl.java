@@ -16,6 +16,7 @@ import org.springframework.web.client.RestTemplate;
 import lombok.RequiredArgsConstructor;
 import project_z.demo.common.Exceptions.TranslationAiErrorException;
 import project_z.demo.config.MyConfig;
+import project_z.demo.services.GoogleAiClient;
 import project_z.demo.services.TranslationService;
 
 @Service
@@ -24,6 +25,7 @@ public class TranslationServiceImpl implements TranslationService {
     private static final String huggingFaceApiUrl = "https://router.huggingface.co/v1/chat/completions";
     private final RestTemplate restTemplate = new RestTemplate();
     private final MyConfig myConfig;
+    private final GoogleAiClient googleAiClient;
 
     @Override
     public String translateToEnglishWithDeepSeek(String text) {
@@ -99,50 +101,25 @@ public class TranslationServiceImpl implements TranslationService {
                 Your task is to return ONLY the official English title.
                 """;
 
-        String apiUrl = myConfig.getGoogleApiUrl();
-        String apiKey = myConfig.getGoogleApiKey();
-        String urlWithKey = apiUrl + "?key=" + apiKey;
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-
-        Map<String, Object> requestBody = Map.of(
-                "contents", List.of(
-                        Map.of("parts", List.of(
-                                Map.of("text", systemPrompt + "\nInput: " + text)))));
-
-        HttpEntity<Map<String, Object>> request = new HttpEntity<>(requestBody, headers);
-
         try {
-            ResponseEntity<Map> response = restTemplate.postForEntity(urlWithKey, request, Map.class);
+            String responseText = googleAiClient.generateContent(
+                    myConfig.getGoogleApiKey(),
+                    systemPrompt + "\nInput: " + text);
 
-            if (response.getBody() != null) {
-                List<?> candidates = (List<?>) response.getBody().get("candidates");
-                if (candidates != null && !candidates.isEmpty()) {
-                    Map<?, ?> firstCandidate = (Map<?, ?>) candidates.get(0);
-                    Map<?, ?> content = (Map<?, ?>) firstCandidate.get("content");
-                    List<?> parts = (List<?>) content.get("parts");
-                    Map<?, ?> firstPart = (Map<?, ?>) parts.get(0);
+            System.out.println("Gemini Response: " + responseText);
 
-                    String responseText = firstPart.get("text").toString().trim();
-                    System.out.println("Gemini Response: " + responseText);
+            Pattern p = Pattern.compile("RESULT:\\s*(.*)", Pattern.CASE_INSENSITIVE);
+            Matcher m = p.matcher(responseText);
 
-                    Pattern p = Pattern.compile("RESULT:\\s*(.*)", Pattern.CASE_INSENSITIVE);
-                    Matcher m = p.matcher(responseText);
-
-                    if (m.find()) {
-                        return m.group(1).trim().replace("\"", "").replace("}", "");
-                    }
-
-                    return responseText.replace("RESULT:", "").trim();
-                }
+            if (m.find()) {
+                return m.group(1).trim().replace("\"", "").replace("}", "");
             }
-            throw new TranslationAiErrorException("Empty or invalid response structure from Google AI");
+
+            return responseText.replace("RESULT:", "").trim();
         } catch (HttpClientErrorException.TooManyRequests e) {
             System.err.println("Google API Rate limit exceeded: " + e.getResponseBodyAsString());
             throw e;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             System.err.println("Google API Error: " + e.getMessage());
             throw new TranslationAiErrorException("Genimi is unavailable");
         }
