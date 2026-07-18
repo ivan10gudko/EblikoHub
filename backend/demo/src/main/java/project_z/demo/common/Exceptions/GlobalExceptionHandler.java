@@ -16,6 +16,7 @@ import org.springframework.dao.DataAccessException;
 
 import project_z.demo.common.Exceptions.RoomBanExceptions.RoomSelfBanException;
 import project_z.demo.common.Exceptions.RoomMembersExceptions.RoomMembersConflictException;
+import project_z.demo.common.Exceptions.RoomRequestExceptions.SelfRoomInviteException;
 import project_z.demo.common.Exceptions.RoomTitleLinkExceptions.RoomTitleLinkAlreadyExistsException;
 
 @RestControllerAdvice
@@ -48,7 +49,10 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Map<String, Object>> handleRoomSelfBan(RoomSelfBanException ex) {
         return buildErrorResponse(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
-
+     @ExceptionHandler(SelfRoomInviteException.class)
+    public ResponseEntity<Map<String, Object>> handleSelfRoomInvite(SelfRoomInviteException ex) {
+        return buildErrorResponse(ex.getMessage(), HttpStatus.CONFLICT);
+    }
     @ExceptionHandler(FriendshipConflictException.class)
     public ResponseEntity<Map<String, Object>> handleFriendshipConflict(FriendshipConflictException ex) {
         return buildErrorResponse(ex.getMessage(), HttpStatus.CONFLICT);

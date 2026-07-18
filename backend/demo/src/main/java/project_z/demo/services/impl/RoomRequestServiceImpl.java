@@ -9,6 +9,7 @@ import project_z.demo.Mappers.Mapper;
 import project_z.demo.Mappers.impl.RoomRequestMappers.RequestsToRoomResponseDtoMapper;
 import project_z.demo.common.Exceptions.ResourceNotFoundException;
 import project_z.demo.common.Exceptions.RoomMembersExceptions.RoomMembersConflictException;
+import project_z.demo.common.Exceptions.RoomRequestExceptions.SelfRoomInviteException;
 import project_z.demo.dto.RoomRequestsDtos.RequestsToRoomResponseDto;
 import project_z.demo.dto.RoomRequestsDtos.RoomRequestCountsDto;
 import project_z.demo.dto.RoomRequestsDtos.RoomRequestDetailsDto;
@@ -38,10 +39,15 @@ public class RoomRequestServiceImpl implements RoomRequestService {
     private final Mapper<RoomRequestsEntity,RoomRequestShortWithUserDto> requestShortWithUserMapper;
     private final RequestsToRoomResponseDtoMapper requestsToRoomResponseDtoMapper;
 
+    @Override
     @Transactional
     public void sendRequest(UUID senderId, UUID receiverId, long roomId, RequestType type) {
         if (roomBanRepository.existsByRoomRoomIdAndUserUserId(roomId, receiverId)) {
             throw new AccessDeniedException("User is permanently banned from this room.");
+        }
+
+        if (senderId.equals(receiverId) && type.equals(RequestType.INVITE)) {
+            throw new SelfRoomInviteException("you cant invite yourself");
         }
 
         RoomEntity room = roomRepository.findById(roomId)
