@@ -12,7 +12,7 @@ interface RoomSettingReadOnlyTabProps {
 
 export const RoomSettingGeneralReadOnlyTab: React.FC<RoomSettingReadOnlyTabProps> = ({ room }) => {
     const formattedDate = room?.createdAt
-        ? new Date(room.createdAt).toLocaleString("uk-UA", { dateStyle: "medium", timeStyle: "short" })
+        ? new Date(room.createdAt).toLocaleString("en-US", { dateStyle: "medium", timeStyle: "short" })
         : "";
 
     return (

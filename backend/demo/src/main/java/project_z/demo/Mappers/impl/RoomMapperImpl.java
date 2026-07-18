@@ -28,6 +28,7 @@ public class RoomMapperImpl implements Mapper<RoomEntity, RoomDto> {
         dto.setOwner(roomEntity.getOwner() != null ? roomEntity.getOwner().getUserId() : null);
         dto.setDescription(roomEntity.getDescription());
         dto.setImageUrl(roomEntity.getImageUrl());
+        dto.setCreatedAt(roomEntity.getCreatedAt());
 
         if (roomEntity.getMembers() != null) {
             dto.setMembers(roomEntity.getMembers().stream()
