@@ -73,7 +73,7 @@ export const RoomDetailsSidebar = ({ room }: RoomDetailsSidebarProps) => {
             <RoomDetailsMemberFilter members={room.members} />
             <RoomDetailsSortControl />
 
-            <Button variant="outline" className="w-full hover:bg-foreground/20 hover:text-danger/70 h-10 text-xs mt-2 font-bold" onClick={reset}>
+            <Button variant="outline" className="w-full border  border-danger/40 text-white/70 hover:bg-danger/15 hover:text-danger gap-2 px-4 py-2 rounded-xl bg-danger/30" onClick={reset}>
               <RefreshIcon className="text-sm mr-1" /> Reset all filters
             </Button>
           </div>

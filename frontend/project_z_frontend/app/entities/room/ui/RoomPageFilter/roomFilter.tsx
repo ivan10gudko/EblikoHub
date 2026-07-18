@@ -18,7 +18,7 @@ export const RoomFilters = () => {
             <Button 
                 onClick={reset}
                 variant="outline"
-                className="text-sm hover:bg-background-muted hover:text-danger-hover transition-colors font-medium p-0 h-auto"
+                className="w-full border  border-danger/40 text-white/70 hover:bg-danger/15 hover:text-danger gap-2 px-4 py-2 rounded-xl bg-danger/30 "
             >
                 Reset all filters
             </Button>
