@@ -1,4 +1,4 @@
-CREATE TABLE user_badges (
+CREATE TABLE IF NOT EXISTS user_badges  (
     id UUID PRIMARY KEY,
     user_id UUID NOT NULL,
     type VARCHAR(50) NOT NULL,
