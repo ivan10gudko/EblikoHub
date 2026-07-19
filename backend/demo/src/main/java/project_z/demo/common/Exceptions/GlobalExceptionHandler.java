@@ -17,6 +17,7 @@ import org.springframework.dao.DataAccessException;
 import project_z.demo.common.Exceptions.RoomBanExceptions.RoomSelfBanException;
 import project_z.demo.common.Exceptions.RoomMembersExceptions.RoomMembersConflictException;
 import project_z.demo.common.Exceptions.RoomTitleLinkExceptions.RoomTitleLinkAlreadyExistsException;
+import project_z.demo.common.Exceptions.WheelPresetExceptions.WheelPresetAlreadyExists;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -34,6 +35,11 @@ public class GlobalExceptionHandler {
         return buildErrorResponse(ex.getMessage(), HttpStatus.CONFLICT);
     }
     
+    @ExceptionHandler(WheelPresetAlreadyExists.class)
+    public ResponseEntity<Map<String, Object>> handleAlreadyExists(WheelPresetAlreadyExists ex) {
+        return buildErrorResponse(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler(TitleWithThatMalIdAlreadyExistsException.class)
     public ResponseEntity<Map<String, Object>> handleAlreadyExists(TitleWithThatMalIdAlreadyExistsException ex) {
         return buildErrorResponse(ex.getMessage(), HttpStatus.BAD_REQUEST);

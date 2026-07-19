@@ -58,11 +58,11 @@ public class TitleEntity {
 
     private String titleName;
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = "title_ratings", joinColumns = @JoinColumn(name = "title_id"))
-
     @MapKeyColumn(name = "name")
     @Column(name = "value")
+    @org.hibernate.annotations.BatchSize(size = 50)
     private Map<String, Float> rating;
 
     @Enumerated(EnumType.STRING)
@@ -70,13 +70,12 @@ public class TitleEntity {
     @Column(name = "description",columnDefinition = "TEXT")
     private String description;
 
-
     @Enumerated(EnumType.STRING)
     @Column(name = "title_type", nullable = false)
     @ColumnDefault("'ANIME'")
     private TitleType titleType = TitleType.ANIME;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     @JsonBackReference
     private UserEntity user;
@@ -94,7 +93,7 @@ public class TitleEntity {
     @Column(name = "is_pinned")
     @Builder.Default
     private boolean isPinned = false;
-    
+
     @Basic(fetch = FetchType.LAZY)
     @Formula("(SELECT AVG(tr.value) FROM title_ratings tr WHERE tr.title_id = title_id AND tr.name != 'overall')")
     private Double avgRating;
