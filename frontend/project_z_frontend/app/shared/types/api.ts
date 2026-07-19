@@ -1,4 +1,4 @@
-// for jikan
+// for externalProvider
 export interface PaginationMeta {
     last_visible_page: number;
     has_next_page: boolean;

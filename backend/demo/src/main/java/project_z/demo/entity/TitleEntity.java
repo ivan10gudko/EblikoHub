@@ -1,6 +1,5 @@
 package project_z.demo.entity;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -37,9 +36,7 @@ import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import project_z.demo.enums.TitleStatus;
 import project_z.demo.enums.TitleType;
 
@@ -70,13 +67,13 @@ public class TitleEntity {
 
     @Enumerated(EnumType.STRING)
     private TitleStatus status;
-    @Column(name = "description")
+    @Column(name = "description",columnDefinition = "TEXT")
     private String description;
 
 
     @Enumerated(EnumType.STRING)
     @Column(name = "title_type", nullable = false)
-    @ColumnDefault("'ANIME'") 
+    @ColumnDefault("'ANIME'")
     private TitleType titleType = TitleType.ANIME;
 
     @ManyToOne
