@@ -1,1 +1,1 @@
-export {ImageUrlEditor} from "./ImageUrlEditor";
+export { ImageUrlEditor } from "./ImageUrlEditor";

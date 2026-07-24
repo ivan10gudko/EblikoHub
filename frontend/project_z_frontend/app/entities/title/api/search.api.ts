@@ -1,7 +1,7 @@
 
 import type { AnimeCardType } from "../model/animeTitle.types";
 import { publicClient } from "~/shared/api";
-import { mapJikanToAnimeCard } from "./mappers";
+import { mapExternalProviderToAnimeCard } from "./mappers";
 import type { SearchResponse } from "~/shared/types/api";
 
 export async function getAnimeSearch(q: string, page: number = 1): Promise<SearchResponse<AnimeCardType>> {
@@ -15,12 +15,12 @@ export async function getAnimeSearch(q: string, page: number = 1): Promise<Searc
             }
         };
 
-        //request to proxy with translations, NOT direct to jikan
+        //request to proxy with translations, NOT direct to externalProvider
         const response = await publicClient.request(options);
 
         const data = response.data.data;
 
-        const animeList: AnimeCardType[] = data.map(mapJikanToAnimeCard);
+        const animeList: AnimeCardType[] = data.map(mapExternalProviderToAnimeCard);
 
         return { data: animeList, pagination: response.data.pagination }
 

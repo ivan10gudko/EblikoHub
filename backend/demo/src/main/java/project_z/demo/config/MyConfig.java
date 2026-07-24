@@ -25,6 +25,8 @@ public class MyConfig {
     private String googleApiKey;
     @Value("${app.api.google-api-url}")
     private String googleApiUrl;
+    @Value("${app.api.anime-api-base-url}")
+    private String animeApiBaseUrl;
     @Value("${app.api.google-title-links-api-key}")
     private String googleTitleLinksApiKey;
 }

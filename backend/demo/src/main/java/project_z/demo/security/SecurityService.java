@@ -15,6 +15,7 @@ import project_z.demo.repositories.RoomRepository;
 import project_z.demo.repositories.RoomRequestRepository;
 import project_z.demo.repositories.SeasonRepository;
 import project_z.demo.repositories.TitleRepository;
+import project_z.demo.repositories.wheelRepositories.WheelPresetRepository;
 
 @Service
 @RequiredArgsConstructor
@@ -26,6 +27,7 @@ public class SecurityService {
     private final SeasonRepository seasonRepository;
     private final FriendshipRepository friendshipRepository;
     private final RoomMemberRepository roomMemberRepository;
+    private final WheelPresetRepository wheelPresetRepository;
 
     public UUID getCurrentUserId() {
         var auth = SecurityContextHolder.getContext().getAuthentication();
@@ -126,4 +128,11 @@ public class SecurityService {
                 })
                 .orElse(false);
     }
+
+    public boolean isPresetOwner(UUID presetId) {
+    UUID currentUserId = getCurrentUserId();
+    return wheelPresetRepository.findById(presetId)
+            .map(preset -> preset.getUser().getUserId().equals(currentUserId))
+            .orElse(false);
+}
 }
