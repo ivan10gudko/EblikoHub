@@ -101,4 +101,7 @@ public interface TitleRepository extends JpaRepository<TitleEntity, Long>,
 
     @Query("SELECT t.titleType, COUNT(t) FROM TitleEntity t WHERE t.user.userId = :userId GROUP BY t.titleType")
     List<Object[]> countByType(@Param("userId") UUID userId);
+
+    @Query("SELECT t FROM TitleEntity t WHERE t.user.userId = :userId AND t.titleId IN :titleIds")
+    List<TitleEntity> findAllByIdsAndUserId(@Param("userId") UUID userId, @Param("titleIds") List<Long> titleIds);
 }

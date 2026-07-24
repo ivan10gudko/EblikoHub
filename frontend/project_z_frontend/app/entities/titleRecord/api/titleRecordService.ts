@@ -28,7 +28,7 @@ interface TitleRecordService {
     reindexCustomOrder(userId: string): Promise<void>;
     getWatched(userId: string): Promise<Array<TitleRecord>>;
     getPlanned(userId: string): Promise<Array<TitleRecord>>;
-    getByApiTitleId(jikanId: number): Promise<TitleRecord>;
+    getByApiTitleId(externalProviderId: number): Promise<TitleRecord>;
     pinTitle(titleId: number): Promise<TitleRecord>;
     unpin(): Promise<void>;
     getSameCriteriaRating(titleId: number, category: string, currentRating: number): Promise<SameCriteriaRating>;
