@@ -21,6 +21,7 @@ public class RoomTitleLinkController {
 
     private final RoomTitleLinkService linkService;
     private final SecurityService securityService;
+
     @PostMapping
     @PreAuthorize("@securityService.isRoomMember(#roomId)")
     public ResponseEntity<RoomTitleLinkDetailsDto> create(
@@ -54,7 +55,7 @@ public class RoomTitleLinkController {
     }
 
     @DeleteMapping("/{roomTitleLinkId}")
-    @PreAuthorize("@securityService.isRoomMember(#roomId)") 
+    @PreAuthorize("@securityService.isAdminOrOwner(#roomId) || @securityService.isRoomTitleLinkOwner(#roomTitleLinkId)")
     public ResponseEntity<Void> deleteLink(
             @PathVariable Long roomId,
             @PathVariable UUID roomTitleLinkId) {

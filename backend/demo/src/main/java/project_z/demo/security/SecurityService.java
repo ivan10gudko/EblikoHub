@@ -13,6 +13,7 @@ import project_z.demo.repositories.FriendshipRepository;
 import project_z.demo.repositories.RoomMemberRepository;
 import project_z.demo.repositories.RoomRepository;
 import project_z.demo.repositories.RoomRequestRepository;
+import project_z.demo.repositories.RoomTitleLinkRepository;
 import project_z.demo.repositories.SeasonRepository;
 import project_z.demo.repositories.TitleRepository;
 import project_z.demo.repositories.wheelRepositories.WheelPresetRepository;
@@ -28,6 +29,7 @@ public class SecurityService {
     private final FriendshipRepository friendshipRepository;
     private final RoomMemberRepository roomMemberRepository;
     private final WheelPresetRepository wheelPresetRepository;
+    private final RoomTitleLinkRepository roomTitleLinkRepository;
 
     public UUID getCurrentUserId() {
         var auth = SecurityContextHolder.getContext().getAuthentication();
@@ -130,9 +132,16 @@ public class SecurityService {
     }
 
     public boolean isPresetOwner(UUID presetId) {
-    UUID currentUserId = getCurrentUserId();
-    return wheelPresetRepository.findById(presetId)
-            .map(preset -> preset.getUser().getUserId().equals(currentUserId))
-            .orElse(false);
-}
+        UUID currentUserId = getCurrentUserId();
+        return wheelPresetRepository.findById(presetId)
+                .map(preset -> preset.getUser().getUserId().equals(currentUserId))
+                .orElse(false);
+    }
+
+    public boolean isRoomTitleLinkOwner(UUID roomTitleLinkId) {
+        UUID currentUserId = getCurrentUserId();
+        return roomTitleLinkRepository.findById(roomTitleLinkId)
+                .map(link -> link.getUserTitleRecord().getUser().getUserId().equals(currentUserId))
+                .orElse(false);
+    }
 }
