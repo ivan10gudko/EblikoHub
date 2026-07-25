@@ -24,7 +24,7 @@ export const RoomTitleUserLinksModal = ({ roomTitleId, onClose, isOpen }: LinksM
 
     return (
         <Modal onClose={onClose} isOpen={isOpen} title="User Links" maxWidth="max-w-xl">
-            <div className="flex flex-col h-[70vh]">
+            <div className="flex   flex-col h-[70vh]">
                 <div className="flex-1 overflow-y-auto custom-scrollbar p-2">
                     {isLoading ? (
                         <div className="p-4 text-center">Loading...</div>
@@ -43,7 +43,7 @@ export const RoomTitleUserLinksModal = ({ roomTitleId, onClose, isOpen }: LinksM
                 </div>
 
                 <div className="pt-4 border-t border-border mt-2 shrink-0">
-                    <Button onClick={onClose} className="w-full" variant="cancel">
+                    <Button onClick={onClose} className="w-full " variant="cancel">
                         Close
                     </Button>
                 </div>

@@ -57,7 +57,7 @@ export const AddRoomTitleModal = ({ isOpen, onClose, onSuccess, roomId }: AddRoo
     };
 
     return (
-        <Modal isOpen={isOpen} onClose={onClose} title="Add New Room Title" maxWidth="max-w-4xl">
+        <Modal isOpen={isOpen} onClose={onClose} title="Add New Room Title" maxWidth="max-w-2xl">
             <div className="flex flex-col h-[70vh] px-1 sm:px-0">
                 <div className="flex-1 min-h-0 overflow-y-auto pr-1 sm:pr-3 custom-scrollbar space-y-6 p-2">
 

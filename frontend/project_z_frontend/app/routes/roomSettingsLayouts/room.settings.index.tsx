@@ -58,7 +58,7 @@ export default function RoomsSettingsIndexLayout() {
             </div>
 
            
-            <main className="flex-1 w-full flex flex-col pt-2 md:pt-5">
+            <main className="flex-1 w-full flex flex-col pt-2 pl-2 md:pt-5">
                 
                 
                 <div className="md:hidden flex items-center justify-between mb-4 bg-card border border-border p-3 rounded-xl shadow-md">

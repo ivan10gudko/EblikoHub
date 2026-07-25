@@ -47,7 +47,7 @@ export const ViewTitleModal = ({
             <img
               src={title.imageUrl || "/defaultTitleRecordImage.jpg"}
               alt={title.titleName}
-              className="w-40 h-56 object-cover rounded-xl shadow-md border border-border/40 shrink-0"
+              className="w-42 h-58 object-cover rounded-xl shadow-md border border-border/40 shrink-0"
             />
 
             <div className="flex-1 space-y-4 w-full">

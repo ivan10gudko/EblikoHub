@@ -44,7 +44,7 @@ export const EditRoomTitleModal = ({ isOpen, onClose, roomId, item }: EditRoomTi
     };
 
     return (
-        <Modal isOpen={isOpen} onClose={onClose} title="Edit Room Title" maxWidth="max-w-4xl">
+        <Modal isOpen={isOpen} onClose={onClose} title="Edit Room Title" maxWidth="max-w-2xl">
             <div className="flex flex-col px-1 sm:px-0 relative">
                 
                
