@@ -9,7 +9,7 @@ export default function RoomSettingsTitlesPage() {
   const { userId } = useAuthStore();
 
   return (
-    <div className="p-6 w-full">
+    <div className="p-1 w-full">
       <h1 className="text-2xl font-bold mb-6">Manage Room Titles Links</h1>
       
       <RoomDetailsSettingsTitlesLinks

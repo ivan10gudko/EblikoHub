@@ -68,7 +68,7 @@ export const RoomDetailsSettingsTitlesLinks = ({ userId, roomId }: { userId: str
                 onDragEnd(result);
             }}
         >
-            <div className="grid grid-cols-2 gap-8 w-full p-4">
+            <div className="grid grid-cols-2 gap-8 w-full p-0">
                 <div className="flex flex-col gap-4 min-w-0">
                     <div className="flex items-center justify-between">
                         <h2 className="font-bold text-lg">My Watchlist</h2>
