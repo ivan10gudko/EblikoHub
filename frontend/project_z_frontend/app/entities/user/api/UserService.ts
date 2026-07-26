@@ -2,6 +2,7 @@ import { apiClient, publicClient } from "~/shared/api";
 import type { BadgeUser, CreateUserProfile, UpdateUserProfile, UserParams, UserProfile } from "../model/user.types";
 import { generateFallbackName } from "../lib/generateFallbackName";
 import type { PageResponse } from "~/shared/types";
+import type { UserDtoWithFriendshipStatus } from "~/entities/friendship";
 
 
 export const userService = {
@@ -16,35 +17,35 @@ export const userService = {
         return response.data;
     },
 
-    createFallbackUser : async (userId: string): Promise<UserProfile> => {
+    createFallbackUser: async (userId: string): Promise<UserProfile> => {
 
         const altUserName = generateFallbackName()
         const userData = {
-                            userId,
-                            name: altUserName,
-                            nameTag: altUserName
-                        }
+            userId,
+            name: altUserName,
+            nameTag: altUserName
+        }
         const response = await publicClient.post<UserProfile>("/users", userData);
         return response.data;
     },
 
-    isNameTagAvailable : async (nameTag: string): Promise<boolean> => {
+    isNameTagAvailable: async (nameTag: string): Promise<boolean> => {
         return (await publicClient.get<boolean>(`/users/${nameTag}/checkNameTag`)).data;
     },
 
-    updateUser: async( userId:string,userData : UpdateUserProfile) : Promise<UpdateUserProfile> => {
+    updateUser: async (userId: string, userData: UpdateUserProfile): Promise<UpdateUserProfile> => {
         return (await apiClient.put<UserProfile>(`users/${userId}`, userData)).data;
     },
 
-    uploadAvatar:async(userId:string, avatarFile:File): Promise<void> => {
+    uploadAvatar: async (userId: string, avatarFile: File): Promise<void> => {
         const formData = new FormData();
         formData.append('file', avatarFile);
         await apiClient.put(`/users/avatar/${userId}`, formData, {
             headers: {
                 'Content-Type': 'multipart/form-data',
             },
-            });
-        
+        });
+
     },
     searchByNameTag: async (nameTag: string): Promise<UserProfile> => {
         const response = await apiClient.get<UserProfile>(`/users/${nameTag}/nameTag`);
@@ -53,14 +54,20 @@ export const userService = {
 
     searchByName: async (name: string, params: UserParams = { page: 0, limit: 10 }): Promise<PageResponse<UserProfile>> => {
         const response = await apiClient.get<PageResponse<UserProfile>>(`/users/name/${name}`, {
-            params: params 
+            params: params
         });
-        
+
         return response.data;
     },
-    
+
     getBadges: async (): Promise<BadgeUser[]> => {
         const response = await apiClient.get<BadgeUser[]>("/badges");
+        return response.data;
+    },
+    getUserWithFriendshipStatus: async (targetUserId: string): Promise<UserDtoWithFriendshipStatus> => {
+        const response = await apiClient.get<UserDtoWithFriendshipStatus>(
+            `/friendships/userWithCurrentFriendshipStatus/${targetUserId}`
+        );
         return response.data;
     },
 };

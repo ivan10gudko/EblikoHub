@@ -1,15 +1,20 @@
 import EditIcon from "@mui/icons-material/Edit";
+import PersonRemoveIcon from "@mui/icons-material/PersonRemove";
 import {
   useMutation,
   useQueryClient,
   useSuspenseQuery,
 } from "@tanstack/react-query";
 import { useState } from "react";
-import { UserAvatar, userService } from "~/entities/user";
+import type { UserDtoWithFriendshipStatus } from "~/entities/friendship";
+import { useFriendAction } from "~/entities/friendship/hooks/useFriendAction";
+import { UserAvatar, userService, type UserProfile } from "~/entities/user";
 import { useAuthStore } from "~/features/auth";
+import { notify } from "~/shared/lib";
+
+import { RequestStatus } from "~/shared/types";
 import { Button } from "~/shared/ui/Button";
 import { UserProfileEdit } from "./UserProfileEditCard";
-import { notify } from "~/shared/lib";
 
 interface UserProfileCardProps {
   userId: string;
@@ -20,13 +25,28 @@ export const UserProfileCard = ({ userId }: UserProfileCardProps) => {
   const { userId: currentUserId } = useAuthStore();
   const queryClient = useQueryClient();
 
-  const isOwn = currentUserId === userId;
+  const isOwn = Boolean(currentUserId && currentUserId === userId);
+  const profileQueryKey = ["user_profile", userId];
 
-  const { data: user } = useSuspenseQuery({
-    queryKey: ["user_profile", userId],
-    queryFn: () => userService.getUser(userId),
+ const { data: user } = useSuspenseQuery<UserDtoWithFriendshipStatus & UserProfile>({
+  queryKey: profileQueryKey,
+  queryFn: async () => {
+    if (isOwn) {
+      return (await userService.getUser(userId)) as UserDtoWithFriendshipStatus & UserProfile;
+    }
+    return (await userService.getUserWithFriendshipStatus(userId)) as UserDtoWithFriendshipStatus & UserProfile;
+  },
+});
+
+  const { onAction, isActionLoading } = useFriendAction({
+    userId,
+    currentUserId,
+    profileQueryKey,
   });
 
+  const rawStatus = user.friendshipStatus;
+  const friendshipStatus = rawStatus ? String(rawStatus).toUpperCase() : null;
+  const friendshipId = user.friendshipId ?? null;
   const updateMutation = useMutation({
     mutationFn: async ({
       profileData,
@@ -35,23 +55,17 @@ export const UserProfileCard = ({ userId }: UserProfileCardProps) => {
       profileData: { name: string; description: string };
       avatarFile: File | null;
     }) => {
-      const updateTextPromise = userService.updateUser(
-        user.userId,
-        profileData,
-      );
+      const updateTextPromise = userService.updateUser(user.userId, profileData);
 
       if (avatarFile) {
-        const updatePhotoPromise = userService.uploadAvatar(
-          user.userId,
-          avatarFile,
-        );
+        const updatePhotoPromise = userService.uploadAvatar(user.userId, avatarFile);
         return Promise.all([updateTextPromise, updatePhotoPromise]);
       }
 
       return updateTextPromise;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["user_profile", userId] });
+      queryClient.invalidateQueries({ queryKey: profileQueryKey });
       setIsEditing(false);
       notify.success("Successfully updated");
     },
@@ -60,12 +74,24 @@ export const UserProfileCard = ({ userId }: UserProfileCardProps) => {
     },
   });
 
+  const isNone =
+    !friendshipStatus ||
+    friendshipStatus === RequestStatus.NONE ||
+    friendshipStatus === "NONE";
+  const isPending =
+    friendshipStatus === RequestStatus.PENDING ||
+    friendshipStatus === "PENDING";
+  const isAccepted =
+    friendshipStatus === RequestStatus.ACCEPTED ||
+    friendshipStatus === "ACCEPTED";
+
   return (
     <>
       {!isEditing ? (
         <>
           <div className="flex flex-col sm:flex-row items-center gap-6">
-            <UserAvatar src={user.img} name={user.name} size="lg" />
+            <UserAvatar src={user.img ?? undefined} name={user.name} size="lg" />
+
             <div className="flex flex-col items-center sm:items-start grow">
               <h1 className="text-3xl font-black text-foreground tracking-tight">
                 {user.name}
@@ -74,6 +100,7 @@ export const UserProfileCard = ({ userId }: UserProfileCardProps) => {
                 @{user.nameTag}
               </span>
             </div>
+
             {isOwn && (
               <Button
                 onClick={() => setIsEditing(true)}
@@ -82,18 +109,53 @@ export const UserProfileCard = ({ userId }: UserProfileCardProps) => {
                 <EditIcon className="text-primary" />
               </Button>
             )}
+            {!isOwn && (
+              <div className="flex items-center gap-3">
+                {isNone && (
+                  <Button
+                    disabled={isActionLoading}
+                    onClick={() => onAction("send", userId)}
+                    className="bg-primary hover:bg-primary-hover text-white px-5 py-2.5 rounded-2xl font-medium transition-all shadow-sm active:scale-95 disabled:opacity-50"
+                  >
+                    {isActionLoading ? "Sending..." : "Add Friend"}
+                  </Button>
+                )}
+
+                {isPending && (
+                  <Button
+                    disabled={isActionLoading || !friendshipId}
+                    onClick={() => friendshipId && onAction("delete", friendshipId)}
+                    className="group flex items-center gap-2 border border-red-500/30 hover:border-red-500/60 bg-red-500/5 hover:bg-red-500/10 text-red-500 px-5 py-2.5 rounded-2xl font-medium transition-all duration-200 active:scale-95 disabled:opacity-50"
+                  >
+                    <PersonRemoveIcon className="w-4 h-4 text-red-500 group-hover:scale-110 transition-transform" />
+                    <span>{isActionLoading ? "Cancelling..." : "Cancel Request"}</span>
+                  </Button>
+                )}
+
+                {isAccepted && (
+                  <Button
+                    disabled={isActionLoading || !friendshipId}
+                    onClick={() => friendshipId && onAction("delete", friendshipId)}
+                    className="group flex items-center gap-2 bg-rose-500/10 hover:bg-rose-500/20 text-rose-500 hover:text-rose-600 border border-rose-500/20 hover:border-rose-500/40 px-5 py-2.5 rounded-2xl font-semibold transition-all duration-200 active:scale-95 shadow-sm disabled:opacity-50"
+                  >
+                    <PersonRemoveIcon className="w-4 h-4 text-rose-500 group-hover:scale-110 transition-transform" />
+                    <span>{isActionLoading ? "Removing..." : "Remove Friend"}</span>
+                  </Button>
+                )}
+              </div>
+            )}
           </div>
 
           <div className="h-[1px] bg-background-muted w-full" />
 
           <p className="text-foreground leading-relaxed">
-            {user.description ||
+            {user.description||
               "No description provided yet. Let people know who you are!"}
           </p>
         </>
       ) : (
         <UserProfileEdit
-          user={user}
+          user={user as unknown as UserProfile}
           onSave={(data, file) =>
             updateMutation.mutate({
               profileData: data,
