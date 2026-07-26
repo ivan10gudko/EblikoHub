@@ -1,7 +1,7 @@
 import { useState } from "react";
 import Modal from "~/shared/ui/Modal/Modal";
 import { Button } from "~/shared/ui/Button";
-import { ImageUrlEditor } from "~/shared/ui/ImageUrlEditor";
+import { ImageUrlField } from "~/shared/ui/imageUrlField";
 import { notify } from "~/shared/lib";
 import { TitleType } from "~/entities/titleRecord";
 import TitleTypeSelect from "~/entities/titleRecord/ui/TitleTypeSelect";
@@ -47,53 +47,62 @@ export const EditRoomTitleModal = ({ isOpen, onClose, roomId, item }: EditRoomTi
         <Modal isOpen={isOpen} onClose={onClose} title="Edit Room Title" maxWidth="max-w-2xl">
             <div className="flex flex-col px-1 sm:px-0 relative">
                 
-               
                 <div className="flex-1 overflow-y-auto hide-scrollbar pr-1 sm:pr-3 space-y-6 p-2 pb-6">
-                    <div className="flex flex-col md:flex-row gap-8">
-                        
-                        
-                        <div className="shrink-0">
-                            <ImageUrlEditor
-                                imageUrl={formData.imageUrl}
-                                onImageChange={(url) => setFormData({ ...formData, imageUrl: url })}
-                            />
-                        </div>
-
-                        
-                        <div className="flex-grow space-y-6">
+                    <ImageUrlField
+                        imageUrl={formData.imageUrl}
+                        onImageChange={(url) => setFormData({ ...formData, imageUrl: url })}
+                        variant="portrait"
+                    >
+                        <div className="flex flex-col md:flex-row gap-8">
                             
-                            <div className="space-y-2">
-                                <label className="text-xs font-bold tracking-widest text-foreground ml-1 leading-tight uppercase">
-                                    Title Name
-                                </label>
-                                <input
-                                    autoComplete="off"
-                                    placeholder="Enter name..."
-                                    value={formData.titleName}
-                                    onChange={(e) => setFormData({ ...formData, titleName: e.target.value })}
-                                    className="h-12 w-full px-4 border-2 border-border rounded-xl font-bold text-foreground bg-transparent text-sm focus:border-primary transition-all shadow-sm outline-none"
-                                />
+                           
+                            <div className="shrink-0">
+                                <ImageUrlField.Preview />
                             </div>
 
                             
-                            <div className="space-y-2">
-                                <label className="text-xs font-bold tracking-widest text-muted-foreground ml-1 uppercase opacity-70">
-                                    Title Type
-                                </label>
-                                <div className="w-full sm:max-w-xs">
-                                    <TitleTypeSelect
-                                        value={formData.titleType}
-                                        onChange={(val) => setFormData({ ...formData, titleType: val as TitleType })}
-                                        className="h-12 border-2 border-border/60 rounded-xl font-bold text-foreground text-sm shadow-sm w-full"
+                            <div className="flex-grow space-y-6">
+                                
+                                <div className="space-y-2">
+                                    <label className="text-xs font-bold tracking-widest text-foreground ml-1 leading-tight uppercase">
+                                        Title Name
+                                    </label>
+                                    <input
+                                        autoComplete="off"
+                                        placeholder="Enter name..."
+                                        value={formData.titleName}
+                                        onChange={(e) => setFormData({ ...formData, titleName: e.target.value })}
+                                        className="h-12 w-full px-4 border-2 border-border rounded-xl font-bold text-foreground bg-transparent text-sm focus:border-primary transition-all shadow-sm outline-none"
                                     />
                                 </div>
-                            </div>
-                        </div>
 
-                    </div>
+                                <div className="space-y-2">
+                                    <label className="text-xs font-bold tracking-widest text-muted-foreground ml-1 uppercase opacity-70">
+                                        Title Type
+                                    </label>
+                                    <div className="w-full sm:max-w-xs">
+                                        <TitleTypeSelect
+                                            value={formData.titleType}
+                                            onChange={(val) => setFormData({ ...formData, titleType: val as TitleType })}
+                                            className="h-12 border-2 border-border/60 rounded-xl font-bold text-foreground text-sm shadow-sm w-full"
+                                        />
+                                    </div>
+                                </div>
+
+                              
+                                <div className="space-y-2">
+                                    <div className="w-full sm:max-w-xs">
+                                        <ImageUrlField.Input className="w-full" />
+                                    </div>
+                                    <ImageUrlField.Tip className="text-left" />
+                                </div>
+
+                            </div>
+
+                        </div>
+                    </ImageUrlField>
                 </div>
 
-                
                 <div className="pt-4 bg-background shrink-0 flex gap-4 border-t border-border mt-auto">
                     <Button
                         onClick={onClose}

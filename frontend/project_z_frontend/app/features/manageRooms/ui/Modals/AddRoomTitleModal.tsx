@@ -1,13 +1,12 @@
 import { useState } from "react";
 import Modal from "~/shared/ui/Modal/Modal";
 import { Button } from "~/shared/ui/Button";
-import { roomTitleService } from "~/features/manageRooms/api/roomTitleService";
 import type { AnimeCardType } from "~/entities/title";
 import { TitleType } from "~/entities/titleRecord";
 import TitleTypeSelect from "~/entities/titleRecord/ui/TitleTypeSelect"; 
 import { notify } from "~/shared/lib";
 import { TitleSearch } from "../../../../widgets/TitleModal/components/titleSearch";
-import { ImageUrlEditor } from "~/shared/ui/ImageUrlEditor";
+import { ImageUrlField } from "~/shared/ui/imageUrlField";
 import { useRoomTitleActions } from "~/features/manageRooms";
 
 interface AddRoomTitleModalProps {
@@ -24,7 +23,7 @@ const INITIAL_FORM = {
     titleType: TitleType.ANIME,
 };
 
-export const AddRoomTitleModal = ({ isOpen, onClose, onSuccess, roomId }: AddRoomTitleModalProps) => {
+export const AddRoomTitleModal = ({ isOpen, onClose, roomId }: AddRoomTitleModalProps) => {
     const [formData, setFormData] = useState(INITIAL_FORM);
 
     const handleImport = (anime: AnimeCardType) => {
@@ -68,57 +67,72 @@ export const AddRoomTitleModal = ({ isOpen, onClose, onSuccess, roomId }: AddRoo
                         <TitleSearch onSelect={handleImport} />
                     </div>
 
-                    <div className="flex flex-col md:flex-row gap-8">
-                        <div className="border-t border-border/50 pt-6 md:border-t-0 md:pt-0">
-                            <ImageUrlEditor
-                                imageUrl={formData.imageUrl}
-                                onImageChange={(url) => setFormData({ ...formData, imageUrl: url })}
-                            />
-                        </div>
-
-                        <div className="flex-grow space-y-6">
-                          
-                            <div className="space-y-2">
-                                <label className="text-xs font-bold tracking-widest text-foreground ml-1 leading-tight uppercase">
-                                    Title Name
-                                </label>
-                                <input
-                                    autoComplete="off"
-                                    placeholder="Enter name..."
-                                    value={formData.titleName}
-                                    onChange={(e) => setFormData({ ...formData, titleName: e.target.value })}
-                                    className="h-12 w-full px-4 border-2 border-border rounded-xl font-bold text-foreground text-sm focus:border-primary transition-all shadow-sm"
-                                />
+                   
+                    <ImageUrlField 
+                        imageUrl={formData.imageUrl} 
+                        onImageChange={(url) => setFormData({ ...formData, imageUrl: url })}
+                        variant="portrait"
+                    >
+                        <div className="flex flex-col md:flex-row gap-8">
+                           
+                            <div className="border-t border-border/50 pt-6 md:border-t-0 md:pt-0 shrink-0">
+                                <ImageUrlField.Preview />
                             </div>
 
-                            <div className="space-y-2">
-                                <label className="text-xs font-bold tracking-widest text-muted-foreground ml-1 uppercase opacity-70">
-                                    Title Type
-                                </label>
-                                <div className="w-full sm:max-w-xs">
-                                 
-                                    <TitleTypeSelect
-                                        value={formData.titleType}
-                                        onChange={(val) => setFormData({ ...formData, titleType: val as TitleType })}
-                                        className="h-12 border-2 border-border/60 rounded-xl font-bold text-foreground text-sm shadow-sm w-full"
+                            
+                            <div className="flex-grow space-y-6">
+                                <div className="space-y-2">
+                                    <label className="text-xs font-bold tracking-widest text-foreground ml-1 leading-tight uppercase">
+                                        Title Name
+                                    </label>
+                                    <input
+                                        autoComplete="off"
+                                        placeholder="Enter name..."
+                                        value={formData.titleName}
+                                        onChange={(e) => setFormData({ ...formData, titleName: e.target.value })}
+                                        className="h-12 w-full px-4 border-2 border-border rounded-xl font-bold text-foreground text-sm focus:border-primary transition-all shadow-sm"
                                     />
                                 </div>
+
+                                <div className="space-y-2">
+                                    <label className="text-xs font-bold tracking-widest text-muted-foreground ml-1 uppercase opacity-70">
+                                        Title Type
+                                    </label>
+                                    <div className="w-full sm:max-w-xs">
+                                        <TitleTypeSelect
+                                            value={formData.titleType}
+                                            onChange={(val) => setFormData({ ...formData, titleType: val as TitleType })}
+                                            className="h-12 border-2 border-border/60 rounded-xl font-bold text-foreground text-sm shadow-sm w-full"
+                                        />
+                                    </div>
+                                </div>
+
+                               
+                                <div className="space-y-2">
+    <div className="w-full sm:max-w-xs">
+        <ImageUrlField.Input className="w-full" />
+    </div>
+    <ImageUrlField.Tip className="text-left" />
+</div>
                             </div>
                         </div>
-                    </div>
+                    </ImageUrlField>
+
                 </div>
 
                 <div className="pt-4 bg-background shrink-0 flex gap-4 border-t border-border mt-2">
                     <Button
                         onClick={onClose}
-                        className="w-full" variant="cancel"
+                        className="w-full" 
+                        variant="cancel"
                     >
                         Cancel
                     </Button>
                     <Button
                         onClick={handleSave}
                         disabled={isPending}
-                        className="w-full" variant="save"
+                        className="w-full" 
+                        variant="save"
                     >
                         {isPending ? "Saving..." : "Save Title"}
                     </Button>

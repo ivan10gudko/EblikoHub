@@ -7,7 +7,8 @@ type ButtonVariants =
   | "text-only"
   | "cancel"
   | "save"
-  | "destructive";
+  | "destructive"
+  | "altCancel";
 
 interface ButtonProps extends ComponentProps<"button"> {
   variant?: ButtonVariants;
@@ -25,6 +26,7 @@ const variantStyles: Record<ButtonVariants, string> = {
   save: "h-12 sm:h-14 rounded-xl bg-primary text-background font-black tracking-wide hover:bg-primary/90 hover:shadow-primary-bouncy active:translate-y-[2px] active:shadow-primary-bouncy-active",
   destructive:
     "border-2 border-danger/40 bg-danger/5 text-danger shadow-sm hover:bg-danger hover:text-background hover:border-danger",
+  altCancel: "border border-danger/40 text-white/70 hover:bg-danger/15 hover:text-danger gap-2 px-4 py-2 rounded-xl bg-danger/30",
 };
 
 const Button = ({

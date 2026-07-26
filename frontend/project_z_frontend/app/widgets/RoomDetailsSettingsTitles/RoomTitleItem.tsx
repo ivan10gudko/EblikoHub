@@ -1,4 +1,5 @@
 import type { RoomTitleDetails } from "~/features/manageRooms/model/roomTitle.types";
+import { TitleTypeThemes } from "~/entities/titleRecord";
 import { RoomTitleActionMenu } from "./RoomTitleActionMenu";
 
 interface RoomTitleItemProps {
@@ -21,13 +22,16 @@ export const RoomTitleItem = ({
   
   const canManage = isOwn || isCurrentUserAdmin;
 
+  
+  const themeClass = TitleTypeThemes[item.titleType] || "border-border hover:border-foreground/30";
+
   return (
-    <div className="relative flex items-center justify-between p-3 rounded-lg border border-border hover:border-primary/50 transition-all">
+    <div className={`relative flex items-center justify-between p-3 rounded-lg border transition-all ${themeClass}`}>
       <div className="flex items-center gap-3">
         <img 
           src={item.imageUrl || defaultImagePath} 
           alt={item.titleName} 
-          className="w-12 h-16 object-cover rounded-md" 
+          className="w-26 h-16 object-cover rounded-md" 
         />
         <div>
           <p className="font-medium text-foreground">{item.titleName}</p>

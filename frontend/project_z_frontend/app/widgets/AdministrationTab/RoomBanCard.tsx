@@ -78,7 +78,7 @@ export const RoomBanCard: React.FC<RoomBanCardProps> = ({ banDetails, onUnban })
                 <button
                     onClick={handleUnbanClick}
                     disabled={isSubmitting}
-                    className="h-10 px-4 bg-primary/20 text-primary border border-primary hover:bg-primary/30 hover:text-primary-hover font-bold text-sm gap-2 rounded-xl transition-colors flex items-center justify-center cursor-pointer"
+                    className="flex items-center gap-1.5 px-5 py-2.5 rounded-lg bg-primary/10 text-primary border border-primary/30 active:scale-95 transition-all text-sm font-semibold cursor-pointer hover:bg-primary/20"
                 >
                     {isSubmitting ? '...' : 'Unban'}
                 </button>

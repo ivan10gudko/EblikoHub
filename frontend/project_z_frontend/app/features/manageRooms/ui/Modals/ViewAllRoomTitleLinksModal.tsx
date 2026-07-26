@@ -3,6 +3,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiClient } from "~/shared/api";
 import { Button } from "~/shared/ui/Button";
 import { Modal } from "~/shared/ui/Modal";
+import { TitleType, TitleTypeThemes } from "~/entities/titleRecord";
 import type { RoomTitleLinkDetailsDto } from "~/features/manageRooms/model/roomTitle.types";
 
 interface ViewLinksModalProps {
@@ -61,7 +62,7 @@ export const ViewAllRoomTitleLinksModal = ({
       title="Title Links"
       maxWidth="max-w-xl"
     >
-      <div className="flex flex-col  h-[70vh]">
+      <div className="flex flex-col h-[70vh]">
         <div className="flex-1 overflow-y-auto custom-scrollbar p-2">
           {isLoading ? (
             <div className="p-4 text-center">Loading...</div>
@@ -73,11 +74,16 @@ export const ViewAllRoomTitleLinksModal = ({
             <div className="flex flex-col gap-2">
               {links.map((link: RoomTitleLinkDetailsDto) => {
                 const titleData = link.title;
+                
+                const themeClass = titleData?.type 
+            
+                  ? TitleTypeThemes[titleData.type as TitleType] 
+                  : "border-border hover:border-foreground/30";
 
                 return (
                   <div
                     key={link.id}
-                    className="flex items-center justify-between p-2 bg-card border border-border rounded-xl transition-colors"
+                    className={`flex items-center justify-between p-2 border rounded-xl transition-all ${themeClass}`}
                   >
                     <div className="flex items-center gap-3 overflow-hidden">
                       <div className="w-16 h-10 bg-background-muted rounded-lg flex items-center justify-center shrink-0 border border-border overflow-hidden">
