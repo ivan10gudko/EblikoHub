@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 
+import project_z.demo.dto.RoomTitleLinkDtos.RoomTitleLinkBatchCreateDto;
 import project_z.demo.dto.RoomTitleLinkDtos.RoomTitleLinkCreateDto;
 import project_z.demo.dto.RoomTitleLinkDtos.RoomTitleLinkDetailsDto;
 import project_z.demo.dto.RoomTitleLinkDtos.SuggestedTitleLinkDto;
@@ -13,6 +14,7 @@ import project_z.demo.entity.RoomTitleLinkEntity;
 @Service
 public interface RoomTitleLinkService {
     RoomTitleLinkDetailsDto createLink(RoomTitleLinkCreateDto dto);
+    List<RoomTitleLinkDetailsDto> batchCreateLinks(RoomTitleLinkBatchCreateDto dto);
     List<RoomTitleLinkDetailsDto> findByRoomTitleId(UUID roomTitleId);
 
     List<RoomTitleLinkDetailsDto> findUserLinksInRoom(UUID userId, Long roomId);

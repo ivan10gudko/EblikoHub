@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import project_z.demo.dto.RoomTitleLinkDtos.RoomTitleLinkBatchCreateDto;
 import project_z.demo.dto.RoomTitleLinkDtos.RoomTitleLinkCreateDto;
 import project_z.demo.dto.RoomTitleLinkDtos.RoomTitleLinkDetailsDto;
 import project_z.demo.dto.RoomTitleLinkDtos.SuggestedTitleLinkDto;
@@ -28,6 +29,14 @@ public class RoomTitleLinkController {
             @PathVariable Long roomId,
             @RequestBody RoomTitleLinkCreateDto dto) {
         return ResponseEntity.ok(linkService.createLink(dto));
+    }
+
+    @PostMapping("/batch")
+    @PreAuthorize("@securityService.isRoomMember(#roomId)")
+    public ResponseEntity<List<RoomTitleLinkDetailsDto>> batchCreate(
+            @PathVariable Long roomId,
+            @RequestBody RoomTitleLinkBatchCreateDto dto) {
+        return ResponseEntity.ok(linkService.batchCreateLinks(dto));
     }
 
     @GetMapping("/roomTitle/{roomTitleId}")

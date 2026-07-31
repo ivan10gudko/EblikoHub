@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import project_z.demo.Mappers.Mapper;
 import project_z.demo.common.Exceptions.ResourceNotFoundException;
 import project_z.demo.common.Exceptions.RoomTitleLinkExceptions.RoomTitleLinkAlreadyExistsException;
+import project_z.demo.dto.RoomTitleLinkDtos.RoomTitleLinkBatchCreateDto;
 import project_z.demo.dto.RoomTitleLinkDtos.RoomTitleLinkCreateDto;
 import project_z.demo.dto.RoomTitleLinkDtos.RoomTitleLinkDetailsDto;
 import project_z.demo.dto.RoomTitleLinkDtos.SuggestedTitleLinkDto;
@@ -54,6 +55,30 @@ public class RoomTitleLinkServiceImpl implements RoomTitleLinkService {
         entity.setUserTitleRecord(userTitle);
         entity.setRoomTitle(roomTitle);
         return mapper.mapTo(repository.save(entity));
+    }
+
+    @Override
+    @Transactional
+    public List<RoomTitleLinkDetailsDto> batchCreateLinks(RoomTitleLinkBatchCreateDto dto) {
+        List<RoomTitleLinkEntity> entities = dto.getLinks().stream()
+                .filter(linkDto -> !repository.existsByUserTitleRecord_TitleIdAndRoomTitle_Id(
+                        linkDto.getTitleId(), linkDto.getRoomTitleId()))
+                .map(linkDto -> {
+                    var userTitle = titleRepository.findById(linkDto.getTitleId())
+                            .orElseThrow(() -> new RuntimeException("Title record not found with id: " + linkDto.getTitleId()));
+                    var roomTitle = roomTitleRepository.findById(linkDto.getRoomTitleId())
+                            .orElseThrow(() -> new RuntimeException("Room title not found with id: " + linkDto.getRoomTitleId()));
+
+                    RoomTitleLinkEntity entity = new RoomTitleLinkEntity();
+                    entity.setUserTitleRecord(userTitle);
+                    entity.setRoomTitle(roomTitle);
+                    return entity;
+                })
+                .collect(Collectors.toList());
+
+        return repository.saveAll(entities).stream()
+                .map(mapper::mapTo)
+                .collect(Collectors.toList());
     }
 
     @Override
