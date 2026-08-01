@@ -38,6 +38,14 @@ export const AiTitleMatcherPage = () => {
         return suggestions.filter((sug) => sug.confidence?.toLowerCase() === "high");
     }, [suggestions, highMatchOnly]);
 
+ 
+    const isAllFilteredSelected = useMemo(() => {
+        if (filteredSuggestions.length === 0) return false;
+        return filteredSuggestions.every(
+            (item) => item.title?.titleId !== undefined && !!selectedMatches[String(item.title.titleId)]
+        );
+    }, [filteredSuggestions, selectedMatches]);
+
     const toggleSelect = (titleId: number, roomTitleId: string) => {
         const key = String(titleId);
         setSelectedMatches((prev) => {
@@ -52,16 +60,28 @@ export const AiTitleMatcherPage = () => {
     };
 
     const handleSelectAll = (filteredItems: SuggestedTitleLinkDto[]) => {
-        if (Object.keys(selectedMatches).length === filteredItems.length) {
-            setSelectedMatches({});
-        } else {
-            const newSelected: Record<string, string> = {};
-            filteredItems.forEach((item) => {
-                if (item.title?.titleId !== undefined && item.roomTitle?.id) {
-                    newSelected[String(item.title.titleId)] = item.roomTitle.id;
-                }
+        if (isAllFilteredSelected) {
+      
+            setSelectedMatches((prev) => {
+                const copy = { ...prev };
+                filteredItems.forEach((item) => {
+                    if (item.title?.titleId !== undefined) {
+                        delete copy[String(item.title.titleId)];
+                    }
+                });
+                return copy;
             });
-            setSelectedMatches(newSelected);
+        } else {
+            // Якщо не всі вибрані — додаємо відфільтровані елементи до обраних
+            setSelectedMatches((prev) => {
+                const next = { ...prev };
+                filteredItems.forEach((item) => {
+                    if (item.title?.titleId !== undefined && item.roomTitle?.id) {
+                        next[String(item.title.titleId)] = item.roomTitle.id;
+                    }
+                });
+                return next;
+            });
         }
     };
 
@@ -137,7 +157,7 @@ export const AiTitleMatcherPage = () => {
                             onClick={() => handleSelectAll(filteredSuggestions)}
                             className="px-3 py-1 text-xs font-bold uppercase tracking-wider text-primary hover:text-primary/80 bg-primary/10 hover:bg-primary/20 border-2 border-primary/30 rounded-lg transition-all active:scale-95 cursor-pointer shadow-sm select-none"
                         >
-                            {selectedCount === filteredSuggestions.length ? "Deselect All" : "Select All"}
+                            {isAllFilteredSelected ? "Deselect All" : "Select All"}
                         </button>
                     )}
                 </div>
@@ -171,7 +191,6 @@ export const AiTitleMatcherPage = () => {
                         const leftBorder = userTitleType ? TitleTypeBorderColors[userTitleType] : "rgba(255,255,255,0.15)";
                         const rightBorder = roomTitleType ? TitleTypeBorderColors[roomTitleType] : "rgba(255,255,255,0.15)";
 
-                        
                         const cardStyle: React.CSSProperties = {
                             backgroundImage: `
                                 linear-gradient(90deg, ${leftBg} 0%, transparent 45%, transparent 55%, ${rightBg} 100%),
