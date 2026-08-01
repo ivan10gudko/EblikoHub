@@ -46,10 +46,10 @@ public class RoomTitleLinkServiceImpl implements RoomTitleLinkService {
             throw new RoomTitleLinkAlreadyExistsException("link between this title and room title adlready exists");
         }
         var userTitle = titleRepository.findById(dto.getTitleId())
-                .orElseThrow(() -> new RuntimeException("Title record not found with id: " + dto.getTitleId()));
+                .orElseThrow(() -> new ResourceNotFoundException("Title record not found with id: " + dto.getTitleId()));
 
         var roomTitle = roomTitleRepository.findById(dto.getRoomTitleId())
-                .orElseThrow(() -> new RuntimeException("Room title not found with id: " + dto.getRoomTitleId()));
+                .orElseThrow(() -> new ResourceNotFoundException("Room title not found with id: " + dto.getRoomTitleId()));
 
         RoomTitleLinkEntity entity = new RoomTitleLinkEntity();
         entity.setUserTitleRecord(userTitle);
@@ -65,9 +65,9 @@ public class RoomTitleLinkServiceImpl implements RoomTitleLinkService {
                         linkDto.getTitleId(), linkDto.getRoomTitleId()))
                 .map(linkDto -> {
                     var userTitle = titleRepository.findById(linkDto.getTitleId())
-                            .orElseThrow(() -> new RuntimeException("Title record not found with id: " + linkDto.getTitleId()));
+                            .orElseThrow(() -> new ResourceNotFoundException("Title record not found with id: " + linkDto.getTitleId()));
                     var roomTitle = roomTitleRepository.findById(linkDto.getRoomTitleId())
-                            .orElseThrow(() -> new RuntimeException("Room title not found with id: " + linkDto.getRoomTitleId()));
+                            .orElseThrow(() -> new ResourceNotFoundException("Room title not found with id: " + linkDto.getRoomTitleId()));
 
                     RoomTitleLinkEntity entity = new RoomTitleLinkEntity();
                     entity.setUserTitleRecord(userTitle);
