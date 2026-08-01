@@ -8,6 +8,7 @@ import { AddRoomTitleModal } from "./AddRoomTitleModal";
 import { EditRoomTitleModal } from "./EditRoomTitleModal";
 import { RoomTitleUserLinksModal } from "./RoomTitleUserLinksModal";
 import { ViewAllRoomTitleLinksModal } from "./ViewAllRoomTitleLinksModal";
+import { AiTitleMatcherModal } from "~/widgets/AiTitleMatcherModal/AiTitleMatcherModal";
 import { RoomRole } from "~/entities/room";
 import { getSessionUserId } from "~/shared/lib/supabase";
 import { useEffect, useState } from "react";
@@ -15,7 +16,8 @@ import { useEffect, useState } from "react";
 export const RoomModalManager = ({ roomId }: { roomId: number }) => {
   const {
     isAddRoomTitleOpen,
-    activeSettingsModal, settingsEntityId,
+    activeSettingsModal,
+    settingsEntityId,
     closeAllModals,
   } = useRoomModal();
 
@@ -30,12 +32,12 @@ export const RoomModalManager = ({ roomId }: { roomId: number }) => {
 
   const cachedTitle = useCachedRoomTitle(
     roomId,
-    activeSettingsModal === 'edit-title' ? settingsEntityId : null
+    activeSettingsModal === "edit-title" ? settingsEntityId : null
   );
 
   const { data: fetchedTitle } = useRoomTitleDetails(
     roomId,
-    !cachedTitle && activeSettingsModal === 'edit-title' ? settingsEntityId : null
+    !cachedTitle && activeSettingsModal === "edit-title" ? settingsEntityId : null
   );
 
   const editingTitle = cachedTitle ?? fetchedTitle;
@@ -66,6 +68,17 @@ export const RoomModalManager = ({ roomId }: { roomId: number }) => {
           roomId={roomId}
           roomTitleId={settingsEntityId ?? ""}
           canDelete={canDeleteLinks}
+        />
+      ),
+    },
+    {
+      key: "ai-sync",
+      isOpen: activeSettingsModal === "ai-sync",
+      render: () => (
+        <AiTitleMatcherModal
+          isOpen
+          onClose={closeAllModals}
+          roomId={roomId}
         />
       ),
     },

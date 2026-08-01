@@ -11,12 +11,14 @@ import GroupAddIcon from "@mui/icons-material/GroupAdd";
 import OutboxIcon from "@mui/icons-material/Outbox";
 import EmojiEventsIcon from "@mui/icons-material/EmojiEvents";
 import LinkIcon from "@mui/icons-material/Link";
+import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
 
 import { Sidebar } from "~/shared/ui/Sidebar";
 import { Button } from "~/shared/ui/Button";
 import { RoomRole } from "~/entities/room/model/room.types";
 import { NavGroupItem, NavLinkItem } from "~/shared/ui/NavLinkItem";
 import type { NavItem } from "~/shared/ui/NavLinkItem/NavLinkItem";
+import { useRoomModal } from "~/features/manageRooms/hooks/useRoomModal";
 
 interface RoomSettingsSidebarProps {
   roomId: number;
@@ -27,36 +29,29 @@ interface RoomSettingsSidebarProps {
 export const RoomSettingsSidebar = ({ roomId, role, onCloseMobileMenu }: RoomSettingsSidebarProps) => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { openSettingsModal, isSettingsModalOpen } = useRoomModal();
   const [openSection, setOpenSection] = useState<string | null>(null);
 
-  
   useEffect(() => {
     const currentPath = location.pathname;
     if (currentPath.includes("/invites")) setOpenSection("invites");
     else if (currentPath.includes("/titles")) setOpenSection("titles");
-  }, []);
+  }, [location.pathname]);
 
-  
   const handleItemClick = (path: string) => {
     navigate(path);
     if (onCloseMobileMenu) onCloseMobileMenu();
   };
 
-  
   const toggleSection = (key: string) => {
     setOpenSection(openSection === key ? null : key);
   };
 
- 
   const handleNavClick = (e: React.MouseEvent<HTMLElement>) => {
     const target = e.target as HTMLElement;
-    
-    
     const isDropdownHeader = target.closest('[class*="NavGroupItem"]') && !target.closest('ul') && !target.closest('li');
-    
-   
-    if (onCloseMobileMenu && !isDropdownHeader && (target.closest('a') || target.closest('li') || target.closest('[role="button"]'))) {
-      
+
+    if (onCloseMobileMenu && !isDropdownHeader && (target.closest('a') || target.closest('li') || target.closest('button') || target.closest('[role="button"]'))) {
       setTimeout(() => {
         onCloseMobileMenu();
       }, 50);
@@ -84,19 +79,41 @@ export const RoomSettingsSidebar = ({ roomId, role, onCloseMobileMenu }: RoomSet
     { key: "admin", label: "Administration", path: `/rooms/${roomId}/settings/admin`, Icon: AdminPanelSettingsIcon, allowed: [RoomRole.OWNER, RoomRole.ADMIN] },
   ].filter(link => link.allowed.includes(role));
 
+  const isAiSyncActive = isSettingsModalOpen("ai-sync");
+
   return (
     <Sidebar className="flex flex-col p-4 pt-20 md:p-5 gap-3 h-auto max-h-[100vh] overflow-y-auto md:h-[calc(100vh-40px)] md:ml-5 md:my-5 w-full md:w-80 shrink-0 backdrop-blur-md bg-card/40 md:bg-card border-none md:border border-border/40 rounded-2xl md:rounded-3xl shadow-xl md:shadow-none hide-scrollbar">
-      
       <nav onClick={handleNavClick} className="flex flex-col gap-3.5 w-full">
         {navLinks.map((item) => (
           item.children ? (
-            <NavGroupItem
-              key={item.key}
-              item={item}
-              isOpen={openSection === item.key}
-              isGroupActive={item.children!.some(child => location.pathname === child.path)}
-              onToggle={() => toggleSection(item.key)} 
-            />
+            <div key={item.key} className="flex flex-col gap-1 w-full">
+              <NavGroupItem
+                item={item}
+                isOpen={openSection === item.key}
+                isGroupActive={item.children!.some(child => location.pathname === child.path) || isAiSyncActive}
+                onToggle={() => toggleSection(item.key)}
+              />
+
+              {/* Рендеримо кнопку вручну в контейнері підгрупи Titles, щоб копіювати дизайн 1в1 */}
+              {openSection === "titles" && item.key === "titles" && (
+                <div className="flex flex-col gap-1 pl-4 mt-1">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      openSettingsModal("ai-sync");
+                      if (onCloseMobileMenu) onCloseMobileMenu();
+                    }}
+                    className={`flex items-center gap-3 w-full px-4 py-2 rounded-xl text-sm font-medium transition-all cursor-pointer ${isAiSyncActive
+                        ? "bg-primary/10 text-primary border border-primary/20 font-semibold"
+                        : "text-foreground hover:bg-muted/40"
+                      }`}
+                  >
+                    <AutoAwesomeIcon className="text-amber-500 text-base" />
+                    <span>AI Title Matcher</span>
+                  </button>
+                </div>
+              )}
+            </div>
           ) : (
             <div key={item.key} onClick={() => handleItemClick(item.path!)} className="w-full">
               <NavLinkItem item={item} />
@@ -104,11 +121,11 @@ export const RoomSettingsSidebar = ({ roomId, role, onCloseMobileMenu }: RoomSet
           )
         ))}
 
-        <Button 
+        <Button
           onClick={() => {
             navigate(`/rooms/${roomId}`);
             if (onCloseMobileMenu) onCloseMobileMenu();
-          }} 
+          }}
           className="flex items-center gap-4 w-full px-5 py-3.5 mt-2 rounded-xl border border-border/40 bg-background-muted/20 text-foreground/80 hover:bg-background-muted/60 hover:text-foreground hover:border-primary/50 cursor-pointer"
         >
           <ArrowBackIcon className="text-primary/70" />

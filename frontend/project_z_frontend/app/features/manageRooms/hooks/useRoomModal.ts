@@ -2,7 +2,7 @@ import { useCallback } from "react";
 import { useSearchParams } from "react-router";
 import type { ModalType } from "~/shared/types";
 
-export type SettingsModalType = 'user-links' | 'all-links' | 'members' | 'edit-title' | 'add-room-title';
+export type SettingsModalType = 'user-links' | 'all-links' | 'members' | 'edit-title' | 'add-room-title'| 'ai-sync';
 
 export const useRoomModal = () => {
   const [searchParams, setSearchParams] = useSearchParams();
