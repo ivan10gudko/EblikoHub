@@ -15,9 +15,12 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.RequiredArgsConstructor;
+import project_z.demo.Mappers.Mapper;
 import project_z.demo.common.Exceptions.TitleLinkSuggestionAiErrorException;
 import project_z.demo.config.MyConfig;
+import project_z.demo.dto.RoomTitleDtos.RoomTitleShortDto;
 import project_z.demo.dto.RoomTitleLinkDtos.SuggestedTitleLinkDto;
+import project_z.demo.dto.TitleDtos.TitleShortDto;
 import project_z.demo.entity.RoomTitleEntity;
 import project_z.demo.entity.TitleEntity;
 import project_z.demo.services.GoogleAiClient;
@@ -54,30 +57,20 @@ public class TitleMatchingEngineImpl implements TitleMatchingEngine {
     private final GoogleAiClient googleAiClient;
     private final MyConfig myConfig;
     private final ObjectMapper objectMapper;
+    private final Mapper<TitleEntity, TitleShortDto> titleShortMapper;
+    private final Mapper<RoomTitleEntity, RoomTitleShortDto> roomTitleShortMapper;
 
     @Override
-    public List<SuggestedTitleLinkDto> suggestLinks(List<RoomTitleEntity> roomTitles,
-            List<TitleEntity> watchlistTitles) {
-        // 1. Дебаг входу
-        System.out.println("DEBUG: suggestLinks started");
-        System.out.println("DEBUG: roomTitles size: " + (roomTitles != null ? roomTitles.size() : "null"));
-        System.out
-                .println("DEBUG: watchlistTitles size: " + (watchlistTitles != null ? watchlistTitles.size() : "null"));
-
+    public List<SuggestedTitleLinkDto> suggestLinks(List<RoomTitleEntity> roomTitles, List<TitleEntity> watchlistTitles) {
         Map<UUID, RoomTitleEntity> roomTitleById = roomTitles.stream()
                 .collect(Collectors.toMap(RoomTitleEntity::getId, rt -> rt));
         Map<Long, TitleEntity> watchlistById = watchlistTitles.stream()
                 .collect(Collectors.toMap(TitleEntity::getTitleId, t -> t));
 
         List<SuggestedTitleLinkDto> preMatched = preMatchByApiTitleId(roomTitles, watchlistTitles);
-        System.out.println("DEBUG: preMatched size: " + preMatched.size());
 
-        Set<UUID> usedRoomTitleIds = preMatched.stream()
-                .map(SuggestedTitleLinkDto::getRoomTitleId)
-                .collect(Collectors.toSet());
-        Set<Long> usedTitleIds = preMatched.stream()
-                .map(SuggestedTitleLinkDto::getTitleId)
-                .collect(Collectors.toSet());
+        Set<UUID> usedRoomTitleIds = preMatched.stream().map(s -> s.getRoomTitle().getId()).collect(Collectors.toSet());
+        Set<Long> usedTitleIds = preMatched.stream().map(s -> s.getTitle().getTitleId()).collect(Collectors.toSet());
 
         List<RoomTitleEntity> roomTitlesForAi = roomTitles.stream()
                 .filter(rt -> !usedRoomTitleIds.contains(rt.getId()))
@@ -86,33 +79,20 @@ public class TitleMatchingEngineImpl implements TitleMatchingEngine {
                 .filter(t -> !usedTitleIds.contains(t.getTitleId()))
                 .toList();
 
-        System.out.println("DEBUG: roomTitlesForAi count: " + roomTitlesForAi.size());
-        System.out.println("DEBUG: watchlistForAi count: " + watchlistForAi.size());
-
-        List<SuggestedTitleLinkDto> aiSuggestions = List.of();
-        if (!roomTitlesForAi.isEmpty() && !watchlistForAi.isEmpty()) {
-            System.out.println("DEBUG: Calling fetchAiSuggestions...");
-            // ТУТ ВАЖЛИВО: перевір, чи немає всередині fetchAiSuggestions виклику цього ж
-            // методу suggestLinks
-            aiSuggestions = fetchAiSuggestions(roomTitlesForAi, watchlistForAi, roomTitleById, watchlistById);
-            System.out.println("DEBUG: fetchAiSuggestions returned size: " + aiSuggestions.size());
-        }
+        List<SuggestedTitleLinkDto> aiSuggestions = (!roomTitlesForAi.isEmpty() && !watchlistForAi.isEmpty())
+                ? fetchAiSuggestions(roomTitlesForAi, watchlistForAi, roomTitleById, watchlistById)
+                : List.of();
 
         List<SuggestedTitleLinkDto> result = new ArrayList<>(preMatched);
         result.addAll(aiSuggestions);
-        System.out.println("DEBUG: suggestLinks finished, total result size: " + result.size());
         return result;
     }
 
-    private List<SuggestedTitleLinkDto> preMatchByApiTitleId(
-            List<RoomTitleEntity> roomTitles,
-            List<TitleEntity> watchlistTitles) {
+    private List<SuggestedTitleLinkDto> preMatchByApiTitleId(List<RoomTitleEntity> roomTitles, List<TitleEntity> watchlistTitles) {
         Map<Long, List<RoomTitleEntity>> roomTitlesByApiId = new HashMap<>();
         for (RoomTitleEntity roomTitle : roomTitles) {
             if (roomTitle.getApiTitleId() != null) {
-                roomTitlesByApiId
-                        .computeIfAbsent(roomTitle.getApiTitleId(), id -> new ArrayList<>())
-                        .add(roomTitle);
+                roomTitlesByApiId.computeIfAbsent(roomTitle.getApiTitleId(), id -> new ArrayList<>()).add(roomTitle);
             }
         }
 
@@ -133,10 +113,8 @@ public class TitleMatchingEngineImpl implements TitleMatchingEngine {
                     continue;
                 }
                 matches.add(SuggestedTitleLinkDto.builder()
-                        .roomTitleId(roomTitle.getId())
-                        .roomTitleName(roomTitle.getTitleName())
-                        .titleId(watchlistTitle.getTitleId())
-                        .titleName(watchlistTitle.getTitleName())
+                        .roomTitle(roomTitleShortMapper.mapTo(roomTitle))
+                        .title(titleShortMapper.mapTo(watchlistTitle))
                         .confidence("high")
                         .build());
                 usedRoomTitleIds.add(roomTitle.getId());
@@ -154,18 +132,13 @@ public class TitleMatchingEngineImpl implements TitleMatchingEngine {
             Map<UUID, RoomTitleEntity> roomTitleById,
             Map<Long, TitleEntity> watchlistById) {
         try {
-            List<Map<String, Object>> roomPayload = roomTitles.stream()
-                    .map(this::toRoomTitlePayload)
-                    .toList();
-            List<Map<String, Object>> watchlistPayload = watchlistTitles.stream()
-                    .map(this::toWatchlistTitlePayload)
-                    .toList();
+            List<Map<String, Object>> roomPayload = roomTitles.stream().map(this::toPayload).toList();
+            List<Map<String, Object>> watchlistPayload = watchlistTitles.stream().map(this::toPayload).toList();
 
-            Map<String, Object> input = Map.of(
+            String userMessage = objectMapper.writeValueAsString(Map.of(
                     "roomTitles", roomPayload,
-                    "watchlistTitles", watchlistPayload);
+                    "watchlistTitles", watchlistPayload));
 
-            String userMessage = objectMapper.writeValueAsString(input);
             String responseText = googleAiClient.generateContent(
                     myConfig.getGoogleTitleLinksApiKey(),
                     TITLE_LINK_PROMPT + "\n\nInput:\n" + userMessage);
@@ -176,57 +149,48 @@ public class TitleMatchingEngineImpl implements TitleMatchingEngine {
             Set<Long> usedTitleIds = new HashSet<>();
             List<SuggestedTitleLinkDto> validated = new ArrayList<>();
 
-            for (AiSuggestedPair pair : rawPairs) {
-                if (pair.roomTitleId() == null || pair.titleId() == null) {
-                    continue;
-                }
-                if (usedRoomTitleIds.contains(pair.roomTitleId()) || usedTitleIds.contains(pair.titleId())) {
-                    continue;
-                }
-                RoomTitleEntity roomTitle = roomTitleById.get(pair.roomTitleId());
-                TitleEntity watchlistTitle = watchlistById.get(pair.titleId());
-                if (roomTitle == null || watchlistTitle == null) {
-                    continue;
-                }
+            if (rawPairs != null) {
+                for (AiSuggestedPair pair : rawPairs) {
+                    if (pair.roomTitleId() == null || pair.titleId() == null ||
+                            usedRoomTitleIds.contains(pair.roomTitleId()) || usedTitleIds.contains(pair.titleId())) {
+                        continue;
+                    }
+                    RoomTitleEntity roomTitle = roomTitleById.get(pair.roomTitleId());
+                    TitleEntity watchlistTitle = watchlistById.get(pair.titleId());
+                    if (roomTitle == null || watchlistTitle == null) {
+                        continue;
+                    }
 
-                validated.add(SuggestedTitleLinkDto.builder()
-                        .roomTitleId(roomTitle.getId())
-                        .roomTitleName(roomTitle.getTitleName())
-                        .titleId(watchlistTitle.getTitleId())
-                        .titleName(watchlistTitle.getTitleName())
-                        .confidence(pair.confidence() != null ? pair.confidence() : "medium")
-                        .build());
-                usedRoomTitleIds.add(pair.roomTitleId());
-                usedTitleIds.add(pair.titleId());
+                    validated.add(SuggestedTitleLinkDto.builder()
+                            .roomTitle(roomTitleShortMapper.mapTo(roomTitle))
+                            .title(titleShortMapper.mapTo(watchlistTitle))
+                            .confidence(pair.confidence() != null ? pair.confidence() : "medium")
+                            .build());
+                    usedRoomTitleIds.add(pair.roomTitleId());
+                    usedTitleIds.add(pair.titleId());
+                }
             }
 
             return validated;
         } catch (TitleLinkSuggestionAiErrorException e) {
             throw e;
         } catch (Exception e) {
-            throw new TitleLinkSuggestionAiErrorException(
-                    "Failed to get title link suggestions from AI: " + e.getMessage());
+            throw new TitleLinkSuggestionAiErrorException("Failed to get title link suggestions from AI: " + e.getMessage());
         }
     }
 
-    private Map<String, Object> toRoomTitlePayload(RoomTitleEntity roomTitle) {
+    private Map<String, Object> toPayload(Object title) {
         Map<String, Object> payload = new HashMap<>();
-        payload.put("id", roomTitle.getId().toString());
-        payload.put("name", roomTitle.getTitleName());
-        payload.put("type", roomTitle.getTitleType().name());
-        if (roomTitle.getApiTitleId() != null) {
-            payload.put("apiTitleId", roomTitle.getApiTitleId());
-        }
-        return payload;
-    }
-
-    private Map<String, Object> toWatchlistTitlePayload(TitleEntity title) {
-        Map<String, Object> payload = new HashMap<>();
-        payload.put("id", title.getTitleId());
-        payload.put("name", title.getTitleName());
-        payload.put("type", title.getTitleType().name());
-        if (title.getApiTitleId() != null) {
-            payload.put("apiTitleId", title.getApiTitleId());
+        if (title instanceof RoomTitleEntity rt) {
+            payload.put("id", rt.getId().toString());
+            payload.put("name", rt.getTitleName());
+            payload.put("type", rt.getTitleType().name());
+            if (rt.getApiTitleId() != null) payload.put("apiTitleId", rt.getApiTitleId());
+        } else if (title instanceof TitleEntity t) {
+            payload.put("id", t.getTitleId());
+            payload.put("name", t.getTitleName());
+            payload.put("type", t.getTitleType().name());
+            if (t.getApiTitleId() != null) payload.put("apiTitleId", t.getApiTitleId());
         }
         return payload;
     }
@@ -238,13 +202,11 @@ public class TitleMatchingEngineImpl implements TitleMatchingEngine {
                 .trim();
 
         try {
-            return objectMapper.readValue(json, new TypeReference<List<AiSuggestedPair>>() {
-            });
+            return objectMapper.readValue(json, new TypeReference<List<AiSuggestedPair>>() {});
         } catch (Exception e) {
             throw new TitleLinkSuggestionAiErrorException("Failed to parse AI response as JSON: " + e.getMessage());
         }
     }
 
-    private record AiSuggestedPair(UUID roomTitleId, Long titleId, String confidence) {
-    }
+    private record AiSuggestedPair(UUID roomTitleId, Long titleId, String confidence) {}
 }

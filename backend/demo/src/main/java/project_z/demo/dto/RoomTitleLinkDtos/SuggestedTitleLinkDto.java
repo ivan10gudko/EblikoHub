@@ -1,20 +1,18 @@
 package project_z.demo.dto.RoomTitleLinkDtos;
 
-import java.util.UUID;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import project_z.demo.dto.RoomTitleDtos.RoomTitleShortDto;
+import project_z.demo.dto.TitleDtos.TitleShortDto;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class SuggestedTitleLinkDto {
-    private UUID roomTitleId;
-    private String roomTitleName;
-    private Long titleId;
-    private String titleName;
+    private TitleShortDto title;
+    private RoomTitleShortDto roomTitle;
     private String confidence;
 }
