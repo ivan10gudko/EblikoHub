@@ -16,6 +16,8 @@ import lombok.RequiredArgsConstructor;
 import project_z.demo.dto.WheelPresetTitleDtos.WheelPresetTitleCreateDto;
 import project_z.demo.services.WheelServices.WheelPresetTitleService;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/v1/wheel/presets/{presetId}/titles")
 @RequiredArgsConstructor
@@ -24,22 +26,22 @@ public class WheelPresetTitleController {
     private final WheelPresetTitleService presetTitleService;
 
     @PostMapping
-    @PreAuthorize("@securityService.isPresetOwner(#presetId) && @securityService.isTitleOwner(#dto.titleId())")
-    public ResponseEntity<Void> addTitleToPreset(
+    @PreAuthorize("@securityService.isPresetOwner(#presetId)")
+    public ResponseEntity<Void> addTitlesToPreset(
             @PathVariable UUID presetId,
-            @RequestBody WheelPresetTitleCreateDto dto) {
+            @RequestBody List<WheelPresetTitleCreateDto> dtos) {
         
-        presetTitleService.addTitleToPreset(presetId, dto);
+        presetTitleService.addTitlesToPreset(presetId, dtos);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
-    @DeleteMapping("/{titleId}")
+    @DeleteMapping
     @PreAuthorize("@securityService.isPresetOwner(#presetId)")
-    public ResponseEntity<Void> removeTitleFromPreset(
+    public ResponseEntity<Void> removeTitlesFromPreset(
             @PathVariable UUID presetId,
-            @PathVariable Long titleId) {
+            @RequestBody List<Long> titleIds) {
         
-        presetTitleService.removeTitleFromPreset(presetId, titleId);
+        presetTitleService.removeTitlesFromPreset(presetId, titleIds);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

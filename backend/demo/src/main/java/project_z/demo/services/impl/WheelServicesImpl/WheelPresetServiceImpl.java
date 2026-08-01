@@ -14,6 +14,7 @@ import project_z.demo.common.Exceptions.WheelPresetExceptions.WheelPresetAlready
 import project_z.demo.dto.WheelPresetDtos.WheelPresetCreateDto;
 import project_z.demo.dto.WheelPresetDtos.WheelPresetDetailsDto;
 import project_z.demo.dto.WheelPresetDtos.WheelPresetPatchDto;
+import project_z.demo.dto.WheelPresetDtos.WheelPresetShortDto;
 import project_z.demo.dto.WheelPresetTitleDtos.WheelPresetTitleCreateDto;
 import project_z.demo.entity.TitleEntity;
 import project_z.demo.entity.UserEntity;
@@ -38,6 +39,7 @@ public class WheelPresetServiceImpl implements WheelPresetService {
 
     private final Mapper<WheelPresetEntity, WheelPresetCreateDto> createMapper;
     private final Mapper<WheelPresetEntity, WheelPresetDetailsDto> detailsMapper;
+    private final Mapper<WheelPresetEntity, WheelPresetShortDto> shortMapper;
     private final Mapper<WheelPresetTitleEntity, WheelPresetTitleCreateDto> titleCreateMapper;
 
     @Override
@@ -48,9 +50,9 @@ public class WheelPresetServiceImpl implements WheelPresetService {
     }
 
     @Override
-    public List<WheelPresetDetailsDto> getUserPresets(UUID userId) {
+    public List<WheelPresetShortDto> getUserPresets(UUID userId) {
         return presetRepository.findAllByUser_UserIdWithTitles(userId).stream()
-                .map(detailsMapper::mapTo)
+                .map(shortMapper::mapTo)
                 .toList();
     }
 

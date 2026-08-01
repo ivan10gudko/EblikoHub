@@ -19,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 import project_z.demo.dto.WheelPresetDtos.WheelPresetCreateDto;
 import project_z.demo.dto.WheelPresetDtos.WheelPresetDetailsDto;
 import project_z.demo.dto.WheelPresetDtos.WheelPresetPatchDto;
+import project_z.demo.dto.WheelPresetDtos.WheelPresetShortDto;
 import project_z.demo.security.SecurityService;
 import project_z.demo.services.WheelServices.WheelPresetService;
 
@@ -31,7 +32,7 @@ public class WheelPresetController {
     private final SecurityService securityService;
 
     @GetMapping
-    public ResponseEntity<List<WheelPresetDetailsDto>> getUserPresets() {
+    public ResponseEntity<List<WheelPresetShortDto>> getUserPresets() {
         UUID userId = securityService.getCurrentUserId();
         return ResponseEntity.ok(presetService.getUserPresets(userId));
     }

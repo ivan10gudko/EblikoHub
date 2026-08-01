@@ -12,4 +12,6 @@ public interface WheelCurrentSettingsService {
     WheelCurrentSettingsDetailsDto createSettings(UUID userId, WheelCurrentSettingsCreateDto dto);
 
     WheelCurrentSettingsDetailsDto partialUpdate(UUID userId, WheelCurrentSettingsPatchDto patchDto);
+
+    WheelCurrentSettingsDetailsDto loadPreset(UUID userId, UUID presetId);
 }

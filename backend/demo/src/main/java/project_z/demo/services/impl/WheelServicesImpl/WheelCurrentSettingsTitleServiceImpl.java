@@ -1,5 +1,6 @@
 package project_z.demo.services.impl.WheelServicesImpl;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
@@ -26,26 +27,28 @@ public class WheelCurrentSettingsTitleServiceImpl implements WheelCurrentSetting
 
     @Override
     @Transactional
-    public void addTitleToWheel(UUID userId, WheelCurrentSettingsTitleCreateDto dto) {
+    public void addTitlesToWheel(UUID userId, List<WheelCurrentSettingsTitleCreateDto> dtos) {
         var settings = settingsRepository.getReferenceById(userId);
-        var title = titleRepository.getReferenceById(dto.titleId());
-        WheelCurrentTitleEntity entity = WheelCurrentTitleEntity.builder()
-                .wheelSettings(settings)
-                .title(title)
-                .build();
-        repository.save(entity);
+        
+        List<WheelCurrentTitleEntity> entities = dtos.stream().map(dto -> {
+            var title = titleRepository.getReferenceById(dto.titleId());
+            return WheelCurrentTitleEntity.builder()
+                    .wheelSettings(settings)
+                    .title(title)
+                    .build();
+        }).toList();
+        
+        repository.saveAll(entities);
     }
 
     @Override
     @Transactional
-    public void removeTitleFromWheel(UUID userId, Long titleId) {
-        WheelCurrentTitleId id = new WheelCurrentTitleId(userId, titleId);
+    public void removeTitlesFromWheel(UUID userId, List<Long> titleIds) {
+        List<WheelCurrentTitleId> ids = titleIds.stream()
+                .map(titleId -> new WheelCurrentTitleId(userId, titleId))
+                .toList();
 
-        if (repository.existsById(id)) {
-            repository.deleteById(id);
-        } else {
-            throw new ResourceNotFoundException("Title not found in this wheel");
-        }
+        repository.deleteAllById(ids);
     }
 
 }
