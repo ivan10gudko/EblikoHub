@@ -65,6 +65,7 @@ export const RoomSettingsSidebar = ({ roomId, role, onCloseMobileMenu }: RoomSet
       children: [
         { label: "Room Titles", path: `/rooms/${roomId}/settings/titles`, Icon: EmojiEventsIcon, end: true },
         { label: "Title Links", path: `/rooms/${roomId}/settings/titles/titleLinks`, Icon: LinkIcon },
+        { label: "AI Title Matcher", path: `/rooms/${roomId}/settings/titles/ai-matcher`, Icon: AutoAwesomeIcon },
       ]
     },
     { key: "members", label: "Members", path: `/rooms/${roomId}/settings/members`, Icon: PeopleIcon, allowed: [RoomRole.OWNER, RoomRole.ADMIN, RoomRole.MEMBER] },
@@ -94,25 +95,7 @@ export const RoomSettingsSidebar = ({ roomId, role, onCloseMobileMenu }: RoomSet
                 onToggle={() => toggleSection(item.key)}
               />
 
-              {/* Рендеримо кнопку вручну в контейнері підгрупи Titles, щоб копіювати дизайн 1в1 */}
-              {openSection === "titles" && item.key === "titles" && (
-                <div className="flex flex-col gap-1 pl-4 mt-1">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      openSettingsModal("ai-sync");
-                      if (onCloseMobileMenu) onCloseMobileMenu();
-                    }}
-                    className={`flex items-center gap-3 w-full px-4 py-2 rounded-xl text-sm font-medium transition-all cursor-pointer ${isAiSyncActive
-                        ? "bg-primary/10 text-primary border border-primary/20 font-semibold"
-                        : "text-foreground hover:bg-muted/40"
-                      }`}
-                  >
-                    <AutoAwesomeIcon className="text-amber-500 text-base" />
-                    <span>AI Title Matcher</span>
-                  </button>
-                </div>
-              )}
+            
             </div>
           ) : (
             <div key={item.key} onClick={() => handleItemClick(item.path!)} className="w-full">

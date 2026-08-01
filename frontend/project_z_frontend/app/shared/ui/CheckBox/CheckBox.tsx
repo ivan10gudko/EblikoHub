@@ -15,9 +15,10 @@ interface CheckboxProps extends Omit<
 
 const CHECKBOX_CLASSES = {
   base: "h-5 w-5 shrink-0 rounded-md border flex items-center justify-center transition-all cursor-pointer peer-disabled:cursor-not-allowed peer-disabled:opacity-50 select-none",
-  error: "border-danger peer-focus:ring-1 peer-focus:ring-danger",
+  error: "border-danger peer-focus-visible:ring-1 peer-focus-visible:ring-danger",
+  
   default:
-    "border-border peer-focus:border-primary peer-focus:ring-1 peer-focus:ring-primary peer-checked:border-primary peer-checked:bg-primary",
+    "border-border hover:border-primary peer-focus-visible:ring-1 peer-focus-visible:ring-primary peer-checked:border-primary peer-checked:bg-primary",
 };
 
 export const Checkbox: React.FC<CheckboxProps> = ({

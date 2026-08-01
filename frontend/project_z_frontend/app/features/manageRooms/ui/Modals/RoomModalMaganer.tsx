@@ -8,7 +8,7 @@ import { AddRoomTitleModal } from "./AddRoomTitleModal";
 import { EditRoomTitleModal } from "./EditRoomTitleModal";
 import { RoomTitleUserLinksModal } from "./RoomTitleUserLinksModal";
 import { ViewAllRoomTitleLinksModal } from "./ViewAllRoomTitleLinksModal";
-import { AiTitleMatcherModal } from "~/widgets/AiTitleMatcherModal/AiTitleMatcherModal";
+
 import { RoomRole } from "~/entities/room";
 import { getSessionUserId } from "~/shared/lib/supabase";
 import { useEffect, useState } from "react";
@@ -71,17 +71,7 @@ export const RoomModalManager = ({ roomId }: { roomId: number }) => {
         />
       ),
     },
-    {
-      key: "ai-sync",
-      isOpen: activeSettingsModal === "ai-sync",
-      render: () => (
-        <AiTitleMatcherModal
-          isOpen
-          onClose={closeAllModals}
-          roomId={roomId}
-        />
-      ),
-    },
+    
   ];
 
   return <>{modals.filter(m => m.isOpen).map(m => <div key={m.key}>{m.render()}</div>)}</>;

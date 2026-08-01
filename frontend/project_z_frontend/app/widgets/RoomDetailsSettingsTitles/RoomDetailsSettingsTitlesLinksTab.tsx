@@ -71,9 +71,9 @@ export const RoomDetailsSettingsTitlesLinks = ({ userId, roomId }: { userId: str
             <div className="grid grid-cols-2 gap-8 w-full p-0">
                 <div className="flex flex-col gap-4 min-w-0">
                     <div className="flex items-center justify-between">
-                        <h2 className="font-bold text-lg">My Watchlist</h2>
+                        <h2 className="font-bold text-2xl">My Watchlist</h2>
                         <div className="flex flex-row items-center gap-3">
-                            <span className="text-xs text-foreground">
+                            <span className="text-sm text-foreground">
                                 {isWatchlistModeToggleActive ? "Only titles with no links" : "All titles"}
                             </span>
                             <ToggleSwitch
@@ -86,7 +86,7 @@ export const RoomDetailsSettingsTitlesLinks = ({ userId, roomId }: { userId: str
                 </div>
 
                 <div className="flex flex-col gap-4 min-w-0">
-                    <h2 className="font-bold text-lg">Room Titles</h2>
+                    <h2 className="font-bold text-2xl">Room Titles</h2>
                     <RoomTitleReadOnlyList
                         draggingTitleId={draggingTitleId!}
                         titles={allTitles}
