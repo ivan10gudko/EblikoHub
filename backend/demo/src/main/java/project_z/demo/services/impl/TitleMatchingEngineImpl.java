@@ -53,7 +53,7 @@ public class TitleMatchingEngineImpl implements TitleMatchingEngine {
 
             Output format:
             [
-              {"roomTitleId":"<uuid>","titleId":<long>,"confidence":"high"|"medium"}
+              {"roomTitleId":"<uuid>","titleId":<long>,"confidence":"high"|"medium"|"low"}
             ]
             """;
 
