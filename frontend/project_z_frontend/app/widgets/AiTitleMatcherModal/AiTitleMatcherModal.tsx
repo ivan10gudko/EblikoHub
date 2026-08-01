@@ -93,7 +93,7 @@ export const AiTitleMatcherPage = () => {
                     <div>
                         <h1 className="text-xl sm:text-2xl font-black tracking-tight flex items-center gap-2">
                             <AutoAwesomeIcon className="text-primary" />
-                            ChatGPT Title Matcher
+                            AI Title Matcher
                         </h1>
                         <p className="text-xs sm:text-sm text-muted-foreground">
                             Automatic title matching and synchronization for your room
