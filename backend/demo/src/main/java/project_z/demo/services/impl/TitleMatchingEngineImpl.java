@@ -31,17 +31,18 @@ import project_z.demo.services.TitleMatchingEngine;
 public class TitleMatchingEngineImpl implements TitleMatchingEngine {
 
     private static final String TITLE_LINK_PROMPT = """
-            You are an expert at matching anime/movie/TV titles across languages.
+            You are an expert at matching anime/movie/TV titles across languages and variations.
 
             You receive two JSON arrays:
-            - roomTitles: titles in a shared room
+            - roomTitles: titles in a shared room (may include separate seasons, parts, or numbered entries like "Bleach 1", "Bleach 2")
             - watchlistTitles: titles from a user's personal watchlist
 
-            Task: find pairs that refer to the SAME work. Names may differ by language (Japanese, English, Ukrainian, romaji, etc.).
+            Task: find pairs that refer to the SAME work or related seasons/parts. Names may differ by language (Japanese, English, Ukrainian, romaji, etc.) or formatting (e.g. "Bleach" vs "Bleach 1").
 
             Rules:
             - Return ONLY a valid JSON array, no markdown, no explanation
-            - Each roomTitleId and titleId may appear at most once
+            - SMARTER MATCHING: Pay close attention to base names and numbers/seasons. If a watchlist has a general title (e.g. "Bleach") and the room has specific seasons/parts ("Bleach 1", "Bleach 2"), you CAN and SHOULD suggest links for multiple matching room titles to that single watchlist title if they correspond.
+            - NO ID RESTRICTIONS: Do not restrict IDs. Any roomTitleId or titleId can appear multiple times in the output if it matches multiple entries.
             - If apiTitleId matches and is non-null on both sides, that is a certain match
             - Only include pairs you are reasonably confident about
             - Do not invent IDs — use only IDs from the input
