@@ -21,24 +21,39 @@ export const AiTitleMatcherPage = () => {
 
     const [selectedMatches, setSelectedMatches] = useState<Record<string, string>>({});
     const [highMatchOnly, setHighMatchOnly] = useState<boolean>(false);
+    
+    // Стан, який показує, чи користувач хоча б раз закликав генерацію
+    const [hasRequested, setHasRequested] = useState<boolean>(false);
 
-    const { data: suggestions = [], isLoading } = useQuery<SuggestedTitleLinkDto[]>({
+    // enabled: false вимикає автоматичний запит при вході на сторінку
+    const { 
+        data: suggestions = [], 
+        isLoading, 
+        isFetching,
+        refetch 
+    } = useQuery<SuggestedTitleLinkDto[]>({
         queryKey: ["aiTitleSuggestions", numericRoomId],
         queryFn: async () => {
             const res = await apiClient.get<SuggestedTitleLinkDto[]>(`/rooms/${numericRoomId}/links/suggestions`);
             return res.data;
         },
-        enabled: !!numericRoomId,
+        enabled: false, // Запит НЕ виконується автоматично
         refetchOnWindowFocus: false,
         staleTime: 0,
     });
+
+    // Функція для ручного запуску генерації підказок
+    const handleGenerateSuggestions = () => {
+        setHasRequested(true);
+        setSelectedMatches({}); // Скидаємо попередній вибір
+        refetch();
+    };
 
     const filteredSuggestions = useMemo(() => {
         if (!highMatchOnly) return suggestions;
         return suggestions.filter((sug) => sug.confidence?.toLowerCase() === "high");
     }, [suggestions, highMatchOnly]);
 
- 
     const isAllFilteredSelected = useMemo(() => {
         if (filteredSuggestions.length === 0) return false;
         return filteredSuggestions.every(
@@ -61,7 +76,6 @@ export const AiTitleMatcherPage = () => {
 
     const handleSelectAll = (filteredItems: SuggestedTitleLinkDto[]) => {
         if (isAllFilteredSelected) {
-      
             setSelectedMatches((prev) => {
                 const copy = { ...prev };
                 filteredItems.forEach((item) => {
@@ -72,7 +86,6 @@ export const AiTitleMatcherPage = () => {
                 return copy;
             });
         } else {
-            // Якщо не всі вибрані — додаємо відфільтровані елементи до обраних
             setSelectedMatches((prev) => {
                 const next = { ...prev };
                 filteredItems.forEach((item) => {
@@ -105,9 +118,11 @@ export const AiTitleMatcherPage = () => {
     });
 
     const selectedCount = Object.keys(selectedMatches).length;
+    const isBusy = isLoading || isFetching;
 
     return (
         <div className="w-full max-w-4xl space-y-6">
+            {/* Header */}
             <div className="flex items-center justify-between gap-4 border-b border-border pb-2">
                 <div className="flex items-center gap-3">
                     <div>
@@ -122,9 +137,7 @@ export const AiTitleMatcherPage = () => {
                 </div>
 
                 <div className="flex items-center gap-3">
-                    <Button onClick={() => navigate(-1)} variant="cancel">
-                        Cancel
-                    </Button>
+                   
                     
                     <Button
                         onClick={() => syncMutation.mutate()}
@@ -137,13 +150,24 @@ export const AiTitleMatcherPage = () => {
                 </div>
             </div>
 
-            <div className="flex items-center justify-between bg-card p-3 border-2 border-border rounded-xl">
+        
+            <div className="flex flex-wrap items-center justify-between bg-card p-3 border-2 border-border rounded-xl gap-3">
                 <div className="flex items-center gap-2">
                     <AutoAwesomeIcon className="text-primary animate-pulse text-sm" />
                     <span className="text-xs sm:text-sm font-bold tracking-wide">AI Analysis and Sync</span>
                 </div>
 
                 <div className="flex items-center gap-3 sm:gap-4">
+              
+                    <Button
+                        onClick={handleGenerateSuggestions}
+                        disabled={isBusy}
+                        className="text-xs"
+                    >
+                        <AutoAwesomeIcon className={`text-xs ${isBusy ? "animate-spin" : ""}`} />
+                        {isBusy ? "Analyzing..." : hasRequested ? "Re-generate Matches" : "Find AI Matches"}
+                    </Button>
+
                     <Checkbox
                         label="High Confidence Only"
                         checked={highMatchOnly}
@@ -163,13 +187,31 @@ export const AiTitleMatcherPage = () => {
                 </div>
             </div>
 
+           
             <div className="space-y-2">
-                {isLoading ? (
+              
+                {!hasRequested && !isBusy ? (
+                    <div className="flex flex-col justify-center items-center h-64 border-2 border-dashed border-border rounded-2xl text-muted-foreground gap-4 p-6 text-center">
+                        <AutoAwesomeIcon className="text-primary text-5xl" />
+                        <div className="space-y-1">
+                            <h3 className="text-base font-bold text-foreground">Find title matches with AI</h3>
+                            <p className="text-xs text-muted-foreground max-w-md">
+                                Click the button below to generate AI recommendations and link titles between your watchlist and room.
+                            </p>
+                        </div>
+                        <Button onClick={handleGenerateSuggestions} variant="save">
+                            <AutoAwesomeIcon className="text-sm" />
+                            Start AI Title Matching
+                        </Button>
+                    </div>
+                ) : isBusy ? (
+                   
                     <div className="flex flex-col justify-center items-center h-64 border-2 border-dashed border-border rounded-2xl text-muted-foreground gap-3">
                         <AutoAwesomeIcon className="text-primary text-4xl animate-spin" />
                         <span className="text-sm font-medium">ChatGPT is analyzing similarities...</span>
                     </div>
                 ) : filteredSuggestions.length > 0 ? (
+                 
                     filteredSuggestions.map((item) => {
                         const currentTitleId = item.title.titleId;
                         const currentRoomTitleId = item.roomTitle.id;
@@ -188,17 +230,30 @@ export const AiTitleMatcherPage = () => {
                         const leftBg = userTitleType ? TitleTypeGradientColors[userTitleType] : "transparent";
                         const rightBg = roomTitleType ? TitleTypeGradientColors[roomTitleType] : "transparent";
 
-                        const leftBorder = userTitleType ? TitleTypeBorderColors[userTitleType] : "rgba(255,255,255,0.15)";
-                        const rightBorder = roomTitleType ? TitleTypeBorderColors[roomTitleType] : "rgba(255,255,255,0.15)";
+                      
+                        const defaultLeftBorder = userTitleType ? TitleTypeBorderColors[userTitleType] : "rgba(255,255,255,0.15)";
+                        const defaultRightBorder = roomTitleType ? TitleTypeBorderColors[roomTitleType] : "rgba(255,255,255,0.15)";
+
+                       
+                        const activeLeftBorder = userTitleType 
+                            ? TitleTypeBorderColors[userTitleType].replace(/[\d.]+\)$/, "0.95)") 
+                            : "rgba(255,255,255,0.8)";
+                        const activeRightBorder = roomTitleType 
+                            ? TitleTypeBorderColors[roomTitleType].replace(/[\d.]+\)$/, "0.95)") 
+                            : "rgba(255,255,255,0.8)";
+
+                        const currentLeftBorder = isChecked ? activeLeftBorder : defaultLeftBorder;
+                        const currentRightBorder = isChecked ? activeRightBorder : defaultRightBorder;
 
                         const cardStyle: React.CSSProperties = {
                             backgroundImage: `
                                 linear-gradient(90deg, ${leftBg} 0%, transparent 45%, transparent 55%, ${rightBg} 100%),
                                 linear-gradient(var(--card, #121212), var(--card, #121212)),
-                                linear-gradient(90deg, ${leftBorder} 0%, rgba(255,255,255,0.05) 40%, rgba(255,255,255,0.05) 60%, ${rightBorder} 100%)
+                                linear-gradient(90deg, ${currentLeftBorder} 0%, ${isChecked ? "rgba(255,255,255,0.3)" : "rgba(255,255,255,0.05)"} 40%, ${isChecked ? "rgba(255,255,255,0.3)" : "rgba(255,255,255,0.05)"} 60%, ${currentRightBorder} 100%)
                             `,
                             backgroundOrigin: "padding-box, padding-box, border-box",
                             backgroundClip: "padding-box, padding-box, border-box",
+                            boxShadow: isChecked ? `0 0 6px ${currentLeftBorder}, 0 0 6px ${currentRightBorder}` : "none",
                         };
 
                         const badgeBg =
@@ -214,9 +269,7 @@ export const AiTitleMatcherPage = () => {
                                 onClick={() => toggleSelect(currentTitleId, currentRoomTitleId)}
                                 style={cardStyle}
                                 className={`group/row grid grid-cols-[auto_1fr_auto_1fr_auto] items-center gap-3 p-2 rounded-xl border-2 border-transparent bg-card cursor-pointer transition-all duration-200 ${
-                                    isChecked
-                                        ? "!border-primary shadow-sm ring-1 ring-primary/40"
-                                        : ""
+                                    isChecked ? "scale-[1.005]" : ""
                                 }`}
                             >
                                 <div onClick={(e) => e.stopPropagation()} className="flex items-center shrink-0">

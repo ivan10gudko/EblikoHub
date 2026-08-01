@@ -52,7 +52,7 @@ export const WatchlistRowReadOnly = ({ title, index, showNumber, onOpenRatingMod
         </div>
 
         <div className="grid flex-1 min-w-0">
-          <span className="block truncate font-bold text-foreground  text-xs sm:text-sm leading-tight w-full">
+          <span className="block truncate font-bold text-foreground  text-xs sm:text-lg leading-tight w-full">
             {title.titleName}
           </span>
         </div>

@@ -1,6 +1,7 @@
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
-import { useState, type ReactNode, Children } from "react";
+import { useState, type ReactNode } from "react";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
+import GavelIcon from "@mui/icons-material/Gavel";
 import { Button } from "../Button";
 
 interface DropdownProps {
@@ -38,22 +39,27 @@ interface DropdownItemProps {
   children: ReactNode;
   variant?: "default" | "danger";
   icon?: ReactNode;
+  className?: string;
 }
 
-export const DropdownItem = ({ onClick, children, variant = "default", icon }: DropdownItemProps) => {
-  const childrenArray = Children.toArray(children);
-  const label = childrenArray.slice(1);
-
+export const DropdownItem = ({
+  onClick,
+  children,
+  variant = "default",
+  icon,
+  className = "",
+}: DropdownItemProps) => {
   return (
     <DropdownMenu.Item
       onSelect={onClick}
       className="outline-none border-none list-none"
     >
       <Button
-        className={`w-full flex items-center justify-start gap-3 px-3 py-2.5 text-xs font-bold rounded-lg transition-colors text-left border-none shadow-none bg-transparent ${variant === "danger"
-          ? "text-danger hover:bg-danger/10"
-          : "text-foreground hover:bg-border/50"
-          }`}
+        className={`w-full flex items-center justify-start gap-3 px-3 py-2.5 text-xs font-bold rounded-lg transition-colors text-left border-none shadow-none bg-transparent ${
+          variant === "danger"
+            ? "text-danger hover:bg-danger/10"
+            : "text-foreground hover:bg-border/50"
+        } ${className}`}
       >
         {icon && (
           <span className="flex items-center justify-center w-5 h-5 flex-shrink-0">
@@ -83,6 +89,28 @@ export const DeleteDropdownItem = ({ onDelete }: { onDelete: () => void }) => {
       icon={<DeleteOutlineIcon sx={{ fontSize: 16 }} />}
     >
       {isConfirming ? "Are you sure?" : "Delete"}
+    </DropdownItem>
+  );
+};
+
+export const BanDropdownItem = ({ onBan }: { onBan: () => void }) => {
+  const [isConfirming, setIsConfirming] = useState(false);
+
+  return (
+    <DropdownItem
+      onClick={(e) => {
+        e.preventDefault();
+        if (!isConfirming) {
+          setIsConfirming(true);
+        } else {
+          onBan();
+        }
+      }}
+      variant="danger"
+      className="text-sm py-3" 
+      icon={<GavelIcon sx={{ fontSize: 18 }} />} 
+    >
+      {isConfirming ? "Are you sure?" : "Ban"}
     </DropdownItem>
   );
 };
