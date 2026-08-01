@@ -53,8 +53,12 @@ export default [
                     route("titles", "./routes/roomSettingsLayouts/room.settings.titles.tsx",[
                         index( "./routes/roomSettingsLayouts/roomSettingsTitlesLayouts/room.settings.titles.roomTitles.tsx"),
                         route("titleLinks", "./routes/roomSettingsLayouts/roomSettingsTitlesLayouts/room.settings.titles.titleLinks.tsx"),
+route("ai-matcher", "./routes/roomSettingsLayouts/roomSettingsTitlesLayouts/room.settings.titles.aiMatcher.tsx"),
+
                     ]),
                     
+
+
                     // Виправлений чистий блок інвайтів без конфліктного /find 
                     route("invites", "./routes/roomSettingsLayouts/room.settings.requests.tsx", [
                         index("./routes/roomSettingsLayouts/roomSettingsRequestsLayouts/room.settings.requests.find.tsx"),

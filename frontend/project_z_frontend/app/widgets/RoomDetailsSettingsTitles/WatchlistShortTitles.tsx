@@ -28,7 +28,7 @@ export const WatchlistShortTitles = ({ userId, roomId, isWatchlistModeToggled }:
           <div
             {...provided.droppableProps}
             ref={provided.innerRef}
-            className="flex flex-col gap-1"
+            className="flex flex-col gap-1 w-full"
           >
             {data?.pages.map((page, pageIndex) =>
               page.content.map((title, titleIndex) => {
@@ -46,11 +46,16 @@ export const WatchlistShortTitles = ({ userId, roomId, isWatchlistModeToggled }:
                         {...provided.draggableProps}
                         style={{
                           ...provided.draggableProps.style,
-                          width: snapshot.isDragging ? "100%" : "100%",
-                          maxWidth: snapshot.isDragging ? "600px" : "100%",
-                          boxSizing: "border-box",
-                        } as React.CSSProperties}
-                        className={`flex items-center justify-between group ${snapshot.isDragging ? "bg-card shadow-xl border border-primary/50" : ""}`}
+                          
+                          ...(snapshot.isDragging && {
+                            width: "460px", 
+                          }),
+                        }}
+                        className={`flex items-center justify-between group rounded-lg ${
+                          snapshot.isDragging 
+                            ? "bg-card shadow-xl border border-primary/50 z-50" 
+                            : ""
+                        }`}
                       >
                         <WatchlistRowShort
                           title={title}

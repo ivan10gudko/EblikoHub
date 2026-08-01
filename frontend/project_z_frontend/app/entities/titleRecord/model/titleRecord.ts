@@ -101,3 +101,20 @@ export interface TitleStats {
     statusCount: Record<string, number>;
     typeCount: Record<string, number>;
 }
+
+export const TitleTypeGradientColors: Record<TitleType, string> = {
+    [TitleType.ANIME]: "rgba(255, 255, 255, 0.15)",
+    [TitleType.MANGA]: "rgba(34, 197, 94, 0.25)",
+    [TitleType.SERIES]: "rgba(168, 85, 247, 0.25)",
+    [TitleType.MOVIE]: "rgba(245, 158, 11, 0.25)",
+    [TitleType.HENTAI]: "rgba(239, 68, 68, 0.25)",
+};
+
+
+export const TitleTypeBorderColors: Record<TitleType, string> = {
+    [TitleType.ANIME]: "rgba(255, 255, 255, 0.4)",
+    [TitleType.MANGA]: "rgba(34, 197, 94, 0.45)",
+    [TitleType.SERIES]: "rgba(168, 85, 247, 0.45)",
+    [TitleType.MOVIE]: "rgba(245, 158, 11, 0.45)",
+    [TitleType.HENTAI]: "rgba(239, 68, 68, 0.45)",
+};
