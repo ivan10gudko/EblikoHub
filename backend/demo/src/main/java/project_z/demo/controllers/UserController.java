@@ -15,6 +15,7 @@ import project_z.demo.Mappers.Mapper;
 import project_z.demo.common.QueryParameters.UserQueryParameters;
 import project_z.demo.dto.UserDtos.UserDto;
 import project_z.demo.dto.UserDtos.UserPostDto;
+import project_z.demo.dto.UserDtos.UserProfileDto;
 import project_z.demo.dto.UserDtos.UserUpdateDto;
 import project_z.demo.entity.UserEntity;
 import project_z.demo.repositories.UserRepository;
@@ -67,6 +68,13 @@ public class UserController {
             return false;
         }
         return true;
+    }
+
+    @GetMapping(path = "/{id}/profile")
+    public ResponseEntity<UserProfileDto> getUserProfile(@PathVariable("id") UUID id) {
+        UserProfileDto userProfile = userService.getUserProfile(id);
+        return new ResponseEntity<>(userProfile, HttpStatus.OK);
+
     }
 
     @GetMapping(path = "/name/{name}")

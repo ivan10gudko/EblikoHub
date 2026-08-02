@@ -17,11 +17,11 @@ import org.springframework.dao.DataAccessException;
 import project_z.demo.common.Exceptions.RoomBanExceptions.RoomSelfBanException;
 import project_z.demo.common.Exceptions.RoomMembersExceptions.RoomMembersConflictException;
 import project_z.demo.common.Exceptions.RoomTitleLinkExceptions.RoomTitleLinkAlreadyExistsException;
+import project_z.demo.common.Exceptions.UserFavoriteTitleExceptions.UserFavoriteTitlesLimitReachedException;
 import project_z.demo.common.Exceptions.WheelPresetExceptions.WheelPresetAlreadyExists;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
-
     private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
 
@@ -47,6 +47,11 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(RoomSelfBanException.class)
     public ResponseEntity<Map<String, Object>> handleRoomSelfBan(RoomSelfBanException ex) {
+        return buildErrorResponse(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(UserFavoriteTitlesLimitReachedException.class)
+    public ResponseEntity<Map<String, Object>> hanleUserFavoriteTitlesLimitReached(UserFavoriteTitlesLimitReachedException ex) {
         return buildErrorResponse(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 

@@ -8,6 +8,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import project_z.demo.common.QueryParameters.UserQueryParameters;
 import project_z.demo.dto.UserDtos.UserDto;
+import project_z.demo.dto.UserDtos.UserProfileDto;
 import project_z.demo.entity.UserEntity;
 
 public interface UserService {
@@ -19,4 +20,5 @@ public interface UserService {
     UserDto findByNameTag(String nameTag);
     String uploadAvatar(UserEntity userEntity, MultipartFile file);
     Page<UserEntity> findByName(String name, UserQueryParameters userQueryParameters, UUID currentUserId);
+    UserProfileDto getUserProfile(UUID userId);
 }
