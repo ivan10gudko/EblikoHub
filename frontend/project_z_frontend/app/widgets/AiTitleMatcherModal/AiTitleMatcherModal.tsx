@@ -1,15 +1,12 @@
 import { useState, useMemo } from "react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useNavigate, useParams } from "react-router";
 import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
-import { apiClient } from "~/shared/api";
-import type {
-    SuggestedTitleLinkDto,
-    RoomTitleLinkBatchCreateDto
-} from "~/features/manageRooms/model/roomTitle.types";
+import type { SuggestedTitleLinkDto } from "~/features/manageRooms/model/roomTitle.types";
 import { Checkbox } from "~/shared/ui/CheckBox";
 import Button from "~/shared/ui/Button/Button";
 import { TitleType, TitleTypeBorderColors, TitleTypeGradientColors } from "~/entities/titleRecord";
+import { useAiTitleSuggestions } from "~/features/manageRooms/hooks/useAiTitleSuggestions";
+import { useBatchCreateRoomTitleLinks } from "~/features/manageRooms/hooks/useBatchCreateRoomTitleLinks";
+import { useNavigate, useParams } from "react-router";
 
 const DEFAULT_IMAGE_PATH = "/defaultTitleRecordImage.jpg";
 
@@ -17,36 +14,40 @@ export const AiTitleMatcherPage = () => {
     const { id } = useParams<{ id: string }>();
     const numericRoomId = Number(id);
     const navigate = useNavigate();
-    const queryClient = useQueryClient();
 
     const [selectedMatches, setSelectedMatches] = useState<Record<string, string>>({});
     const [highMatchOnly, setHighMatchOnly] = useState<boolean>(false);
-    
-    // Стан, який показує, чи користувач хоча б раз закликав генерацію
     const [hasRequested, setHasRequested] = useState<boolean>(false);
 
-    // enabled: false вимикає автоматичний запит при вході на сторінку
-    const { 
-        data: suggestions = [], 
-        isLoading, 
+    const {
+        data: suggestions = [],
+        isLoading,
         isFetching,
-        refetch 
-    } = useQuery<SuggestedTitleLinkDto[]>({
-        queryKey: ["aiTitleSuggestions", numericRoomId],
-        queryFn: async () => {
-            const res = await apiClient.get<SuggestedTitleLinkDto[]>(`/rooms/${numericRoomId}/links/suggestions`);
-            return res.data;
+        refetch
+    } = useAiTitleSuggestions(numericRoomId);
+
+    const syncMutation = useBatchCreateRoomTitleLinks({
+        roomId: numericRoomId,
+        onSuccess: () => {
+            setSelectedMatches({});
+            navigate(-1);
         },
-        enabled: false, // Запит НЕ виконується автоматично
-        refetchOnWindowFocus: false,
-        staleTime: 0,
     });
 
-    // Функція для ручного запуску генерації підказок
     const handleGenerateSuggestions = () => {
         setHasRequested(true);
-        setSelectedMatches({}); // Скидаємо попередній вибір
+        setSelectedMatches({});
         refetch();
+    };
+
+    const handleSync = () => {
+        const payload = {
+            links: Object.entries(selectedMatches).map(([titleId, roomTitleId]) => ({
+                titleId: Number(titleId),
+                roomTitleId: roomTitleId,
+            })),
+        };
+        syncMutation.mutate(payload);
     };
 
     const filteredSuggestions = useMemo(() => {
@@ -98,31 +99,11 @@ export const AiTitleMatcherPage = () => {
         }
     };
 
-    const syncMutation = useMutation({
-        mutationFn: async () => {
-            const payload: RoomTitleLinkBatchCreateDto = {
-                links: Object.entries(selectedMatches).map(([titleId, roomTitleId]) => ({
-                    titleId: Number(titleId), 
-                    roomTitleId: roomTitleId,
-                })),
-            };
-            await apiClient.post(`/rooms/${numericRoomId}/links/batch`, payload);
-        },
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["userRoomTitleLinks", numericRoomId] });
-            queryClient.invalidateQueries({ queryKey: ["suggestedRoomTitleLinks", numericRoomId] });
-            queryClient.invalidateQueries({ queryKey: ["aiTitleSuggestions", numericRoomId] });
-            setSelectedMatches({});
-            navigate(-1);
-        },
-    });
-
     const selectedCount = Object.keys(selectedMatches).length;
     const isBusy = isLoading || isFetching;
 
     return (
         <div className="w-full max-w-4xl space-y-6">
-            {/* Header */}
             <div className="flex items-center justify-between gap-4 border-b border-border pb-2">
                 <div className="flex items-center gap-3">
                     <div>
@@ -137,10 +118,8 @@ export const AiTitleMatcherPage = () => {
                 </div>
 
                 <div className="flex items-center gap-3">
-                   
-                    
                     <Button
-                        onClick={() => syncMutation.mutate()}
+                        onClick={handleSync}
                         disabled={selectedCount === 0 || syncMutation.isPending}
                         variant="save"
                     >
@@ -149,8 +128,6 @@ export const AiTitleMatcherPage = () => {
                     </Button>
                 </div>
             </div>
-
-        
             <div className="flex flex-wrap items-center justify-between bg-card p-3 border-2 border-border rounded-xl gap-3">
                 <div className="flex items-center gap-2">
                     <AutoAwesomeIcon className="text-primary animate-pulse text-sm" />
@@ -158,7 +135,6 @@ export const AiTitleMatcherPage = () => {
                 </div>
 
                 <div className="flex items-center gap-3 sm:gap-4">
-              
                     <Button
                         onClick={handleGenerateSuggestions}
                         disabled={isBusy}
@@ -186,10 +162,7 @@ export const AiTitleMatcherPage = () => {
                     )}
                 </div>
             </div>
-
-           
             <div className="space-y-2">
-              
                 {!hasRequested && !isBusy ? (
                     <div className="flex flex-col justify-center items-center h-64 border-2 border-dashed border-border rounded-2xl text-muted-foreground gap-4 p-6 text-center">
                         <AutoAwesomeIcon className="text-primary text-5xl" />
@@ -205,13 +178,11 @@ export const AiTitleMatcherPage = () => {
                         </Button>
                     </div>
                 ) : isBusy ? (
-                   
                     <div className="flex flex-col justify-center items-center h-64 border-2 border-dashed border-border rounded-2xl text-muted-foreground gap-3">
                         <AutoAwesomeIcon className="text-primary text-4xl animate-spin" />
                         <span className="text-sm font-medium">ChatGPT is analyzing similarities...</span>
                     </div>
                 ) : filteredSuggestions.length > 0 ? (
-                 
                     filteredSuggestions.map((item) => {
                         const currentTitleId = item.title.titleId;
                         const currentRoomTitleId = item.roomTitle.id;
@@ -229,19 +200,14 @@ export const AiTitleMatcherPage = () => {
 
                         const leftBg = userTitleType ? TitleTypeGradientColors[userTitleType] : "transparent";
                         const rightBg = roomTitleType ? TitleTypeGradientColors[roomTitleType] : "transparent";
-
-                      
                         const defaultLeftBorder = userTitleType ? TitleTypeBorderColors[userTitleType] : "rgba(255,255,255,0.15)";
                         const defaultRightBorder = roomTitleType ? TitleTypeBorderColors[roomTitleType] : "rgba(255,255,255,0.15)";
-
-                       
-                        const activeLeftBorder = userTitleType 
-                            ? TitleTypeBorderColors[userTitleType].replace(/[\d.]+\)$/, "0.95)") 
+                        const activeLeftBorder = userTitleType
+                            ? TitleTypeBorderColors[userTitleType].replace(/[\d.]+\)$/, "0.95)")
                             : "rgba(255,255,255,0.8)";
-                        const activeRightBorder = roomTitleType 
-                            ? TitleTypeBorderColors[roomTitleType].replace(/[\d.]+\)$/, "0.95)") 
+                        const activeRightBorder = roomTitleType
+                            ? TitleTypeBorderColors[roomTitleType].replace(/[\d.]+\)$/, "0.95)")
                             : "rgba(255,255,255,0.8)";
-
                         const currentLeftBorder = isChecked ? activeLeftBorder : defaultLeftBorder;
                         const currentRightBorder = isChecked ? activeRightBorder : defaultRightBorder;
 
@@ -268,9 +234,8 @@ export const AiTitleMatcherPage = () => {
                                 key={`${currentTitleId}-${currentRoomTitleId}`}
                                 onClick={() => toggleSelect(currentTitleId, currentRoomTitleId)}
                                 style={cardStyle}
-                                className={`group/row grid grid-cols-[auto_1fr_auto_1fr_auto] items-center gap-3 p-2 rounded-xl border-2 border-transparent bg-card cursor-pointer transition-all duration-200 ${
-                                    isChecked ? "scale-[1.005]" : ""
-                                }`}
+                                className={`group/row grid grid-cols-[auto_1fr_auto_1fr_auto] items-center gap-3 p-2 rounded-xl border-2 border-transparent bg-card cursor-pointer transition-all duration-200 ${isChecked ? "scale-[1.005]" : ""
+                                    }`}
                             >
                                 <div onClick={(e) => e.stopPropagation()} className="flex items-center shrink-0">
                                     <Checkbox
