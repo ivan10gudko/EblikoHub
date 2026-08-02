@@ -19,6 +19,7 @@ export interface RateOptions extends ActionOptions {
 interface TitleRecordService {
 
     get(userId: string, params?: TitleParams): Promise<PageResponse<TitleRecord>>;
+    getById(titleId: number): Promise<TitleRecord>;
     post(titleData: CreateTitleRecord): Promise<TitleRecord>;
     put(titleId: number, titleData: TitleRecord): Promise<TitleRecord>;
     patch(titleId: number, titleData: Partial<TitleRecord>): Promise<TitleRecord>;
@@ -48,6 +49,11 @@ export const titleRecordService: TitleRecordService = {
 
         return response.data;
     },
+    async getById(titleId) {
+        const response = await apiClient.get(`/titles/getTitleById/${titleId}`);
+        return response.data;
+    },
+    
     async getSameCriteriaRating(titleId, category, currentRating) {
         const response = await apiClient.get(`/titles/${titleId}/getSameCriteriaRating`, {
             params: {
