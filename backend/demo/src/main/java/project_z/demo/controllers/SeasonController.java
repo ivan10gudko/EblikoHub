@@ -38,9 +38,7 @@ public class SeasonController {
     @PostMapping(path = "/{titleId}")
     public SeasonDto createSeason(@PathVariable("titleId") Long titleId,
             @RequestBody SeasonCreateDto seasonDto) {
-        TitleEntity titleEntity = titleService.findOne(titleId).orElseThrow(
-                () -> new ResourceNotFoundException("there is no title with that id"));
-        
+        TitleEntity titleEntity = titleService.findOneEntity(titleId);
         SeasonEntity seasonEntity = createSeasonMapper.mapFrom(seasonDto);
         titleService.addSeason(seasonEntity, titleEntity);
 

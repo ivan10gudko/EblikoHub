@@ -23,6 +23,9 @@ import project_z.demo.entity.TitleEntity;
 import project_z.demo.security.JwtService;
 import project_z.demo.services.TitleService;
 import project_z.demo.services.UserService;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 @RestController
 @RequestMapping("/api/v1/titles")
@@ -83,6 +86,12 @@ public class TitleController {
     public Page<TitleDto> getTitleListByUserId(@PathVariable("userId") UUID userId, TitleQueryParameters params) {
         return titleService.findAllByUserId(params, userId);
     }
+
+    @GetMapping("/getTitleById/{titleId}")
+    public ResponseEntity<TitleDto> getMethodName(@PathVariable ("titleId") Long titleId) {
+        return new ResponseEntity<>(titleService.findOne(titleId),HttpStatus.OK);
+    }
+    
 
     @GetMapping(path = "/mal/{titleMalId}")
     public ResponseEntity<TitleDto> getUserTitleByMalId(@PathVariable("titleMalId") Integer titleMalId,
