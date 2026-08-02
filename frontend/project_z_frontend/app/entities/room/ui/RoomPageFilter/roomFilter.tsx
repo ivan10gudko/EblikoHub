@@ -3,12 +3,18 @@ import { Button } from "~/shared/ui/Button";
 import { useRoomFilterStore } from "../../store/rooms.store";
 import { RoomSearch } from "./roomSearch";
 import { RoomSort } from "./sortControl";
+import type { ReactNode } from "react";
 
-export const RoomFilters = () => {
+
+interface RoomFiltersProps {
+  children?: ReactNode;
+}
+
+export const RoomFilters = ({ children }: RoomFiltersProps) => {
   const { reset } = useRoomFilterStore();
 
   return (
-    <div className="flex flex-col gap-10 p-4 bg-background rounded-2xl shadow-sm border border-border">
+    <div className="flex flex-col gap-6 p-4 bg-background rounded-2xl shadow-sm border border-border">
       <RoomSearch />
       <RoomSort />
 
@@ -21,6 +27,9 @@ export const RoomFilters = () => {
       >
         Reset all filters
       </Button>
+
+     
+      {children && <div className="flex flex-col  gap-3 pt-2">{children}</div>}
     </div>
   );
 };

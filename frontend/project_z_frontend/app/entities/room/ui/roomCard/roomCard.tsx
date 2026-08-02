@@ -24,7 +24,7 @@ export const RoomCard = ({ room, onClick }: RoomCardProps) => {
       className="group flex flex-col w-full rounded-2xl border border-border bg-card transition-all hover:border-primary cursor-pointer"
     >
       
-      <div className="relative h-40 w-full overflow-hidden rounded-t-2xl hover:rounded-none hover:scale-[1.2] hover:z-10 origin-top duration-500 transition-all">
+      <div className="relative h-40 w-full overflow-hidden rounded-t-2xl    origin-top duration-500 transition-all">
         <img
           src={room.imageUrl || DEFAULT_IMAGE_PATH}
           alt={room.roomName}

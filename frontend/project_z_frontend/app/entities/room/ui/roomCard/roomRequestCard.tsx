@@ -23,12 +23,12 @@ export const RoomRequestCard = ({
     const { room, sender } = request;
 
     return (
-        <div className="flex flex-col w-full border border-border bg-card transition-all hover:border-primary">
+        <div className="flex flex-col w-full rounded-xl border border-border bg-card transition-all hover:border-primary">
             <div className="relative h-40 w-full overflow-hidden">
                 <img
                     src={room.imageUrl || DEFAULT_IMAGE_PATH}
                     alt={room.roomName}
-                    className="w-full h-full object-cover"
+                    className="w-full rounded-t-xl h-full object-cover"
                 />
             </div>
 
@@ -48,18 +48,20 @@ export const RoomRequestCard = ({
 
                     <div className="flex items-center gap-2 shrink-0">
                         <Button
-                            className="h-8 w-8 p-0"
+                        variant="altCancel"
+                            className="h-8 w-8 p-0 rounded-lg "
                             onClick={onReject}
                             disabled={isPendingAction}
                         >
                             <CloseIcon className="text-base" />
                         </Button>
                         <Button
-                            className="h-8 w-8 p-0 "
+                            variant="fill"
+                            className="h-8 w-8 p-0 flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary/10 text-primary border border-primary/30 active:scale-95 transition-all text-xs font-semibold cursor-pointer hover:bg-primary/20 "
                             onClick={onAccept}
                             disabled={isPendingAction}
                         >
-                            <CheckIcon className="text-base" />
+                            <CheckIcon className="text-base hover:text-emerald-500" />
                         </Button>
                     </div>
                 </div>

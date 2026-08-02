@@ -7,14 +7,24 @@ import {
   useRoomFilterStore,
   useRoomsQuery,
 } from "~/entities/room";
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 
 import { Button } from "~/shared/ui/Button";
-import { RoomModalManager } from "~/features/manageRooms";
 import { useRoomModal } from "~/features/manageRooms/hooks/useRoomModal";
-import { NavLink, useNavigate } from "react-router";
-import { RoomTitlesManager } from "~/widgets/RoomDetailsSettingsTitles/RoomTitlesManager";
+import { useNavigate } from "react-router";
 import { GlobalModalManager } from "~/features/manageRooms/ui/Modals/GlobalRoomManager";
+
+
+const secondaryBtnStyle =
+  "w-full h-11 flex items-center justify-center gap-2 rounded-xl " +
+  "bg-card hover:bg-background-muted " +
+  "border border-border hover:border-primary " +
+  "text-foreground hover:text-primary " +
+  "font-bold text-sm tracking-wide " +
+  "shadow-md hover:shadow-orange-glow " +
+  "transition-all duration-200 " +
+  "active:scale-[0.97] cursor-pointer";
+
 
 
 export default function RoomsPage({ userId }: { userId: string | null }) {
@@ -27,10 +37,12 @@ export default function RoomsPage({ userId }: { userId: string | null }) {
     sortBy: setSortFromUrl,
     order: setOrderFromUrl,
   });
+
   const { openRoomModal } = useRoomModal();
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
     useRoomsQuery(userId ?? null);
   const navigate = useNavigate();
+
   const allRooms = useMemo(() => {
     const flat = data?.pages.flatMap((page) => page.content) || [];
     return flat.filter(
@@ -38,24 +50,27 @@ export default function RoomsPage({ userId }: { userId: string | null }) {
     );
   }, [data]);
 
-  const actionButtonsStyles = "w-full flex items-center justify-center gap-2 bg-primary text-background py-3 rounded-xl";
   return (
     <div className="flex flex-col lg:flex-row gap-6 p-4 sm:p-8 max-w-[1400px] mx-auto min-h-screen bg-background-muted/30">
-      <FilterResponsiveWrapper
-        pageTitle="My Rooms"
-        actionButtons={[
+      <FilterResponsiveWrapper pageTitle="My Rooms">
+        <RoomFilters>
           <Button
             onClick={() => navigate("/rooms/requests")}
-            className={actionButtonsStyles}>
+            className={secondaryBtnStyle}
+          >
             My Requests
-          </Button>,
-          <Button onClick={() => openRoomModal('add')} className={actionButtonsStyles}>
+          </Button>
+          <Button
+            onClick={() => openRoomModal("add")}
+            className={secondaryBtnStyle}
+          >
+            {/* Великий виразний плюс */}
+            <span className="text-2xl font-extrabold leading-none relative -top-[1px] select-none">
+              +
+            </span>
             <span>Add New Room</span>
           </Button>
-
-        ]}
-      >
-        <RoomFilters />
+        </RoomFilters>
       </FilterResponsiveWrapper>
 
       <main className="flex-1">
@@ -74,6 +89,5 @@ export default function RoomsPage({ userId }: { userId: string | null }) {
       </main>
       <GlobalModalManager />
     </div>
-
   );
 }

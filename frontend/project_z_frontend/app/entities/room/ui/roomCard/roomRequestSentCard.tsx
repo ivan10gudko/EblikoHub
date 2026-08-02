@@ -12,9 +12,9 @@ export const RoomRequestSentCard = ({ request, isPendingAction, onCancel }: Room
     const { room } = request;
 
     return (
-        <div className="flex flex-col w-full border border-border bg-card transition-all hover:border-primary">
+        <div className="flex flex-col w-full rounded-xl border border-border bg-card transition-all hover:border-primary">
             <div className="relative h-40 w-full overflow-hidden">
-                <img src={room.imageUrl || "/defaultTitleRecordImage.jpg"} className="w-full h-full object-cover" />
+                <img src={room.imageUrl || "/defaultTitleRecordImage.jpg"} className="w-full rounded-t-xl h-full object-cover" />
             </div>
             <div className="p-4 flex flex-col gap-2">
                 <h3 className="text-lg font-bold text-foreground truncate">{room.roomName}</h3>
@@ -23,8 +23,9 @@ export const RoomRequestSentCard = ({ request, isPendingAction, onCancel }: Room
                         <GroupIcon className="text-sm" />
                         <span>{room.usersCount}</span>
                     </div>
-                    <Button 
-                        className="h-8 text-xs bg-transparent px-3 border border-danger text-danger hover:bg-danger hover:text-white" 
+                    <Button
+                    variant="altCancel" 
+                        className="h-8 rounded-lg " 
                         onClick={onCancel} 
                         disabled={isPendingAction}
                     >
