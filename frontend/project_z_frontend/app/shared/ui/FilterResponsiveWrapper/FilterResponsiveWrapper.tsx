@@ -28,7 +28,8 @@ export const FilterResponsiveWrapper = ({
         </h1>
         <Button
           onClick={() => setIsOpen(true)}
-          className="flex items-center gap-2 bg-primary hover:bg-primary-hover text-background px-5 py-2.5 rounded-2xl shadow-md shadow-amber-200 transition-all active:scale-95"
+          variant="accent"
+          className=""
         >
           <FilterListIcon sx={{ fontSize: 20 }} />
           <span className="font-bold text-sm">Filters</span>
@@ -55,16 +56,9 @@ export const FilterResponsiveWrapper = ({
         `}
         >
           <div className="p-5 lg:p-0 lg:h-auto overflow-y-auto lg:overflow-visible flex flex-col gap-6">
-            <div className="lg:hidden flex justify-between items-center pt-25 p-5 border-b border-border bg-transparent">
-              <span className="font-black uppercase tracking-wider text-foreground text-xl">
-                {filterTitle}
-              </span>
-              <button
-                className="p-2 hover:bg-background-muted-hover rounded-xl transition-colors text-foreground"
-                onClick={close}
-              >
-                <CloseIcon />
-              </button>
+            <div className="lg:hidden flex justify-between items-center pt-6 p-5 border-b border-border bg-transparent">
+              
+             
             </div>
             <div>{children}</div>
 
