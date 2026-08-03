@@ -11,23 +11,49 @@ interface StatusButtonProps {
 }
 
 export const StatusButton = ({
-    label, count, isActive, onClick,
-    className, activeClassName, inactiveClassName
+    label,
+    count,
+    isActive,
+    onClick,
+    className = "",
+    activeClassName = "",
+    inactiveClassName = ""
 }: StatusButtonProps) => {
     return (
         <Button
             variant="outline"
             onClick={onClick}
-            className={`px-4 py-2 border-none rounded-xl text-sm font-semibold transition-all flex items-center gap-1.5 
+            className={`
+                h-11
+                px-4
+                rounded-xl
+                transition-all
+                duration-200
+                flex
+                items-center
+                gap-2
+                font-semibold
+                text-sm
+                active:scale-[0.97]
                 ${isActive
-                    ? `${activeClassName}`
+                    ? activeClassName
                     : `${inactiveClassName} ${className}`
-                }`}
+                }
+            `}
         >
             <span>{label}</span>
             {count !== undefined && (
-                <span className={`text-xs px-1.5 py-0.5 rounded-md font-normal ${isActive ? "bg-background/20 text-foreground" : "bg-background/20 text-foreground/80"
-                    }`}>
+                <span
+                    className={`
+                        px-2 py-0.5 rounded-lg
+                        text-xs font-bold
+                        transition-all
+                        ${isActive
+                            ? "bg-card border border-border text-foreground"
+                            : "bg-background-muted border border-border text-foreground-muted"
+                        }
+                    `}
+                >
                     {count}
                 </span>
             )}

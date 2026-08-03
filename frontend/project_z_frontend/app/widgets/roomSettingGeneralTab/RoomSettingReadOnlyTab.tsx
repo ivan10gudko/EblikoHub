@@ -16,10 +16,10 @@ export const RoomSettingGeneralReadOnlyTab = ({ room }: RoomSettingReadOnlyTabPr
     : "";
 
   return (
-    /* Ширина залишається компактною (max-w-xl), як і була */
+    
     <div className="w-full max-w-xl bg-background border border-border rounded-2xl shadow-2xl overflow-hidden text-left transition-all">
       
-      {/* Висоту суттєво збільшено донизу (h-72 / md:h-80), щоб фото мало значно більше місця */}
+      
       <div className="relative w-full h-72 md:h-80 bg-background-muted border-b border-border overflow-hidden flex items-center justify-center group">
         {room?.imageUrl ? (
           <img

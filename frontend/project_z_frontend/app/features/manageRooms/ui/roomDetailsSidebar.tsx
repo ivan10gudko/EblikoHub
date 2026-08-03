@@ -25,56 +25,103 @@ export const RoomDetailsSidebar = ({ room }: RoomDetailsSidebarProps) => {
 
   return (
     <Sidebar className="w-80 bg-background p-5 rounded-3xl border border-border h-fit shadow-sm">
-      
       <div className="flex flex-col gap-4 max-h-[calc(100vh-120px)] overflow-y-auto hide-scrollbar pb-6">
-
-     
+        
+      
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div>
               <h2 className="text-primary text-xl leading-tight font-bold">{room.roomName}</h2>
             </div>
           </div>
-          <Link to={`/rooms/${room.roomId}/settings`}>
-            <SettingsIcon className=" !transition-all !duration-300 text-muted-foreground - hover:text-primary   cursor-pointer hover:scale-130" />
+          <Link
+            to={`/rooms/${room.roomId}/settings`}
+            className="
+              flex
+              items-center
+              justify-center
+              h-10
+              w-10
+              rounded-xl
+              border
+              border-border
+              bg-card
+              hover:bg-background-muted
+              hover:border-primary/40
+              transition-all
+              duration-200
+              hover:text-primary
+              active:scale-95
+            "
+          >
+            <SettingsIcon fontSize="small"/>
           </Link>
         </div>
 
         <RoomMembersList members={room.members} />
 
-        
-        <div className="border-t border-border pt-4 flex flex-col gap-4">
+        <div className="pt-5 border-t border-border/60 flex flex-col gap-5">
           
-          
-          <button 
+          <button
             onClick={() => setIsFiltersOpen(!isFiltersOpen)}
-            className="text-sm p-0.5 font-bold flex items-center justify-between rounded-lg  border border-border w-full text-foreground hover:text-primary transition-colors cursor-pointer text-left "
+            className="
+              group
+              w-full
+              flex items-center justify-between
+              rounded-xl
+              border border-border
+              bg-card
+              px-4 py-3
+              transition-all duration-200
+              hover:bg-background-muted
+              hover:border-primary/40
+              hover:shadow-md
+              active:scale-[0.98]
+              cursor-pointer
+            "
           >
-            <span className="flex items-center gap-2 rounded-lg  px-2 py-1 text-primary/90 transition-colors hover:text-primary/60">
-              <FilterListIcon className="text-ms" /> Group Filters             
+            <span className="
+              flex items-center gap-2
+              font-semibold
+              text-foreground
+              transition-colors
+              group-hover:text-primary
+            ">
+              <FilterListIcon fontSize="small" />
+              Group Filters
             </span>
+
             {isFiltersOpen ? (
-              <KeyboardArrowUpIcon fontSize="small" className="text-foreground" />
+              <KeyboardArrowUpIcon
+                fontSize="small"
+                className="transition-transform duration-200 group-hover:text-primary"
+              />
             ) : (
-              <KeyboardArrowDownIcon fontSize="small" className="text-foreground" />
+              <KeyboardArrowDownIcon
+                fontSize="small"
+                className="transition-transform duration-200 group-hover:text-primary"
+              />
             )}
           </button>
 
-          
           {isFiltersOpen && (
-            <div className="flex flex-col gap-5 animate-fadeIn">
-              <RoomDetailsTypeFilter />
+            <div className="flex flex-col gap-4 animate-fadeIn">
+             
               <RoomDetailsStatusFilter />
+              <RoomDetailsTypeFilter />
             </div>
           )}
 
-         
-          <div className="flex flex-col gap-5">
+          <div className="flex flex-col gap-4">
             <RoomDetailsMemberFilter members={room.members} />
             <RoomDetailsSortControl />
 
-            <Button variant="outline" className="w-full border  border-danger/40 text-white/70 hover:bg-danger/15 hover:text-danger gap-2 px-4 py-2 rounded-xl bg-danger/30" onClick={reset}>
-              <RefreshIcon className="text-sm mr-1" /> Reset all filters
+            <Button 
+              variant="resetFilters" 
+              className="py-3 mt-1 flex items-center justify-center gap-2" 
+              onClick={reset}
+            >
+              <RefreshIcon className="text-sm" /> Reset all filters
             </Button>
           </div>
 

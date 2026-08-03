@@ -39,9 +39,9 @@ export const FriendCard = ({ user, variant, onAction, isPendingAction }: FriendC
             <div className="flex items-center gap-2  shrink-0 md:border-0 border-t border-border/20 pt-4 md:pt-0">
                 {variant === "friends" && (
                     <Button
-                        variant="outline"
+                        variant="altCancel"
                         disabled={isPendingAction}
-                        className="w-full border-danger/30 text-foreground/70 hover:bg-danger/20 hover:text-danger gap-2 px-4 py-2 rounded-xl bg-danger/40"
+                        className="h-11 w-16"
                         onClick={() => onAction?.("delete", user.friendshipId || user.userId)}
                     >
                         <PersonRemoveIcon fontSize="small" />
@@ -58,9 +58,9 @@ export const FriendCard = ({ user, variant, onAction, isPendingAction }: FriendC
                             <CheckIcon fontSize="small" />
                         </Button>
                         <Button
-                            variant="outline"
+                            variant="altCancel"
                             disabled={isPendingAction}
-                            className="w-full border-danger/30 text-white/70 hover:bg-danger/20 hover:text-danger gap-2 px-4 py-2 rounded-xl bg-danger/40"
+                            className="w-24 h-12"
                             onClick={() => onAction?.("reject", user.userId)}
                         >
                             <ClearIcon fontSize="small" />
@@ -71,7 +71,8 @@ export const FriendCard = ({ user, variant, onAction, isPendingAction }: FriendC
                 {variant === "add" && (
                     <Button
                         disabled={isPendingAction}
-                        className="w-full bg-primary/40 text-becgraund hover:text-primary/70 border border-primary hover:bg-primary-hover/20 font-bold gap-2 px-4 py-2 rounded-xl"
+                        variant="accent"
+                        className="w-24 h-12"
                         onClick={() => onAction?.("send", user.userId)}
                     >
                         <PersonAddIcon fontSize="small" />
@@ -81,9 +82,9 @@ export const FriendCard = ({ user, variant, onAction, isPendingAction }: FriendC
 
                 {variant === "sent" && (
                     <Button
-                        variant="outline"
+                        variant="altCancel"
                         disabled={isPendingAction}
-                        className="w-full border-danger/30 text-foreground/70 hover:bg-danger/20 hover:text-danger gap-2 px-4 py-2 rounded-xl bg-danger/40"
+                        className="w-24 h-12"
                         onClick={() => onAction?.("delete", user.friendshipId || user.userId)}
                     >
                         <PersonAddDisabledIcon fontSize="small" />

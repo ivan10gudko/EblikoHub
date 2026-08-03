@@ -64,7 +64,7 @@ export default function RoomsPage({ userId }: { userId: string | null }) {
             onClick={() => openRoomModal("add")}
             className={secondaryBtnStyle}
           >
-            {/* Великий виразний плюс */}
+            
             <span className="text-2xl font-extrabold leading-none relative -top-[1px] select-none">
               +
             </span>

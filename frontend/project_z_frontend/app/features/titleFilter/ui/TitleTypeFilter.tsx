@@ -25,11 +25,11 @@ const TitleTypeFilter = ({ typeCount }: TypeFilterProps) => {
   });
 
   return (
-    <div className="flex flex-col gap-3 w-full">
+    <div className="flex flex-col gap-2 w-full">
       <label className="text-sm font-bold text-foreground uppercase px-1">
         Title Type
       </label>
-      <div className="flex flex-col gap-3 px-1 w-full">
+      <div className="flex flex-col gap-2 px-1 w-full">
         {typeOptions.map((opt) => {
           const count = getBackendCount(typeCount, opt.value);
 

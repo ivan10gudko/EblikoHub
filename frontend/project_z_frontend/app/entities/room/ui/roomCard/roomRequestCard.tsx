@@ -1,4 +1,4 @@
-
+import { Link } from "react-router";
 import GroupIcon from "@mui/icons-material/Group";
 import CheckIcon from "@mui/icons-material/Check";
 import CloseIcon from "@mui/icons-material/Close";
@@ -22,19 +22,30 @@ export const RoomRequestCard = ({
 }: RoomRequestCardProps) => {
     const { room, sender } = request;
 
+    const handleAction = (e: React.MouseEvent, action: () => void) => {
+        e.preventDefault();
+        e.stopPropagation();
+        action();
+    };
+
     return (
-        <div className="flex flex-col w-full rounded-xl border border-border bg-card transition-all hover:border-primary">
+        <Link 
+            to={`/rooms/${room.roomId}`}
+            className="group flex flex-col w-full rounded-xl border border-border bg-card transition-all hover:border-primary cursor-pointer overflow-hidden"
+        >
             <div className="relative h-40 w-full overflow-hidden">
                 <img
                     src={room.imageUrl || DEFAULT_IMAGE_PATH}
                     alt={room.roomName}
-                    className="w-full rounded-t-xl h-full object-cover"
+                    className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                 />
             </div>
 
             <div className="p-4 flex flex-col gap-2">
                 <div>
-                    <h3 className="text-lg font-bold text-foreground truncate">{room.roomName}</h3>
+                    <h3 className="text-lg font-bold text-foreground truncate group-hover:text-primary transition-colors">
+                        {room.roomName}
+                    </h3>
                     <p className="text-xs text-foreground-muted truncate">
                         From: <span className="font-medium text-foreground">{sender.name}</span>
                     </p>
@@ -48,17 +59,17 @@ export const RoomRequestCard = ({
 
                     <div className="flex items-center gap-2 shrink-0">
                         <Button
-                        variant="altCancel"
-                            className="h-8 w-8 p-0 rounded-lg "
-                            onClick={onReject}
+                            variant="altCancel"
+                            className="h-8 w-8 p-0 rounded-lg"
+                            onClick={(e) => handleAction(e, onReject)}
                             disabled={isPendingAction}
                         >
                             <CloseIcon className="text-base" />
                         </Button>
                         <Button
                             variant="fill"
-                            className="h-8 w-8 p-0 flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary/10 text-primary border border-primary/30 active:scale-95 transition-all text-xs font-semibold cursor-pointer hover:bg-primary/20 "
-                            onClick={onAccept}
+                            className="h-8 w-8 p-0 flex items-center justify-center rounded-lg bg-primary/10 text-primary border border-primary/30 active:scale-95 transition-all text-xs font-semibold cursor-pointer hover:bg-primary/20"
+                            onClick={(e) => handleAction(e, onAccept)}
                             disabled={isPendingAction}
                         >
                             <CheckIcon className="text-base hover:text-emerald-500" />
@@ -66,6 +77,6 @@ export const RoomRequestCard = ({
                     </div>
                 </div>
             </div>
-        </div>
+        </Link>
     );
 };

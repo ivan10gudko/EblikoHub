@@ -1,3 +1,4 @@
+import { Link } from "react-router";
 import GroupIcon from "@mui/icons-material/Group";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
@@ -19,38 +20,50 @@ export const RoomSearchCard = ({ room }: RoomSearchCardProps) => {
     if (room.isRequested) return { icon: <CheckCircleIcon fontSize="small" />, text: "Requested" };
     return { icon: <PersonAddIcon fontSize="small" />, text: "Join" };
   };
+
   const isDisabled = room.isMember || room.isRequested || isJoining;
   const { icon, text } = getButtonContent();
+
+  const handleJoin = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    joinRoom();
+  };
+
   return (
-    <div className="group flex flex-col w-full border border-border bg-card transition-all hover:border-primary">
+    <Link
+      to={`/rooms/${room.roomId}`}
+      className="group flex flex-col w-full border border-border bg-card rounded-xl transition-all hover:border-primary cursor-pointer overflow-hidden"
+    >
       <div className="relative h-40 w-full overflow-hidden">
         <img
           src={room.imageUrl || DEFAULT_IMAGE_PATH}
           alt={room.roomName}
-          className="w-full h-full object-cover"
+          className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
         />
       </div>
 
       <div className="p-3 flex flex-col gap-3">
-        <h3 className="text-md font-bold text-foreground truncate">{room.roomName}</h3>
+        <h3 className="text-md font-bold text-foreground truncate group-hover:text-primary transition-colors">
+          {room.roomName}
+        </h3>
 
         <div className="flex flex-col gap-3">
-
           <div className="flex items-center gap-1.5 text-foreground-muted text-xs">
             <GroupIcon className="text-sm shrink-0" />
             <span className="truncate">{room.memberCount} members</span>
           </div>
 
           <Button
-            onClick={() => joinRoom()}
+            onClick={handleJoin}
             disabled={isDisabled}
-            className="h-9 w-full text-xs flex items-center justify-center gap-1.5"
+            className="h-9 w-full text-xs flex items-center justify-center gap-1.5 cursor-pointer"
           >
             {icon}
             {text}
           </Button>
         </div>
       </div>
-    </div>
+    </Link>
   );
 };

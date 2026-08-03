@@ -22,13 +22,13 @@ export const RoomFilters = ({ children }: RoomFiltersProps) => {
 
       <Button
         onClick={reset}
-        variant="outline"
-        className="border-danger/40 text-foreground/70 hover:bg-danger/15 hover:text-danger bg-danger/30"
+        variant="resetFilters"
       >
         Reset all filters
       </Button>
 
-     
+     <div className="h-px bg-border/80 my-0" />
+
       {children && <div className="flex flex-col  gap-3 pt-2">{children}</div>}
     </div>
   );

@@ -23,7 +23,8 @@ export const FriendCardAdd = ({ user, onAction, isPendingAction }: FriendCardAdd
                 return (
                     <Button
                         disabled={isPendingAction}
-                        className="h-10 px-4 bg-primary/10 text-primary border border-primary/30 hover:bg-primary/20 hover:text-primary-hover font-bold text-sm gap-2 rounded-xl disabled:opacity-50 transition-colors whitespace-nowrap flex items-center justify-center cursor-pointer"
+                        variant="accent"
+                        className="w-24 h-12"
                         onClick={() => onAction("send", userId)}
                     >
                         <PersonAddIcon fontSize="small" />
@@ -34,9 +35,9 @@ export const FriendCardAdd = ({ user, onAction, isPendingAction }: FriendCardAdd
             case RequestStatus.PENDING:
                 return (
                     <Button
-                        variant="outline"
+                        variant="altCancel"
                         disabled={isPendingAction}
-                        className="w-full border-danger/30 text-white/70 hover:bg-danger/20 hover:text-danger gap-2 px-4 py-2 rounded-xl bg-danger/40"
+                        className="w-24 h-12"
                         onClick={() => onAction("delete", friendshipId ?? userId)}
                     >
                         <PersonAddIcon fontSize="small" />
