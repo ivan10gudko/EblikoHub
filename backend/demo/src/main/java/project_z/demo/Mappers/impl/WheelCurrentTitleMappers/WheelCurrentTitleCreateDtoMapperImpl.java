@@ -10,7 +10,8 @@ public class WheelCurrentTitleCreateDtoMapperImpl implements Mapper<WheelCurrent
     @Override
     public WheelCurrentSettingsTitleCreateDto mapTo(WheelCurrentTitleEntity entity) {
         return new WheelCurrentSettingsTitleCreateDto(
-                entity.getTitle().getTitleId()
+                entity.getTitle().getTitleId(),
+                entity.getMultiplier()
         );
     }
 

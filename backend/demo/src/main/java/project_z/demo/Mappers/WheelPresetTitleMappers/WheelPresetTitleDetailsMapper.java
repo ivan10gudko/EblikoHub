@@ -21,6 +21,7 @@ public class WheelPresetTitleDetailsMapper implements Mapper<WheelPresetTitleEnt
     public WheelPresetTitleDetailsDto mapTo(WheelPresetTitleEntity entity) {
         return new WheelPresetTitleDetailsDto(
                 titleMapper.mapTo(entity.getTitleId()),
+            entity.getMultiplier(),
             entity.getCreatedAt());
     }
 

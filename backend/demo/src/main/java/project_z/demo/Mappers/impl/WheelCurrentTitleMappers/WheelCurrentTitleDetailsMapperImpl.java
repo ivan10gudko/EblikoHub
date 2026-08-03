@@ -22,6 +22,7 @@ public class WheelCurrentTitleDetailsMapperImpl implements Mapper<WheelCurrentTi
         return new WheelCurrentSettingsTitleDetailsDto(
             
             titleMapper.mapTo(entity.getTitle()),
+            entity.getMultiplier(),
             entity.getCreatedAt()
         );
     }

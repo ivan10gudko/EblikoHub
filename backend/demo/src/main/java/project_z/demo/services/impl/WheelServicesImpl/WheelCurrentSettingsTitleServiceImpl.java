@@ -35,6 +35,7 @@ public class WheelCurrentSettingsTitleServiceImpl implements WheelCurrentSetting
             return WheelCurrentTitleEntity.builder()
                     .wheelSettings(settings)
                     .title(title)
+                    .multiplier(dto.multiplier() != null ? dto.multiplier() : 1)
                     .build();
         }).toList();
         

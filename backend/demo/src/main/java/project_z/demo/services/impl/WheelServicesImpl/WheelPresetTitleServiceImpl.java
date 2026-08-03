@@ -38,6 +38,7 @@ public class WheelPresetTitleServiceImpl implements WheelPresetTitleService {
             return WheelPresetTitleEntity.builder()
                     .presetId(preset)
                     .titleId(title)
+                    .multiplier(dto.multiplier() != null ? dto.multiplier() : 1)
                     .build();
         }).toList();
 

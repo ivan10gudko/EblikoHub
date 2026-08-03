@@ -45,6 +45,9 @@ public class WheelPresetTitleEntity {
     @JoinColumn(name = "title_id", nullable = false)
     private TitleEntity titleId;
 
+    @Column(name = "multiplier")
+    @Builder.Default
+    private Integer multiplier = 1;
 
     @CreatedDate
     @Column(name = "created_at", nullable = false, updatable = false)
