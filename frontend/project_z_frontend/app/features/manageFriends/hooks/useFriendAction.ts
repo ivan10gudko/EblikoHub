@@ -1,9 +1,10 @@
 import { useQueryClient, type QueryKey } from "@tanstack/react-query";
 import { useState } from "react";
-import { 
-  friendshipService, 
-  type UserDtoWithFriendshipStatus 
+import {
+  friendshipService,
+  type WithFriendship
 } from "~/entities/friendship";
+import type { UserProfile } from "~/entities/user/model/user.types";
 import { useFriends } from "~/features/manageFriends/hooks/useFriends";
 import type { FriendActionType } from "~/features/manageFriends/types/friends.types";
 import { notify } from "~/shared/lib";
@@ -28,7 +29,7 @@ export const useFriendAction = ({
     if (isActionLoading) return;
     setIsActionLoading(true);
 
-    queryClient.setQueryData<UserDtoWithFriendshipStatus | undefined>(
+    queryClient.setQueryData<WithFriendship<UserProfile> | undefined>(
       profileQueryKey,
       (oldData) => {
         if (!oldData) return oldData;
@@ -50,7 +51,7 @@ export const useFriendAction = ({
       if (action === "send") {
         await handleFriendAction("send", userId);
 
-        const updatedUser = await friendshipService.getUserWithFriendshipStatus(userId);
+        const updatedUser = await friendshipService.getUserWithFriendshipStatus<UserProfile>(userId);
         if (updatedUser) {
           queryClient.setQueryData(profileQueryKey, updatedUser);
         }
@@ -64,7 +65,7 @@ export const useFriendAction = ({
 
       if (status === 409) {
         notify.info("Friend request is already pending");
-        queryClient.setQueryData<UserDtoWithFriendshipStatus | undefined>(
+        queryClient.setQueryData<WithFriendship<UserProfile> | undefined>(
           profileQueryKey,
           (oldData) =>
             oldData

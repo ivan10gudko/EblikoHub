@@ -1,12 +1,12 @@
 import { apiClient } from "~/shared/api";
 import type { PageResponse } from "~/shared/types";
-import type { 
-    FriendshipDetailsDto, 
-    FriendshipPartialUpdateDto, 
-    FriendRequestDto, 
-    FriendshipCounts, 
-    UserDtoWithFriendshipStatus, 
-    FriendshipQueryParameters 
+import type {
+    FriendshipDetailsDto,
+    FriendshipPartialUpdateDto,
+    FriendRequestDto,
+    FriendshipCounts,
+    FriendshipQueryParameters,
+    WithFriendship
 } from "../model/friendship.types";
 
 interface FriendshipService {
@@ -20,11 +20,11 @@ interface FriendshipService {
     getSentPendingRequests(userId: string): Promise<FriendRequestDto[]>;
     deleteFriendshipById(id: string): Promise<void>;
     getFriendshipCounts(userId: string): Promise<FriendshipCounts>;
-    getUserWithFriendshipStatus(targetUserId: string): Promise<UserDtoWithFriendshipStatus>;
-    searchUsersWithStatus(
+    getUserWithFriendshipStatus<T>(targetUserId: string): Promise<WithFriendship<T>>;
+    searchUsersWithStatus<T>(
         name: string,
         params?: FriendshipQueryParameters
-    ): Promise<PageResponse<UserDtoWithFriendshipStatus>>;
+    ): Promise<PageResponse<WithFriendship<T>>>;
 }
 
 export const friendshipService: FriendshipService = {
@@ -73,16 +73,16 @@ export const friendshipService: FriendshipService = {
         const response = await apiClient.get<FriendshipCounts>(`/friendships/${userId}/stats`);
         return response.data;
     },
-
-    async getUserWithFriendshipStatus(targetUserId) {
-        const response = await apiClient.get<UserDtoWithFriendshipStatus>(
+    //TODO: Consider move this method to Profile feature, since it is not directly related to friendship management.
+    async getUserWithFriendshipStatus<T>(targetUserId: string) {
+        const response = await apiClient.get<WithFriendship<T>>(
             `/friendships/userWithCurrentFriendshipStatus/${targetUserId}`
         );
         return response.data;
     },
 
-    async searchUsersWithStatus(name, params) {
-        const response = await apiClient.get<PageResponse<UserDtoWithFriendshipStatus>>(
+    async searchUsersWithStatus<T>(name: string, params?: FriendshipQueryParameters) {
+        const response = await apiClient.get<PageResponse<WithFriendship<T>>>(
             `/friendships/search/${name}`,
             { params }
         );

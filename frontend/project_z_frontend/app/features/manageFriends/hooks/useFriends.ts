@@ -4,8 +4,10 @@ import { friendshipService } from "~/entities/friendship/api/friendshipService";
 import type { FriendActionType } from "../types/friends.types";
 import { RequestStatus, type PageResponse } from "~/shared/types";
 import { updateInfiniteQuery } from "~/shared/helpers/updateInfinityQuery";
-import type { UserDtoWithFriendshipStatus } from "~/entities/friendship";
+import type { WithFriendship } from "~/entities/friendship";
+import type { UserProfile } from "~/entities/user/model/user.types";
 
+type FullProfile = WithFriendship<UserProfile>;
 const getErrorMessage = (error: any, defaultMessage: string): string => {
   return error?.response?.data?.message || error?.message || defaultMessage;
 };
@@ -22,12 +24,12 @@ export const useFriends = (userId: string, activeTab: string) => {
   };
 
   const updateSearchCache = (id: string, actionType: FriendActionType) => {
-    queryClient.setQueriesData<InfiniteData<PageResponse<UserDtoWithFriendshipStatus>>>(
+    queryClient.setQueriesData<InfiniteData<PageResponse<FullProfile>>>(
       { queryKey: ["user_friendship_search"], exact: false },
       (oldData) => {
         if (!oldData) return undefined;
 
-        return updateInfiniteQuery<PageResponse<UserDtoWithFriendshipStatus>, UserDtoWithFriendshipStatus>({
+        return updateInfiniteQuery<PageResponse<FullProfile>, FullProfile>({
           oldData,
           getContent: (page) => page.content,
           setContent: (page, newContent) => ({ ...page, content: newContent }),
@@ -35,15 +37,15 @@ export const useFriends = (userId: string, activeTab: string) => {
             allItems.map((user) =>
               user.userId === id || user.friendshipId === id
                 ? {
-                    ...user,
-                    friendshipStatus:
-                      actionType === "send"
-                        ? RequestStatus.PENDING
-                        : actionType === "accept"
+                  ...user,
+                  friendshipStatus:
+                    actionType === "send"
+                      ? RequestStatus.PENDING
+                      : actionType === "accept"
                         ? RequestStatus.ACCEPTED
                         : RequestStatus.NONE,
-                    friendshipId: actionType === "send" ? user.friendshipId : null,
-                  }
+                  friendshipId: actionType === "send" ? user.friendshipId : null,
+                }
                 : user
             ),
         });

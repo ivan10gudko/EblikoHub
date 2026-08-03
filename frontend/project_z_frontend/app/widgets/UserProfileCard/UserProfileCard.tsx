@@ -4,7 +4,7 @@ import { UserAvatar } from "~/entities/user";
 import { RequestStatus } from "~/shared/types";
 import { Button } from "~/shared/ui/Button";
 import { UserProfileEdit } from "./UserProfileEditCard";
-import { useUserProfile } from "~/entities/user/hooks/useUserProfile";
+import { useUserProfile } from "~/widgets/UserProfileCard/hooks/useUserProfile";
 
 interface UserProfileCardProps {
   userId: string;
@@ -24,20 +24,20 @@ export const UserProfileCard = ({ userId }: UserProfileCardProps) => {
     isUpdating,
   } = useUserProfile(userId);
 
-  const isNone =
-    !friendshipStatus ||
-    friendshipStatus === RequestStatus.NONE;
-  const isPending =
-    friendshipStatus === RequestStatus.PENDING;
-  const isAccepted =
-    friendshipStatus === RequestStatus.ACCEPTED;
+  const isNone = !friendshipStatus || friendshipStatus === RequestStatus.NONE;
+  const isPending = friendshipStatus === RequestStatus.PENDING;
+  const isAccepted = friendshipStatus === RequestStatus.ACCEPTED;
 
   return (
     <>
       {!isEditing ? (
         <>
           <div className="flex flex-col sm:flex-row items-center gap-6">
-            <UserAvatar src={user.img ?? undefined} name={user.name} size="lg" />
+            <UserAvatar
+              src={user.img ?? undefined}
+              name={user.name}
+              size="lg"
+            />
 
             <div className="flex flex-col items-center sm:items-start grow">
               <h1 className="text-3xl font-black text-foreground tracking-tight">
@@ -71,22 +71,30 @@ export const UserProfileCard = ({ userId }: UserProfileCardProps) => {
                 {isPending && (
                   <Button
                     disabled={isActionLoading || !friendshipId}
-                    onClick={() => friendshipId && onAction("delete", friendshipId)}
+                    onClick={() =>
+                      friendshipId && onAction("delete", friendshipId)
+                    }
                     className="group flex items-center gap-2 border border-red-500/30 hover:border-red-500/60 bg-red-500/5 hover:bg-red-500/10 text-red-500 px-5 py-2.5 rounded-2xl font-medium transition-all duration-200 active:scale-95 disabled:opacity-50"
                   >
                     <PersonRemoveIcon className="w-4 h-4 text-red-500 group-hover:scale-110 transition-transform" />
-                    <span>{isActionLoading ? "Cancelling..." : "Cancel Request"}</span>
+                    <span>
+                      {isActionLoading ? "Cancelling..." : "Cancel Request"}
+                    </span>
                   </Button>
                 )}
 
                 {isAccepted && (
                   <Button
                     disabled={isActionLoading || !friendshipId}
-                    onClick={() => friendshipId && onAction("delete", friendshipId)}
+                    onClick={() =>
+                      friendshipId && onAction("delete", friendshipId)
+                    }
                     className="group flex items-center gap-2 bg-rose-500/10 hover:bg-rose-500/20 text-rose-500 hover:text-rose-600 border border-rose-500/20 hover:border-rose-500/40 px-5 py-2.5 rounded-2xl font-semibold transition-all duration-200 active:scale-95 shadow-sm disabled:opacity-50"
                   >
                     <PersonRemoveIcon className="w-4 h-4 text-rose-500 group-hover:scale-110 transition-transform" />
-                    <span>{isActionLoading ? "Removing..." : "Remove Friend"}</span>
+                    <span>
+                      {isActionLoading ? "Removing..." : "Remove Friend"}
+                    </span>
                   </Button>
                 )}
               </div>
@@ -104,10 +112,12 @@ export const UserProfileCard = ({ userId }: UserProfileCardProps) => {
         <UserProfileEdit
           user={user}
           onSave={(data, file) =>
-            updateProfile({
-              profileData: data,
-              avatarFile: file,
-            })
+            updateProfile(
+              { profileData: data, avatarFile: file },
+              {
+                onSuccess: () => setIsEditing(false),
+              },
+            )
           }
           onCancel={() => setIsEditing(false)}
           isPending={isUpdating}
