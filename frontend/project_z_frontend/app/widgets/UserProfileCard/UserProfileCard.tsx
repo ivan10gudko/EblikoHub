@@ -1,89 +1,36 @@
 import EditIcon from "@mui/icons-material/Edit";
 import PersonRemoveIcon from "@mui/icons-material/PersonRemove";
-import {
-  useMutation,
-  useQueryClient,
-  useSuspenseQuery,
-} from "@tanstack/react-query";
-import { useState } from "react";
-import type { UserDtoWithFriendshipStatus } from "~/entities/friendship";
-import { useFriendAction } from "~/entities/friendship/hooks/useFriendAction";
-import { UserAvatar, userService, type UserProfile } from "~/entities/user";
-import { useAuthStore } from "~/features/auth";
-import { notify } from "~/shared/lib";
-
+import { UserAvatar } from "~/entities/user";
 import { RequestStatus } from "~/shared/types";
 import { Button } from "~/shared/ui/Button";
 import { UserProfileEdit } from "./UserProfileEditCard";
+import { useUserProfile } from "~/entities/user/hooks/useUserProfile";
 
 interface UserProfileCardProps {
   userId: string;
 }
 
 export const UserProfileCard = ({ userId }: UserProfileCardProps) => {
-  const [isEditing, setIsEditing] = useState(false);
-  const { userId: currentUserId } = useAuthStore();
-  const queryClient = useQueryClient();
-
-  const isOwn = Boolean(currentUserId && currentUserId === userId);
-  const profileQueryKey = ["user_profile", userId];
-
- const { data: user } = useSuspenseQuery<UserDtoWithFriendshipStatus & UserProfile>({
-  queryKey: profileQueryKey,
-  queryFn: async () => {
-    if (isOwn) {
-      return (await userService.getUser(userId)) as UserDtoWithFriendshipStatus & UserProfile;
-    }
-    return (await userService.getUserWithFriendshipStatus(userId)) as UserDtoWithFriendshipStatus & UserProfile;
-  },
-});
-
-  const { onAction, isActionLoading } = useFriendAction({
-    userId,
-    currentUserId,
-    profileQueryKey,
-  });
-
-  const rawStatus = user.friendshipStatus;
-  const friendshipStatus = rawStatus ? String(rawStatus).toUpperCase() : null;
-  const friendshipId = user.friendshipId ?? null;
-  const updateMutation = useMutation({
-    mutationFn: async ({
-      profileData,
-      avatarFile,
-    }: {
-      profileData: { name: string; description: string };
-      avatarFile: File | null;
-    }) => {
-      const updateTextPromise = userService.updateUser(user.userId, profileData);
-
-      if (avatarFile) {
-        const updatePhotoPromise = userService.uploadAvatar(user.userId, avatarFile);
-        return Promise.all([updateTextPromise, updatePhotoPromise]);
-      }
-
-      return updateTextPromise;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: profileQueryKey });
-      setIsEditing(false);
-      notify.success("Successfully updated");
-    },
-    onError: () => {
-      notify.error("Failed to update profile");
-    },
-  });
+  const {
+    user,
+    isOwn,
+    isEditing,
+    setIsEditing,
+    friendshipStatus,
+    friendshipId,
+    onAction,
+    isActionLoading,
+    updateProfile,
+    isUpdating,
+  } = useUserProfile(userId);
 
   const isNone =
     !friendshipStatus ||
-    friendshipStatus === RequestStatus.NONE ||
-    friendshipStatus === "NONE";
+    friendshipStatus === RequestStatus.NONE;
   const isPending =
-    friendshipStatus === RequestStatus.PENDING ||
-    friendshipStatus === "PENDING";
+    friendshipStatus === RequestStatus.PENDING;
   const isAccepted =
-    friendshipStatus === RequestStatus.ACCEPTED ||
-    friendshipStatus === "ACCEPTED";
+    friendshipStatus === RequestStatus.ACCEPTED;
 
   return (
     <>
@@ -146,24 +93,24 @@ export const UserProfileCard = ({ userId }: UserProfileCardProps) => {
             )}
           </div>
 
-          <div className="h-[1px] bg-background-muted w-full" />
+          <div className="h-px bg-background-muted w-full" />
 
           <p className="text-foreground leading-relaxed">
-            {user.description||
+            {user.description ||
               "No description provided yet. Let people know who you are!"}
           </p>
         </>
       ) : (
         <UserProfileEdit
-          user={user as unknown as UserProfile}
+          user={user}
           onSave={(data, file) =>
-            updateMutation.mutate({
+            updateProfile({
               profileData: data,
               avatarFile: file,
             })
           }
           onCancel={() => setIsEditing(false)}
-          isPending={updateMutation.isPending}
+          isPending={isUpdating}
         />
       )}
     </>

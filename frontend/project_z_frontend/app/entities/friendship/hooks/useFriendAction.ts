@@ -1,11 +1,13 @@
 import { useQueryClient, type QueryKey } from "@tanstack/react-query";
 import { useState } from "react";
-import type { UserDtoWithFriendshipStatus } from "~/entities/friendship";
-import { userService } from "~/entities/user";
+import { 
+  friendshipService, 
+  type UserDtoWithFriendshipStatus 
+} from "~/entities/friendship";
 import { useFriends } from "~/features/manageFriends/hooks/useFriends";
+import type { FriendActionType } from "~/features/manageFriends/types/friends.types";
 import { notify } from "~/shared/lib";
 import { RequestStatus } from "~/shared/types";
-import type { FriendActionType } from "~/features/manageFriends/types/friends.types";
 
 interface UseFriendActionProps {
   userId: string;
@@ -25,6 +27,7 @@ export const useFriendAction = ({
   const onAction = async (action: FriendActionType, targetId: string) => {
     if (isActionLoading) return;
     setIsActionLoading(true);
+
     queryClient.setQueryData<UserDtoWithFriendshipStatus | undefined>(
       profileQueryKey,
       (oldData) => {
@@ -47,12 +50,13 @@ export const useFriendAction = ({
       if (action === "send") {
         await handleFriendAction("send", userId);
 
-        const updatedUser = await userService.getUserWithFriendshipStatus(userId);
+        const updatedUser = await friendshipService.getUserWithFriendshipStatus(userId);
         if (updatedUser) {
           queryClient.setQueryData(profileQueryKey, updatedUser);
         }
       } else {
         await handleFriendAction(action, targetId);
+        await queryClient.invalidateQueries({ queryKey: profileQueryKey });
       }
     } catch (error: unknown) {
       const err = error as { response?: { status?: number }; status?: number };

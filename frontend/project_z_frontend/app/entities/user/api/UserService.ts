@@ -1,12 +1,11 @@
+// entities/user/api/userService.ts
+
 import { apiClient, publicClient } from "~/shared/api";
 import type { BadgeUser, CreateUserProfile, UpdateUserProfile, UserParams, UserProfile } from "../model/user.types";
 import { generateFallbackName } from "../lib/generateFallbackName";
 import type { PageResponse } from "~/shared/types";
-import type { UserDtoWithFriendshipStatus } from "~/entities/friendship";
-
 
 export const userService = {
-
     createUser: async (userData: CreateUserProfile): Promise<UserProfile> => {
         const response = await publicClient.post<UserProfile>("/users", userData);
         return response.data;
@@ -18,13 +17,12 @@ export const userService = {
     },
 
     createFallbackUser: async (userId: string): Promise<UserProfile> => {
-
-        const altUserName = generateFallbackName()
+        const altUserName = generateFallbackName();
         const userData = {
             userId,
             name: altUserName,
             nameTag: altUserName
-        }
+        };
         const response = await publicClient.post<UserProfile>("/users", userData);
         return response.data;
     },
@@ -45,8 +43,8 @@ export const userService = {
                 'Content-Type': 'multipart/form-data',
             },
         });
-
     },
+
     searchByNameTag: async (nameTag: string): Promise<UserProfile> => {
         const response = await apiClient.get<UserProfile>(`/users/${nameTag}/nameTag`);
         return response.data;
@@ -54,20 +52,13 @@ export const userService = {
 
     searchByName: async (name: string, params: UserParams = { page: 0, limit: 10 }): Promise<PageResponse<UserProfile>> => {
         const response = await apiClient.get<PageResponse<UserProfile>>(`/users/name/${name}`, {
-            params: params
+            params
         });
-
         return response.data;
     },
 
     getBadges: async (): Promise<BadgeUser[]> => {
         const response = await apiClient.get<BadgeUser[]>("/badges");
-        return response.data;
-    },
-    getUserWithFriendshipStatus: async (targetUserId: string): Promise<UserDtoWithFriendshipStatus> => {
-        const response = await apiClient.get<UserDtoWithFriendshipStatus>(
-            `/friendships/userWithCurrentFriendshipStatus/${targetUserId}`
-        );
         return response.data;
     },
 };
