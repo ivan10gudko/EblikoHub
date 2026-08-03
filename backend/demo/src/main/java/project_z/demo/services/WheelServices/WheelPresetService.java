@@ -6,10 +6,11 @@ import java.util.UUID;
 import project_z.demo.dto.WheelPresetDtos.WheelPresetCreateDto;
 import project_z.demo.dto.WheelPresetDtos.WheelPresetDetailsDto;
 import project_z.demo.dto.WheelPresetDtos.WheelPresetPatchDto;
+import project_z.demo.dto.WheelPresetDtos.WheelPresetShortDto;
 
 public interface WheelPresetService {
     WheelPresetDetailsDto getPreset(UUID presetId);
-    List<WheelPresetDetailsDto> getUserPresets(UUID userId);
+    List<WheelPresetShortDto> getUserPresets(UUID userId);
     WheelPresetDetailsDto createPreset(UUID userId, WheelPresetCreateDto dto);
     WheelPresetDetailsDto updatePreset(UUID presetId, WheelPresetPatchDto patchDto);
     void deletePreset(UUID presetId);

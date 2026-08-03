@@ -1,5 +1,6 @@
 package project_z.demo.services.impl.WheelServicesImpl;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
@@ -29,28 +30,29 @@ public class WheelPresetTitleServiceImpl implements WheelPresetTitleService {
 
     @Override
     @Transactional
-    public void addTitleToPreset(UUID presetId, WheelPresetTitleCreateDto dto) {
+    public void addTitlesToPreset(UUID presetId, List<WheelPresetTitleCreateDto> dtos) {
         var preset = presetRepository.getReferenceById(presetId);
-        var title = titleRepository.getReferenceById(dto.titleId());
 
-        WheelPresetTitleEntity entity = WheelPresetTitleEntity.builder()
-                .presetId(preset)
-                .titleId(title)
-                .build();
+        List<WheelPresetTitleEntity> entities = dtos.stream().map(dto -> {
+            var title = titleRepository.getReferenceById(dto.titleId());
+            return WheelPresetTitleEntity.builder()
+                    .presetId(preset)
+                    .titleId(title)
+                    .multiplier(dto.multiplier() != null ? dto.multiplier() : 1)
+                    .build();
+        }).toList();
 
-        repository.save(entity);
+        repository.saveAll(entities);
     }
 
     @Override
     @Transactional
-    public void removeTitleFromPreset(UUID presetId, Long titleId) {
-        WheelPresetTitleId id = new WheelPresetTitleId(presetId, titleId);
+    public void removeTitlesFromPreset(UUID presetId, List<Long> titleIds) {
+        List<WheelPresetTitleId> ids = titleIds.stream()
+                .map(titleId -> new WheelPresetTitleId(presetId, titleId))
+                .toList();
 
-        if (repository.existsById(id)) {
-            repository.deleteById(id);
-        } else {
-            throw new ResourceNotFoundException("Title not found in this preset");
-        }
+        repository.deleteAllById(ids);
     }
 
 }
