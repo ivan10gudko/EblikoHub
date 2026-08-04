@@ -35,7 +35,7 @@ return (
 
         <div className="relative z-10 w-full py-12 md:py-20 px-6 md:px-12 lg:px-24  text-white ">
             <div className="max-w-full md:max-w-2xl xl:max-w-3xl">
-                <Badge size="md" color="blue" textColor="white" border={false}>Featured anime</Badge>
+                <Badge size="md" color="var(--primary)" textColor="black" border={false}>Featured anime</Badge>
                 
                 <h2 className="mt-4 mb-2 text-2xl sm:text-3xl md:text-5xl font-bold leading-tight">
                     {data.title_english}

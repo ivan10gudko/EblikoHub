@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { UserAvatar } from "~/entities/user";
 import type { RoomBanDetailsDto } from '~/features/manageRooms/model/roomTitle.types';
+import Button from '~/shared/ui/Button/Button';
 
 
 interface AdditionalFields {
@@ -75,13 +76,14 @@ export const RoomBanCard: React.FC<RoomBanCardProps> = ({ banDetails, onUnban })
             </div>
 
             <div className="flex-shrink-0 z-10">
-                <button
+                <Button
                     onClick={handleUnbanClick}
+                    variant="accent"
                     disabled={isSubmitting}
-                    className="flex items-center gap-1.5 px-5 py-2.5 rounded-lg bg-primary/10 text-primary border border-primary/30 active:scale-95 transition-all text-sm font-semibold cursor-pointer hover:bg-primary/20"
+                    className="h-12 w-24 text-lg"
                 >
                     {isSubmitting ? '...' : 'Unban'}
-                </button>
+                </Button>
             </div>
         </div>
     );

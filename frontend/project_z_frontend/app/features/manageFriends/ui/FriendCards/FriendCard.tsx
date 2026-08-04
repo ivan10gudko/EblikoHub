@@ -41,7 +41,7 @@ export const FriendCard = ({ user, variant, onAction, isPendingAction }: FriendC
                     <Button
                         variant="altCancel"
                         disabled={isPendingAction}
-                        className="h-11 w-16"
+                        className="h-11 w-full md:w-16"
                         onClick={() => onAction?.("delete", user.friendshipId || user.userId)}
                     >
                         <PersonRemoveIcon fontSize="small" />
@@ -52,18 +52,19 @@ export const FriendCard = ({ user, variant, onAction, isPendingAction }: FriendC
                     <div className="flex w-full gap-2">
                         <Button
                             disabled={isPendingAction}
-                            className="px-3 py-1.5 bg-primary/10 hover:bg-primary/20 text-primary rounded-xl text-xs font-bold border border-primary/30 transition-all disabled:opacity-50 cursor-pointer whitespace-nowrap"
+                            variant="accent"
+                            className="w-full md:w-13 h-13"
                             onClick={() => onAction?.("accept", user.userId)}
                         >
-                            <CheckIcon fontSize="small" />
+                            <CheckIcon fontSize="medium" />
                         </Button>
                         <Button
                             variant="altCancel"
                             disabled={isPendingAction}
-                            className="w-24 h-12"
+                            className="w-full md:w-13 h-13"
                             onClick={() => onAction?.("reject", user.userId)}
                         >
-                            <ClearIcon fontSize="small" />
+                            <ClearIcon fontSize="medium" />
                         </Button>
                     </div>
                 )}
@@ -72,7 +73,7 @@ export const FriendCard = ({ user, variant, onAction, isPendingAction }: FriendC
                     <Button
                         disabled={isPendingAction}
                         variant="accent"
-                        className="w-24 h-12"
+                        className="w-full md:w-24 h-12"
                         onClick={() => onAction?.("send", user.userId)}
                     >
                         <PersonAddIcon fontSize="small" />
@@ -84,7 +85,7 @@ export const FriendCard = ({ user, variant, onAction, isPendingAction }: FriendC
                     <Button
                         variant="altCancel"
                         disabled={isPendingAction}
-                        className="w-24 h-12"
+                        className="w-full md:w-24 h-12  "
                         onClick={() => onAction?.("delete", user.friendshipId || user.userId)}
                     >
                         <PersonAddDisabledIcon fontSize="small" />

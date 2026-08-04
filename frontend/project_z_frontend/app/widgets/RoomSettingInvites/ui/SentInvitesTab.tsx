@@ -73,8 +73,9 @@ export const SentInvitesTab = ({ roomId }: SentInvitesTabProps) => {
                 <div className="flex items-center gap-2 shrink-0 self-end sm:self-center">
                   <Button
                     disabled={isPendingAction}
+                    variant="altCancel"
                     onClick={() => cancelRequest({ roomRequestId: requestId }, { onSuccess: () => refetch() })}
-                    className="w-full border border-danger/40 text-foreground/70 hover:bg-danger/20 hover:text-danger gap-2 px-4 py-2 rounded-xl bg-danger/40"
+                    className="h-11"
                   >
                     Cancel Invite
                   </Button>

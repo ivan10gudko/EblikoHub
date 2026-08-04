@@ -22,14 +22,14 @@ export const RoomSettingInvitesTab = ({ room, role, children }: RoomSettingInvit
   return (
     <div className="flex flex-col gap-6 w-full max-w-4xl">
       <div className="flex flex-col gap-1">
-        <span className="text-xs font-bold uppercase tracking-wider text-amber-500">
+        <span className="text-xs font-bold uppercase tracking-wider text-primary">
           Room Management
         </span>
         <h1 className="text-2xl font-bold text-white">{room?.roomName || "Invites"}</h1>
       </div>
 
       
-      <div className="flex gap-2 bg-[#1a1a1a] p-1.5 rounded-2xl border border-neutral-800 w-fit">
+      <div className="flex gap-2 bg-card p-1.5 rounded-2xl border border-neutral-800 w-fit">
         <NavLink
           to={`${baseUrl}/find`}
           className={({ isActive }) =>

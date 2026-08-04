@@ -24,7 +24,7 @@ export const FriendCardAdd = ({ user, onAction, isPendingAction }: FriendCardAdd
                     <Button
                         disabled={isPendingAction}
                         variant="accent"
-                        className="w-24 h-12"
+                        className="w-full md:w-24 h-12"
                         onClick={() => onAction("send", userId)}
                     >
                         <PersonAddIcon fontSize="small" />
@@ -37,7 +37,7 @@ export const FriendCardAdd = ({ user, onAction, isPendingAction }: FriendCardAdd
                     <Button
                         variant="altCancel"
                         disabled={isPendingAction}
-                        className="w-24 h-12"
+                        className="w-full md:w-24 h-12"
                         onClick={() => onAction("delete", friendshipId ?? userId)}
                     >
                         <PersonAddIcon fontSize="small" />

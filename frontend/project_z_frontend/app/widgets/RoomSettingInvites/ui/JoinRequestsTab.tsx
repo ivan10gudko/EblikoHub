@@ -73,15 +73,17 @@ export const JoinRequestsTab = ({ roomId }: JoinRequestsTabProps) => {
                 <div className="flex items-center gap-2 shrink-0 self-end sm:self-center">
                   <Button
                     disabled={isPendingAction}
+                    variant="altCancel"
                     onClick={() => rejectRequest({ roomRequestId: requestId }, { onSuccess: () => refetch() })}
-                    className="w-full border border-danger/40 text-foreground/70 hover:bg-danger/20 hover:text-danger gap-2 px-4 py-2 rounded-xl bg-danger/40 "
+                    className="h-10 w-20"
                   >
                     Reject
                   </Button>
                   <Button
                     disabled={isPendingAction}
+                    variant="accent"
                     onClick={() => acceptRequest({ roomRequestId: requestId }, { onSuccess: () => refetch() })}
-                    className="px-3 py-1.5 bg-primary/10 hover:bg-primary/20 text-primary rounded-lg text-xs font-bold border border-primary/30 transition-all disabled:opacity-50 cursor-pointer whitespace-nowrap"
+                    className="h-10 w-20"
                   >
                     Accept
                   </Button>

@@ -29,7 +29,7 @@ interface RoomSettingsSidebarProps {
 export const RoomSettingsSidebar = ({ roomId, role, onCloseMobileMenu }: RoomSettingsSidebarProps) => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { openSettingsModal, isSettingsModalOpen } = useRoomModal();
+  const { isSettingsModalOpen } = useRoomModal();
   const [openSection, setOpenSection] = useState<string | null>(null);
 
   useEffect(() => {
@@ -47,14 +47,21 @@ export const RoomSettingsSidebar = ({ roomId, role, onCloseMobileMenu }: RoomSet
     setOpenSection(openSection === key ? null : key);
   };
 
+ 
   const handleNavClick = (e: React.MouseEvent<HTMLElement>) => {
-    const target = e.target as HTMLElement;
-    const isDropdownHeader = target.closest('[class*="NavGroupItem"]') && !target.closest('ul') && !target.closest('li');
+    if (!onCloseMobileMenu) return;
 
-    if (onCloseMobileMenu && !isDropdownHeader && (target.closest('a') || target.closest('li') || target.closest('button') || target.closest('[role="button"]'))) {
-      setTimeout(() => {
-        onCloseMobileMenu();
-      }, 50);
+    const target = e.target as HTMLElement;
+
+    
+    const linkElement = target.closest('a');
+    
+   
+    const isGroupHeader = target.closest('[class*="NavGroupItem"]') && !linkElement;
+
+    
+    if (linkElement && !isGroupHeader) {
+      onCloseMobileMenu();
     }
   };
 
@@ -63,18 +70,18 @@ export const RoomSettingsSidebar = ({ roomId, role, onCloseMobileMenu }: RoomSet
     {
       key: "titles", label: "Titles", Icon: ListIcon, allowed: [RoomRole.OWNER, RoomRole.ADMIN, RoomRole.MEMBER],
       children: [
-        { label: "Room Titles", path: `/rooms/${roomId}/settings/titles`, Icon: EmojiEventsIcon, end: true },
-        { label: "Title Links", path: `/rooms/${roomId}/settings/titles/titleLinks`, Icon: LinkIcon },
-        { label: "AI Title Matcher", path: `/rooms/${roomId}/settings/titles/ai-matcher`, Icon: AutoAwesomeIcon },
+        { key: "room-titles", label: "Room Titles", path: `/rooms/${roomId}/settings/titles`, Icon: EmojiEventsIcon, end: true, allowed: [RoomRole.OWNER, RoomRole.ADMIN, RoomRole.MEMBER] },
+        { key: "title-links", label: "Title Links", path: `/rooms/${roomId}/settings/titles/titleLinks`, Icon: LinkIcon, allowed: [RoomRole.OWNER, RoomRole.ADMIN, RoomRole.MEMBER] },
+        { key: "ai-matcher", label: "AI Title Matcher", path: `/rooms/${roomId}/settings/titles/ai-matcher`, Icon: AutoAwesomeIcon, allowed: [RoomRole.OWNER, RoomRole.ADMIN, RoomRole.MEMBER] },
       ]
     },
     { key: "members", label: "Members", path: `/rooms/${roomId}/settings/members`, Icon: PeopleIcon, allowed: [RoomRole.OWNER, RoomRole.ADMIN, RoomRole.MEMBER] },
     {
       key: "invites", label: "Invites", Icon: MailIcon, allowed: [RoomRole.OWNER, RoomRole.ADMIN],
       children: [
-        { label: "Find User", path: `/rooms/${roomId}/settings/invites`, Icon: PersonSearchIcon, end: true },
-        { label: "Join Requests", path: `/rooms/${roomId}/settings/invites/requests`, Icon: GroupAddIcon },
-        { label: "Sent", path: `/rooms/${roomId}/settings/invites/sent`, Icon: OutboxIcon },
+        { key: "find-user", label: "Find User", path: `/rooms/${roomId}/settings/invites`, Icon: PersonSearchIcon, end: true, allowed: [RoomRole.OWNER, RoomRole.ADMIN] },
+        { key: "join-requests", label: "Join Requests", path: `/rooms/${roomId}/settings/invites/requests`, Icon: GroupAddIcon, allowed: [RoomRole.OWNER, RoomRole.ADMIN] },
+        { key: "sent-requests", label: "Sent", path: `/rooms/${roomId}/settings/invites/sent`, Icon: OutboxIcon, allowed: [RoomRole.OWNER, RoomRole.ADMIN] },
       ]
     },
     { key: "admin", label: "Administration", path: `/rooms/${roomId}/settings/admin`, Icon: AdminPanelSettingsIcon, allowed: [RoomRole.OWNER, RoomRole.ADMIN] },
@@ -94,8 +101,6 @@ export const RoomSettingsSidebar = ({ roomId, role, onCloseMobileMenu }: RoomSet
                 isGroupActive={item.children!.some(child => location.pathname === child.path) || isAiSyncActive}
                 onToggle={() => toggleSection(item.key)}
               />
-
-            
             </div>
           ) : (
             <div key={item.key} onClick={() => handleItemClick(item.path!)} className="w-full">
@@ -105,10 +110,7 @@ export const RoomSettingsSidebar = ({ roomId, role, onCloseMobileMenu }: RoomSet
         ))}
 
         <Button
-          onClick={() => {
-            navigate(`/rooms/${roomId}`);
-            if (onCloseMobileMenu) onCloseMobileMenu();
-          }}
+          onClick={() => handleItemClick(`/rooms/${roomId}`)}
           className="flex items-center gap-4 w-full px-5 py-3.5 mt-2 rounded-xl border border-border/40 bg-background-muted/20 text-foreground/80 hover:bg-background-muted/60 hover:text-foreground hover:border-primary/50 cursor-pointer"
         >
           <ArrowBackIcon className="text-primary/70" />

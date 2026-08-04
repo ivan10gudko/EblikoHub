@@ -200,7 +200,9 @@ export const RoomBansTab: React.FC<RoomBansTabProps> = ({ roomId }) => {
                     <button
                         type="submit"
                         disabled={isMutating || !targetUserId}
-                        className=" border  border-danger/40 text-white/70 hover:bg-danger/15 hover:text-danger gap-2 px-4 py-2 rounded-lg bg-danger/30 cursor-pointer"
+                        className=" border  border-danger/40 text-white/70 hover:bg-danger/15 hover:text-danger 
+                        gap-2 px-4 py-2 rounded-lg bg-danger/30 cursor-pointer
+                        shadow-sm hover:shadow-[0_0_12px_rgba(220,38,38,.15)]"
                     >
                         {isMutating ? 'Banning...' : 'Ban User'}
                     </button>
