@@ -3,11 +3,13 @@ import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import SearchOffIcon from "@mui/icons-material/SearchOff";
 import { UserAvatar } from "./UserAvatar";
 
-interface SearchDisplayItem {
+export interface SearchDisplayItem {
   userId: string;     
   name: string;
   nameTag: string;
   img?: string;
+  isInvited?: boolean;
+  isMember?: boolean;
 }
 
 interface UserSearchDropdownProps<T> {
@@ -58,12 +60,21 @@ export const UserSearchDropdown = <T,>({
         ) : (
           results.map((user) => {
             const display = mapToDisplayItem(user);
+            const isInteractionDisabled = display.isInvited || display.isMember;
 
             return (
               <div
-                onClick={() => onSelect(user)}
+                onClick={() => {
+                  if (!isInteractionDisabled) {
+                    onSelect(user);
+                  }
+                }}
                 key={display.userId}
-                className="flex items-center justify-between gap-3 p-4 hover:bg-background-muted cursor-pointer transition-colors border-b border-border last:border-0"
+                className={`flex items-center justify-between gap-3 p-4 transition-colors border-b border-border last:border-0 ${
+                  isInteractionDisabled 
+                    ? "bg-background/40 cursor-default" 
+                    : "hover:bg-background-muted cursor-pointer"
+                }`}
               >
                 <div className="flex items-center gap-3 min-w-0 flex-1">
                   <UserAvatar name={display.name} src={display.img} size="sm" />
@@ -77,18 +88,29 @@ export const UserSearchDropdown = <T,>({
                   </div>
                 </div>
 
-                <Button 
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onSelect(user);
-                  }}
-                  className="p-2 bg-transparent hover:bg-primary/20 border border-border hover:border-primary/40 rounded-full transition-all group flex items-center justify-center flex-shrink-0"
-                >
-                  <AddCircleOutlineIcon
-                    className="text-primary group-hover:scale-110 transition-transform"
-                    fontSize="small"
-                  />
-                </Button>
+               
+                {display.isMember ? (
+                  <span className="text-[11px] font-medium text-foreground-muted bg-background-muted px-2.5 py-1 rounded-lg border border-border flex-shrink-0">
+                    Member
+                  </span>
+                ) : display.isInvited ? (
+                  <span className="text-[11px] font-semibold text-amber-500 bg-amber-500/10 px-2.5 py-1 rounded-lg border border-amber-500/30 flex-shrink-0">
+                    Pending
+                  </span>
+                ) : (
+                  <Button 
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onSelect(user);
+                    }}
+                    className="p-2 bg-transparent hover:bg-primary/20 border border-border hover:border-primary/40 rounded-full transition-all group flex items-center justify-center flex-shrink-0"
+                  >
+                    <AddCircleOutlineIcon
+                      className="text-primary group-hover:scale-110 transition-transform"
+                      fontSize="small"
+                    />
+                  </Button>
+                )}
               </div>
             );
           })

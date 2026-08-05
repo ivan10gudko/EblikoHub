@@ -5,7 +5,7 @@ import { useRoomRequests } from "~/entities/room/hooks/useRoomRequests";
 import type { UserShort, UserWithRelationsToRoomDto } from "~/entities/room/model/room.types";
 import { useRoomUserSearch } from "~/entities/room";
 import { UserSearchDropdown } from "~/entities/user";
-import { UserAvatar } from "~/entities/user"; 
+import { UserAvatar } from "~/entities/user";
 
 interface FindUserTabProps {
   roomId: number;
@@ -22,21 +22,33 @@ export const FindUserTab = ({ roomId }: FindUserTabProps) => {
   const searchResults = data?.pages.flatMap((page) => page.content || []) || [];
 
   const handleSelectUser = (item: UserWithRelationsToRoomDto) => {
-    const user = item.user;
+  const user = item.user;
 
-    sendInvite(
-      { roomId, receiverId: user.userId },
-      {
-        onSuccess: () => {
-          if (!invitedUsers.some((u) => u.userId === user.userId)) {
-            setInvitedUsers((prev) => [...prev, user]);
-          }
-          setQuery("");
-          setIsDropdownOpen(false);
+  // Перевірка статусів
+  const isAlreadyInvitedLocally = invitedUsers.some((u) => u.userId === user.userId);
+  const isAlreadyInvitedOnServer = 
+    item.relationStatus === "PENDING_OUT" || 
+    item.relationStatus === "PENDING" || 
+    item.activeRequest?.status === "PENDING";
+  const isAlreadyMember = item.relationStatus === "MEMBER";
+
+  if (isAlreadyInvitedLocally || isAlreadyInvitedOnServer || isAlreadyMember) {
+    return;
+  }
+
+  sendInvite(
+    { roomId, receiverId: user.userId },
+    {
+      onSuccess: () => {
+       
+        if (!invitedUsers.some((u) => u.userId === user.userId)) {
+          setInvitedUsers((prev) => [...prev, user]);
         }
-      }
-    );
-  };
+      
+      },
+    }
+  );
+};
 
   return (
     <div className="flex flex-col gap-6 w-full text-foreground">
@@ -62,12 +74,26 @@ export const FindUserTab = ({ roomId }: FindUserTabProps) => {
           <div className="w-full max-w-md absolute top-[76px] left-0 z-[110]">
             <UserSearchDropdown<UserWithRelationsToRoomDto>
               results={searchResults}
-              mapToDisplayItem={(r) => ({
-                userId: r.user.userId,
-                name: r.user.name,
-                nameTag: r.user.nameTag,
-                img: r.user.img
-              })}
+              mapToDisplayItem={(r) => {
+                const isInvitedInSession = invitedUsers.some((u) => u.userId === r.user.userId);
+
+               
+                const isAlreadyInvited =
+                  isInvitedInSession ||
+                  r.relationStatus === "PENDING" ||
+                  r.activeRequest?.status === "PENDING";
+
+                const isAlreadyMember = r.relationStatus === "MEMBER";
+
+                return {
+                  userId: r.user.userId,
+                  name: r.user.name,
+                  nameTag: r.user.nameTag,
+                  img: r.user.img,
+                  isInvited: isAlreadyInvited,
+                  isMember: isAlreadyMember,
+                };
+              }}
               isLoading={isSearchLoading || isSendingInvite}
               onSelect={handleSelectUser}
               onClose={() => setIsDropdownOpen(false)}
@@ -82,7 +108,7 @@ export const FindUserTab = ({ roomId }: FindUserTabProps) => {
         </div>
       )}
 
-      
+     
       <div className="flex flex-col gap-4 w-full">
         <div className="flex items-center gap-2">
           <h3 className="text-xl font-bold font-industrial text-foreground tracking-wide">
@@ -96,7 +122,6 @@ export const FindUserTab = ({ roomId }: FindUserTabProps) => {
         {invitedUsers.length === 0 ? (
           <p className="text-sm text-neutral-600 italic py-2">No invites sent yet.</p>
         ) : (
-         
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full">
             {invitedUsers.map((user) => (
               <div
