@@ -29,6 +29,7 @@ import project_z.demo.dto.UserDtos.UserDtoWithFriendshipStatus;
 import project_z.demo.entity.UserEntity;
 import project_z.demo.security.SecurityService;
 import project_z.demo.services.FriendshipService;
+
 @RestController
 @RequestMapping("/api/v1/friendships")
 @RequiredArgsConstructor
@@ -40,10 +41,10 @@ public class FriendshipController {
 
     @PostMapping("/request/{receiverId}")
     public ResponseEntity<Void> sendFriendRequest(@PathVariable("receiverId") UUID receiverId) {
-        UUID senderId = SecurityContextHolder.getContext().getAuthentication() != null 
-                        ? UUID.fromString(SecurityContextHolder.getContext().getAuthentication().getName()) 
-                        : null;
-        
+        UUID senderId = SecurityContextHolder.getContext().getAuthentication() != null
+                ? UUID.fromString(SecurityContextHolder.getContext().getAuthentication().getName())
+                : null;
+
         friendshipService.sendFriendRequest(senderId, receiverId);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
@@ -81,6 +82,13 @@ public class FriendshipController {
     public ResponseEntity<List<FriendRequestDto>> getFriendsByUserId(@PathVariable("userId") UUID userId) {
         List<FriendRequestDto> res = friendshipService.findFriendsByUserId(userId);
         return new ResponseEntity<>(res, HttpStatus.OK);
+    }
+
+    @GetMapping("/userWithCurrentFriendshipStatus/{userId}")
+    public ResponseEntity<UserDtoWithFriendshipStatus> getUserWithFriendshipStatus(
+            @PathVariable("userId") UUID userId) {
+        UUID currentUserId = securityService.getCurrentUserId();
+        return new ResponseEntity<>(friendshipService.findUserWithFriendshipStatusToCurrentUser(userId,currentUserId), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")

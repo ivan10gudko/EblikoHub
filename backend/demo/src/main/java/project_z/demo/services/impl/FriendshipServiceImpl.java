@@ -65,6 +65,13 @@ public class FriendshipServiceImpl implements FriendshipService {
 
     @Override
     @Transactional(readOnly = true)
+    public UserDtoWithFriendshipStatus findUserWithFriendshipStatusToCurrentUser(UUID userId, UUID currentUserId) {
+        return friendshipRepository.findUserWithFriendshipStatusToCurrentUser(userId, currentUserId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public List<FriendRequestDto> findFriendsByUserId(UUID userId) {
         List<Object[]> rawData = friendshipRepository.findFriendsWithIds(userId);
 

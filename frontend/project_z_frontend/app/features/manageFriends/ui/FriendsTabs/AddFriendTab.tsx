@@ -3,6 +3,7 @@ import { InfiniteScrollLoader } from "~/shared/ui/infinityScroll";
 import type { FriendActionType } from "../../types/friends.types";
 import { useUserFriendshipSearch } from "~/entities/friendship/hooks/useFriendshipSearch";
 import { FriendCardAdd } from "../FriendCards/AddFriendCard";
+import type { UserProfile } from "~/entities/user/model/user.types";
 
 
 interface AddFriendTabProps {
@@ -11,7 +12,7 @@ interface AddFriendTabProps {
     onAction: (actionType: FriendActionType, id: string) => void;
 }
 export const AddFriendTab = ({ searchQuery, isPendingAction, onAction }: AddFriendTabProps) => {
-    const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } = useUserFriendshipSearch(searchQuery);
+    const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } = useUserFriendshipSearch<UserProfile>(searchQuery);
     
     const searchResults = data?.pages.flatMap(p => p.content) ?? [];
 
