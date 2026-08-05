@@ -29,6 +29,7 @@ export interface TitleVisual {
     apiTitleId: number;
     titleName: string;
     imageUrl: string;
+    titleType: TitleType;
 }
 
 export const titleTypeOptions = [

@@ -1,56 +1,126 @@
-
-import { TitleTypeThemes } from "~/entities/titleRecord";
+import { useState, useEffect } from "react";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import { useParams } from "react-router";
+import { TitleTypeThemes, TitleType, type TitleShort } from "~/entities/titleRecord";
 import type { RoomTitleWithUserLinks } from "~/features/manageRooms";
-import { Dropdown } from "~/shared/ui/DropDown";
-import { DropdownItem } from "~/shared/ui/DropDown/DropDown";
-import MoreVertIcon from "@mui/icons-material/MoreVert";
-import VisibilityIcon from "@mui/icons-material/Visibility";
-import { useRoomModal } from "~/features/manageRooms/hooks/useRoomModal";
+import { useRoomTitleLinkActions } from "~/features/manageRooms";
+import { LinkItem } from "~/features/manageRooms/ui/LinkItem";
+
 interface RoomTitleRowProps {
-    title: RoomTitleWithUserLinks;
+  title: RoomTitleWithUserLinks;
+  allTitles?: RoomTitleWithUserLinks[];
+  isDraggingOver?: boolean;
 }
+
 const DEFAULT_IMAGE_PATH = "/defaultTitleRecordImage.jpg";
-export const RoomTitleReadOnlyRowShort = ({ title }: RoomTitleRowProps) => {
-    const themeClasses = title.titleType ? TitleTypeThemes[title.titleType] : ""
-    const { openSettingsModal } = useRoomModal();
-    return (
-        <div className={`group/row flex items-center gap-4 bg-card p-2 rounded-xl border border-border/50 transition-all duration-300 w-full min-w-0 ${themeClasses}`}>
-            <div className="w-[20px]" />
+const HOVER_EXPAND_DELAY_MS = 700; 
 
-            <div className="relative h-10 w-16 flex-shrink-0">
-                <img
-                    src={title.imageUrl || DEFAULT_IMAGE_PATH}
-                    className="h-full w-full object-cover rounded-md"
-                    alt={title.titleName}
+const getThemeClass = (type?: string | null): string => {
+  if (!type) return "";
+  if (Object.values(TitleType).includes(type as TitleType)) {
+    return TitleTypeThemes[type as TitleType] || "";
+  }
+  return "";
+};
+
+export const RoomTitleReadOnlyRowShort = ({
+  title,
+  allTitles = [],
+  isDraggingOver,
+}: RoomTitleRowProps) => {
+  const [isOpenManual, setIsOpenManual] = useState(false);
+  const [isDragOpen, setIsDragOpen] = useState(false);
+
+  const themeClasses = getThemeClass(title.titleType);
+  const borderClass = themeClasses ? "" : "border-border/50";
+
+  const { id: roomId } = useParams<{ id: string }>();
+  const { deleteLink } = useRoomTitleLinkActions(Number(roomId));
+
+  
+  useEffect(() => {
+    if (!isDraggingOver) {
+      setIsDragOpen(false);
+      return;
+    }
+
+    const timer = setTimeout(() => {
+      setIsDragOpen(true);
+    }, HOVER_EXPAND_DELAY_MS);
+
+    return () => clearTimeout(timer);
+  }, [isDraggingOver]);
+
+  
+  const isOpen = isOpenManual || isDragOpen;
+
+  const handleDeleteLink = (linkId: string | number) => {
+    deleteLink({
+      roomTitleLinkId: String(linkId),
+      roomTitleId: String(title.id),
+    });
+  };
+
+  return (
+    <div
+      className={`group/row flex flex-col bg-card rounded-xl border ${borderClass} transition-all duration-300 w-full overflow-hidden ${themeClasses}`}
+    >
+      <div className="flex items-center gap-4 p-2 w-full min-w-0">
+        <div className="w-[20px]" />
+
+        <div className="relative h-10 w-16 flex-shrink-0">
+          <img
+            src={title.imageUrl || DEFAULT_IMAGE_PATH}
+            className="h-full w-full object-cover rounded-md"
+            alt={title.titleName}
+          />
+        </div>
+
+        <div className="flex-1 min-w-0">
+          <span className="block truncate font-bold text-foreground uppercase text-xs sm:text-sm">
+            {title.titleName}
+          </span>
+        </div>
+
+        <div className="ml-auto flex items-center pr-2">
+          <button
+            type="button"
+            onClick={() => setIsOpenManual((prev) => !prev)}
+            className={`p-1 hover:bg-border/50 rounded-lg transition-all text-foreground cursor-pointer ${
+              isOpen ? "rotate-180" : ""
+            }`}
+            title={isOpen ? "hide" : "Expand linked titles"}
+          >
+            <ExpandMoreIcon sx={{ fontSize: 22 }} />
+          </button>
+        </div>
+      </div>
+
+      {isOpen && (
+        <div className="w-full flex flex-col gap-2 p-3 bg-black/25 border-t border-border/40 animate-in fade-in slide-in-from-top-1 duration-150">
+          <div className="flex items-center justify-between px-1">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
+              Linked titles ({title.links?.length || 0})
+            </span>
+          </div>
+
+          {!title.links || title.links.length === 0 ? (
+            <p className="p-2 text-center text-muted-foreground text-xs italic">
+              No links found.
+            </p>
+          ) : (
+            <div className="flex flex-col gap-2">
+              {title.links.map((link) => (
+                <LinkItem
+                  key={link.id}
+                  title={link.title}
+                  onDelete={() => handleDeleteLink(link.id)}
                 />
+              ))}
             </div>
-
-            <div className="flex-1 min-w-0">
-                <span className="block truncate font-bold text-foreground uppercase text-xs sm:text-sm">
-                    {title.titleName}
-                </span>
-            </div>
-
-            <div className="ml-auto flex items-center pr-2">
-                <Dropdown
-                    trigger={
-                        <button className="p-1 hover:bg-border/50 rounded-lg transition-colors text-foreground">
-                            <MoreVertIcon sx={{ fontSize: 20 }} />
-                        </button>
-                    }
-                >
-                    <DropdownItem
-                        icon={<VisibilityIcon sx={{ fontSize: 16 }} />}
-                        onClick={() => {
-                            openSettingsModal('user-links', title.id)
-                        }
-                        }
-                    >
-                        View room title links
-                    </DropdownItem>
-
-                </Dropdown>
-            </div>
-        </div >
-    );
+          )}
+        </div>
+      )}
+    </div>
+  );
 };

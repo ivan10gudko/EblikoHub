@@ -6,7 +6,7 @@ import { useRoomMemberByRoomIdAndUserId } from "../../hooks/useRoomMemberByRoomI
 import { AddRoomModal } from "./AddRoomModal";
 import { AddRoomTitleModal } from "./AddRoomTitleModal";
 import { EditRoomTitleModal } from "./EditRoomTitleModal";
-import { RoomTitleUserLinksModal } from "./RoomTitleUserLinksModal";
+
 import { ViewAllRoomTitleLinksModal } from "./ViewAllRoomTitleLinksModal";
 
 import { RoomRole } from "~/entities/room";
@@ -53,11 +53,7 @@ export const RoomModalManager = ({ roomId }: { roomId: number }) => {
       isOpen: activeSettingsModal === "edit-title" && !!editingTitle,
       render: () => <EditRoomTitleModal isOpen onClose={closeAllModals} roomId={roomId} item={editingTitle!} />,
     },
-    {
-      key: "user-links",
-      isOpen: activeSettingsModal === "user-links",
-      render: () => <RoomTitleUserLinksModal isOpen onClose={closeAllModals} roomTitleId={settingsEntityId ?? ""} />,
-    },
+   
     {
       key: "all-links",
       isOpen: activeSettingsModal === "all-links",
