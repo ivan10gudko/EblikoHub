@@ -14,5 +14,7 @@ public interface UserFavoriteTitleRepository extends JpaRepository<UserFavoriteT
 
     void deleteByUserUserIdAndTitleTitleId(UUID userId, Long titleId);
     
+    boolean existsByUserUserIdAndPosition(UUID userId, Integer position);
+
     long countByUserUserId(UUID userId);
 }

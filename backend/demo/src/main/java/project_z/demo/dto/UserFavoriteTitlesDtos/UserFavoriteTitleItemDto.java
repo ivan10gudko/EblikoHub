@@ -15,5 +15,6 @@ import project_z.demo.dto.TitleDtos.TitleShortDto;
 @AllArgsConstructor
 public class UserFavoriteTitleItemDto {
     private UUID id;
+    private Integer position;
     private TitleShortDto title;
 }

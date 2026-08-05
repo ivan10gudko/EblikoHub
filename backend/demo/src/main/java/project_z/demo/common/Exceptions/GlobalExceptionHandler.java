@@ -18,6 +18,7 @@ import project_z.demo.common.Exceptions.RoomBanExceptions.RoomSelfBanException;
 import project_z.demo.common.Exceptions.RoomMembersExceptions.RoomMembersConflictException;
 import project_z.demo.common.Exceptions.RoomTitleLinkExceptions.RoomTitleLinkAlreadyExistsException;
 import project_z.demo.common.Exceptions.UserFavoriteTitleExceptions.UserFavoriteTitlesLimitReachedException;
+import project_z.demo.common.Exceptions.UserFavoriteTitleExceptions.UserFavoriteTitlePositionOccupiedException;
 import project_z.demo.common.Exceptions.WheelPresetExceptions.WheelPresetAlreadyExists;
 
 @RestControllerAdvice
@@ -53,6 +54,11 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(UserFavoriteTitlesLimitReachedException.class)
     public ResponseEntity<Map<String, Object>> hanleUserFavoriteTitlesLimitReached(UserFavoriteTitlesLimitReachedException ex) {
         return buildErrorResponse(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(UserFavoriteTitlePositionOccupiedException.class)
+    public ResponseEntity<Map<String, Object>> handleUserFavoriteTitlePositionOccupied(UserFavoriteTitlePositionOccupiedException ex) {
+        return buildErrorResponse(ex.getMessage(), HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler(FriendshipConflictException.class)

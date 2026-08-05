@@ -24,6 +24,7 @@ public class UserFavoriteTitleItemMapperImpl implements Mapper<UserFavoriteTitle
 
         return UserFavoriteTitleItemDto.builder()
                 .id(entity.getId())
+                .position(entity.getPosition())
                 .title(titleShortMapper.mapTo(entity.getTitle()))
                 .build();
     }

@@ -23,10 +23,11 @@ public class UserFavoriteTitleController {
     @PostMapping("/{titleId}")
     public ResponseEntity<UserProfileDto> addTitleToFavorite(
             @PathVariable("titleId") Long titleId,
+            @RequestParam("position") Integer position,
             @RequestHeader("Authorization") String token) {
 
         UUID userId = jwtService.extractUsername(token);
-        UserProfileDto updatedProfile = favoriteTitleService.addTitleToFavorite(userId, titleId);
+        UserProfileDto updatedProfile = favoriteTitleService.addTitleToFavorite(userId, titleId, position);
         return new ResponseEntity<>(updatedProfile, HttpStatus.CREATED);
     }
 
