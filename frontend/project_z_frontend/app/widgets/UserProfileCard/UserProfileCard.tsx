@@ -10,6 +10,9 @@ import { useAuthStore } from "~/features/auth";
 import { Button } from "~/shared/ui/Button";
 import { UserProfileEdit } from "./UserProfileEditCard";
 import { notify } from "~/shared/lib";
+import { UserFavoriteTitlesShowcase } from "./UserFavoriteTitlesShowcase";
+import { SelectFavoriteModal } from "~/features/favoriteTitles/ui/SelectFavoriteModal"; // Імпорт модалки
+import { useUserProfile } from "~/features/favoriteTitles";
 
 interface UserProfileCardProps {
   userId: string;
@@ -17,15 +20,14 @@ interface UserProfileCardProps {
 
 export const UserProfileCard = ({ userId }: UserProfileCardProps) => {
   const [isEditing, setIsEditing] = useState(false);
+  const [selectedPosition, setSelectedPosition] = useState<number | null>(null); // Стан для керування модалкою вибору тайтла
+
   const { userId: currentUserId } = useAuthStore();
   const queryClient = useQueryClient();
 
   const isOwn = currentUserId === userId;
 
-  const { data: user } = useSuspenseQuery({
-    queryKey: ["user_profile", userId],
-    queryFn: () => userService.getUser(userId),
-  });
+  const { data: user } = useUserProfile(userId);
 
   const updateMutation = useMutation({
     mutationFn: async ({
@@ -90,6 +92,22 @@ export const UserProfileCard = ({ userId }: UserProfileCardProps) => {
             {user.description ||
               "No description provided yet. Let people know who you are!"}
           </p>
+
+          <div className="h-[1px] bg-background-muted w-full my-2" />
+
+          <UserFavoriteTitlesShowcase
+            profile={user}
+            isOwner={isOwn}
+            onAddClick={(position) => setSelectedPosition(position)}
+          />
+          {selectedPosition !== null && (
+            <SelectFavoriteModal
+              position={selectedPosition}
+              userId={user.userId}
+              isOpen={selectedPosition !== null}
+              onClose={() => setSelectedPosition(null)}
+            />
+          )}
         </>
       ) : (
         <UserProfileEdit
