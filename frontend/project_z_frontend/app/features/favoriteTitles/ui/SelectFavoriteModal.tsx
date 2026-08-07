@@ -47,18 +47,8 @@ export const SelectFavoriteModal: React.FC<SelectFavoriteModalProps> = ({
     queryKey,
   } = useInfinityTitles(isOpen ? userId : null, queryParams);
 
-  const userTitles = useMemo(() => {//TODO  fix memo
-    if (!data?.pages) return [];
-    
-    const uniqueMap = new Map();
-    for (const page of data.pages) {
-      for (const item of page.content) {
-        if (!uniqueMap.has(item.titleId)) {
-          uniqueMap.set(item.titleId, item);
-        }
-      }
-    }
-    return Array.from(uniqueMap.values());
+  const userTitles = useMemo(() => {
+    return data?.pages.flatMap((page) => page.content) || [];
   }, [data]);
 
   const { optimisticTitles } = useReorderWatchlist(
@@ -121,11 +111,10 @@ export const SelectFavoriteModal: React.FC<SelectFavoriteModalProps> = ({
                   <div
                     key={item.titleId}
                     onClick={() => handleSelectTitle(item.titleId)}
-                    className={`flex items-center justify-between p-3 rounded-xl border transition-all gap-3 select-none ${
-                      isAlreadyAdded
+                    className={`flex items-center justify-between p-3 rounded-xl border transition-all gap-3 select-none ${isAlreadyAdded
                         ? "bg-background-muted/20 border-transparent opacity-50 cursor-not-allowed"
                         : "bg-background-muted/40 hover:bg-primary/10 hover:border-primary/30 border-transparent cursor-pointer"
-                    }`}
+                      }`}
                   >
                     <div className="flex items-center gap-3 overflow-hidden">
                       <div className="w-12 h-16 shrink-0 overflow-hidden rounded-lg bg-background-muted">
@@ -150,11 +139,10 @@ export const SelectFavoriteModal: React.FC<SelectFavoriteModalProps> = ({
                         e.stopPropagation();
                         handleSelectTitle(item.titleId);
                       }}
-                      className={`px-3 py-1 text-xs font-bold rounded-lg transition-colors shrink-0 ${
-                        isAlreadyAdded
+                      className={`px-3 py-1 text-xs font-bold rounded-lg transition-colors shrink-0 ${isAlreadyAdded
                           ? "bg-slate-700 text-slate-400 cursor-not-allowed"
                           : "bg-primary text-white hover:bg-primary-hover cursor-pointer disabled:opacity-50"
-                      }`}
+                        }`}
                     >
                       {isAlreadyAdded ? "Added" : "Select"}
                     </button>
