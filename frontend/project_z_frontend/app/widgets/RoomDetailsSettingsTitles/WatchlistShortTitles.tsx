@@ -23,7 +23,7 @@ export const WatchlistShortTitles = ({
     useInfinityTitles(
       userId,
       {
-        limit: 10,
+        limit: 20,
         search,
         sortBy,
         order,
