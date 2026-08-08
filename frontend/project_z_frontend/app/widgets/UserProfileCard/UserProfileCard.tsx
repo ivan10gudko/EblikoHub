@@ -1,73 +1,49 @@
-import EditIcon from "@mui/icons-material/Edit";
-import {
-  useMutation,
-  useQueryClient,
-  useSuspenseQuery,
-} from "@tanstack/react-query";
 import { useState } from "react";
-import { UserAvatar, userService } from "~/entities/user";
-import { useAuthStore } from "~/features/auth";
+import EditIcon from "@mui/icons-material/Edit";
+import PersonRemoveIcon from "@mui/icons-material/PersonRemove";
+import { UserAvatar } from "~/entities/user";
+import { RequestStatus } from "~/shared/types";
 import { Button } from "~/shared/ui/Button";
 import { UserProfileEdit } from "./UserProfileEditCard";
-import { notify } from "~/shared/lib";
 import { UserFavoriteTitlesShowcase } from "./UserFavoriteTitlesShowcase";
-import { SelectFavoriteModal } from "~/features/favoriteTitles/ui/SelectFavoriteModal"; // Імпорт модалки
-import { useUserProfile } from "~/features/favoriteTitles";
+import { useUserProfile } from "~/widgets/UserProfileCard/hooks/useUserProfile";
+import { SelectFavoriteModal } from "~/features/profile/ui/SelectFavoriteModal";
 
 interface UserProfileCardProps {
   userId: string;
 }
 
 export const UserProfileCard = ({ userId }: UserProfileCardProps) => {
-  const [isEditing, setIsEditing] = useState(false);
-  const [selectedPosition, setSelectedPosition] = useState<number | null>(null); // Стан для керування модалкою вибору тайтла
+  const [selectedPosition, setSelectedPosition] = useState<number | null>(null);
 
-  const { userId: currentUserId } = useAuthStore();
-  const queryClient = useQueryClient();
+  const {
+    user,
+    isOwn,
+    isEditing,
+    setIsEditing,
+    friendshipStatus,
+    friendshipId,
+    onAction,
+    isActionLoading,
+    updateProfile,
+    isUpdating,
+  } = useUserProfile(userId);
 
-  const isOwn = currentUserId === userId;
-
-  const { data: user } = useUserProfile(userId);
-
-  const updateMutation = useMutation({
-    mutationFn: async ({
-      profileData,
-      avatarFile,
-    }: {
-      profileData: { name: string; description: string };
-      avatarFile: File | null;
-    }) => {
-      const updateTextPromise = userService.updateUser(
-        user.userId,
-        profileData,
-      );
-
-      if (avatarFile) {
-        const updatePhotoPromise = userService.uploadAvatar(
-          user.userId,
-          avatarFile,
-        );
-        return Promise.all([updateTextPromise, updatePhotoPromise]);
-      }
-
-      return updateTextPromise;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["user_profile", userId] });
-      setIsEditing(false);
-      notify.success("Successfully updated");
-    },
-    onError: () => {
-      notify.error("Failed to update profile");
-    },
-  });
+  const isNone = !friendshipStatus || friendshipStatus === RequestStatus.NONE;
+  const isPending = friendshipStatus === RequestStatus.PENDING;
+  const isAccepted = friendshipStatus === RequestStatus.ACCEPTED;
 
   return (
     <>
       {!isEditing ? (
         <>
           <div className="flex flex-col sm:flex-row items-center gap-6">
-            <UserAvatar src={user.img} name={user.name} size="lg" />
+            <UserAvatar
+              src={user.img || undefined}
+              name={user.name}
+              size="lg"
+            />
+
             <div className="flex flex-col items-center sm:items-start grow">
               <h1 className="text-3xl font-black text-foreground tracking-tight">
                 {user.name}
@@ -76,6 +52,7 @@ export const UserProfileCard = ({ userId }: UserProfileCardProps) => {
                 @{user.nameTag}
               </span>
             </div>
+
             {isOwn && (
               <Button
                 onClick={() => setIsEditing(true)}
@@ -84,9 +61,53 @@ export const UserProfileCard = ({ userId }: UserProfileCardProps) => {
                 <EditIcon className="text-primary" />
               </Button>
             )}
+
+            {!isOwn && (
+              <div className="flex items-center gap-3">
+                {isNone && (
+                  <Button
+                    disabled={isActionLoading}
+                    onClick={() => onAction("send", userId)}
+                    className="bg-primary hover:bg-primary-hover text-white px-5 py-2.5 rounded-2xl font-medium transition-all shadow-sm active:scale-95 disabled:opacity-50"
+                  >
+                    {isActionLoading ? "Sending..." : "Add Friend"}
+                  </Button>
+                )}
+
+                {isPending && (
+                  <Button
+                    disabled={isActionLoading || !friendshipId}
+                    onClick={() =>
+                      friendshipId && onAction("delete", friendshipId)
+                    }
+                    className="group flex items-center gap-2 border border-red-500/30 hover:border-red-500/60 bg-red-500/5 hover:bg-red-500/10 text-red-500 px-5 py-2.5 rounded-2xl font-medium transition-all duration-200 active:scale-95 disabled:opacity-50"
+                  >
+                    <PersonRemoveIcon className="w-4 h-4 text-red-500 group-hover:scale-110 transition-transform" />
+                    <span>
+                      {isActionLoading ? "Cancelling..." : "Cancel Request"}
+                    </span>
+                  </Button>
+                )}
+
+                {isAccepted && (
+                  <Button
+                    disabled={isActionLoading || !friendshipId}
+                    onClick={() =>
+                      friendshipId && onAction("delete", friendshipId)
+                    }
+                    className="group flex items-center gap-2 bg-rose-500/10 hover:bg-rose-500/20 text-rose-500 hover:text-rose-600 border border-rose-500/20 hover:border-rose-500/40 px-5 py-2.5 rounded-2xl font-semibold transition-all duration-200 active:scale-95 shadow-sm disabled:opacity-50"
+                  >
+                    <PersonRemoveIcon className="w-4 h-4 text-rose-500 group-hover:scale-110 transition-transform" />
+                    <span>
+                      {isActionLoading ? "Removing..." : "Remove Friend"}
+                    </span>
+                  </Button>
+                )}
+              </div>
+            )}
           </div>
 
-          <div className="h-[1px] bg-background-muted w-full" />
+          <div className="h-px bg-background-muted w-full" />
 
           <p className="text-foreground leading-relaxed">
             {user.description ||
@@ -100,6 +121,7 @@ export const UserProfileCard = ({ userId }: UserProfileCardProps) => {
             isOwner={isOwn}
             onAddClick={(position) => setSelectedPosition(position)}
           />
+
           {selectedPosition !== null && (
             <SelectFavoriteModal
               position={selectedPosition}
@@ -113,13 +135,15 @@ export const UserProfileCard = ({ userId }: UserProfileCardProps) => {
         <UserProfileEdit
           user={user}
           onSave={(data, file) =>
-            updateMutation.mutate({
-              profileData: data,
-              avatarFile: file,
-            })
+            updateProfile(
+              { profileData: data, avatarFile: file },
+              {
+                onSuccess: () => setIsEditing(false),
+              }
+            )
           }
           onCancel={() => setIsEditing(false)}
-          isPending={updateMutation.isPending}
+          isPending={isUpdating}
         />
       )}
     </>

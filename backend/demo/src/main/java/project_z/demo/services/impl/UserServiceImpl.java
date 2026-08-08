@@ -2,11 +2,9 @@ package project_z.demo.services.impl;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpEntity;
@@ -14,23 +12,23 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
-import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import project_z.demo.JavaUtil.BeanUtilsHelper;
 import project_z.demo.JavaUtil.PagingHelper;
 import project_z.demo.Mappers.Mapper;
-import project_z.demo.Mappers.impl.UserMapperImpl;
 import project_z.demo.common.Exceptions.ResourceNotFoundException;
 import project_z.demo.common.QueryParameters.UserQueryParameters;
 import project_z.demo.config.MyConfig;
 import project_z.demo.dto.UserDtos.UserDto;
 import project_z.demo.dto.UserDtos.UserProfileDto;
-import project_z.demo.entity.RoomEntity;
 import project_z.demo.entity.RoomMemberEntity;
 import project_z.demo.entity.UserEntity;
+import project_z.demo.enums.RequestStatus;
+import project_z.demo.repositories.FriendshipRepository;
 import project_z.demo.repositories.RoomMemberRepository;
 import project_z.demo.repositories.RoomRepository;
 import project_z.demo.repositories.TitleRepository;
@@ -41,6 +39,7 @@ import project_z.demo.services.UserService;
 @AllArgsConstructor
 public class UserServiceImpl implements UserService {
 
+    private final FriendshipRepository friendshipRepository;
     private final Mapper<UserEntity, UserDto> userMapper;
     private final Mapper<UserEntity, UserProfileDto> userProfileMapper;
     private final ModelMapper modelMapper;
@@ -144,11 +143,30 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Transactional
-    public UserProfileDto getUserProfile(UUID userId) {
+    @Transactional(readOnly = true)
+    public UserProfileDto getUserProfile(UUID userId, UUID currentUserId) {
         UserEntity userEntity = userRepository.findByIdWithFavorites(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
-        return userProfileMapper.mapTo(userEntity);
+        UserProfileDto userProfile = userProfileMapper.mapTo(userEntity);
+
+
+        if (currentUserId != null && !currentUserId.equals(userId)) {
+            friendshipRepository.findFriendshipBetween(userId, currentUserId)
+                    .ifPresentOrElse(
+                            friendship -> {
+                                userProfile.setFriendshipStatus(friendship.getStatus());
+                                userProfile.setFriendshipId(friendship.getFriendshipId());
+                            },
+                            () -> {
+                                userProfile.setFriendshipStatus(RequestStatus.NONE);
+                                userProfile.setFriendshipId(null);
+                            });
+        } else {
+            userProfile.setFriendshipStatus(RequestStatus.NONE);
+            userProfile.setFriendshipId(null);
+        }
+
+        return userProfile;
     }
 }

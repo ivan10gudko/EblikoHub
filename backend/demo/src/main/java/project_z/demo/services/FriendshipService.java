@@ -30,4 +30,5 @@ public interface FriendshipService {
     List<FriendRequestDto> findSentFriendRequestsByUserId(UUID userId);
     FriendshipCountsDto getUserFriendshipStats(UUID userId);
     Page<UserDtoWithFriendshipStatus> searchUsers(String name, UUID currentUserId, FriendshipQueryParameters pageable);
+    UserDtoWithFriendshipStatus findUserWithFriendshipStatusToCurrentUser(UUID userId, UUID currentUserId);
 }

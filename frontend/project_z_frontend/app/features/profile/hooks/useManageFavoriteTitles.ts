@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { favoriteTitlesApi } from "~/features/favoriteTitles";
+import { favoriteTitlesApi } from "~/features/profile/api/favoriteTitlesApi";
 
 export const useManageFavoriteTitles = (userId: string) => {
   const queryClient = useQueryClient();
@@ -7,7 +7,7 @@ export const useManageFavoriteTitles = (userId: string) => {
 
   const addFavoriteMutation = useMutation({
     mutationFn: ({ titleId, position }: { titleId: number; position: number }) =>
-      favoriteTitlesApi.addOrUpdateFavorite(titleId, position),
+      favoriteTitlesApi.addFavorite(titleId, position),
     onSuccess: (updatedProfile) => {
       queryClient.setQueryData(userProfileQueryKey, updatedProfile);
     },

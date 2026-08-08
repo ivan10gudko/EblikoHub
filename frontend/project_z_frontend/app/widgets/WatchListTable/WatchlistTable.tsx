@@ -4,11 +4,11 @@ import {
   Draggable,
   type DropResult,
 } from "@hello-pangea/dnd";
-import { type TitleRecord } from "~/entities/titleRecord";
+import { useTitleById, type TitleRecord } from "~/entities/titleRecord";
 import { WatchlistRow } from "./WatchlistRow/watchlistRow";
 import { useParams, useSearchParams } from "react-router";
 import { useReorderWatchlist } from "~/entities/titleRecord/hooks/useReorderWatchlist";
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { WatchlistSkeleton } from "./WatchlistTableSkeleton";
 import { AddTitleModal } from "../TitleModal";
 import { PinnedWatchlistRow } from "./WatchlistRow/pinnedWatchlistRow";
@@ -43,6 +43,16 @@ export const WatchlistTable = ({
   const [activeRatingTitle, setActiveRatingTitle] =
     useState<TitleRecord | null>(null);
   const [viewTitle, setViewTitle] = useState<TitleRecord | null>(null);
+  
+  const [selectedTitleId, setSelectedTitleId] = useState<number | null>(null);
+  const { data: fetchedTitle } = useTitleById(selectedTitleId ?? undefined);
+
+  useEffect(() => {
+    if (fetchedTitle) {
+      setActiveRatingTitle(fetchedTitle);
+    }
+  }, [fetchedTitle]);
+
   const showNumber = !isDragable;
 
   const { reorder, optimisticTitles } = useReorderWatchlist(
@@ -58,13 +68,14 @@ export const WatchlistTable = ({
   }, [optimisticTitles]);
 
   const handleTitleChange = (newTitleId: number) => {
-    const foundTitle = titles.find((t) => t.titleId === newTitleId);
-    if (foundTitle) {
-      setActiveRatingTitle(foundTitle);
-    }
+    setSelectedTitleId(newTitleId);
   };
 
-  const openRating = (title: TitleRecord) => setActiveRatingTitle(title);
+  const openRating = (title: TitleRecord) => {
+    setSelectedTitleId(title.titleId);
+    setActiveRatingTitle(title);
+  };
+  
   const openView = (title: TitleRecord) => setViewTitle(title);
 
   const onDragEnd = (result: DropResult) => {
@@ -122,7 +133,7 @@ export const WatchlistTable = ({
                       draggableId={String(title.titleId)}
                       index={index}
                       isDragDisabled={!isDragable}
-                    >
+                  >
                       {(provided) => (
                         <div
                           ref={provided.innerRef}
@@ -139,14 +150,14 @@ export const WatchlistTable = ({
                             onOpenRatingModal={() => openRating(title)}
                           />
                         </div>
-                      )}
-                    </Draggable>
-                  ))}
-                  {provided.placeholder}
-                </div>
-              )}
-            </Droppable>
-          </DragDropContext>
+                  )}
+                </Draggable>
+              ))}
+              {provided.placeholder}
+            </div>
+          )}
+          </Droppable>
+        </DragDropContext>
         </>
       ) : (
         <div className="flex flex-col gap-2 w-full">
@@ -156,43 +167,46 @@ export const WatchlistTable = ({
               onOpenRatingModal={() => openRating(pinnedTitle)}
               onRowClick={openView}
             />
-          )}
-          {regularTitles.map((title, index) => (
-            <WatchlistRowReadOnly
-              key={String(title.titleId)}
-              title={title}
-              index={index}
-              showNumber={showNumber}
-              onOpenRatingModal={() => openRating(title)}
-              onRowClick={openView}
-            />
-          ))}
-        </div>
-      )}
+        )}
+        {regularTitles.map((title, index) => (
+          <WatchlistRowReadOnly
+            key={String(title.titleId)}
+            title={title}
+            index={index}
+            showNumber={showNumber}
+            onOpenRatingModal={() => openRating(title)}
+            onRowClick={openView}
+          />
+        ))}
+      </div>
+    )}
 
-      <AddTitleModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+    <AddTitleModal
+      isOpen={isModalOpen}
+      onClose={() => setIsModalOpen(false)}
+    />
+
+    {activeRatingTitle && (
+      <EditRatingModal
+        isOpen={true}
+        title={activeRatingTitle}
+        onClose={() => {
+         setActiveRatingTitle(null);
+         setSelectedTitleId(null);
+       }}
+        onTitleChange={handleTitleChange}
+        isOwn={isOwn}
       />
-
-      {activeRatingTitle && (
-        <EditRatingModal
-          isOpen={true}
-          title={activeRatingTitle}
-          onClose={() => setActiveRatingTitle(null)}
-          onTitleChange={handleTitleChange}
-          isOwn={isOwn}
-        />
-      )}
-      {viewTitle && (
-        <ViewTitleModal
-          isOpen={true}
-          title={viewTitle}
-          onClose={() => setViewTitle(null)}
-          isOwn={isOwn}
-          onEditClick={() => openRating(viewTitle)}
-        />
-      )}
-    </div>
+    )}
+    {viewTitle && (
+      <ViewTitleModal
+        isOpen={true}
+        title={viewTitle}
+        onClose={() => setViewTitle(null)}
+        isOwn={isOwn}
+        onEditClick={() => openRating(viewTitle)}
+      />
+    )}
+  </div>
   );
 };

@@ -5,7 +5,13 @@ import java.util.UUID;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
 import project_z.demo.dto.UserDtos.UserProfileDto;
@@ -27,8 +33,8 @@ public class UserFavoriteTitleController {
             @RequestHeader("Authorization") String token) {
 
         UUID userId = jwtService.extractUsername(token);
-        UserProfileDto updatedProfile = favoriteTitleService.addTitleToFavorite(userId, titleId, position);
-        return new ResponseEntity<>(updatedProfile, HttpStatus.CREATED);
+        UserProfileDto res = favoriteTitleService.addTitleToFavorite(userId, titleId, position);
+        return new ResponseEntity<>(res, HttpStatus.CREATED);
     }
 
     @PreAuthorize("hasRole('ADMIN') || @securityService.isFavoriteOwner(#favoriteId)")

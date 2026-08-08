@@ -5,7 +5,7 @@ export interface UserProfile {
     name: string;
     nameTag: string;
     description?: string;
-    img?: string;
+    img?: string | null;
     createdAt?: string;
 }
 
@@ -19,14 +19,13 @@ export interface UpdateUserProfile {
     name: string;
     description?: string;
 }
-export interface UserParams extends QueryParams {
+export interface UserParams extends QueryParams {}
 
-}
 export interface UserShort {
     userId: string;
     name: string;
     nameTag: string;
-    img?: string;
+    img?: string | null;
 }
 export interface BadgeUser {
     id: string;

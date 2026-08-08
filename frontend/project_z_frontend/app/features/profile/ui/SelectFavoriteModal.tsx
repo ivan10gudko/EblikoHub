@@ -1,9 +1,9 @@
 import React, { useState, useMemo } from "react";
-import { useManageFavoriteTitles } from "~/features/favoriteTitles/hooks/useManageFavoriteTitles";
+import { useManageFavoriteTitles } from "~/features/profile/hooks/useManageFavoriteTitles";
 import { InfiniteScrollLoader } from "~/shared/ui/infinityScroll";
 import { useInfinityTitles } from "~/entities/titleRecord/hooks/useInfinityTitles";
 import { useReorderWatchlist } from "~/entities/titleRecord";
-import { useUserProfile } from "../hooks/useUserProfile";
+import { useUserProfile } from "~/widgets/UserProfileCard/hooks/useUserProfile";
 
 interface SelectFavoriteModalProps {
   position: number;
@@ -23,11 +23,11 @@ export const SelectFavoriteModal: React.FC<SelectFavoriteModalProps> = ({
   const [searchQuery, setSearchQuery] = useState("");
   const { addFavorite, isAdding } = useManageFavoriteTitles(userId);
 
-  const { data: userProfile } = useUserProfile(userId);
+  const { favoriteTitles } = useUserProfile(userId);
 
   const existingFavoriteIds = useMemo(
-    () => new Set(userProfile?.favoriteTitles?.map((f) => f.title.titleId) || []),
-    [userProfile]
+    () => new Set(favoriteTitles.map((f) => f.title.titleId)),
+    [favoriteTitles]
   );
 
   const queryParams = useMemo(
@@ -75,7 +75,6 @@ export const SelectFavoriteModal: React.FC<SelectFavoriteModalProps> = ({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
       <div className="w-full max-w-lg bg-card border border-background-muted rounded-2xl p-6 shadow-2xl flex flex-col max-h-[80vh]">
-
         <div className="flex items-center justify-between pb-4 border-b border-background-muted">
           <h3 className="text-lg font-bold text-foreground">
             Select title for position #{position}
@@ -87,7 +86,6 @@ export const SelectFavoriteModal: React.FC<SelectFavoriteModalProps> = ({
             ✕
           </button>
         </div>
-
 
         <div className="my-4">
           <input
@@ -111,10 +109,11 @@ export const SelectFavoriteModal: React.FC<SelectFavoriteModalProps> = ({
                   <div
                     key={item.titleId}
                     onClick={() => handleSelectTitle(item.titleId)}
-                    className={`flex items-center justify-between p-3 rounded-xl border transition-all gap-3 select-none ${isAlreadyAdded
+                    className={`flex items-center justify-between p-3 rounded-xl border transition-all gap-3 select-none ${
+                      isAlreadyAdded
                         ? "bg-background-muted/20 border-transparent opacity-50 cursor-not-allowed"
                         : "bg-background-muted/40 hover:bg-primary/10 hover:border-primary/30 border-transparent cursor-pointer"
-                      }`}
+                    }`}
                   >
                     <div className="flex items-center gap-3 overflow-hidden">
                       <div className="w-12 h-16 shrink-0 overflow-hidden rounded-lg bg-background-muted">
@@ -139,10 +138,11 @@ export const SelectFavoriteModal: React.FC<SelectFavoriteModalProps> = ({
                         e.stopPropagation();
                         handleSelectTitle(item.titleId);
                       }}
-                      className={`px-3 py-1 text-xs font-bold rounded-lg transition-colors shrink-0 ${isAlreadyAdded
+                      className={`px-3 py-1 text-xs font-bold rounded-lg transition-colors shrink-0 ${
+                        isAlreadyAdded
                           ? "bg-slate-700 text-slate-400 cursor-not-allowed"
                           : "bg-primary text-white hover:bg-primary-hover cursor-pointer disabled:opacity-50"
-                        }`}
+                      }`}
                     >
                       {isAlreadyAdded ? "Added" : "Select"}
                     </button>

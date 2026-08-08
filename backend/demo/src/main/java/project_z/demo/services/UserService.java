@@ -1,6 +1,5 @@
 package project_z.demo.services;
 
-import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.data.domain.Page;
@@ -20,5 +19,5 @@ public interface UserService {
     UserDto findByNameTag(String nameTag);
     String uploadAvatar(UserEntity userEntity, MultipartFile file);
     Page<UserEntity> findByName(String name, UserQueryParameters userQueryParameters, UUID currentUserId);
-    UserProfileDto getUserProfile(UUID userId);
+    UserProfileDto getUserProfile(UUID userId, UUID currentUserId);
 }

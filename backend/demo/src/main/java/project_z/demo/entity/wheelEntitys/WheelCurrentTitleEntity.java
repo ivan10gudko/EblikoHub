@@ -43,6 +43,10 @@ public class WheelCurrentTitleEntity {
     @JoinColumn(name = "title_id", nullable = false)
     private TitleEntity title;
 
+    @Column(name = "multiplier")
+    @Builder.Default
+    private Integer multiplier = 1;
+
     @CreatedDate
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;

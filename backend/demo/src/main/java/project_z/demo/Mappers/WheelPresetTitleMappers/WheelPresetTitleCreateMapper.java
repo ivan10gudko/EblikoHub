@@ -12,7 +12,8 @@ public class WheelPresetTitleCreateMapper implements Mapper<WheelPresetTitleEnti
     @Override
     public WheelPresetTitleCreateDto mapTo(WheelPresetTitleEntity entity) {
         return new WheelPresetTitleCreateDto(
-                entity.getTitleId().getTitleId()
+                entity.getTitleId().getTitleId(),
+                entity.getMultiplier()
         );
     }
 

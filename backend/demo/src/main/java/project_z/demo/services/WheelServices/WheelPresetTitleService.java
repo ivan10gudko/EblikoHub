@@ -4,7 +4,9 @@ import java.util.UUID;
 
 import project_z.demo.dto.WheelPresetTitleDtos.WheelPresetTitleCreateDto;
 
+import java.util.List;
+
 public interface WheelPresetTitleService {
-    void addTitleToPreset(UUID presetId, WheelPresetTitleCreateDto dto);
-    void removeTitleFromPreset(UUID presetId, Long titleId);
+    void addTitlesToPreset(UUID presetId, List<WheelPresetTitleCreateDto> dtos);
+    void removeTitlesFromPreset(UUID presetId, List<Long> titleIds);
 }

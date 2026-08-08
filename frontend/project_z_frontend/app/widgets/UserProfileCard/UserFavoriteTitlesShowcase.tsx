@@ -1,9 +1,9 @@
 import React from "react";
-import { useManageFavoriteTitles } from "~/features/favoriteTitles/hooks/useManageFavoriteTitles";
-import type { UserProfileDto } from "~/features/favoriteTitles/model/favorite.types";
+import { useManageFavoriteTitles } from "~/features/profile/hooks/useManageFavoriteTitles";
+import type { UserProfileWithFavorite } from "~/features/profile";
 
 interface UserFavoriteTitlesShowcaseProps {
-    profile: UserProfileDto;
+    profile: UserProfileWithFavorite;
     isOwner: boolean;
     maxPositions?: number;
     onAddClick?: (position: number) => void;
@@ -19,7 +19,7 @@ export const UserFavoriteTitlesShowcase: React.FC<UserFavoriteTitlesShowcaseProp
 }) => {
     const { deleteFavorite, isDeleting } = useManageFavoriteTitles(profile.userId);
     
-    const favoriteTitles = (profile as UserProfileDto).favoriteTitles || [];
+    const favoriteTitles = profile.favoriteTitles || [];
 
     const slots = Array.from({ length: maxPositions }, (_, index) => {
         const position = index + 1;
