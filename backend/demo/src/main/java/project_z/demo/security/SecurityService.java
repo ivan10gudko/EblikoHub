@@ -130,9 +130,22 @@ public class SecurityService {
     }
 
     public boolean isPresetOwner(UUID presetId) {
-    UUID currentUserId = getCurrentUserId();
-    return wheelPresetRepository.findById(presetId)
-            .map(preset -> preset.getUser().getUserId().equals(currentUserId))
-            .orElse(false);
-}
+        UUID currentUserId = getCurrentUserId();
+        return wheelPresetRepository.findById(presetId)
+                .map(preset -> preset.getUser().getUserId().equals(currentUserId))
+                .orElse(false);
+    }
+
+    public boolean canDeleteFriendship(UUID friendshipId) {
+        UUID currentUserId = getCurrentUserId();
+        return friendshipRepository.findById(friendshipId)
+                .map(friendship -> {
+                    if (friendship.getStatus() == RequestStatus.REJECTED) {
+                        return friendship.getReceiver().getUserId().equals(currentUserId);
+                    }
+                    return friendship.getSender().getUserId().equals(currentUserId)
+                            || friendship.getReceiver().getUserId().equals(currentUserId);
+                })
+                .orElse(false);
+    }
 }

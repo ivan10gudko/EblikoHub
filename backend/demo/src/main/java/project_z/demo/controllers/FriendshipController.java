@@ -2,6 +2,7 @@ package project_z.demo.controllers;
 
 import java.util.List;
 import java.util.UUID;
+
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -119,7 +120,7 @@ public class FriendshipController {
         return ResponseEntity.ok(friendshipService.partialUpdate(id, updateDto));
     }
 
-    @PreAuthorize("hasRole('ADMIN') || @securityService.isFriendshipMember(#id)")
+    @PreAuthorize("hasRole('ADMIN') || @securityService.canDeleteFriendship(#id)")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteFriendshipById(@PathVariable("id") UUID id) {
         friendshipService.deleteFriendById(id);
