@@ -13,3 +13,4 @@ export type { ManageTitleRecordProps, TitleStats } from "./model/titleRecord";
 export { default as StatusSelect } from "./ui/StatusSelect";
 export { AnimeSearchDropDownResults } from "./ui/AnimeSearchDropDownResult";
 export { ReadOnlyStatusBadge } from "./ui/ReadOnlyStatusBadge";
+export {getTitleThemeClassname} from "./helpers/getTitleThemeClassname";

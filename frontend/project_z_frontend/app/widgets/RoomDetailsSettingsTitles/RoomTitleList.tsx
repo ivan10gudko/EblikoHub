@@ -68,7 +68,7 @@ export const RoomTitleReadOnlyList = ({
                     )}
 
                     {!isAlreadyLinked && snapshot.isDraggingOver && (
-                      <div className="absolute inset-0 flex items-center justify-center bg-primary/20 rounded-xl z-10 pointer-events-none">
+                      <div className="absolute inset-0 flex items-center justify-center rounded-xl z-10 pointer-events-none">
                         <span className="text-primary font-bold text-xl">
                           + Add
                         </span>

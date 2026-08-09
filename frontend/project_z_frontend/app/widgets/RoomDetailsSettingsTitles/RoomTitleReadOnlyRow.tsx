@@ -1,37 +1,29 @@
 import { useState, useEffect } from "react";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { useParams } from "react-router";
-import { TitleTypeThemes, TitleType, type TitleShort } from "~/entities/titleRecord";
+import { TitleTypeThemes, TitleType, type TitleShort, getTitleThemeClassname } from "~/entities/titleRecord";
 import type { RoomTitleWithUserLinks } from "~/features/manageRooms";
 import { useRoomTitleLinkActions } from "~/features/manageRooms";
 import { LinkItem } from "~/features/manageRooms/ui/LinkItem";
 
 interface RoomTitleRowProps {
   title: RoomTitleWithUserLinks;
-  allTitles?: RoomTitleWithUserLinks[];
   isDraggingOver?: boolean;
 }
 
 const DEFAULT_IMAGE_PATH = "/defaultTitleRecordImage.jpg";
 const HOVER_EXPAND_DELAY_MS = 700; 
 
-const getThemeClass = (type?: string | null): string => {
-  if (!type) return "";
-  if (Object.values(TitleType).includes(type as TitleType)) {
-    return TitleTypeThemes[type as TitleType] || "";
-  }
-  return "";
-};
+
 
 export const RoomTitleReadOnlyRowShort = ({
   title,
-  allTitles = [],
   isDraggingOver,
 }: RoomTitleRowProps) => {
   const [isOpenManual, setIsOpenManual] = useState(false);
   const [isDragOpen, setIsDragOpen] = useState(false);
 
-  const themeClasses = getThemeClass(title.titleType);
+  const themeClasses = getTitleThemeClassname(title.titleType);
   const borderClass = themeClasses ? "" : "border-border/50";
 
   const { id: roomId } = useParams<{ id: string }>();

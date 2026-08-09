@@ -1,5 +1,5 @@
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
-import { TitleTypeThemes, TitleType, type TitleShort, type TitleVisual } from "~/entities/titleRecord";
+import { TitleTypeThemes, TitleType, type TitleShort, type TitleVisual, getTitleThemeClassname } from "~/entities/titleRecord";
 import { Button } from "~/shared/ui/Button";
 
 interface LinkItemProps {
@@ -9,18 +9,11 @@ interface LinkItemProps {
 
 const DEFAULT_IMAGE_PATH = "/defaultTitleRecordImage.jpg";
 
-const getThemeClass = (type?: string | null): string => {
-  if (!type) return "";
-  if (Object.values(TitleType).includes(type as TitleType)) {
-    return TitleTypeThemes[type as TitleType] || "";
-  }
-  return "";
-};
+
 
 export const LinkItem = ({ title, onDelete }: LinkItemProps) => {
  
-  const themeClasses = getThemeClass(title.titleType);
-  console.log("LinkItem themeClasses:", themeClasses);
+  const themeClasses = getTitleThemeClassname(title.titleType);
   const borderClass = themeClasses ? "" : "border-border/50";
 
   return (

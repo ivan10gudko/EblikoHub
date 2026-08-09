@@ -14,7 +14,7 @@ export const WatchlistRowShort = ({ title, dragHandleProps }: WatchlistDragRowPr
     const themeClasses = title.titleType ? TitleTypeThemes[title.titleType] : "";
 
     return (
-        <div className={`group/row flex items-center justify-between gap-2 sm:gap-4 bg-card p-2 rounded-xl border transition-all duration-300 w-full ${themeClasses}`}>
+        <div className={`group/row flex items-center justify-between gap-2 mt-1 sm:gap-4 bg-card p-2 rounded-xl border transition-all duration-300 w-full ${themeClasses}`}>
             <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
                 <div {...dragHandleProps} className="text-muted-foreground/40 group-hover/row:text-muted-foreground/70 cursor-grab active:cursor-grabbing flex-shrink-0">
                     <DragIndicatorIcon sx={{ fontSize: 20 }} />
