@@ -1,4 +1,4 @@
-import { AiTitleMatcherPage } from "~/widgets/AiTitleMatcherModal/AiTitleMatcherModal";
+import { AiTitleMatcherPage } from "~/widgets/AiTitleMatcherModal/AiTitleMatcher";
 
 export default function RoomSettingsTitlesAiMatcherRoute() {
   return (

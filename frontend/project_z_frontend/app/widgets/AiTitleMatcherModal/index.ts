@@ -1,1 +1,1 @@
-export { AiTitleMatcherPage} from './AiTitleMatcherModal';
+export { AiTitleMatcherPage} from './AiTitleMatcher';

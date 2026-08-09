@@ -25,7 +25,7 @@ export const RoomSort = () => {
                     className="flex-1"
                 />
                 <Button 
-                    variant="outline" 
+                    variant="accent" 
                     onClick={toggleOrder} 
                     className="px-4 bg-background hover:bg-background-muted-hover rounded-xl transition-colors"
                 >

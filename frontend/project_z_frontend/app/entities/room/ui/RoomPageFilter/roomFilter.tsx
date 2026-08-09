@@ -14,7 +14,7 @@ export const RoomFilters = ({ children }: RoomFiltersProps) => {
   const { reset } = useRoomFilterStore();
 
   return (
-    <div className="flex flex-col gap-6 p-4 bg-background rounded-2xl shadow-sm border border-border">
+    <div className="flex flex-col gap-6 p-4 bg-background/60 rounded-2xl shadow-sm border border-border">
       <RoomSearch />
       <RoomSort />
 

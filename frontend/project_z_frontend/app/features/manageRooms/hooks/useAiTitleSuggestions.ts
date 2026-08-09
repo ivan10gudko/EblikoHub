@@ -11,6 +11,7 @@ export const useAiTitleSuggestions = (roomId: number) => {
             );
             return res.data;
         },
+        enabled: false, // 👈 Блокує автоматичний запит при завантаженні/монтуванні
         refetchOnWindowFocus: false,
         staleTime: 0,
     });

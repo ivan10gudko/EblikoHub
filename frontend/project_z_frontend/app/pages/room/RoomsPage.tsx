@@ -13,6 +13,7 @@ import { Button } from "~/shared/ui/Button";
 import { useRoomModal } from "~/features/manageRooms/hooks/useRoomModal";
 import { useNavigate } from "react-router";
 import { GlobalModalManager } from "~/features/manageRooms/ui/Modals/GlobalRoomManager";
+import { AddRoomCardButton } from "~/entities/room/ui/roomCard/AddRoomCardButton";
 
 
 const secondaryBtnStyle =
@@ -24,8 +25,6 @@ const secondaryBtnStyle =
   "shadow-md hover:shadow-orange-glow " +
   "transition-all duration-200 " +
   "active:scale-[0.97] cursor-pointer";
-
-
 
 export default function RoomsPage({ userId }: { userId: string | null }) {
   const { search, sortBy, order, setSearch, setSortFromUrl, setOrderFromUrl } =
@@ -50,6 +49,8 @@ export default function RoomsPage({ userId }: { userId: string | null }) {
     );
   }, [data]);
 
+  const isEmpty = !isLoading && allRooms.length === 0;
+
   return (
     <div className="flex flex-col lg:flex-row gap-6 p-4 sm:p-8 max-w-[1400px] mx-auto min-h-screen bg-background-muted/30">
       <FilterResponsiveWrapper pageTitle="My Rooms">
@@ -64,7 +65,6 @@ export default function RoomsPage({ userId }: { userId: string | null }) {
             onClick={() => openRoomModal("add")}
             className={secondaryBtnStyle}
           >
-            
             <span className="text-2xl font-extrabold leading-none relative -top-[1px] select-none">
               +
             </span>
@@ -74,11 +74,18 @@ export default function RoomsPage({ userId }: { userId: string | null }) {
       </FilterResponsiveWrapper>
 
       <main className="flex-1">
-        <RoomListGrid
-          rooms={allRooms}
-          isLoading={isLoading}
-          isEmpty={allRooms.length === 0}
-        />
+        {isEmpty ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 w-full">
+            <AddRoomCardButton />
+          </div>
+        ) : (
+          <RoomListGrid
+            rooms={allRooms}
+            isLoading={isLoading}
+            isEmpty={allRooms.length === 0}
+          />
+        )}
+
         <div className="py-10 flex justify-center">
           <InfiniteScrollLoader
             hasNextPage={hasNextPage}

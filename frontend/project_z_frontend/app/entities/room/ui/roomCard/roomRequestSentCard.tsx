@@ -23,11 +23,11 @@ export const RoomRequestSentCard = ({ request, isPendingAction, onCancel }: Room
             to={`/rooms/${room.roomId}`}
             className="group flex flex-col w-full rounded-xl border border-border bg-card transition-all hover:border-primary cursor-pointer overflow-hidden"
         >
-            <div className="relative h-40 w-full overflow-hidden">
+            <div className="relative h-54 md:h-44 w-full overflow-hidden">
                 <img 
                     src={room.imageUrl || "/defaultTitleRecordImage.jpg"} 
                     alt={room.roomName}
-                    className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" 
+                    className="w-full h-full object-cover transition-transform duration-300 " 
                 />
             </div>
             <div className="p-4 flex flex-col gap-2">
@@ -41,7 +41,7 @@ export const RoomRequestSentCard = ({ request, isPendingAction, onCancel }: Room
                     </div>
                     <Button
                         variant="altCancel" 
-                        className="h-8 rounded-lg cursor-pointer" 
+                        className="h-12 w-40 md:h-8 md:w-20  p-0  rounded-lg cursor-pointer" 
                         onClick={handleCancel} 
                         disabled={isPendingAction}
                     >

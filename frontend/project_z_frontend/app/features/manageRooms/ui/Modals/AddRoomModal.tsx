@@ -97,7 +97,7 @@ export const AddRoomModal = ({
   const handleBack = () => onStepChange(Math.max(step - 1, 1));
 
   const renderFooter = () => (
-    <div className="pt-4 bg-background shrink-0">
+    <div className=" bg-background shrink-0">
       <ModalFooter
         onCancel={isFirstStep ? onClose : handleBack}
         cancelLabel={isFirstStep ? "Cancel" : "Back"}

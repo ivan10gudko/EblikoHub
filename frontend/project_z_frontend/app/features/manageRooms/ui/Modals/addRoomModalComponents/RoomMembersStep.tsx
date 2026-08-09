@@ -46,33 +46,38 @@ export const MembersStep = ({
       )}
     </div>
 
-    <div className="bg-background-muted/30 rounded-xl p-4 border border-border h-[380px] flex flex-col">
-      <h4 className="text-xs font-bold uppercase text-muted-foreground mb-3 shrink-0">
+    <div className="bg-background-muted/30 rounded-xl p-2 border border-border h-[380px] flex flex-col">
+      <h4 className="text-xs font-bold uppercase p-1 text-muted-foreground mb-3 shrink-0">
         Added Members ({addedUsers.length})
       </h4>
 
-      <div className="flex-1 overflow-y-auto pr-1 custom-scrollbar space-y-2">
-        {addedUsers.length === 0 ? (
-          <p className="text-sm text-muted-foreground italic text-center mt-10">
-            No users added yet
-          </p>
-        ) : (
-          addedUsers.map((user: any) => (
-            <UserShortRow
-              key={user.userId}
-              user={user}
-              action={
-                <Button
-                  onClick={() => onRemove(user.userId)}
-                  className="text-background bg-danger p-1"
-                >
-                  <DeleteOutlineIcon fontSize="small" />
-                </Button>
-              }
-            />
-          ))
-        )}
+      <div className="flex-1 overflow-y-auto  custom-scrollbar space-y-1">
+  {addedUsers.length === 0 ? (
+    <p className="text-sm text-muted-foreground italic text-center mt-10">
+      No users added yet
+    </p>
+  ) : (
+    addedUsers.map((user: UserProfile) => (
+      <div 
+        key={user.userId} 
+        className="p-1 border border-border/60 bg-background/50 rounded-lg transition-colors hover:border-border"
+      >
+        <UserShortRow
+          user={user}
+          action={
+            <Button
+              variant="altCancel"
+              onClick={() => onRemove(user.userId)}
+              className="w-10 shrink-0"
+            >
+              <DeleteOutlineIcon fontSize="small" />
+            </Button>
+          }
+        />
       </div>
+    ))
+  )}
+</div>
     </div>
   </div>
 );

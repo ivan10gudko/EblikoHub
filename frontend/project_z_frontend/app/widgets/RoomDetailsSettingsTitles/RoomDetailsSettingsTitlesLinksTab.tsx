@@ -6,6 +6,7 @@ import {
   useInfiniteRoomTitlesWithLinks,
   useRoomTitleLinkActions,
 } from "~/features/manageRooms";
+import { useTitleStats } from "~/features/titleFilter/hooks/useTitleStats"; // 1. Додали імпорт хука
 import { ToggleSwitch } from "~/shared/ui/Switch";
 import { MobileTitleLinksManager } from "./MobileRoomSettsngsTitleLinksTab";
 import { TitleFiltersDropdown } from "./TitleFiltersDropdown";
@@ -26,6 +27,9 @@ export const RoomDetailsSettingsTitlesLinks = ({
     hasNextPage,
     isFetchingNextPage,
   } = useInfiniteRoomTitlesWithLinks(roomId, userId, { page: 0, limit: 20 });
+
+ 
+  const { data: stats } = useTitleStats(userId);
 
   const [draggingTitleId, setDraggingTitleId] = useState<string | null>(null);
   const [isWatchlistModeToggleActive, setWatchlistModeToggleActive] = useState(false);
@@ -57,7 +61,6 @@ export const RoomDetailsSettingsTitlesLinks = ({
     }
   };
 
-  
   if (isMobile) {
     return (
       <MobileTitleLinksManager
@@ -73,7 +76,6 @@ export const RoomDetailsSettingsTitlesLinks = ({
     );
   }
 
-
   return (
     <DragDropContext
       onDragStart={(start) => setDraggingTitleId(start.draggableId)}
@@ -83,7 +85,6 @@ export const RoomDetailsSettingsTitlesLinks = ({
       }}
     >
       <div className="grid grid-cols-2 gap-8 w-full p-0">
-       
         <div className="flex flex-col gap-4 min-w-0">
           <div className="flex items-center justify-between">
             <h2 className="font-bold text-2xl">My Watchlist</h2>
@@ -100,8 +101,11 @@ export const RoomDetailsSettingsTitlesLinks = ({
                 onToggle={setWatchlistModeToggleActive}
               />
 
-              
-              <TitleFiltersDropdown />
+              {/* 3. Передаємо пораховані counts у дропдаун */}
+              <TitleFiltersDropdown 
+                statusCount={stats?.statusCount}
+                typeCount={stats?.typeCount}
+              />
             </div>
           </div>
 
@@ -112,7 +116,6 @@ export const RoomDetailsSettingsTitlesLinks = ({
           />
         </div>
 
-       
         <div className="flex flex-col gap-4 min-w-0">
           <h2 className="font-bold text-2xl">Room Titles</h2>
           <RoomTitleReadOnlyList

@@ -35,11 +35,11 @@ export const RoomSearchCard = ({ room }: RoomSearchCardProps) => {
       to={`/rooms/${room.roomId}`}
       className="group flex flex-col w-full border border-border bg-card rounded-xl transition-all hover:border-primary cursor-pointer overflow-hidden"
     >
-      <div className="relative h-40 w-full overflow-hidden">
+      <div className="relative h-50 md:h-44  w-full overflow-hidden">
         <img
           src={room.imageUrl || DEFAULT_IMAGE_PATH}
           alt={room.roomName}
-          className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+          className="w-full h-full object-cover transition-transform duration-300"
         />
       </div>
 
@@ -55,6 +55,7 @@ export const RoomSearchCard = ({ room }: RoomSearchCardProps) => {
           </div>
 
           <Button
+          variant="fill"
             onClick={handleJoin}
             disabled={isDisabled}
             className="h-9 w-full text-xs flex items-center justify-center gap-1.5 cursor-pointer"

@@ -177,7 +177,7 @@ export const EditSeasonsModal = ({
           </div>
         </div>
 
-        <div className="pt-4 bg-background shrink-0">
+        <div className=" bg-background shrink-0">
           <ModalFooter
             onCancel={onClose}
             onSave={handleSaveChanges}
