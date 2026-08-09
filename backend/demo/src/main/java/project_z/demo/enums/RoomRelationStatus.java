@@ -4,5 +4,6 @@ public enum RoomRelationStatus {
     NONE,
     MEMBER,
     PENDING_IN,
-    PENDING_OUT
+    PENDING_OUT,
+    BANNED
 }

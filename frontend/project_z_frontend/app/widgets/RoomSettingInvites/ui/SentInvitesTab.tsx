@@ -4,7 +4,8 @@ import { roomService } from "~/entities/room/api/roomService";
 import { Button } from "~/shared/ui/Button";
 import { RequestStatus, RequestType } from "~/shared/types";
 import { UserAvatar } from "~/entities/user";
-import type { RoomRequestShort, RoomRequestShortWithUser } from "~/entities/room";
+import type { RoomRequestShortWithUser } from "~/entities/room";
+import { roomRequestsService } from "~/features/manageRooms";
 
 interface SentInvitesTabProps {
   roomId: number;
@@ -15,7 +16,7 @@ export const SentInvitesTab = ({ roomId }: SentInvitesTabProps) => {
 
   const { data, isLoading, isError, refetch } = useQuery({
     queryKey: ["room_requests", roomId, RequestStatus.PENDING, RequestType.INVITE],
-    queryFn: () => roomService.getRoomRequests(roomId, RequestStatus.PENDING, RequestType.INVITE),
+    queryFn: () => roomRequestsService.getRoomRequests(roomId, RequestStatus.PENDING, RequestType.INVITE),
     enabled: !!roomId,
   });
 
@@ -26,7 +27,7 @@ export const SentInvitesTab = ({ roomId }: SentInvitesTabProps) => {
 
   return (
     <div className="flex flex-col gap-4 w-full text-foreground">
-      
+
       <div className="flex items-center gap-2 mb-2">
         <h3 className="text-xl font-bold font-industrial text-foreground tracking-wide">
           Sent Room Invites
@@ -39,7 +40,7 @@ export const SentInvitesTab = ({ roomId }: SentInvitesTabProps) => {
       {sentInvites.length === 0 ? (
         <p className="text-sm text-neutral-600 italic py-4">No pending sent invites.</p>
       ) : (
-        
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full max-w-4xl">
           {sentInvites.map((invite: RoomRequestShortWithUser) => {
             const targetUser = invite.user;
@@ -69,7 +70,7 @@ export const SentInvitesTab = ({ roomId }: SentInvitesTabProps) => {
                   </div>
                 </div>
 
-                
+
                 <div className="flex items-center gap-2 shrink-0 self-end sm:self-center">
                   <Button
                     disabled={isPendingAction}

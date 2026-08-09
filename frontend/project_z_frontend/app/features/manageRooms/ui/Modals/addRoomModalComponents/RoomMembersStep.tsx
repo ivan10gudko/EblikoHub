@@ -5,6 +5,7 @@ import {
 } from "~/entities/user";
 import { Button } from "~/shared/ui/Button";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
+import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import SearchBar from "~/shared/ui/SearchBar";
 
 interface MembersStepProps {
@@ -42,6 +43,20 @@ export const MembersStep = ({
           })}
           onSelect={onSelect}
           isLoading={isLoading}
+          renderAction={(user) => (
+            <Button
+              onClick={(e) => {
+                e.stopPropagation();
+                onSelect(user);
+              }}
+              className="p-2 bg-transparent hover:bg-primary/20 border border-border hover:border-primary/40 rounded-full transition-all group flex items-center justify-center flex-shrink-0"
+            >
+              <AddCircleOutlineIcon
+                className="text-primary group-hover:scale-110 transition-transform"
+                fontSize="small"
+              />
+            </Button>
+          )}
         />
       )}
     </div>
@@ -51,33 +66,33 @@ export const MembersStep = ({
         Added Members ({addedUsers.length})
       </h4>
 
-      <div className="flex-1 overflow-y-auto  custom-scrollbar space-y-1">
-  {addedUsers.length === 0 ? (
-    <p className="text-sm text-muted-foreground italic text-center mt-10">
-      No users added yet
-    </p>
-  ) : (
-    addedUsers.map((user: UserProfile) => (
-      <div 
-        key={user.userId} 
-        className="p-1 border border-border/60 bg-background/50 rounded-lg transition-colors hover:border-border"
-      >
-        <UserShortRow
-          user={user}
-          action={
-            <Button
-              variant="altCancel"
-              onClick={() => onRemove(user.userId)}
-              className="w-10 shrink-0"
+      <div className="flex-1 overflow-y-auto custom-scrollbar space-y-1">
+        {addedUsers.length === 0 ? (
+          <p className="text-sm text-muted-foreground italic text-center mt-10">
+            No users added yet
+          </p>
+        ) : (
+          addedUsers.map((user: UserProfile) => (
+            <div
+              key={user.userId}
+              className="p-1 border border-border/60 bg-background/50 rounded-lg transition-colors hover:border-border"
             >
-              <DeleteOutlineIcon fontSize="small" />
-            </Button>
-          }
-        />
+              <UserShortRow
+                user={user}
+                action={
+                  <Button
+                    variant="altCancel"
+                    onClick={() => onRemove(user.userId)}
+                    className="w-10 shrink-0"
+                  >
+                    <DeleteOutlineIcon fontSize="small" />
+                  </Button>
+                }
+              />
+            </div>
+          ))
+        )}
       </div>
-    ))
-  )}
-</div>
     </div>
   </div>
 );

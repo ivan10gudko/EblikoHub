@@ -1,44 +1,33 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { RoomBanCard } from './RoomBanCard';
-import { UserAvatar } from "~/entities/user";
 import { useRoomBans } from '~/features/manageRooms/hooks/useRoomBans';
 import { useInfiniteRoomBanSearch } from '~/features/manageRooms';
 import { useRoomBanActions } from '~/features/manageRooms/hooks/useRoomBanActions';
-import type { RoomBanCreateDto } from '~/features/manageRooms/model/roomTitle.types';
 import { notify } from "~/shared/lib";
+import { UserSearchDropdown } from '~/entities/user/ui/UserSearchDropdownResults';
+import SearchBar from '~/shared/ui/SearchBar';
+import { useDebounce } from '~/shared/hooks';
 
 interface RoomBansTabProps {
     roomId: string | number;
 }
 
-
-function useDebounce<T>(value: T, delay: number): T {
-    const [debouncedValue, setDebouncedValue] = useState<T>(value);
-    useEffect(() => {
-        const handler = setTimeout(() => setDebouncedValue(value), delay);
-        return () => clearTimeout(handler);
-    }, [value, delay]);
-    return debouncedValue;
-}
-
 export const RoomBansTab: React.FC<RoomBansTabProps> = ({ roomId }) => {
     const numericRoomId = Number(roomId);
 
-    
     const [targetUsername, setTargetUsername] = useState('');
     const [targetUserId, setTargetUserId] = useState<string | null>(null);
+    const [selectedUserData, setSelectedUserData] = useState<{ name: string; nameTag?: string; img?: string | null } | null>(null);
     const [reason, setReason] = useState('');
     const [showDropdown, setShowDropdown] = useState(false);
 
     const dropdownRef = useRef<HTMLDivElement>(null);
 
-   
-    const { 
-        data: bannedUsers = [], 
-        isLoading: isLoadingBans 
+    const {
+        data: bannedUsers = [],
+        isLoading: isLoadingBans
     } = useRoomBans(numericRoomId);
 
-   
     const debouncedUsername = useDebounce(targetUsername.trim(), 300);
     const isSearchEnabled = debouncedUsername.length >= 2;
 
@@ -49,22 +38,18 @@ export const RoomBansTab: React.FC<RoomBansTabProps> = ({ roomId }) => {
         hasNextPage,
         isFetchingNextPage
     } = useInfiniteRoomBanSearch(numericRoomId, {
-        name: debouncedUsername, 
+        name: debouncedUsername,
         limit: 10
     }, isSearchEnabled);
 
-    
     const rawSearchResults = searchData?.pages.flatMap((page) => page.content) || [];
 
-   
     const filteredSearchResults = rawSearchResults.filter(
         (user) => !bannedUsers.some((ban) => ban.user.userId === user.userId)
     );
 
-    
     const { banUser, unbanUser, isPending: isMutating } = useRoomBanActions(numericRoomId);
 
-    
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
             if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
@@ -75,57 +60,50 @@ export const RoomBansTab: React.FC<RoomBansTabProps> = ({ roomId }) => {
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, []);
 
-   
-    const handleBanUser = async (e: React.FormEvent) => {
+    const handleBanUser = (e: React.FormEvent) => {
         e.preventDefault();
-        
+
         if (!targetUserId) {
             notify.error("Please select a valid user from the dropdown list.");
             return;
         }
 
-        const finalReason = reason.trim() ? reason.trim() : "Banned by Admin";
-
-        const payload: RoomBanCreateDto = {
-            userId: targetUserId,
-            reason: finalReason
-        };
-
-        try {
-            await banUser(payload);
-            
-           
-            notify.success("User successfully banned");
-
-            setTargetUsername('');
-            setTargetUserId(null);
-            setReason('');
-            setShowDropdown(false);
-        } catch {
-            
-        }
+        banUser(
+            {
+                userId: targetUserId,
+                reason: reason.trim() ? reason.trim() : "Banned by Admin",
+                userData: selectedUserData || undefined,
+            },
+            {
+                onSuccess: () => {
+                    setTargetUsername('');
+                    setTargetUserId(null);
+                    setSelectedUserData(null);
+                    setReason('');
+                    setShowDropdown(false);
+                },
+            }
+        );
     };
 
-    
-    const handleUnbanUser = async (roomBanId: string) => {
-        try {
-            await unbanUser(roomBanId);
-            notify.success("User successfully unbanned");
-        } catch {
-            
-        }
-    };
-
-    const selectUserFromSearch = (username: string, userId: string) => {
-        setTargetUsername(username);
-        setTargetUserId(userId);
+    const selectUserFromSearch = (user: { userId: string; name: string; nameTag?: string; img?: string | null }) => {
+        setTargetUsername(user.name);
+        setTargetUserId(user.userId);
+        setSelectedUserData({
+            name: user.name,
+            nameTag: user.nameTag,
+            img: user.img,
+        });
         setShowDropdown(false);
     };
 
-    
     const handleDropdownScroll = (e: React.UIEvent<HTMLDivElement>) => {
         const target = e.currentTarget;
-        if (target.scrollHeight - target.scrollTop <= target.clientHeight + 10) {
+
+        if (
+            target.scrollHeight - target.scrollTop <=
+            target.clientHeight + 10
+        ) {
             if (hasNextPage && !isFetchingNextPage) {
                 fetchNextPage();
             }
@@ -143,82 +121,107 @@ export const RoomBansTab: React.FC<RoomBansTabProps> = ({ roomId }) => {
                 </p>
             </div>
 
-            
-            <form onSubmit={handleBanUser} className="flex flex-col gap-3 p-4 bg-card/30 border border-border rounded-xl backdrop-blur-md relative z-30">
-                <div className="flex gap-3 relative" ref={dropdownRef}>
-                    <div className="flex-1 relative">
-                        <input
-                            type="text"
+            <form
+                onSubmit={handleBanUser}
+                className="p-4 bg-card/30 border border-border rounded-xl backdrop-blur-md relative z-30"
+            >
+                <div
+                    className="grid grid-cols-1 sm:grid-cols-[minmax(0,1fr)_auto] gap-3"
+                    ref={dropdownRef}
+                >
+                    <div className="relative min-w-0">
+                        <SearchBar
+                            initialValue={targetUsername}
                             placeholder="Type to search and select a user..."
-                            value={targetUsername}
-                            onChange={(e) => {
-                                setTargetUsername(e.target.value);
-                                setTargetUserId(null); 
+                            isLoading={isSearching}
+                            minLength={2}
+                            className="w-full max-w-none"
+                            onSearch={(query) => {
+                                setTargetUsername(query);
+                                if (!query) {
+                                    setTargetUserId(null);
+                                    setSelectedUserData(null);
+                                }
+                            }}
+                            onChange={(value) => {
+                                setTargetUsername(value);
+                                setTargetUserId(null);
+                                setSelectedUserData(null);
                                 setShowDropdown(true);
                             }}
-                            onFocus={() => setShowDropdown(true)}
-                            disabled={isMutating}
-                            className="w-full px-4 py-2.5 text-sm bg-background border border-border focus:border-primary/60 rounded-xl text-foreground placeholder:text-foreground-muted/60 outline-none transition-colors disabled:opacity-50"
                         />
-
-                        
-                        {showDropdown && isSearchEnabled && (
-                            <div 
-                                onScroll={handleDropdownScroll}
-                                className="absolute left-0 right-0 top-full mt-2 bg-card border border-border rounded-xl shadow-2xl max-h-48 overflow-y-auto custom-scrollbar scrollbar-thin scrollbar-thumb-border/60 scrollbar-track-transparent z-[9999]"
-                            >
-                                {isSearching ? (
-                                    <div className="text-xs text-foreground-muted p-4 animate-pulse">Searching users...</div>
-                                ) : filteredSearchResults.length === 0 ? (
-                                    <div className="text-xs text-foreground-muted/60 p-4 italic">No users found</div>
-                                ) : (
-                                    <>
-                                        {filteredSearchResults.map((user) => (
-                                            <div
-                                                key={user.userId}
-                                                onClick={() => selectUserFromSearch(user.nameTag || user.name, user.userId)}
-                                                className="flex items-center gap-3 px-4 py-2 hover:bg-primary/10 cursor-pointer transition-colors border-b border-border/40 last:border-none"
-                                            >
-                                                <UserAvatar name={user.name} src={user.img || undefined} size="sm" />
-                                                <div className="flex flex-col min-w-0 py-1">
-                                                    <span className="text-sm font-semibold truncate text-foreground">{user.name}</span>
-                                                    <span className="text-xs text-primary truncate">@{user.nameTag}</span>
-                                                </div>
-                                            </div>
-                                        ))}
-                                        {isFetchingNextPage && (
-                                            <div className="text-center py-2 text-xs text-foreground-muted animate-pulse">
-                                                Loading more...
-                                            </div>
-                                        )}
-                                    </>
-                                )}
-                            </div>
-                        )}
+                        <div onClick={() => setShowDropdown(true)}>
+                            {showDropdown && isSearchEnabled && (
+                                <div className="absolute left-0 right-0 top-full mt-2 z-[9999] w-full min-w-0">
+                                    <UserSearchDropdown
+                                        results={filteredSearchResults}
+                                        mapToDisplayItem={(user) => ({
+                                            userId: user.userId,
+                                            name: user.name,
+                                            nameTag: user.nameTag || '',
+                                            img: user.img || undefined,
+                                        })}
+                                        onSelect={selectUserFromSearch}
+                                        onClose={() => setShowDropdown(false)}
+                                        isLoading={isSearching}
+                                        compact
+                                        onScroll={handleDropdownScroll}
+                                        isFetchingNextPage={isFetchingNextPage}
+                                    />
+                                </div>
+                            )}
+                        </div>
                     </div>
+
+                    <input
+                        type="text"
+                        placeholder="Reason for ban (optional)..."
+                        value={reason}
+                        onChange={(e) => setReason(e.target.value)}
+                        disabled={isMutating}
+                        className="
+                            w-full min-w-0
+                            px-4 py-2 text-xs
+                            bg-background/50
+                            border border-border/60
+                            focus:border-primary/40
+                            rounded-xl
+                            text-foreground-muted
+                            placeholder:text-foreground-muted/40
+                            outline-none
+                            transition-colors
+                            disabled:opacity-50
+                            sm:col-start-1
+                            sm:row-start-2
+                        "
+                    />
 
                     <button
                         type="submit"
                         disabled={isMutating || !targetUserId}
-                        className=" border  border-danger/40 text-white/70 hover:bg-danger/15 hover:text-danger 
-                        gap-2 px-4 py-2 rounded-lg bg-danger/30 cursor-pointer
-                        shadow-sm hover:shadow-[0_0_12px_rgba(220,38,38,.15)]"
+                        className="
+                            w-full
+                            border border-danger/40
+                            text-white/70
+                            hover:bg-danger/15
+                            hover:text-danger
+                            px-4 py-2
+                            rounded-lg
+                            bg-danger/30
+                            cursor-pointer
+                            shadow-sm
+                            hover:shadow-[0_0_12px_rgba(220,38,38,.15)]
+                            disabled:opacity-50
+                            sm:w-auto
+                            sm:col-start-2
+                            sm:row-start-1
+                        "
                     >
                         {isMutating ? 'Banning...' : 'Ban User'}
                     </button>
                 </div>
-
-                <input
-                    type="text"
-                    placeholder="Reason for ban (optional)..."
-                    value={reason}
-                    onChange={(e) => setReason(e.target.value)}
-                    disabled={isMutating}
-                    className="px-4 py-2 text-xs bg-background/50 border border-border/60 focus:border-primary/40 rounded-xl text-foreground-muted placeholder:text-foreground-muted/40 outline-none transition-colors disabled:opacity-50"
-                />
             </form>
 
-            
             <div className="flex flex-col min-w-0 relative z-10">
                 <h4 className="text-xs font-bold uppercase tracking-wider text-foreground-muted mb-3">
                     Banned Users ({bannedUsers.length})
@@ -238,7 +241,7 @@ export const RoomBansTab: React.FC<RoomBansTabProps> = ({ roomId }) => {
                             <RoomBanCard
                                 key={ban.id}
                                 banDetails={ban}
-                                onUnban={handleUnbanUser}
+                                onUnban={unbanUser}
                             />
                         ))}
                     </div>

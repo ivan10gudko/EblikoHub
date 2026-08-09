@@ -107,7 +107,7 @@ export interface RoomBanDetailsDto {
     createdAt: string;
 }
 
-// Нові типи для AI Тайтл Матчера
+
 export interface SuggestedTitleLinkDto {
     title: TitleShort;
     roomTitle: RoomTitleShort

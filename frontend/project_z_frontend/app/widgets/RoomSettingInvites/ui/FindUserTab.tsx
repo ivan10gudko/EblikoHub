@@ -1,11 +1,13 @@
 import { useState } from "react";
 import SearchIcon from "@mui/icons-material/Search";
+import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 
 import { useRoomRequests } from "~/entities/room/hooks/useRoomRequests";
-import type { UserShort, UserWithRelationsToRoomDto } from "~/entities/room/model/room.types";
+import { type UserShort, type UserWithRelationsToRoomDto, RoomRelationStatus } from "~/entities/room/model/room.types";
 import { useRoomUserSearch } from "~/entities/room";
 import { UserSearchDropdown } from "~/entities/user";
 import { UserAvatar } from "~/entities/user";
+import { useDebounce } from "~/shared/hooks";
 
 interface FindUserTabProps {
   roomId: number;
@@ -16,39 +18,89 @@ export const FindUserTab = ({ roomId }: FindUserTabProps) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [invitedUsers, setInvitedUsers] = useState<UserShort[]>([]);
 
-  const { data, isLoading: isSearchLoading, error: searchError } = useRoomUserSearch(roomId, query);
+  const debouncedQuery = useDebounce(query.trim(), 300);
+
+  const { data, isLoading: isSearchLoading, error: searchError } = useRoomUserSearch(roomId, debouncedQuery);
   const { sendInvite, isSendingInvite } = useRoomRequests(roomId);
 
   const searchResults = data?.pages.flatMap((page) => page.content || []) || [];
 
   const handleSelectUser = (item: UserWithRelationsToRoomDto) => {
-  const user = item.user;
+    const user = item.user;
 
-  // Перевірка статусів
-  const isAlreadyInvitedLocally = invitedUsers.some((u) => u.userId === user.userId);
-  const isAlreadyInvitedOnServer = 
-    item.relationStatus === "PENDING_OUT" || 
-    item.relationStatus === "PENDING" || 
-    item.activeRequest?.status === "PENDING";
-  const isAlreadyMember = item.relationStatus === "MEMBER";
+    const isAlreadyInvitedLocally = invitedUsers.some((u) => u.userId === user.userId);
+    const isAlreadyInvitedOnServer =
+      item.relationStatus === RoomRelationStatus.PENDING_OUT ||
+      item.relationStatus === RoomRelationStatus.PENDING_IN;
+    const isAlreadyMember = item.relationStatus === RoomRelationStatus.MEMBER;
+    const isBanned = item.relationStatus === RoomRelationStatus.BANNED;
 
-  if (isAlreadyInvitedLocally || isAlreadyInvitedOnServer || isAlreadyMember) {
-    return;
-  }
-
-  sendInvite(
-    { roomId, receiverId: user.userId },
-    {
-      onSuccess: () => {
-       
-        if (!invitedUsers.some((u) => u.userId === user.userId)) {
-          setInvitedUsers((prev) => [...prev, user]);
-        }
-      
-      },
+    if (isAlreadyInvitedLocally || isAlreadyInvitedOnServer || isAlreadyMember || isBanned) {
+      return;
     }
-  );
-};
+
+    sendInvite(
+      { roomId, receiverId: user.userId },
+      {
+        onSuccess: () => {
+          if (!invitedUsers.some((u) => u.userId === user.userId)) {
+            setInvitedUsers((prev) => [...prev, user]);
+          }
+        },
+      }
+    );
+  };
+
+  const renderUserAction = (item: UserWithRelationsToRoomDto) => {
+    const isInvitedInSession = invitedUsers.some((u) => u.userId === item.user.userId);
+    const isAlreadyInvited =
+      isInvitedInSession ||
+      item.relationStatus === RoomRelationStatus.PENDING_OUT ||
+      item.relationStatus === RoomRelationStatus.PENDING_IN ||
+      item.activeRequest?.status === "PENDING";
+    const isAlreadyMember = item.relationStatus === RoomRelationStatus.MEMBER;
+    const isBanned = item.relationStatus === RoomRelationStatus.BANNED;
+
+    if (isAlreadyMember) {
+      return (
+        <span className="text-[11px] font-medium text-foreground-muted bg-background-muted px-2.5 py-1 rounded-lg border border-border flex-shrink-0">
+          Member
+        </span>
+      );
+    }
+
+    if (isBanned) {
+      return (
+        <span className="text-[11px] font-medium text-danger bg-danger/10 px-2.5 py-1 rounded-lg border border-danger/30 flex-shrink-0">
+          Banned
+        </span>
+      );
+    }
+
+    if (isAlreadyInvited) {
+      return (
+        <span className="text-[11px] font-semibold text-primary bg-amber-500/10 px-2.5 py-1 rounded-lg border border-amber-500/30 flex-shrink-0">
+          Pending
+        </span>
+      );
+    }
+
+    return (
+      <button
+        type="button"
+        onClick={(e) => {
+          e.stopPropagation();
+          handleSelectUser(item);
+        }}
+        className="p-2 bg-transparent hover:bg-primary/20 border border-border hover:border-primary/40 rounded-full transition-all group flex items-center justify-center flex-shrink-0 cursor-pointer"
+      >
+        <AddCircleOutlineIcon
+          className="text-primary group-hover:scale-110 transition-transform"
+          fontSize="small"
+        />
+      </button>
+    );
+  };
 
   return (
     <div className="flex flex-col gap-6 w-full text-foreground">
@@ -74,29 +126,16 @@ export const FindUserTab = ({ roomId }: FindUserTabProps) => {
           <div className="w-full max-w-md absolute top-[76px] left-0 z-[110]">
             <UserSearchDropdown<UserWithRelationsToRoomDto>
               results={searchResults}
-              mapToDisplayItem={(r) => {
-                const isInvitedInSession = invitedUsers.some((u) => u.userId === r.user.userId);
-
-               
-                const isAlreadyInvited =
-                  isInvitedInSession ||
-                  r.relationStatus === "PENDING" ||
-                  r.activeRequest?.status === "PENDING";
-
-                const isAlreadyMember = r.relationStatus === "MEMBER";
-
-                return {
-                  userId: r.user.userId,
-                  name: r.user.name,
-                  nameTag: r.user.nameTag,
-                  img: r.user.img,
-                  isInvited: isAlreadyInvited,
-                  isMember: isAlreadyMember,
-                };
-              }}
+              mapToDisplayItem={(r) => ({
+                userId: r.user.userId,
+                name: r.user.name,
+                nameTag: r.user.nameTag,
+                img: r.user.img,
+              })}
               isLoading={isSearchLoading || isSendingInvite}
               onSelect={handleSelectUser}
               onClose={() => setIsDropdownOpen(false)}
+              renderAction={renderUserAction}
             />
           </div>
         )}
@@ -108,7 +147,6 @@ export const FindUserTab = ({ roomId }: FindUserTabProps) => {
         </div>
       )}
 
-     
       <div className="flex flex-col gap-4 w-full">
         <div className="flex items-center gap-2">
           <h3 className="text-xl font-bold font-industrial text-foreground tracking-wide">

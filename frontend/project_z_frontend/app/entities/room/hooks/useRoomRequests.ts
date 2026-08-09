@@ -28,7 +28,6 @@ export const useRoomRequests = (roomId?: number) => {
     }
   };
 
- 
   const joinMutation = useMutation<void, Error, void, MutationContext>({
     ...mutationConfig,
     mutationFn: () => roomId ? roomService.joinRoom(roomId) : Promise.reject("Room ID required"),
@@ -57,7 +56,6 @@ export const useRoomRequests = (roomId?: number) => {
     onSuccess: () => notify.success("Sent join request!")
   });
 
-  
   const acceptMutation = useMutation({
     ...mutationConfig,
     mutationFn: ({ roomRequestId }: { roomRequestId: string }) =>
@@ -65,7 +63,6 @@ export const useRoomRequests = (roomId?: number) => {
     onSuccess: () => notify.success("Request accepted!")
   });
 
-  
   const rejectMutation = useMutation({
     ...mutationConfig,
     mutationFn: ({ roomRequestId }: { roomRequestId: string }) =>
@@ -73,26 +70,37 @@ export const useRoomRequests = (roomId?: number) => {
     onSuccess: () => notify.success("Request rejected!")
   });
 
-  
   const cancelMutation = useMutation({
     ...mutationConfig,
     mutationFn: ({ roomRequestId }: { roomRequestId: string }) =>
       roomService.cancelRequest(roomRequestId),
-    onSuccess: () => notify.success("Request cancelled!")
+    onSuccess: () => {
+      notify.success("Request cancelled!");
+      if (roomId) {
+        queryClient.invalidateQueries({ queryKey: ['room_users_search', roomId] });
+      }
+    }
   });
+
   const inviteMutation = useMutation({
     ...mutationConfig,
     mutationFn: ({ roomId, receiverId }: { roomId: number; receiverId: string }) =>
       roomService.inviteUser(roomId, receiverId),
-    onSuccess: () => notify.success("Invite sent successfully!"),
+    onSuccess: () => {
+      notify.success("Invite sent successfully!");
+      if (roomId) {
+        queryClient.invalidateQueries({ queryKey: ['room_users_search', roomId] });
+      }
+    },
   });
+
   return {
     joinRoom: joinMutation.mutate,
     isJoining: joinMutation.isPending,
     cancelRequest: cancelMutation.mutate,
     acceptRequest: acceptMutation.mutate,
     rejectRequest: rejectMutation.mutate,
-    sendInvite: inviteMutation.mutate, 
+    sendInvite: inviteMutation.mutate,
     isSendingInvite: inviteMutation.isPending,
     isPendingAction: acceptMutation.isPending || rejectMutation.isPending
   };

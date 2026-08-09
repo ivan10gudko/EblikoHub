@@ -15,7 +15,7 @@ export interface Room {
   members: RoomMemberShort[];
   imageUrl?: string;
   description?: string;
-  createdAt: string; 
+  createdAt: string;
 }
 
 export interface UpdateRoomPayload {
@@ -115,12 +115,11 @@ export enum RoomRole {
 
 
 export enum RoomRelationStatus {
+  NONE = "NONE",
   MEMBER = "MEMBER",
-  NOT_MEMBER = "NOT_MEMBER",
-  BLOCKED = "BLOCKED",
-  PENDING = "PENDING",
-  PENDING_OUT = "PENDING_OUT",
   PENDING_IN = "PENDING_IN",
+  PENDING_OUT = "PENDING_OUT",
+  BANNED = "BANNED"
 }
 
 export interface UserWithRelationsToRoomDto {

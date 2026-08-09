@@ -1,20 +1,21 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
-import { roomService } from "../api/roomService";
 import type { QueryParams } from "~/shared/types";
+import { roomRequestsService } from "~/features/manageRooms";
+import { roomKeys } from "../model/room.Keys";
 
 export const useRoomUserSearch = (
     roomId: number | null,
     name: string,
     params: QueryParams = {}
 ) => {
-    const queryKey = ['room_users_search', roomId, name, params];
+    const queryKey = roomKeys.userSearch(roomId, name, params);
 
     return useInfiniteQuery({
         queryKey,
         queryFn: ({ pageParam }) => {
             const page = typeof pageParam === 'number' ? pageParam : 0;
 
-            return roomService.searchUsersForRoom(roomId!, name, {
+            return roomRequestsService.searchUsersForRoom(roomId!, name, {
                 ...params,
                 page: page
             });
