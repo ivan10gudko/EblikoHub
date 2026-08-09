@@ -1,4 +1,3 @@
-import { useState } from "react";
 import EditIcon from "@mui/icons-material/Edit";
 import PersonRemoveIcon from "@mui/icons-material/PersonRemove";
 import { UserAvatar } from "~/entities/user";
@@ -7,15 +6,12 @@ import { Button } from "~/shared/ui/Button";
 import { UserProfileEdit } from "./UserProfileEditCard";
 import { UserFavoriteTitlesShowcase } from "./UserFavoriteTitlesShowcase";
 import { useUserProfile } from "~/widgets/UserProfileCard/hooks/useUserProfile";
-import { SelectFavoriteModal } from "~/features/profile/ui/SelectFavoriteModal";
 
 interface UserProfileCardProps {
   userId: string;
 }
 
 export const UserProfileCard = ({ userId }: UserProfileCardProps) => {
-  const [selectedPosition, setSelectedPosition] = useState<number | null>(null);
-
   const {
     user,
     isOwn,
@@ -118,18 +114,8 @@ export const UserProfileCard = ({ userId }: UserProfileCardProps) => {
 
           <UserFavoriteTitlesShowcase
             profile={user}
-            isOwner={isOwn}
-            onAddClick={(position) => setSelectedPosition(position)}
+            isOwner={false}
           />
-
-          {selectedPosition !== null && (
-            <SelectFavoriteModal
-              position={selectedPosition}
-              userId={user.userId}
-              isOpen={selectedPosition !== null}
-              onClose={() => setSelectedPosition(null)}
-            />
-          )}
         </>
       ) : (
         <UserProfileEdit

@@ -1,13 +1,15 @@
-import { useState, useRef, useCallback } from "react";
-import Cropper, { type Area } from "react-easy-crop";
+import { useState, useRef } from "react";
 import { Button } from "~/shared/ui/Button";
 import { UserAvatar, type UserProfile } from "~/entities/user";
 import PhotoCameraIcon from "@mui/icons-material/PhotoCamera";
 import { getCroppedImg } from "~/shared/helpers";
 import { ImageCropper } from "~/shared/ui/ImageCropper/ImageCropper";
+import { UserFavoriteTitlesShowcase } from "./UserFavoriteTitlesShowcase";
+import { SelectFavoriteModal } from "~/features/profile/ui/SelectFavoriteModal";
+import type { UserProfileWithFavorite } from "~/features/profile";
 
 interface UserProfileEditProps {
-  user: UserProfile;
+  user: UserProfileWithFavorite; // Змінено з UserProfile
   onSave: (
     data: { name: string; description: string },
     file: File | null,
@@ -27,11 +29,9 @@ export const UserProfileEdit = ({
     description: user.description || "",
   });
   const [imageSrc, setImageSrc] = useState<string | null>(null);
-  const [crop, setCrop] = useState({ x: 0, y: 0 });
-  const [zoom, setZoom] = useState(1);
-  const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area | null>(null);
   const [finalPreview, setFinalPreview] = useState(user.img);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [selectedPosition, setSelectedPosition] = useState<number | null>(null);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -64,7 +64,7 @@ export const UserProfileEdit = ({
             className="relative cursor-pointer group w-32 h-32"
             onClick={() => fileInputRef.current?.click()}
           >
-            <UserAvatar src={finalPreview} name={formData.name} size="lg" />
+            <UserAvatar src={finalPreview ?? undefined} name={formData.name} size="lg" />
             <div className="absolute inset-0 bg-black/40 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
               <PhotoCameraIcon className="text-white scale-125" />
             </div>
@@ -94,6 +94,28 @@ export const UserProfileEdit = ({
           placeholder="Tell us about yourself..."
         />
       </div>
+
+      <div className="h-[1px] bg-background-muted w-full my-2" />
+
+      <div className="flex flex-col gap-2">
+        <span className="text-sm font-semibold text-muted-foreground">
+          Favorite Titles
+        </span>
+        <UserFavoriteTitlesShowcase
+          profile={user}
+          isOwner={true}
+          onAddClick={(position) => setSelectedPosition(position)}
+        />
+      </div>
+
+      {selectedPosition !== null && (
+        <SelectFavoriteModal
+          position={selectedPosition}
+          userId={user.userId}
+          isOpen={selectedPosition !== null}
+          onClose={() => setSelectedPosition(null)}
+        />
+      )}
 
       <div className="flex gap-3 mt-2">
         <Button
