@@ -15,10 +15,10 @@ import { Dropdown } from "~/shared/ui/DropDown";
 import { BanDropdownItem, DropdownItem } from "~/shared/ui/DropDown/DropDown";
 
 interface RoomMemberCardProps {
-  roomId: string | number;
+  roomId: number;
   member: RoomMemberShort;
-  roomOwnerId?: string | number;
-  currentUserId: string | number;
+  roomOwnerId?: string;
+  currentUserId: string;
   isCurrentUserAdmin: boolean;
 }
 
@@ -48,18 +48,18 @@ export const RoomMemberCard: React.FC<RoomMemberCardProps> = ({
   const canManage = isCurrentUserAdmin && !isSelf && !isOwner;
   const isActionPending = isUpdatingRole || isBanning;
 
-  const handleRoleChange = async (event: Event, targetRole: RoomRole) => {
+  const handleRoleChange = (newRole: RoomRole) => (event: Event) => {
     event.stopPropagation();
 
-    try {
-      await updateMemberRole({
-        roomMemberId: member.id,
-        role: targetRole,
-      });
-      notify.success(`Role updated successfully`);
-    } catch {
-      // Обробка помилки
+    if (!realUserId) {
+      notify.error("Cannot update role for a user without a valid ID");
+      return;
     }
+
+    updateMemberRole({
+      roomMemberId: member.id,
+      role: newRole,
+    });
   };
 
   const handleBanAction = (event?: Event) => {
@@ -73,7 +73,7 @@ export const RoomMemberCard: React.FC<RoomMemberCardProps> = ({
     }
 
     banUser({
-      userId: String(realUserId),
+      userId: realUserId,
       reason: "Banned by Admin via member list",
       userData: {
         name: displayName,
@@ -141,14 +141,14 @@ export const RoomMemberCard: React.FC<RoomMemberCardProps> = ({
           >
             {member.role === RoomRole.ADMIN ? (
               <DropdownItem
-                onClick={(e) => handleRoleChange(e, RoomRole.MEMBER)}
+                onClick={handleRoleChange(RoomRole.MEMBER)}
                 icon={<ArrowDownwardIcon sx={{ fontSize: 16 }} />}
               >
                 Demote to Member
               </DropdownItem>
             ) : (
               <DropdownItem
-                onClick={(e) => handleRoleChange(e, RoomRole.ADMIN)}
+                onClick={handleRoleChange(RoomRole.ADMIN)}
                 icon={
                   <ArrowUpwardIcon
                     sx={{ fontSize: 16, color: "var(--primary)" }}

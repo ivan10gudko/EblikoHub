@@ -1,21 +1,14 @@
 import { apiClient } from "~/shared/api";
-import type { UserShort, Room, RoomCreateDto, RoomQueryParameters, RoomRequestCounts, RoomRequestShort, RoomSearchResult, RoomShort, UpdateRoomPayload, UserWithRelationsToRoomDto} from "../model/room.types";
+import type { UserShort, Room, RoomCreateDto, RoomQueryParameters, RoomRequestCounts, RoomRequestShort, RoomSearchResult, RoomShort, UpdateRoomPayload, UserWithRelationsToRoomDto, RequestsToRoomResponse} from "../model/room.types";
 import type { PageResponse, RequestStatus, RequestType } from "~/shared/types";
 
 
-interface RequestsToRoomResponse {
-    requests: any[];
-    last: boolean;
-    number: number;
-    totalElements: number;
-    totalPages: number;
-}
 
 interface RoomService {
     create(data: RoomCreateDto): Promise<Room>;
     getById(roomId: number): Promise<Room>;
     getByUserId(userId: string, params?: RoomQueryParameters): Promise<PageResponse<RoomShort>>;
-    fullUpdate(id: number, data: UpdateRoomPayload): Promise<Room>;
+    partialUpdate(id: number, data: UpdateRoomPayload): Promise<Room>;
     patch(id: number, data: Partial<Room>): Promise<Room>;
     delete(id: number): Promise<void>;
     searchRoomByName(roomName: string, params?: RoomQueryParameters): Promise<PageResponse<RoomSearchResult>>;
@@ -33,10 +26,6 @@ interface RoomService {
     getRequestsCountsByUserId(userId: string): Promise<RoomRequestCounts>;
     pinRoom(roomId: number): Promise<RoomShort>;
     unpin(): Promise<void>;
-    
-    
-    getRoomRequests(roomId: number, status: RequestStatus, type: RequestType): Promise<RequestsToRoomResponse>;
-    searchUsersForRoom(roomId: number, name: string, params?: any): Promise<PageResponse<UserWithRelationsToRoomDto>>;
 }
 
 export const roomService: RoomService = {
@@ -55,7 +44,7 @@ export const roomService: RoomService = {
         return data;
     },
 
-    async fullUpdate(id, data) {
+    async partialUpdate(id, data) {
         const { data: response } = await apiClient.patch(`/rooms/${id}`, data);
         return response;
     },
@@ -137,17 +126,4 @@ export const roomService: RoomService = {
         await apiClient.post(`/rooms/unpin`);
     },
 
-    async getRoomRequests(roomId, status, type) {
-        const { data } = await apiClient.get(`/rooms/requests/${roomId}`, {
-            params: { status, type }
-        });
-        return data;
-    },
-
-    async searchUsersForRoom(roomId, name, params) {
-        const { data } = await apiClient.get(`/rooms/${roomId}/members/users/search`, {
-            params: { name, ...params }
-        });
-        return data;
-    }
 };

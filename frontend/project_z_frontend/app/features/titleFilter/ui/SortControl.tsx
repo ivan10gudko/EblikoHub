@@ -32,7 +32,7 @@ const SortControl = () => {
           className="flex-1 bg-transparent"
         />
         <Button
-          variant="accent"
+          variant="accept"
           onClick={toggleOrder}
           className="px-4 bg-transparent hover:bg-transparent-muted-hover rounded-xl transition-colors"
         >

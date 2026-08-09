@@ -4,7 +4,7 @@ import { RoomRole, type Room } from "~/entities/room/model/room.types";
 
 interface RoomMembersTabProps {
     room: Room;
-    currentUserId: number | string;
+    currentUserId: string;
 }
 
 export const RoomMembersTab: React.FC<RoomMembersTabProps> = ({ room, currentUserId }) => {
@@ -35,7 +35,7 @@ export const RoomMembersTab: React.FC<RoomMembersTabProps> = ({ room, currentUse
                 {members.map((member) => (
                     <RoomMemberCard
                         key={member.user?.userId}
-                        roomId={room.roomId} // Передаємо ID кімнати сюди
+                        roomId={room.roomId}
                         member={member}
                         roomOwnerId={room.owner}
                         currentUserId={currentUserId}

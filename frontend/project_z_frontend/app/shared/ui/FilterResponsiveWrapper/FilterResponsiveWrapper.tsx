@@ -28,7 +28,7 @@ export const FilterResponsiveWrapper = ({
         </h1>
         <Button
           onClick={() => setIsOpen(true)}
-          variant="accent"
+          variant="accept"
           className=""
         >
           <FilterListIcon sx={{ fontSize: 20 }} />

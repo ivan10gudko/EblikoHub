@@ -79,7 +79,7 @@ export const RoomBanCard: React.FC<RoomBanCardProps> = ({ banDetails, onUnban })
   <div className="flex-shrink-0 z-10 w-full sm:w-auto">
     <Button
       onClick={handleUnbanClick}
-      variant="accent"
+      variant="accept"
       disabled={isSubmitting}
       className="h-10 w-full md:h-12 sm:w-24 text-lg"
     >

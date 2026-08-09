@@ -52,7 +52,7 @@ export const FriendCard = ({ user, variant, onAction, isPendingAction }: FriendC
                     <div className="flex w-full gap-2">
                         <Button
                             disabled={isPendingAction}
-                            variant="accent"
+                            variant="accept"
                             className="w-full md:w-13 h-13"
                             onClick={() => onAction?.("accept", user.userId)}
                         >
@@ -72,7 +72,7 @@ export const FriendCard = ({ user, variant, onAction, isPendingAction }: FriendC
                 {variant === "add" && (
                     <Button
                         disabled={isPendingAction}
-                        variant="accent"
+                        variant="accept"
                         className="w-full md:w-24 h-12"
                         onClick={() => onAction?.("send", user.userId)}
                     >

@@ -1,10 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
 import { useRoomRequests } from "~/entities/room/hooks/useRoomRequests";
-import { roomService } from "~/entities/room/api/roomService";
 import { Button } from "~/shared/ui/Button";
 import { RequestStatus, RequestType } from "~/shared/types";
 import { UserAvatar } from "~/entities/user";
 import type { RoomRequestShortWithUser } from "~/entities/room/model/room.types";
+import { roomRequestsService } from "~/features/manageRooms";
 
 interface JoinRequestsTabProps {
   roomId: number;
@@ -15,7 +15,7 @@ export const JoinRequestsTab = ({ roomId }: JoinRequestsTabProps) => {
 
   const { data, isLoading, isError, refetch } = useQuery({
     queryKey: ["room_requests", roomId, RequestStatus.PENDING, RequestType.JOIN_REQUEST],
-    queryFn: () => roomService.getRoomRequests(roomId, RequestStatus.PENDING, RequestType.JOIN_REQUEST),
+    queryFn: () => roomRequestsService.getRoomRequests(roomId, RequestStatus.PENDING, RequestType.JOIN_REQUEST),
     enabled: !!roomId,
   });
 
@@ -81,7 +81,7 @@ export const JoinRequestsTab = ({ roomId }: JoinRequestsTabProps) => {
                   </Button>
                   <Button
                     disabled={isPendingAction}
-                    variant="accent"
+                    variant="accept"
                     onClick={() => acceptRequest({ roomRequestId: requestId }, { onSuccess: () => refetch() })}
                     className="h-10 w-20"
                   >

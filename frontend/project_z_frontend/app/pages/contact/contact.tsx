@@ -42,7 +42,7 @@ export function ContactPage() {
               href={channel.href}
               target={channel.isExternal ? "_blank" : undefined}
               rel={channel.isExternal ? "noreferrer" : undefined}
-              className="flex items-center gap-6 p-6 bg-card hover:bg-accent/50 rounded-2xl border border-border shadow-md transition-all duration-300 hover:-translate-y-1 hover:shadow-lg active:scale-[0.98] group max-w-md w-full"
+              className="flex items-center gap-6 p-6 bg-card hover:bg-accept/50 rounded-2xl border border-border shadow-md transition-all duration-300 hover:-translate-y-1 hover:shadow-lg active:scale-[0.98] group max-w-md w-full"
             >
               <div className="flex items-center justify-center text-primary group-hover:scale-110 transition-transform duration-300 shrink-0">
                 {channel.icon}

@@ -125,7 +125,7 @@ export enum RoomRelationStatus {
 
 export interface UserWithRelationsToRoomDto {
   user: UserShort;
-  relationStatus: RoomRelationStatus | keyof typeof RoomRelationStatus;
+  relationStatus: RoomRelationStatus;
   activeRequest: RoomRequestShortWithoutRoomDto | null;
 }
 

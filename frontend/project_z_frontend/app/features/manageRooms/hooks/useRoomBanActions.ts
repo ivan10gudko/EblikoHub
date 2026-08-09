@@ -30,7 +30,6 @@ export const useRoomBanActions = (roomId: number) => {
   const banListKey = ['rooms', roomId, 'bans'];
   const roomDetailsKey = ["room", roomId];
 
-  // 1. Мутація для створення бану
   const createMutation = useMutation({
     mutationFn: (variables: OptimisticBanVariables) => {
       const { userId, reason } = variables;
@@ -38,15 +37,12 @@ export const useRoomBanActions = (roomId: number) => {
     },
     
     onMutate: async (variables) => {
-      // Скасовуємо активні запити для обох ключів
       await queryClient.cancelQueries({ queryKey: banListKey });
       await queryClient.cancelQueries({ queryKey: roomDetailsKey });
 
-      // Зберігаємо старі стани для відкату
       const previousBans = queryClient.getQueryData<RoomBanItem[]>(banListKey);
       const previousRoom = queryClient.getQueryData<Room>(roomDetailsKey);
 
-      // ОПТИМІСТИЧНО 1: Додаємо користувача в список забанених
       queryClient.setQueryData<RoomBanItem[]>(banListKey, (oldBans) => {
         const currentBans = oldBans || [];
         const optimisticBan: RoomBanItem = {
@@ -63,7 +59,6 @@ export const useRoomBanActions = (roomId: number) => {
         return [optimisticBan, ...currentBans];
       });
 
-      // ОПТИМІСТИЧНО 2: Видаляємо користувача зі списку учасників кімнати
       queryClient.setQueryData<Room>(roomDetailsKey, (oldRoom) => {
         if (!oldRoom || !oldRoom.members) return oldRoom;
         return {

@@ -15,3 +15,4 @@ export type {
 } from "./model/roomTitle.types";
 export {useRoomTitleLinks} from "./hooks/useRoomTitleLinks";
 export{useInfiniteRoomBanSearch} from "./hooks/useSearchBanUsers"
+export {roomRequestsService} from "./api/roomRequestsService";

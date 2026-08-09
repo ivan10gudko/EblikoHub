@@ -8,7 +8,7 @@ import {
 } from "~/features/manageRooms";
 import { useTitleStats } from "~/features/titleFilter/hooks/useTitleStats"; // 1. Додали імпорт хука
 import { ToggleSwitch } from "~/shared/ui/Switch";
-import { MobileTitleLinksManager } from "./MobileRoomSettsngsTitleLinksTab";
+import { MobileTitleLinksManager } from "./MobileRoomSettingsTitleLinksTab";
 import { TitleFiltersDropdown } from "./TitleFiltersDropdown";
 
 interface RoomDetailsSettingsTitlesLinksProps {

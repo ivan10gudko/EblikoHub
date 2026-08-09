@@ -9,7 +9,7 @@ type ButtonVariants =
   | "save"
   | "destructive"
   | "resetFilters"
-  | "accent"
+  | "accept"
   | "altCancel";
 
 interface ButtonProps extends ComponentProps<"button"> {
@@ -53,7 +53,7 @@ const variantStyles: Record<ButtonVariants, string> = {
   "active:scale-[0.97] cursor-pointer",
 
 // Стиль для кнопки для додавання друзів по типу того 
-     accent:
+     accept:
    "h-11 px-5 rounded-xl " +
   "bg-transparent bg-primary/10 " +
   "border border-primary/40 " +

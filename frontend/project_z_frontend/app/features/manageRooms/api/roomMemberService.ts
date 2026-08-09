@@ -14,7 +14,6 @@ export const roomMemberService: RoomMemberService = {
     },
 
     async updateMemberRole(roomId, data) {
-        // Використовуємо твій apiClient замість абстрактного api
         const { data: responseData } = await apiClient.patch<RoomMember>(`rooms/${roomId}/members`, data);
         return responseData;
     },

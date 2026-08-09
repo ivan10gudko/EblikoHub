@@ -1,34 +1,24 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { roomTitleService } from "~/features/manageRooms/api/roomTitleService";
-import type { RoomTitleDetails } from "~/features/manageRooms/model/roomTitle.types";
-import { AddRoomTitleModal } from "../../features/manageRooms/ui/Modals/AddRoomTitleModal";
 import { RoomTitleItem } from "./RoomTitleItem";
 import { useAuthStore } from "~/features/auth";
-import { RoomRole, useRoomDetails } from "~/entities/room";
 import { useQuery } from "@tanstack/react-query";
 import { useRoomModal } from "~/features/manageRooms/hooks/useRoomModal";
+import { useRoomTitleActions } from "~/features/manageRooms";
+import { TitleFiltersDropdown } from "./TitleFiltersDropdown";
 
 export const RoomTitlesManager = ({ roomId }: { roomId: number }) => {
     const { userId } = useAuthStore();
     const { openSettingsModal } = useRoomModal();
-    const [isCurrentUserAdmin, setIsCurrentUserAdmin] = useState(false);
+    const [isCurrentUserAdmin] = useState(false);
 
     const DEFAULT_IMAGE_PATH = "/defaultTitleRecordImage.jpg";
-    const { room } = useRoomDetails(roomId)
-    const currentUser = room?.members.find(member => member.user.userId == userId);
-    const { data: titles = [], isLoading, refetch } = useQuery({
+    const { data: titles = [], isLoading } = useQuery({
         queryKey: ["roomTitles", roomId],
         queryFn: () => roomTitleService.findAll(roomId),
     });
 
-    const handleDelete = async (titleId: string) => {
-        try {
-            await roomTitleService.deleteTitle(roomId, titleId);
-            refetch();
-        } catch (error) {
-            console.error("Error deleting room title:", error);
-        }
-    };
+    const { deleteTitle, isPending } = useRoomTitleActions(roomId);
 
     if (isLoading) {
         return <div className="p-4 text-muted-foreground">Loading titles...</div>;
@@ -42,12 +32,16 @@ export const RoomTitlesManager = ({ roomId }: { roomId: number }) => {
                     <p className="text-sm text-muted-foreground">Manage the list of titles for this room</p>
                 </div>
 
-                <button
-                    onClick={() => openSettingsModal('add-room-title', String(roomId))}
-                    className="h-10  px-4  py-1.5 bg-primary/10 hover:bg-primary/20 text-primary rounded-xl text-xs font-bold border border-primary/30 transition-all disabled:opacity-50 cursor-pointer whitespace-nowrap"
-                >
-                    + Add Title
-                </button>
+                <div className="flex items-center gap-2">
+
+                    <button
+                        onClick={() => openSettingsModal('add-room-title', String(roomId))}
+                        disabled={isPending}
+                        className="h-10 px-4 py-1.5 bg-primary/10 hover:bg-primary/20 text-primary rounded-xl text-xs font-bold border border-primary/30 transition-all disabled:opacity-50 cursor-pointer whitespace-nowrap"
+                    >
+                        + Add Title
+                    </button>
+                </div>
             </div>
 
             {titles.length === 0 ? (
@@ -60,10 +54,10 @@ export const RoomTitlesManager = ({ roomId }: { roomId: number }) => {
                         <RoomTitleItem
                             key={item.id}
                             item={item}
-                            onDelete={handleDelete}
+                            onDelete={deleteTitle}
                             defaultImagePath={DEFAULT_IMAGE_PATH}
                             roomId={roomId}
-                            isOwn={item.addedByUserId==userId? true:false}
+                            isOwn={item.addedByUserId === userId}
                             isCurrentUserAdmin={isCurrentUserAdmin}
                         />
                     ))}

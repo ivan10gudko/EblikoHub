@@ -23,7 +23,7 @@ export const FriendCardAdd = ({ user, onAction, isPendingAction }: FriendCardAdd
                 return (
                     <Button
                         disabled={isPendingAction}
-                        variant="accent"
+                        variant="accept"
                         className="w-full md:w-24 h-12"
                         onClick={() => onAction("send", userId)}
                     >
