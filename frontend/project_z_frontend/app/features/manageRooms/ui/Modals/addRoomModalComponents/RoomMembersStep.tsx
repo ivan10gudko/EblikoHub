@@ -39,24 +39,42 @@ export const MembersStep = ({
             userId: p.userId,
             name: p.name,
             nameTag: p.nameTag,
-            img: p.img
+            img: p.img,
           })}
-          onSelect={onSelect}
+          onSelect={(user) => {
+            
+            const isAlreadyAdded = addedUsers.some((u) => u.userId === user.userId);
+            if (!isAlreadyAdded) {
+              onSelect(user);
+            }
+          }}
           isLoading={isLoading}
-          renderAction={(user) => (
-            <Button
-              onClick={(e) => {
-                e.stopPropagation();
-                onSelect(user);
-              }}
-              className="p-2 bg-transparent hover:bg-primary/20 border border-border hover:border-primary/40 rounded-full transition-all group flex items-center justify-center flex-shrink-0"
-            >
-              <AddCircleOutlineIcon
-                className="text-primary group-hover:scale-110 transition-transform"
-                fontSize="small"
-              />
-            </Button>
-          )}
+          renderAction={(user) => {
+            const isAdded = addedUsers.some((u) => u.userId === user.userId);
+
+            if (isAdded) {
+              return (
+                <span className="text-[11px] font-medium text-foreground-muted bg-background-muted px-2.5 py-1 rounded-lg border border-border flex-shrink-0 select-none">
+                  Added
+                </span>
+              );
+            }
+
+            return (
+              <Button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onSelect(user);
+                }}
+                className="p-2 bg-transparent hover:bg-primary/20 border border-border hover:border-primary/40 rounded-full transition-all group flex items-center justify-center flex-shrink-0"
+              >
+                <AddCircleOutlineIcon
+                  className="text-primary group-hover:scale-110 transition-transform"
+                  fontSize="small"
+                />
+              </Button>
+            );
+          }}
         />
       )}
     </div>

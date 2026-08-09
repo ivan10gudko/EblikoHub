@@ -67,7 +67,7 @@ export const RoomRequestCard = ({
                             <CloseIcon className="text-base" />
                         </Button>
                         <Button
-                            variant="accent"
+                            variant="accept"
                             className="h-12 w-12 md:h-9 md:w-9 p-0 rounded-lg"
                             onClick={(e) => handleAction(e, onAccept)}
                             disabled={isPendingAction}

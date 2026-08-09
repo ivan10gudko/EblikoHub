@@ -22,12 +22,12 @@ export const RoomSort = () => {
                     value={sortBy}
                     options={sortOptions}
                     onChange={(val) => setSort(val as RoomSortType)}
-                    className="flex-1"
+                    className="flex-1 bg-transparent"
                 />
                 <Button 
-                    variant="accent" 
+                    variant="accept" 
                     onClick={toggleOrder} 
-                    className="px-4 bg-background hover:bg-background-muted-hover rounded-xl transition-colors"
+                    className="px-4 bg-transparent hover:bg-background-muted-hover rounded-xl transition-colors"
                 >
                     {order === "asc" ? (
                         <KeyboardArrowUpIcon className="text-primary hover:text-primary-hover" sx={{ fontSize: 24 }} />
