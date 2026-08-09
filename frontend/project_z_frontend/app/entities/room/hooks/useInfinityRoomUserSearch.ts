@@ -1,7 +1,7 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
 import type { QueryParams } from "~/shared/types";
 import { roomRequestsService } from "~/features/manageRooms";
-import { roomKeys } from "../model/room.Keys";
+import { roomKeys } from "../model/room.keys";
 
 export const useRoomUserSearch = (
     roomId: number | null,

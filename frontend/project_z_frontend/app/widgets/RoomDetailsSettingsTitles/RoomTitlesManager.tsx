@@ -4,15 +4,20 @@ import { RoomTitleItem } from "./RoomTitleItem";
 import { useAuthStore } from "~/features/auth";
 import { useQuery } from "@tanstack/react-query";
 import { useRoomModal } from "~/features/manageRooms/hooks/useRoomModal";
-import { useRoomTitleActions } from "~/features/manageRooms";
+import { useRoomMemberByRoomIdAndUserId, useRoomTitleActions } from "~/features/manageRooms";
 import { TitleFiltersDropdown } from "./TitleFiltersDropdown";
+import { RoomRole } from "~/entities/room";
 
 export const RoomTitlesManager = ({ roomId }: { roomId: number }) => {
     const { userId } = useAuthStore();
     const { openSettingsModal } = useRoomModal();
-    const [isCurrentUserAdmin] = useState(false);
+    
+    const { data : currentUser } = useRoomMemberByRoomIdAndUserId(userId!, roomId);
 
+    const isCurrentUserAdmin = currentUser?.role === RoomRole.ADMIN || currentUser?.role === RoomRole.OWNER;
     const DEFAULT_IMAGE_PATH = "/defaultTitleRecordImage.jpg";
+
+    
     const { data: titles = [], isLoading } = useQuery({
         queryKey: ["roomTitles", roomId],
         queryFn: () => roomTitleService.findAll(roomId),

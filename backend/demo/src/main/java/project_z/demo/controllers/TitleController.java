@@ -18,8 +18,6 @@ import project_z.demo.dto.TitleDtos.TitleBatchCreateDto;
 import project_z.demo.dto.TitleDtos.TitleDto;
 import project_z.demo.dto.TitleDtos.TitlePatchUpdateDto;
 import project_z.demo.dto.TitleDtos.TitlePositionUpdateDto;
-import project_z.demo.dto.TitleDtos.TitleShortDto;
-import project_z.demo.dto.TitleDtos.TitleShortWithLinksToRoomTitleDto;
 import project_z.demo.dto.TitleDtos.TitleStatsDto;
 import project_z.demo.entity.TitleEntity;
 import project_z.demo.security.JwtService;

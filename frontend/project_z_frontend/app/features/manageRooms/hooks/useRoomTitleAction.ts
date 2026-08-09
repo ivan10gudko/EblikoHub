@@ -2,6 +2,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { roomTitleService } from "~/features/manageRooms/api/roomTitleService";
 import { notify } from "~/shared/lib";
 import type { RoomTitleCreateRequest, RoomTitleDetails } from "../model/roomTitle.types";
+import { isAxiosError } from "axios";
 
 export const useRoomTitleActions = (roomId: number) => {
   const queryClient = useQueryClient();
@@ -9,9 +10,15 @@ export const useRoomTitleActions = (roomId: number) => {
 
   const mutationConfig = {
     onSuccess: () => queryClient.invalidateQueries({ queryKey }),
-    onError: () => notify.error("Something went wrong"),
-  };
 
+    onError: (error: unknown) => {
+      if (isAxiosError(error) && error.response?.status === 403) {
+        notify.error("Access denied. You only have access to delete titles created by you.");
+        return;
+      }
+      notify.error("Something went wrong");
+    },
+  };
   const createMutation = useMutation({
     ...mutationConfig,
     mutationFn: (data: RoomTitleCreateRequest) => roomTitleService.createTitle(roomId, data),
@@ -24,7 +31,7 @@ export const useRoomTitleActions = (roomId: number) => {
 
   const updateMutation = useMutation({
     ...mutationConfig,
-    mutationFn: ({ titleId, data }: { titleId: string; data: RoomTitleCreateRequest }) => 
+    mutationFn: ({ titleId, data }: { titleId: string; data: RoomTitleCreateRequest }) =>
       roomTitleService.updateTitle(roomId, titleId, data),
   });
 

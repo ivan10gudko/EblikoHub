@@ -89,7 +89,7 @@ public class RoomTitleController {
     }
 
     @DeleteMapping("/{titleId}")
-    @PreAuthorize("@securityService.isAdminOrOwner(#roomId)")
+    @PreAuthorize("@securityService.isAdminOrOwner(#roomId) || @securityService.isRoomTitleOwner(#titleId)")
     public ResponseEntity<Void> delete(
             @PathVariable Long roomId,
             @PathVariable UUID titleId) {
