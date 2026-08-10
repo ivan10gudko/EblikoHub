@@ -3,7 +3,8 @@ import { useState } from "react";
 import { WatchlistShortTitles } from "./WatchlistShortTitles";
 import { RoomTitleReadOnlyList } from "./RoomTitleList";
 import { ToggleSwitch } from "~/shared/ui/Switch";
-import { TitleFiltersDropdown } from "./TitleFiltersDropdown";
+import { TitleFiltersDropdown } from "~/features/titleFilter";
+
 
 interface MobileTitleLinksManagerProps {
     userId: string;

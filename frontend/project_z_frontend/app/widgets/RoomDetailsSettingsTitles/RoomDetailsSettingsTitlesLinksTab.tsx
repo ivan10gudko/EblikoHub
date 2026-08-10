@@ -6,10 +6,10 @@ import {
   useInfiniteRoomTitlesWithLinks,
   useRoomTitleLinkActions,
 } from "~/features/manageRooms";
-import { useTitleStats } from "~/features/titleFilter/hooks/useTitleStats"; // 1. Додали імпорт хука
+import { useTitleStats } from "~/features/titleFilter/hooks/useTitleStats"; 
 import { ToggleSwitch } from "~/shared/ui/Switch";
 import { MobileTitleLinksManager } from "./MobileRoomSettingsTitleLinksTab";
-import { TitleFiltersDropdown } from "./TitleFiltersDropdown";
+import { TitleFiltersDropdown } from "~/features/titleFilter";
 
 interface RoomDetailsSettingsTitlesLinksProps {
   userId: string;
@@ -101,7 +101,6 @@ export const RoomDetailsSettingsTitlesLinks = ({
                 onToggle={setWatchlistModeToggleActive}
               />
 
-              {/* 3. Передаємо пораховані counts у дропдаун */}
               <TitleFiltersDropdown 
                 statusCount={stats?.statusCount}
                 typeCount={stats?.typeCount}

@@ -5,7 +5,6 @@ import { useAuthStore } from "~/features/auth";
 import { useQuery } from "@tanstack/react-query";
 import { useRoomModal } from "~/features/manageRooms/hooks/useRoomModal";
 import { useRoomMemberByRoomIdAndUserId, useRoomTitleActions } from "~/features/manageRooms";
-import { TitleFiltersDropdown } from "./TitleFiltersDropdown";
 import { RoomRole } from "~/entities/room";
 
 export const RoomTitlesManager = ({ roomId }: { roomId: number }) => {
