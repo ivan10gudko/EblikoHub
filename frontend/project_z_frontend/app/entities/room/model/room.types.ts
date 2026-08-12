@@ -1,4 +1,3 @@
-import type { InfiniteQueryPageParamsOptions } from "@tanstack/react-query";
 import type { QueryParams, RequestStatus, RequestType, Status } from "~/shared/types";
 
 export interface UserShort {

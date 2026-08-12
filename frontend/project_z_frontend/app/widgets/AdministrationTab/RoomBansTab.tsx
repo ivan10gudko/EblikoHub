@@ -1,8 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { RoomBanCard } from './RoomBanCard';
-import { useRoomBans } from '~/features/manageRooms/hooks/useRoomBans';
-import { useInfiniteRoomBanSearch } from '~/features/manageRooms';
-import { useRoomBanActions } from '~/features/manageRooms/hooks/useRoomBanActions';
+import { useRoomBans } from '~/features/manageRoomBans/hooks/useRoomBans';
+import { useInfiniteRoomBanSearch } from '~/features/manageRoomBans';
+import { useRoomBanActions } from '~/features/manageRoomBans/hooks/useRoomBanActions';
 import { notify } from "~/shared/lib";
 import { UserSearchDropdown } from '~/entities/user/ui/UserSearchDropdownResults';
 import SearchBar from '~/shared/ui/SearchBar';

@@ -2,9 +2,9 @@ import { useState, useEffect } from "react";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { useParams } from "react-router";
 import { TitleTypeThemes, TitleType, type TitleShort, getTitleThemeClassname } from "~/entities/titleRecord";
-import type { RoomTitleWithUserLinks } from "~/features/manageRooms";
-import { useRoomTitleLinkActions } from "~/features/manageRooms";
-import { LinkItem } from "~/features/manageRooms/ui/LinkItem";
+import type { RoomTitleWithUserLinks } from "~/features/manageRoomTitles";
+import { useRoomTitleLinkActions } from "~/features/manageRoomTitles";
+import { LinkItem } from "~/features/manageRoomTitles/ui/LinkItem";
 
 interface RoomTitleRowProps {
   title: RoomTitleWithUserLinks;

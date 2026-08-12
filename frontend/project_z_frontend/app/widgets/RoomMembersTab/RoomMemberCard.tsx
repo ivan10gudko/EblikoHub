@@ -7,9 +7,9 @@ import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import { UserAvatar } from "~/entities/user";
 
 import { RoomRole, type RoomMemberShort } from "~/entities/room/model/room.types";
-import { RoomMemberRoleBadge } from "~/features/manageRooms/ui/RoomMemberRoleBadge";
-import { useRoomMemberActions } from "~/features/manageRooms/hooks/useRoomMemberActions";
-import { useRoomBanActions } from "~/features/manageRooms/hooks/useRoomBanActions";
+import { RoomMemberRoleBadge } from "~/features/manageRoomMembers/ui/RoomMemberRoleBadge";
+import { useRoomMemberActions } from "~/features/manageRoomMembers/hooks/useRoomMemberActions";
+import { useRoomBanActions } from "~/features/manageRoomBans/hooks/useRoomBanActions";
 import { notify } from "~/shared/lib";
 import { Dropdown } from "~/shared/ui/DropDown";
 import { BanDropdownItem, DropdownItem } from "~/shared/ui/DropDown/DropDown";

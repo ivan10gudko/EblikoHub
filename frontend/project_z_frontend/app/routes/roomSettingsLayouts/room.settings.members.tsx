@@ -1,7 +1,7 @@
 import { useParams } from "react-router";
 import { useRoomDetails } from "~/entities/room";
 import { useAuthStore } from "~/features/auth";
-import { useRoomMemberByRoomIdAndUserId } from "~/features/manageRooms";
+import { useRoomMemberByRoomIdAndUserId } from "~/features/manageRoomMembers";
 
 import { RoomMembersTab } from "~/widgets/RoomMembersTab";
 

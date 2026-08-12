@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { Outlet, redirect, useParams } from "react-router";
 import MenuIcon from "@mui/icons-material/Menu";
-import { RoomRequestsSidebar } from "~/entities/room";
 import { useAuthStore } from "~/features/auth";
+import { RoomRequestsSidebar } from "~/features/manageRoomRequests";
 
 export default function RoomsUserRequestsLayout() {
     

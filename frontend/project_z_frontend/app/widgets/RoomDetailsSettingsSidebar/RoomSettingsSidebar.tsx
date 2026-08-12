@@ -18,7 +18,7 @@ import { Button } from "~/shared/ui/Button";
 import { RoomRole } from "~/entities/room/model/room.types";
 import { NavGroupItem, NavLinkItem } from "~/shared/ui/NavLinkItem";
 import type { NavItem } from "~/shared/ui/NavLinkItem/NavLinkItem";
-import { useRoomModal } from "~/features/manageRooms/hooks/useRoomModal";
+import { useRoomModal } from "~/features/manageRoomSettings/hooks/useRoomModal";
 
 interface RoomSettingsSidebarProps {
   roomId: number;

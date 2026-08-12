@@ -1,10 +1,11 @@
 import { useState } from "react";
-import { roomTitleService } from "~/features/manageRooms/api/roomTitleService";
+import { roomTitleService } from "~/features/manageRoomTitles/api/roomTitleService";
 import { RoomTitleItem } from "./RoomTitleItem";
 import { useAuthStore } from "~/features/auth";
 import { useQuery } from "@tanstack/react-query";
-import { useRoomModal } from "~/features/manageRooms/hooks/useRoomModal";
-import { useRoomMemberByRoomIdAndUserId, useRoomTitleActions } from "~/features/manageRooms";
+import { useRoomModal } from "~/features/manageRoomSettings/hooks/useRoomModal";
+import { useRoomMemberByRoomIdAndUserId } from "~/features/manageRoomMembers";
+import { useRoomTitleActions } from "~/features/manageRoomTitles";
 import { RoomRole } from "~/entities/room";
 
 export const RoomTitlesManager = ({ roomId }: { roomId: number }) => {

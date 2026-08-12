@@ -1,11 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
-import { useRoomRequests } from "~/entities/room/hooks/useRoomRequests";
-import { roomService } from "~/entities/room/api/roomService";
 import { Button } from "~/shared/ui/Button";
 import { RequestStatus, RequestType } from "~/shared/types";
 import { UserAvatar } from "~/entities/user";
 import type { RoomRequestShortWithUser } from "~/entities/room";
-import { roomRequestsService } from "~/features/manageRooms";
+import { roomRequestsService, useRoomRequests } from "~/features/manageRoomRequests";
 
 interface SentInvitesTabProps {
   roomId: number;

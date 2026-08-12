@@ -1,23 +1,15 @@
-import { useRoomActions } from "../../hooks/useRoomActions";
+
 import type { RoomShort } from "../../model/room.types";
-import PushPinIcon from "@mui/icons-material/PushPin";
 import GroupIcon from "@mui/icons-material/Group";
-import { RoomActionsMenu } from "../roomActoinsMenu";
 
 interface RoomCardProps {
   room: RoomShort;
   onClick?: () => void;
+  renderActions?: (room: RoomShort) => React.ReactNode;
 }
 const DEFAULT_IMAGE_PATH = "/defaultTitleRecordImage.jpg";
 
-export const PinnedRoomCard = ({ room, onClick }: RoomCardProps) => {
-  const { unpinRoom, isPending } = useRoomActions(room.roomId);
-  const handleUnpin = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    unpinRoom();
-  };
-
-  return (
+export const PinnedRoomCard = ({ room, onClick, renderActions }: RoomCardProps) => {  return (
     <div
       onClick={onClick}
       className="group flex flex-col w-full rounded-2xl border-2 border-primary bg-card shadow-lg shadow-primary/10 transition-all cursor-pointer"
@@ -43,15 +35,7 @@ export const PinnedRoomCard = ({ room, onClick }: RoomCardProps) => {
           </div>
 
           <div className="flex items-center gap-1 opacity-100 sm:opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-            <button
-              onClick={handleUnpin}
-              disabled={isPending}
-              className="flex items-center justify-center p-1 rounded-lg hover:bg-background-muted transition-colors"
-            >
-              <PushPinIcon className="text-sm text-foreground" />
-            </button>
-
-            <RoomActionsMenu room={room} />
+            {renderActions?.(room)}
           </div>
         </div>
       </div>

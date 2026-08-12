@@ -2,7 +2,7 @@ import { useNavigate } from "react-router";
 import type { RoomShort } from "../model/room.types";
 import { RoomCardWrapper } from "./roomCard/roomCardWrapper";
 
-export const RoomListGrid = ({ rooms, isLoading, isEmpty }: { rooms: RoomShort[], isLoading: boolean, isEmpty: boolean }) => {
+export const RoomListGrid = ({ rooms, isLoading, isEmpty, renderActions }: { rooms: RoomShort[], isLoading: boolean, isEmpty: boolean, renderActions?: (room: RoomShort) => React.ReactNode }) => {
   const navigate = useNavigate();
 
   if (isLoading) return <div className="text-foreground">Loading rooms...</div>;
@@ -15,6 +15,7 @@ export const RoomListGrid = ({ rooms, isLoading, isEmpty }: { rooms: RoomShort[]
           key={room.roomId} 
           room={room} 
           onClick={() => navigate(`/rooms/${room.roomId}`)} 
+          renderActions={renderActions}
         />
       ))}
     </div>

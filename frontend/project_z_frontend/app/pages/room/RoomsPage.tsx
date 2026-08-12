@@ -10,11 +10,12 @@ import {
 import { useMemo } from "react";
 
 import { Button } from "~/shared/ui/Button";
-import { useRoomModal } from "~/features/manageRooms/hooks/useRoomModal";
+import { AddRoomCardButton, useRoomModal, GlobalModalManager, useRoomActions } from "~/features/manageRoomSettings";
 import { useNavigate } from "react-router";
-import { GlobalModalManager } from "~/features/manageRooms/ui/Modals/GlobalRoomManager";
-import { AddRoomCardButton } from "~/entities/room/ui/roomCard/AddRoomCardButton";
 
+import PushPinIcon from "@mui/icons-material/PushPin";
+import type { RoomShort } from "~/entities/room/model/room.types";
+import { RoomActionsMenu } from "~/features/manageRoomSettings/ui/RoomActionsMenu";
 
 const secondaryBtnStyle =
   "w-full h-11 flex items-center justify-center gap-2 rounded-xl " +
@@ -25,6 +26,33 @@ const secondaryBtnStyle =
   "shadow-md hover:shadow-orange-glow " +
   "transition-all duration-200 " +
   "active:scale-[0.97] cursor-pointer";
+
+const RoomListItem = ({ room }: { room: RoomShort }) => {
+  const { pinRoom, unpinRoom, isPending } = useRoomActions(room.roomId);
+
+  const handleTogglePin = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (room.isPinned) {
+      unpinRoom();
+    } else {
+      pinRoom();
+    }
+  };
+
+  return (
+    <>
+      <button
+        onClick={handleTogglePin}
+        disabled={isPending}
+        className="flex items-center justify-center p-1 rounded-lg hover:bg-background-muted transition-colors cursor-pointer"
+      >
+        <PushPinIcon className={`text-sm ${room.isPinned ? "text-primary" : "text-foreground"}`} />
+      </button>
+
+      <RoomActionsMenu room={room} />
+    </>
+  );
+};
 
 export default function RoomsPage({ userId }: { userId: string | null }) {
   const { search, sortBy, order, setSearch, setSortFromUrl, setOrderFromUrl } =
@@ -83,6 +111,7 @@ export default function RoomsPage({ userId }: { userId: string | null }) {
             rooms={allRooms}
             isLoading={isLoading}
             isEmpty={allRooms.length === 0}
+            renderActions={(room) => <RoomListItem room={room} />}
           />
         )}
 

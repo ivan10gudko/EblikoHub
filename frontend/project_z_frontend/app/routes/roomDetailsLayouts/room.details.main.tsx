@@ -1,8 +1,9 @@
 import { useEffect, useRef } from "react";
 import { useParams } from "react-router";
 import { useRoomDetails } from "~/entities/room";
-import { RoomDetailsSidebar, RoomModalManager, useRoomTitlesQuery } from "~/features/manageRooms";
-import { useRoomDetailsFilterStore } from "~/features/manageRooms/store/roomDetailsFilter.store";
+import { RoomDetailsSidebar, useRoomTitlesQuery } from "~/widgets/RoomDetailsManager";
+import { RoomModalManager } from "~/widgets/RoomDetailsManager";
+import { useRoomDetailsFilterStore } from "~/widgets/RoomDetailsManager/store/roomDetailsFilter.store";
 
 export default function RoomDetailsMainPage() {
     const { id: roomId } = useParams<{ id: string }>();

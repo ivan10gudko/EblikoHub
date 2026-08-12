@@ -1,6 +1,6 @@
 import { Droppable } from "@hello-pangea/dnd";
 import { RoomTitleReadOnlyRowShort } from "./RoomTitleReadOnlyRow";
-import type { RoomTitleWithUserLinks } from "~/features/manageRooms";
+import type { RoomTitleWithUserLinks } from "~/features/manageRoomTitles";
 import { InfiniteScrollLoader } from "~/shared/ui/infinityScroll";
 
 export interface RoomTitleReadOnlyListProps {

@@ -1,4 +1,4 @@
-import type { RoomTitleDetails } from "~/features/manageRooms/model/roomTitle.types";
+import type { RoomTitleDetails } from "~/features/manageRoomTitles/model/roomTitle.types";
 import { TitleTypeThemes } from "~/entities/titleRecord";
 import { RoomTitleActionMenu } from "./RoomTitleActionMenu";
 

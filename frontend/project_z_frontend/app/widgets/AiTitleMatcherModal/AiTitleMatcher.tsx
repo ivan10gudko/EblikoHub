@@ -1,11 +1,11 @@
 import { useState, useMemo, useEffect } from "react";
 import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
-import type { SuggestedTitleLinkDto } from "~/features/manageRooms/model/roomTitle.types";
+import type { SuggestedTitleLinkDto } from "~/features/manageRoomTitles/model/roomTitle.types";
 import { Checkbox } from "~/shared/ui/CheckBox";
 import Button from "~/shared/ui/Button/Button";
 import { TitleType, TitleTypeBorderColors, TitleTypeGradientColors } from "~/entities/titleRecord";
-import { useAiTitleSuggestions } from "~/features/manageRooms/hooks/useAiTitleSuggestions";
-import { useBatchCreateRoomTitleLinks } from "~/features/manageRooms/hooks/useBatchCreateRoomTitleLinks";
+import { useAiTitleSuggestions } from "~/features/manageRoomTitles/hooks/useAiTitleSuggestions";
+import { useBatchCreateRoomTitleLinks } from "~/features/manageRoomTitles/hooks/useBatchCreateRoomTitleLinks";
 import { useNavigate, useParams } from "react-router";
 
 const DEFAULT_IMAGE_PATH = "/defaultTitleRecordImage.jpg";

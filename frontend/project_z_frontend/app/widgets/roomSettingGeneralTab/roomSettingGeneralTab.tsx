@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
 import SettingsIcon from "@mui/icons-material/Settings";
-import { useRoomMutation, type Room, type UpdateRoomPayload } from "~/entities/room";
+
 import { Button } from "~/shared/ui/Button";
 import { ImageUrlEditor } from "~/shared/ui/ImageUrlEditor";
+import { useRoomMutation } from "~/features/manageRoomSettings";
+import type { Room, UpdateRoomPayload } from "~/entities/room";
 
 interface RoomSettingGeneralTabProps {
   room: Room;

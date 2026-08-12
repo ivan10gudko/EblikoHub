@@ -5,7 +5,7 @@ import { RoomTitleReadOnlyList } from "./RoomTitleList";
 import {
   useInfiniteRoomTitlesWithLinks,
   useRoomTitleLinkActions,
-} from "~/features/manageRooms";
+} from "~/features/manageRoomTitles";
 import { useTitleStats } from "~/features/titleFilter/hooks/useTitleStats"; 
 import { ToggleSwitch } from "~/shared/ui/Switch";
 import { MobileTitleLinksManager } from "./MobileRoomSettingsTitleLinksTab";

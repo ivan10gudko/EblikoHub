@@ -2,8 +2,8 @@
 import { MoreVert, Link as LinkIcon, Edit } from "@mui/icons-material";
 import { Dropdown } from "~/shared/ui/DropDown";
 import { DropdownItem, DeleteDropdownItem } from "~/shared/ui/DropDown/DropDown";
-import type { RoomTitleDetails } from "~/features/manageRooms/model/roomTitle.types";
-import { useRoomModal } from "~/features/manageRooms/hooks/useRoomModal";
+import type { RoomTitleDetails } from "~/features/manageRoomTitles/model/roomTitle.types";
+import { useRoomModal } from "~/features/manageRoomSettings/hooks/useRoomModal";
 
 interface RoomTitleActionMenuProps {
   item: RoomTitleDetails;

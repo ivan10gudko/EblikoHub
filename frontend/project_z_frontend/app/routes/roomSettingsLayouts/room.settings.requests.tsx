@@ -1,7 +1,7 @@
 import { useParams, Outlet } from "react-router";
 import { useRoomDetails } from "~/entities/room";
 import { useAuthStore } from "~/features/auth";
-import { useRoomMemberByRoomIdAndUserId } from "~/features/manageRooms";
+import { useRoomMemberByRoomIdAndUserId } from "~/features/manageRoomMembers";
 import { RoomSettingInvitesTab } from "~/widgets/RoomSettingInvites/ui/RoomSettingInvitesTab";
 
 export default function RoomSettingsRequestsPage() {

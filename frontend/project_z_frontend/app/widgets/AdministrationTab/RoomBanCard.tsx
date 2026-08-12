@@ -1,6 +1,6 @@
 import React from 'react';
 import { UserAvatar } from "~/entities/user";
-import type { RoomBanDetailsDto } from '~/features/manageRooms/model/roomTitle.types';
+import type { RoomBanDetailsDto } from '~/features/manageRoomBans';
 import Button from '~/shared/ui/Button/Button';
 
 interface RoomBanCardProps {

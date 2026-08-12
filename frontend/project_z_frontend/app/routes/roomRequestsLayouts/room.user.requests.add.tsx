@@ -2,7 +2,7 @@
 import { useState } from "react";
 import SearchBar from "~/shared/ui/SearchBar";
 import { useDebouncedCallback } from "~/shared/hooks/useDebouncedCallback";
-import { RoomRequestsSearchTab } from "~/entities/room/ui/roomRequestsTabs/RoomRequestsSearchTab";
+import { RoomRequestsSearchTab } from "~/features/manageRoomRequests/ui/roomRequestsTabs/RoomRequestsSearchTab";
 
 export default function RoomRequestsSearchPage() {
     const [searchQuery, setSearchQuery] = useState("");
