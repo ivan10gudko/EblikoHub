@@ -1,16 +1,15 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { RoomBanCard } from './RoomBanCard';
-import { useRoomBans } from '~/features/manageRoomBans/hooks/useRoomBans';
-import { useInfiniteRoomBanSearch } from '~/features/manageRoomBans';
-import { useRoomBanActions } from '~/features/manageRoomBans/hooks/useRoomBanActions';
 import { notify } from "~/shared/lib";
 import { UserSearchDropdown } from '~/entities/user/ui/UserSearchDropdownResults';
 import SearchBar from '~/shared/ui/SearchBar';
 import { useDebounce } from '~/shared/hooks';
+import { RoomBanDetailsModal, useInfiniteRoomBanSearch, useRoomBanActions, useRoomBans, type RoomBanDetailsDto } from '~/features/manageRoomBans';
 
 interface RoomBansTabProps {
     roomId: string | number;
 }
+
 
 export const RoomBansTab: React.FC<RoomBansTabProps> = ({ roomId }) => {
     const numericRoomId = Number(roomId);
@@ -20,6 +19,8 @@ export const RoomBansTab: React.FC<RoomBansTabProps> = ({ roomId }) => {
     const [selectedUserData, setSelectedUserData] = useState<{ name: string; nameTag?: string; img?: string | null } | null>(null);
     const [reason, setReason] = useState('');
     const [showDropdown, setShowDropdown] = useState(false);
+
+    const [selectedBan, setSelectedBan] = useState<RoomBanDetailsDto | null>(null);
 
     const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -111,9 +112,9 @@ export const RoomBansTab: React.FC<RoomBansTabProps> = ({ roomId }) => {
     };
 
     return (
-        <div className="p-6 text-foreground flex flex-col gap-6">
+        <div className="p-6 text-foreground flex flex-col gap-6 w-full min-w-0 overflow-hidden">
             <div>
-                <h3 className="text-lg font-bold tracking-wide text-foreground">
+                <h3 className="text-lg font-bold tracking-wide text-foreground truncate">
                     Administration: Room Blacklist
                 </h3>
                 <p className="text-xs text-foreground-muted mt-1">
@@ -123,10 +124,10 @@ export const RoomBansTab: React.FC<RoomBansTabProps> = ({ roomId }) => {
 
             <form
                 onSubmit={handleBanUser}
-                className="p-4 bg-card/30 border border-border rounded-xl backdrop-blur-md relative z-30"
+                className="p-4 bg-card/30 border border-border rounded-xl backdrop-blur-md relative z-30 w-full min-w-0"
             >
                 <div
-                    className="grid grid-cols-1 sm:grid-cols-[minmax(0,1fr)_auto] gap-3"
+                    className="grid grid-cols-1 sm:grid-cols-[minmax(0,1fr)_auto] gap-3 items-start min-w-0"
                     ref={dropdownRef}
                 >
                     <div className="relative min-w-0">
@@ -173,48 +174,39 @@ export const RoomBansTab: React.FC<RoomBansTabProps> = ({ roomId }) => {
                         </div>
                     </div>
 
-                    <input
-                        type="text"
-                        placeholder="Reason for ban (optional)..."
-                        value={reason}
-                        onChange={(e) => setReason(e.target.value)}
-                        disabled={isMutating}
-                        className="
-                            w-full min-w-0
-                            px-4 py-2 text-xs
-                            bg-background/50
-                            border border-border/60
-                            focus:border-primary/40
-                            rounded-xl
-                            text-foreground-muted
-                            placeholder:text-foreground-muted/40
-                            outline-none
-                            transition-colors
-                            disabled:opacity-50
-                            sm:col-start-1
-                            sm:row-start-2
-                        "
-                    />
+                    <div className="relative w-full min-w-0 sm:col-start-1 sm:row-start-2">
+                        <input
+                            type="text"
+                            placeholder="Reason for ban (optional)..."
+                            value={reason}
+                            onChange={(e) => setReason(e.target.value)}
+                            disabled={isMutating}
+                            className="
+                                w-full min-w-0
+                                px-4 py-2 pr-14 text-xs
+                                bg-background/50
+                                border border-border/60
+                                focus:border-primary/40
+                                rounded-xl
+                                text-foreground-muted
+                                placeholder:text-foreground-muted/40
+                                outline-none
+                                transition-colors
+                                disabled:opacity-50
+                            "
+                        />
+                    </div>
 
                     <button
                         type="submit"
                         disabled={isMutating || !targetUserId}
                         className="
-                            w-full
-                            border border-danger/40
-                            text-white/70
-                            hover:bg-danger/15
-                            hover:text-danger
-                            px-4 py-2
-                            rounded-lg
-                            bg-danger/30
-                            cursor-pointer
-                            shadow-sm
-                            hover:shadow-[0_0_12px_rgba(220,38,38,.15)]
-                            disabled:opacity-50
-                            sm:w-auto
-                            sm:col-start-2
-                            sm:row-start-1
+                            bg-primary text-background hover:bg-primary-hover 
+                            h-10 px-5 rounded-xl shadow-lg active:scale-95 transition-all 
+                            shrink-0 font-black uppercase text-[11px] tracking-wider 
+                            border-2 border-primary/30 hover:border-primary/60 
+                            cursor-pointer disabled:opacity-50 disabled:pointer-events-none disabled:active:scale-100
+                            w-full sm:w-auto sm:col-start-2 sm:row-start-1 sm:row-span-2 sm:self-stretch flex items-center justify-center
                         "
                     >
                         {isMutating ? 'Banning...' : 'Ban User'}
@@ -222,7 +214,7 @@ export const RoomBansTab: React.FC<RoomBansTabProps> = ({ roomId }) => {
                 </div>
             </form>
 
-            <div className="flex flex-col min-w-0 relative z-10">
+            <div className="flex flex-col min-w-0 w-full relative z-10 overflow-hidden">
                 <h4 className="text-xs font-bold uppercase tracking-wider text-foreground-muted mb-3">
                     Banned Users ({bannedUsers.length})
                 </h4>
@@ -236,17 +228,26 @@ export const RoomBansTab: React.FC<RoomBansTabProps> = ({ roomId }) => {
                         No banned users found in this room.
                     </div>
                 ) : (
-                    <div className="flex flex-col gap-1">
+                    <div className="flex flex-col gap-1 w-full min-w-0 overflow-hidden">
                         {bannedUsers.map((ban) => (
                             <RoomBanCard
                                 key={ban.id}
                                 banDetails={ban}
                                 onUnban={unbanUser}
+                                onClick={() => setSelectedBan(ban)}
                             />
                         ))}
                     </div>
                 )}
             </div>
+
+            <RoomBanDetailsModal
+                isOpen={!!selectedBan}
+                onClose={() => setSelectedBan(null)}
+                banDetails={selectedBan}
+                onUnban={unbanUser}
+                isUnbanning={isMutating}
+            />
         </div>
     );
 };
