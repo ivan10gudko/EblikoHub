@@ -10,6 +10,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import PushPinIcon from "@mui/icons-material/PushPin";
 import { ReadOnlyStatusBadge } from "~/entities/titleRecord";
+import { formatDate } from "~/shared/helpers";
 
 interface ViewTitleModalProps {
   title: TitleRecord | null;
@@ -115,7 +116,7 @@ export const ViewTitleModal = ({
             {title.createdAt && (
               <span className="flex items-center gap-1">
                 <CalendarMonthIcon sx={{ fontSize: 14 }} />
-                Added: {new Date(title.createdAt).toLocaleDateString()}
+                Added: {formatDate(title.createdAt)}
               </span>
             )}
             {title.pinned && (

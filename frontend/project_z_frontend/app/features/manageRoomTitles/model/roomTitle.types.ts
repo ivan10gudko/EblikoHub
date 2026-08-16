@@ -104,7 +104,6 @@ export interface RoomTitleLinkCreateDto {
     roomTitleId: string;
 }
 
-/** Відповідає Java RoomTitleLinkBatchCreateDto */
 export interface RoomTitleLinkBatchCreateDto {
     links: RoomTitleLinkCreateDto[];
 }

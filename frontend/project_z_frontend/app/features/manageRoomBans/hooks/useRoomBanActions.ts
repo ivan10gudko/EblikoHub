@@ -1,8 +1,10 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { roomBanService } from "~/features/manageRoomBans/api/roomBanService"; 
+import { roomBanService } from "~/features/manageRoomBans/api/roomBanService";
 import type { Room } from "~/entities/room/model/room.types";
 import { notify } from "~/shared/lib";
 import type { RoomBanCreateDto } from "../model/roomBan.types";
+import { roomKeys } from "~/entities/room/model/room.keys";
+import { roomBanKeys } from "../model/roomBan.keys";
 
 
 export interface RoomBanItem {
@@ -27,16 +29,16 @@ interface OptimisticBanVariables extends RoomBanCreateDto {
 
 export const useRoomBanActions = (roomId: number) => {
   const queryClient = useQueryClient();
-  
-  const banListKey = ['rooms', roomId, 'bans'];
-  const roomDetailsKey = ["room", roomId];
+
+  const banListKey = roomBanKeys.bans(roomId);
+  const roomDetailsKey = roomKeys.details(roomId);;
 
   const createMutation = useMutation({
     mutationFn: (variables: OptimisticBanVariables) => {
       const { userId, reason } = variables;
       return roomBanService.create(roomId, { userId, reason });
     },
-    
+
     onMutate: async (variables) => {
       await queryClient.cancelQueries({ queryKey: banListKey });
       await queryClient.cancelQueries({ queryKey: roomDetailsKey });
@@ -74,7 +76,6 @@ export const useRoomBanActions = (roomId: number) => {
     },
 
     onError: (error: Error, _variables, context) => {
-      // Відкат обох стейтів у разі помилки
       if (context?.previousBans) {
         queryClient.setQueryData(banListKey, context.previousBans);
       }
@@ -90,14 +91,12 @@ export const useRoomBanActions = (roomId: number) => {
     },
 
     onSettled: () => {
-      // Синхронізуємо з сервером
       queryClient.invalidateQueries({ queryKey: banListKey });
       queryClient.invalidateQueries({ queryKey: roomDetailsKey });
       queryClient.invalidateQueries({ queryKey: ['user', roomId] });
     },
   });
 
-  // 2. Мутація для зняття бану
   const unbanMutation = useMutation({
     mutationFn: (roomBanId: string) => roomBanService.unban(roomId, roomBanId),
 
@@ -105,7 +104,6 @@ export const useRoomBanActions = (roomId: number) => {
       await queryClient.cancelQueries({ queryKey: banListKey });
       const previousBans = queryClient.getQueryData<RoomBanItem[]>(banListKey);
 
-      // Оптимістично видаляємо з чорного списку
       queryClient.setQueryData<RoomBanItem[]>(banListKey, (oldBans) => {
         if (!oldBans) return [];
         return oldBans.filter((ban) => String(ban.id) !== String(roomBanId));

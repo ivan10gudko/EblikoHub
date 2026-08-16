@@ -2,9 +2,8 @@ import { useState } from "react";
 import SearchIcon from "@mui/icons-material/Search";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 
-import { useRoomRequests } from "~/features/manageRoomRequests";
+import { useRoomRequests, useRoomUserSearch } from "~/features/manageRoomRequests";
 import { type UserShort, type UserWithRelationsToRoomDto, RoomRelationStatus } from "~/entities/room/model/room.types";
-import { useRoomUserSearch } from "~/features/manageRoomMembers";
 import { UserSearchDropdown } from "~/entities/user";
 import { UserAvatar } from "~/entities/user";
 import { useDebounce } from "~/shared/hooks";

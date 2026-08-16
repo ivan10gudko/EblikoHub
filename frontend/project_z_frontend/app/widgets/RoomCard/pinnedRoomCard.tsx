@@ -1,20 +1,29 @@
-
-import type { RoomShort } from "../../model/room.types";
+import PushPinIcon from "@mui/icons-material/PushPin";
 import GroupIcon from "@mui/icons-material/Group";
+import type { RoomShort } from "~/entities/room/model/room.types";
+import { DEFAULT_IMAGE_PATH } from "~/shared/constants";
+import { useRoomActions } from "~/features/manageRoomSettings";
+import { RoomActionsMenu } from "~/features/manageRoomSettings/ui/RoomActionsMenu";
+
 
 interface RoomCardProps {
   room: RoomShort;
   onClick?: () => void;
-  renderActions?: (room: RoomShort) => React.ReactNode;
 }
-const DEFAULT_IMAGE_PATH = "/defaultTitleRecordImage.jpg";
 
-export const PinnedRoomCard = ({ room, onClick, renderActions }: RoomCardProps) => {  return (
+export const PinnedRoomCard = ({ room, onClick }: RoomCardProps) => {
+  const { unpinRoom, isPending } = useRoomActions(room.roomId);
+
+  const handleUnpin = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    unpinRoom();
+  };
+
+  return (
     <div
       onClick={onClick}
       className="group flex flex-col w-full rounded-2xl border-2 border-primary bg-card shadow-lg shadow-primary/10 transition-all cursor-pointer"
     >
-     
       <div className="relative h-44 w-full overflow-hidden rounded-t-[14px] origin-top duration-500 transition-all">
         <img
           src={room.imageUrl || DEFAULT_IMAGE_PATH}
@@ -35,7 +44,14 @@ export const PinnedRoomCard = ({ room, onClick, renderActions }: RoomCardProps) 
           </div>
 
           <div className="flex items-center gap-1 opacity-100 sm:opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-            {renderActions?.(room)}
+            <button
+              onClick={handleUnpin}
+              disabled={isPending}
+              className="flex items-center justify-center p-1 rounded-lg hover:bg-background-muted transition-colors cursor-pointer"
+            >
+              <PushPinIcon className="text-sm text-primary" />
+            </button>
+            <RoomActionsMenu room={room} />
           </div>
         </div>
       </div>

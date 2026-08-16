@@ -3,6 +3,7 @@ import Modal from '~/shared/ui/Modal/Modal';
 import { UserAvatar } from '~/entities/user';
 import { ModalFooter } from '~/shared/ui/Modal';
 import type { RoomBanDetailsDto } from '../model/roomBan.types';
+import { formatDate } from '~/shared/helpers';
 
 interface RoomBanDetailsModalProps {
     isOpen: boolean;
@@ -24,18 +25,7 @@ export const RoomBanDetailsModal: React.FC<RoomBanDetailsModalProps> = ({
     const user = banDetails.user;
     const bannedBy = banDetails.bannedByUser;
 
-    const formattedDate = banDetails.createdAt
-        ? new Date(
-            banDetails.createdAt.endsWith('Z') ? banDetails.createdAt : `${banDetails.createdAt}Z`
-          ).toLocaleString('en-UK', {
-              month: 'short',
-              day: 'numeric',
-              year: 'numeric',
-              hour: '2-digit',
-              minute: '2-digit',
-              hour12: false,
-          })
-        : 'Н/Д';
+    const formattedDate = formatDate(banDetails.createdAt);
 
     return (
         <Modal
@@ -45,7 +35,7 @@ export const RoomBanDetailsModal: React.FC<RoomBanDetailsModalProps> = ({
             title="Ban Details"
         >
             <div className="flex flex-col justify-between min-h-full w-full text-foreground relative">
-                
+
                 <div className="flex flex-col gap-3.5 w-full pb-4">
                     <div className="flex items-center gap-3.5 p-3.5 rounded-2xl bg-card/60 border border-border w-full min-w-0">
                         <UserAvatar

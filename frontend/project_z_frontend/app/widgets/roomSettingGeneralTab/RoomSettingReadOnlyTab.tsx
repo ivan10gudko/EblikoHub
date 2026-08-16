@@ -5,21 +5,20 @@ import ShieldIcon from "@mui/icons-material/Shield";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import PeopleIcon from "@mui/icons-material/People";
 import type { Room } from "~/entities/room";
+import { formatDate } from "~/shared/helpers";
 
 interface RoomSettingReadOnlyTabProps {
   room: Room;
 }
 
 export const RoomSettingGeneralReadOnlyTab = ({ room }: RoomSettingReadOnlyTabProps) => {
-  const formattedDate = room?.createdAt
-    ? new Date(room.createdAt).toLocaleString("en-US", { dateStyle: "medium", timeStyle: "short" })
-    : "";
+  const formattedDate = formatDate(room.createdAt);
 
   return (
-    
+
     <div className="w-full max-w-xl bg-background border border-border rounded-2xl shadow-2xl overflow-hidden text-left transition-all">
-      
-      
+
+
       <div className="relative w-full h-72 md:h-80 bg-background-muted border-b border-border overflow-hidden flex items-center justify-center group">
         {room?.imageUrl ? (
           <img

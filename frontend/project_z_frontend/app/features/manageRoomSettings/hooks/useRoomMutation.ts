@@ -1,7 +1,9 @@
 import { useMutation, useQueryClient, type UseMutationOptions } from "@tanstack/react-query";
 import { roomService } from "~/entities/room/api/roomService";
+import { roomKeys } from "~/entities/room/model/room.keys";
 import type { Room, RoomCreateDto, UpdateRoomPayload } from "~/entities/room/model/room.types";
 import { notify } from "~/shared/lib";
+
 
 export const useRoomMutation = () => {
     const queryClient = useQueryClient();
@@ -9,7 +11,7 @@ export const useRoomMutation = () => {
     const createMutation = useMutation({
         mutationFn: (data: RoomCreateDto) => roomService.create(data),
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['rooms'] });
+            queryClient.invalidateQueries({ queryKey: roomKeys.all });
             notify.success("Room created successfully!");
         },
         onError: (error: any) => {
@@ -22,8 +24,8 @@ export const useRoomMutation = () => {
         mutationFn: ({ id, data }: { id: number; data: UpdateRoomPayload }) => 
             roomService.partialUpdate(id, data),
         onSuccess: (_, variables) => {
-            queryClient.invalidateQueries({ queryKey: ['room', variables.id] });
-            queryClient.invalidateQueries({ queryKey: ['rooms'] });
+            queryClient.invalidateQueries({ queryKey: roomKeys.details(variables.id) });
+            queryClient.invalidateQueries({ queryKey: roomKeys.all });
             notify.success("Room settings updated successfully!");
         },
         onError: (error: any) => {

@@ -9,6 +9,7 @@ import {
   validateUsername,
 } from "~/features/auth";
 import { useForm } from "~/shared/hooks";
+import { SIGN_UP_SYMBOLS_LIMITS } from "../model/auth.constants";
 
 interface RegisterFormData extends RegisterData {
   confirmPassword: string;
@@ -20,12 +21,6 @@ const INITIAL_VALUE = {
   email: "",
   password: "",
   confirmPassword: "",
-};
-
-// Ліміти довжини
-const LIMITS = {
-  NAME: 16,
-  USERNAME: 12,
 };
 
 export const useSignup = () => {
@@ -47,15 +42,9 @@ export const useSignup = () => {
     validate: (name, value, currentValues) => {
       switch (name) {
         case "name":
-          if (value.length > LIMITS.NAME) {
-            return `Ім'я не повинно перевищувати ${LIMITS.NAME} символів`;
-          }
           return validateName(value);
 
         case "username":
-          if (value.length > LIMITS.USERNAME) {
-            return `Тег не повинен перевищувати ${LIMITS.USERNAME} символів`;
-          }
           return validateUsername(value);
 
         case "email":
@@ -91,7 +80,7 @@ export const useSignup = () => {
   });
 
   const handleCheckAvailability = async (value: string) => {
-    if (!value || value.length > LIMITS.USERNAME) return;
+    if (!value || value.length > SIGN_UP_SYMBOLS_LIMITS.USERNAME) return;
     try {
       const isAvailable = await userService.isNameTagAvailable(value);
       if (!isAvailable) {
@@ -106,26 +95,15 @@ export const useSignup = () => {
   };
 
   const handleChange = (name: keyof RegisterFormData) => (value: string) => {
-    let sanitizedValue = value;
-
-    // Жорстке обмеження: обрізаємо текст при введенні
-    if (name === "name" && value.length > LIMITS.NAME) {
-      sanitizedValue = value.slice(0, LIMITS.NAME);
-    }
-
-    if (name === "username" && value.length > LIMITS.USERNAME) {
-      sanitizedValue = value.slice(0, LIMITS.USERNAME);
-    }
-
-    baseHandleChange(name)(sanitizedValue);
+    baseHandleChange(name)(value);
 
     if (name === "username") {
-      handleCheckAvailability(sanitizedValue);
+      handleCheckAvailability(value);
     }
 
     if (name === "password" && touched.confirmPassword) {
       const error =
-        formData.confirmPassword !== sanitizedValue
+        formData.confirmPassword !== value
           ? "Passwords do not match"
           : undefined;
       setErrors((prev) => ({ ...prev, confirmPassword: error }));

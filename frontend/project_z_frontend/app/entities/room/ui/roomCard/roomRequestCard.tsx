@@ -4,6 +4,7 @@ import CheckIcon from "@mui/icons-material/Check";
 import CloseIcon from "@mui/icons-material/Close";
 import { Button } from "~/shared/ui/Button";
 import type { RoomRequestShort } from "../../model/room.types";
+import { DEFAULT_IMAGE_PATH } from "~/shared/constants";
 
 
 interface RoomRequestCardProps {
@@ -13,7 +14,6 @@ interface RoomRequestCardProps {
     onReject: () => void;
 }
 
-const DEFAULT_IMAGE_PATH = "/defaultTitleRecordImage.jpg";
 
 export const RoomRequestCard = ({
     request,

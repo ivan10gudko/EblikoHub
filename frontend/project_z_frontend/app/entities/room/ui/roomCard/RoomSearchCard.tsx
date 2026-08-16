@@ -3,6 +3,7 @@ import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import { Button } from "~/shared/ui/Button";
 import type { RoomSearchResult } from "../../model/room.types";
+import { DEFAULT_IMAGE_PATH } from "~/shared/constants";
 
 interface RoomSearchCardProps {
   room: RoomSearchResult;
@@ -12,7 +13,6 @@ interface RoomSearchCardProps {
   renderActions?: (room: RoomSearchResult) => React.ReactNode;
 }
 
-const DEFAULT_IMAGE_PATH = "/defaultTitleRecordImage.jpg";
 
 export const RoomSearchCard = ({
   room,

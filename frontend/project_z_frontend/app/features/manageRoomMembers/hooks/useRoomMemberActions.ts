@@ -2,16 +2,18 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { RoomMemberRoleUpdateDto, Room, RoomMemberShort } from "~/entities/room";
 import { roomMemberService } from "../api/roomMemberService";
 import { notify } from "~/shared/lib";
+import { roomKeys } from "~/entities/room/model/room.keys";
+import { roomMembersKeys } from "../model/roomMembers.keys";
 
 export const useRoomMemberActions = (roomId: number) => {
     const queryClient = useQueryClient();
 
-    const memberListKey = ['rooms', roomId, 'members'];
-    const roomDetailsKey = ["room", roomId];
+    const memberListKey = roomMembersKeys.members(roomId);
+    const roomDetailsKey = roomKeys.details(roomId);
 
     const updateRoleMutation = useMutation({
         mutationFn: (data: RoomMemberRoleUpdateDto) => roomMemberService.updateMemberRole(roomId, data),
-        
+
         onMutate: async (variables) => {
             await queryClient.cancelQueries({ queryKey: memberListKey });
             await queryClient.cancelQueries({ queryKey: roomDetailsKey });

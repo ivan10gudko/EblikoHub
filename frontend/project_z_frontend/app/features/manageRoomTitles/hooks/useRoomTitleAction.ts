@@ -3,6 +3,7 @@ import { roomTitleService } from "~/features/manageRoomTitles/api/roomTitleServi
 import { notify } from "~/shared/lib";
 import type { RoomTitleCreateRequest, RoomTitleDetails } from "../model/roomTitle.types";
 import { isAxiosError } from "axios";
+import { getErrorMessage } from "~/shared/utils";
 
 export const useRoomTitleActions = (roomId: number) => {
   const queryClient = useQueryClient();
@@ -12,11 +13,7 @@ export const useRoomTitleActions = (roomId: number) => {
     onSuccess: () => queryClient.invalidateQueries({ queryKey }),
 
     onError: (error: unknown) => {
-      if (isAxiosError(error) && error.response?.status === 403) {
-        notify.error("Access denied. You only have access to delete titles created by you.");
-        return;
-      }
-      notify.error("Something went wrong");
+      notify.error(getErrorMessage(error, "Something went wrong"))
     },
   };
   const createMutation = useMutation({

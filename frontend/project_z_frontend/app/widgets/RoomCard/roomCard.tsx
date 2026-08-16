@@ -1,22 +1,29 @@
 import PushPinIcon from "@mui/icons-material/PushPin";
 import GroupIcon from "@mui/icons-material/Group";
 import type { RoomShort } from "~/entities/room/model/room.types";
+import { DEFAULT_IMAGE_PATH } from "~/shared/constants";
+import { RoomActionsMenu } from "~/features/manageRoomSettings/ui/RoomActionsMenu";
+import { useRoomActions } from "~/features/manageRoomSettings";
 
 interface RoomCardProps {
   room: RoomShort;
   onClick?: () => void;
-  renderActions?: (room: RoomShort) => React.ReactNode;
 }
 
-const DEFAULT_IMAGE_PATH = "/defaultTitleRecordImage.jpg";
+export const RoomCard = ({ room, onClick }: RoomCardProps) => {
+  const { pinRoom, isPending } = useRoomActions(room.roomId);
 
-export const RoomCard = ({ room, onClick, renderActions }: RoomCardProps) => {  return (
+  const handlePin = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    pinRoom();
+  };
+
+  return (
     <div
       onClick={onClick}
       className="group flex flex-col w-full rounded-2xl border border-border bg-card transition-all hover:border-primary cursor-pointer"
     >
-      
-      <div className="relative h-44 w-full overflow-hidden rounded-t-2xl    origin-top duration-500 transition-all">
+      <div className="relative h-44 w-full overflow-hidden rounded-t-2xl origin-top duration-500 transition-all">
         <img
           src={room.imageUrl || DEFAULT_IMAGE_PATH}
           alt={room.roomName}
@@ -35,7 +42,14 @@ export const RoomCard = ({ room, onClick, renderActions }: RoomCardProps) => {  
           </div>
 
           <div className="flex items-center gap-1 opacity-100 sm:opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-            {renderActions?.(room)}
+            <button
+              onClick={handlePin}
+              disabled={isPending}
+              className="flex items-center justify-center p-1 rounded-lg hover:bg-background-muted transition-colors cursor-pointer"
+            >
+              <PushPinIcon className="text-sm text-foreground" />
+            </button>
+            <RoomActionsMenu room={room} />
           </div>
         </div>
       </div>

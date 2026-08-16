@@ -1,6 +1,7 @@
 import type { RoomTitleDetails } from "~/features/manageRoomTitles/model/roomTitle.types";
 import { TitleTypeThemes } from "~/entities/titleRecord";
 import { RoomTitleActionMenu } from "./RoomTitleActionMenu";
+import { formatDate } from "~/shared/helpers";
 
 interface RoomTitleItemProps {
   item: RoomTitleDetails;
@@ -41,7 +42,7 @@ export const RoomTitleItem = ({
     </div>
 
     <div className="truncate text-sm font-bold">
-      Added: {new Date(item.createdAt).toLocaleDateString()}
+      Added: {formatDate(item.createdAt)}
     </div>
   </div>
 
