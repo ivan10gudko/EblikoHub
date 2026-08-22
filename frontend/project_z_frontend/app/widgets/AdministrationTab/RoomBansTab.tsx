@@ -5,22 +5,24 @@ import { UserSearchDropdown } from '~/entities/user/ui/UserSearchDropdownResults
 import SearchBar from '~/shared/ui/SearchBar';
 import { useDebounce } from '~/shared/hooks';
 import { 
-  RoomBanDetailsModal, 
-  useInfiniteRoomBanSearch,
-  useRoomBans, 
-  type RoomBanDetailsDto 
+    RoomBanDetailsModal, 
+    useInfiniteRoomBanSearch,
+    useRoomBans, 
+    type RoomBanDetailsDto 
 } from '~/features/manageRoomBans';
 import { useCreateRoomBan } from '~/features/manageRoomBans/hooks/useCreateRoomBan';
 import { useDeleteRoomBan } from '~/features/manageRoomBans/hooks/useDeleteRoomBan';
+import type { UserShort } from '~/entities/user/model/user.types';
+
+
 interface RoomBansTabProps {
     roomId: number;
 }
 
 export const RoomBansTab = ({ roomId }: RoomBansTabProps) => {
-
     const [targetUsername, setTargetUsername] = useState('');
     const [targetUserId, setTargetUserId] = useState<string | null>(null);
-    const [selectedUserData, setSelectedUserData] = useState<{ name: string; nameTag?: string; img?: string | null } | null>(null);
+    const [selectedUserData, setSelectedUserData] = useState<UserShort | null>(null);
     const [reason, setReason] = useState('');
     const [showDropdown, setShowDropdown] = useState(false);
 
@@ -92,14 +94,10 @@ export const RoomBansTab = ({ roomId }: RoomBansTabProps) => {
         );
     };
 
-    const selectUserFromSearch = (user: { userId: string; name: string; nameTag?: string; img?: string | null }) => {
+    const selectUserFromSearch = (user: UserShort) => {
         setTargetUsername(user.name);
         setTargetUserId(user.userId);
-        setSelectedUserData({
-            name: user.name,
-            nameTag: user.nameTag,
-            img: user.img,
-        });
+        setSelectedUserData(user);
         setShowDropdown(false);
     };
 
