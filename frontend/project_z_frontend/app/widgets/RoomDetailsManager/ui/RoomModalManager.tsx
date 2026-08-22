@@ -1,12 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 
 import { RoomRole } from "~/entities/room";
-import { getSessionUserId } from "~/shared/lib/supabase";
 
 import { useRoomModal } from "~/features/manageRoomSettings/hooks/useRoomModal";
-
 import { useRoomMemberByRoomIdAndUserId } from "~/features/manageRoomMembers";
-
 import {
   useRoomTitleDetails,
   AddRoomTitleModal,
@@ -14,6 +11,7 @@ import {
   ViewAllRoomTitleLinksModal,
   useCachedRoomTitle,
 } from "~/features/manageRoomTitles";
+import { useAuthStore } from "~/features/auth";
 
 export const RoomModalManager = ({ roomId }: { roomId: number }) => {
   const {
@@ -23,13 +21,10 @@ export const RoomModalManager = ({ roomId }: { roomId: number }) => {
     closeAllModals,
   } = useRoomModal();
 
-  const [userId, setUserId] = useState<string | null>(null);
+  const userId = useAuthStore((state) => state.userId);
 
-  useEffect(() => {
-    getSessionUserId().then(setUserId);
-  }, []);
+  const { data: currentMember } = useRoomMemberByRoomIdAndUserId(userId ?? null, roomId);
 
-  const { data: currentMember } = useRoomMemberByRoomIdAndUserId(userId ?? "", roomId);
   const canDeleteLinks =
     currentMember?.role === RoomRole.OWNER || currentMember?.role === RoomRole.ADMIN;
 
@@ -50,7 +45,7 @@ export const RoomModalManager = ({ roomId }: { roomId: number }) => {
       key: "add-room-title",
       isOpen: isAddRoomTitleOpen,
       render: () => (
-        <AddRoomTitleModal isOpen onClose={closeAllModals} onSuccess={closeAllModals} roomId={roomId} />
+        <AddRoomTitleModal isOpen onClose={closeAllModals} roomId={roomId} />
       ),
     },
     {
@@ -74,6 +69,7 @@ export const RoomModalManager = ({ roomId }: { roomId: number }) => {
       ),
     },
   ];
-
-  return <>{modals.filter((m) => m.isOpen).map((m) => <div key={m.key}>{m.render()}</div>)}</>;
+  return modals
+    .filter((m) => m.isOpen)
+    .map((m) => <React.Fragment key={m.key}>{m.render()}</React.Fragment>);
 };

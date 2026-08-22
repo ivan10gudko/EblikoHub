@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import SettingsIcon from "@mui/icons-material/Settings";
 
 import { Button } from "~/shared/ui/Button";
@@ -11,23 +11,13 @@ interface RoomSettingGeneralTabProps {
 }
 
 export const RoomSettingGeneralTab: React.FC<RoomSettingGeneralTabProps> = ({ room }) => {
-  const { updateRoom, isUpdating } = useRoomMutation();
+  const { updateRoom } = useRoomMutation();
 
   const [formData, setFormData] = useState<UpdateRoomPayload>({
     roomName: room?.roomName || "",
     imageUrl: room?.imageUrl || "",
     description: room?.description || "",
   });
-
-  useEffect(() => {
-    if (room) {
-      setFormData({
-        roomName: room.roomName || "",
-        imageUrl: room.imageUrl || "",
-        description: room.description || "",
-      });
-    }
-  }, [room]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -39,11 +29,14 @@ export const RoomSettingGeneralTab: React.FC<RoomSettingGeneralTabProps> = ({ ro
   };
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (room?.roomId) {
-      updateRoom(room.roomId, formData);
-    }
-  };
+  e.preventDefault();
+  if (room?.roomId) {
+    updateRoom.mutate({ 
+      id: room.roomId, 
+      data: formData 
+    });
+  }
+};
 
   return (
     <div className="w-full max-w-3xl bg-background border border-border rounded-2xl shadow-2xl overflow-hidden text-left transition-all">
@@ -109,10 +102,10 @@ export const RoomSettingGeneralTab: React.FC<RoomSettingGeneralTabProps> = ({ ro
           <Button
             type="submit"
             variant="save"
-            disabled={isUpdating}
+            disabled={updateRoom.isPending}
             className="w-full md:w-auto h-11 sm:h-12"
           >
-            {isUpdating ? "Saving changes..." : "Save changes"}
+            {updateRoom.isPending ? "Saving changes..." : "Save changes"}
           </Button>
         </div>
       </form>

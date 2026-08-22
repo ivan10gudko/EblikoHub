@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { DragDropContext, type DropResult } from "@hello-pangea/dnd";
 import { WatchlistShortTitles } from "./WatchlistShortTitles";
 import { RoomTitleReadOnlyList } from "./RoomTitleList";
@@ -10,6 +10,7 @@ import { useTitleStats } from "~/features/titleFilter/hooks/useTitleStats";
 import { ToggleSwitch } from "~/shared/ui/Switch";
 import { MobileTitleLinksManager } from "./MobileRoomSettingsTitleLinksTab";
 import { TitleFiltersDropdown } from "~/features/titleFilter";
+import { useWindowDimensions } from "~/shared/hooks";
 
 interface RoomDetailsSettingsTitlesLinksProps {
   userId: string;
@@ -28,22 +29,16 @@ export const RoomDetailsSettingsTitlesLinks = ({
     isFetchingNextPage,
   } = useInfiniteRoomTitlesWithLinks(roomId, userId, { page: 0, limit: 20 });
 
- 
   const { data: stats } = useTitleStats(userId);
 
   const [draggingTitleId, setDraggingTitleId] = useState<string | null>(null);
   const [isWatchlistModeToggleActive, setWatchlistModeToggleActive] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
+
+  const breakpoint = useWindowDimensions();
+  const isMobile = breakpoint === "xs" || breakpoint === "sm";
 
   const allTitles = data?.pages.flatMap((page) => page.content) ?? [];
   const { createLink } = useRoomTitleLinkActions(Number(roomId));
-
-  useEffect(() => {
-    setIsMobile(window.innerWidth < 768);
-    const handleResize = () => setIsMobile(window.innerWidth < 768);
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
 
   const onDragEnd = (result: DropResult) => {
     const { source, destination, draggableId } = result;
@@ -118,7 +113,7 @@ export const RoomDetailsSettingsTitlesLinks = ({
         <div className="flex flex-col gap-4 min-w-0">
           <h2 className="font-bold text-2xl">Room Titles</h2>
           <RoomTitleReadOnlyList
-            draggingTitleId={draggingTitleId!}
+            draggingTitleId={draggingTitleId ?? ""}
             titles={allTitles}
             isLoading={isLoading}
             fetchNextPage={fetchNextPage}

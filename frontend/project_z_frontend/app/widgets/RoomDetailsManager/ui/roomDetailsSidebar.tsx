@@ -62,7 +62,7 @@ export const RoomDetailsSidebar = ({ room }: RoomDetailsSidebarProps) => {
 
         <div className="pt-5 border-t border-border/60 flex flex-col gap-5">
           
-          <button
+          <Button
             onClick={() => setIsFiltersOpen(!isFiltersOpen)}
             className="
               group
@@ -94,15 +94,15 @@ export const RoomDetailsSidebar = ({ room }: RoomDetailsSidebarProps) => {
             {isFiltersOpen ? (
               <KeyboardArrowUpIcon
                 fontSize="small"
-                className="transition-transform duration-200 group-hover:text-primary"
+                className="transition-transform duration-200 group-hover:text-primary text-foreground"
               />
             ) : (
               <KeyboardArrowDownIcon
                 fontSize="small"
-                className="transition-transform duration-200 group-hover:text-primary"
+                className="transition-transform duration-200 group-hover:text-primary text-foreground"
               />
             )}
-          </button>
+          </Button>
 
           {isFiltersOpen && (
             <div className="flex flex-col gap-4 animate-fadeIn">

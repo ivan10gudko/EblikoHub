@@ -8,5 +8,5 @@ interface RoomSettingGeneralTabProps {
 
 export const RoomSettingGeneralWrapper = ({ room, role }: RoomSettingGeneralTabProps) => {
     if (role == RoomRole.MEMBER) return <RoomSettingGeneralReadOnlyTab room={room} />
-    return <RoomSettingGeneralTab room={room} />
+    return <RoomSettingGeneralTab key={room.roomId} room={room} />
 }

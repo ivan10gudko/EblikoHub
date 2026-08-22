@@ -9,10 +9,10 @@ import { UserAvatar } from "~/entities/user";
 import { RoomRole, type RoomMemberShort } from "~/entities/room/model/room.types";
 import { RoomMemberRoleBadge } from "~/features/manageRoomMembers/ui/RoomMemberRoleBadge";
 import { useRoomMemberActions } from "~/features/manageRoomMembers/hooks/useRoomMemberActions";
-import { useRoomBanActions } from "~/features/manageRoomBans/hooks/useRoomBanActions";
 import { notify } from "~/shared/lib";
 import { Dropdown } from "~/shared/ui/DropDown";
 import { BanDropdownItem, DropdownItem } from "~/shared/ui/DropDown/DropDown";
+import { useCreateRoomBan } from "~/features/manageRoomBans/hooks/useCreateRoomBan";
 
 interface RoomMemberCardProps {
   roomId: number;
@@ -33,7 +33,7 @@ export const RoomMemberCard: React.FC<RoomMemberCardProps> = ({
 
   const numericRoomId = Number(roomId);
   const { updateMemberRole, isUpdatingRole } = useRoomMemberActions(numericRoomId);
-  const { banUser, isPending: isBanning } = useRoomBanActions(numericRoomId);
+  const { mutate: banUser, isPending: isBanning } = useCreateRoomBan(numericRoomId);
 
   const userData = member.user;
   const realUserId = userData?.userId;

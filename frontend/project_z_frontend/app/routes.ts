@@ -36,36 +36,34 @@ export default [
                     route("change-password", "./routes/profile.settings.change-password.tsx"),
                 ]),
             ]),
-            
+
             ...prefix("rooms", [
                 route("user/:userId", "./routes/rooms._index.tsx"),     // /rooms
-                
+
                 route("/requests", "./routes/roomRequestsLayouts/room.user.requests.tsx", [
                     index("./routes/roomRequestsLayouts/room.user.requests.add.tsx"),
                     route("invites", "./routes/roomRequestsLayouts/room.user.requests.invites.tsx"),
                     route("sent", "./routes/roomRequestsLayouts/room.user.requests.sent.tsx"),
                 ]), // rooms requests 
-                
+
                 route(":id", "./routes/roomDetailsLayouts/room.details.main.tsx"), // /rooms/:id
-                
+
                 route(":id/settings", "./routes/roomSettingsLayouts/room.settings.index.tsx", [
-                    route("general", "./routes/roomSettingsLayouts/room.settings.general.tsx"),
-                    route("titles", "./routes/roomSettingsLayouts/room.settings.titles.tsx",[
-                        index( "./routes/roomSettingsLayouts/roomSettingsTitlesLayouts/room.settings.titles.roomTitles.tsx"),
+                    index("./routes/roomSettingsLayouts/room.settings.general.tsx"),
+                    route("general", "./routes/roomSettingsLayouts/room.settings.general.tsx", { id: "room-settings-general-alias" }),
+
+                    ...prefix("titles", [
+                        index("./routes/roomSettingsLayouts/roomSettingsTitlesLayouts/room.settings.titles.roomTitles.tsx"),
                         route("titleLinks", "./routes/roomSettingsLayouts/roomSettingsTitlesLayouts/room.settings.titles.titleLinks.tsx"),
-route("ai-matcher", "./routes/roomSettingsLayouts/roomSettingsTitlesLayouts/room.settings.titles.aiMatcher.tsx"),
-
+                        route("ai-matcher", "./routes/roomSettingsLayouts/roomSettingsTitlesLayouts/room.settings.titles.aiMatcher.tsx"),
                     ]),
-                    
 
-
-                    // Виправлений чистий блок інвайтів без конфліктного /find 
                     route("invites", "./routes/roomSettingsLayouts/room.settings.requests.tsx", [
                         index("./routes/roomSettingsLayouts/roomSettingsRequestsLayouts/room.settings.requests.find.tsx"),
                         route("requests", "./routes/roomSettingsLayouts/roomSettingsRequestsLayouts/room.settings.requests.requests.tsx"),
                         route("sent", "./routes/roomSettingsLayouts/roomSettingsRequestsLayouts/room.settings.requests.sent.tsx"),
                     ]),
-                    
+
                     route("members", "./routes/roomSettingsLayouts/room.settings.members.tsx"),
                     route("admin", "./routes/roomSettingsLayouts/room.settings.admin.tsx"),
                 ]),

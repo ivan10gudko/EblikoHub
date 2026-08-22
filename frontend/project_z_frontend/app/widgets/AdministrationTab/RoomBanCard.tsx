@@ -33,7 +33,7 @@ export const RoomBanCard: React.FC<RoomBanCardProps> = ({
     return (
         <div 
             onClick={onClick}
-            className="relative flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 bg-card/60 backdrop-blur-md border border-border rounded-xl  cursor-pointer transition-all duration-200 group min-h-[96px] mb-3 w-full overflow-hidden"
+            className="relative flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 bg-card/60 backdrop-blur-md border border-border rounded-xl cursor-pointer transition-all duration-200 group min-h-[96px] mb-3 w-full overflow-hidden"
         >
             <div className="flex items-start sm:items-center gap-4 min-w-0 flex-1 overflow-hidden">
                 <div className="flex-shrink-0 transition-transform duration-200">
@@ -56,11 +56,10 @@ export const RoomBanCard: React.FC<RoomBanCardProps> = ({
                     )}
                 </div>
             </div>
-
             <div className="flex-shrink-0 z-10 w-full sm:w-auto self-end sm:self-center">
                 <Button
                     onClick={handleUnbanClick}
-                    className="bg-primary text-background hover:bg-primary-hover 
+                    className="w-full sm:w-auto bg-primary text-background hover:bg-primary-hover 
                     h-9 px-4 rounded-xl shadow-md active:scale-95 transition-all 
                     shrink-0 font-black uppercase text-[10px] tracking-wider 
                     border-2 border-primary/30 hover:border-primary/60 

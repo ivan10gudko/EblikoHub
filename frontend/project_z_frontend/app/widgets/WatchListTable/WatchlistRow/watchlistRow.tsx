@@ -9,7 +9,7 @@ import { CompactRate } from "~/shared/ui/CompactRate";
 import { TitleActionsMenu } from "../../TitleActionsMenu";
 import type { Rating } from "~/shared/types";
 import { useTitleFilterStore, type TitleSortType } from "~/features/titleFilter/store/titleFilter.store";
-
+import { DEFAULT_IMAGE_PATH } from "~/shared/constants";
 interface WatchlistRowProps {
   title: TitleRecord;
   dragHandleProps?: DraggableProvidedDragHandleProps | null;
@@ -34,7 +34,6 @@ export const WatchlistRow = ({ title, dragHandleProps, index, showNumber, onOpen
     if (title.apiTitleId) navigate(`/anime/${title.apiTitleId}`);
   };
 
-  const DEFAULT_IMAGE_PATH = "/defaultTitleRecordImage.jpg";
   const themeClasses = title.titleType ? TitleTypeThemes[title.titleType] : "";
 
   return (

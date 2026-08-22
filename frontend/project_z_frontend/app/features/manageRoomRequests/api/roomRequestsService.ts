@@ -15,7 +15,15 @@ interface RoomRequestsService {
     cancelRequest(roomRequestId: string): Promise<void>;
     getRequestsCountsByUserId(userId: string): Promise<RoomRequestCounts>;
 }
-
+export const roomRequestsKeys = {
+    all: ["room_requests"] as const,
+    list: (roomId: number, status: RequestStatus, type: RequestType) =>
+        [...roomRequestsKeys.all, roomId, status, type] as const,
+    userRequests: (userId: string, status: RequestStatus, type: RequestType) =>
+        [...roomRequestsKeys.all, "user", userId, status, type] as const,
+    userCounts: (userId: string) =>
+        [...roomRequestsKeys.all, "counts", userId] as const,
+};
 
 export const roomRequestsService: RoomRequestsService = {
 

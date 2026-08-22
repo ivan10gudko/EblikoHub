@@ -5,13 +5,12 @@ import { TitleTypeThemes, TitleType, type TitleShort, getTitleThemeClassname } f
 import type { RoomTitleWithUserLinks } from "~/features/manageRoomTitles";
 import { useRoomTitleLinkActions } from "~/features/manageRoomTitles";
 import { LinkItem } from "~/features/manageRoomTitles/ui/LinkItem";
-
+import { DEFAULT_IMAGE_PATH } from "~/shared/constants";
 interface RoomTitleRowProps {
   title: RoomTitleWithUserLinks;
   isDraggingOver?: boolean;
 }
 
-const DEFAULT_IMAGE_PATH = "/defaultTitleRecordImage.jpg";
 const HOVER_EXPAND_DELAY_MS = 700; 
 
 

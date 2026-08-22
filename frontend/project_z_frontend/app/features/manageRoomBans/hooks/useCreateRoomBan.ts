@@ -6,7 +6,6 @@ import type { RoomBanCreateDto } from "../model/roomBan.types";
 import { roomKeys } from "~/entities/room/model/room.keys";
 import { roomBanKeys } from "../model/roomBan.keys";
 
-
 export interface RoomBanItem {
   id: string;
   reason: string;
@@ -27,13 +26,13 @@ interface OptimisticBanVariables extends RoomBanCreateDto {
   };
 }
 
-export const useRoomBanActions = (roomId: number) => {
+export const useCreateRoomBan = (roomId: number) => {
   const queryClient = useQueryClient();
 
   const banListKey = roomBanKeys.bans(roomId);
-  const roomDetailsKey = roomKeys.details(roomId);;
+  const roomDetailsKey = roomKeys.details(roomId);
 
-  const createMutation = useMutation({
+  return useMutation({
     mutationFn: (variables: OptimisticBanVariables) => {
       const { userId, reason } = variables;
       return roomBanService.create(roomId, { userId, reason });
@@ -46,9 +45,8 @@ export const useRoomBanActions = (roomId: number) => {
       const previousBans = queryClient.getQueryData<RoomBanItem[]>(banListKey);
       const previousRoom = queryClient.getQueryData<Room>(roomDetailsKey);
 
-      queryClient.setQueryData<RoomBanItem[]>(banListKey, (oldBans) => {
-        const currentBans = oldBans || [];
-        const optimisticBan: RoomBanItem = {
+      queryClient.setQueryData<RoomBanItem[]>(banListKey, (oldBans) => [
+        {
           id: `temp-ban-id-${Date.now()}`,
           reason: variables.reason || "Banned by Admin",
           createdAt: new Date().toISOString(),
@@ -57,13 +55,13 @@ export const useRoomBanActions = (roomId: number) => {
             name: variables.userData?.name || "Processing...",
             nameTag: variables.userData?.nameTag,
             img: variables.userData?.img,
-          }
-        };
-        return [optimisticBan, ...currentBans];
-      });
+          },
+        },
+        ...(oldBans || []),
+      ]);
 
       queryClient.setQueryData<Room>(roomDetailsKey, (oldRoom) => {
-        if (!oldRoom || !oldRoom.members) return oldRoom;
+        if (!oldRoom?.members) return oldRoom;
         return {
           ...oldRoom,
           members: oldRoom.members.filter(
@@ -93,47 +91,7 @@ export const useRoomBanActions = (roomId: number) => {
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: banListKey });
       queryClient.invalidateQueries({ queryKey: roomDetailsKey });
-      queryClient.invalidateQueries({ queryKey: ['user', roomId] });
+      queryClient.invalidateQueries({ queryKey: ["user", roomId] });
     },
   });
-
-  const unbanMutation = useMutation({
-    mutationFn: (roomBanId: string) => roomBanService.unban(roomId, roomBanId),
-
-    onMutate: async (roomBanId) => {
-      await queryClient.cancelQueries({ queryKey: banListKey });
-      const previousBans = queryClient.getQueryData<RoomBanItem[]>(banListKey);
-
-      queryClient.setQueryData<RoomBanItem[]>(banListKey, (oldBans) => {
-        if (!oldBans) return [];
-        return oldBans.filter((ban) => String(ban.id) !== String(roomBanId));
-      });
-
-      return { previousBans };
-    },
-
-    onError: (error: Error, _variables, context) => {
-      if (context?.previousBans) {
-        queryClient.setQueryData(banListKey, context.previousBans);
-      }
-      notify.error("Room unban action failed");
-      console.error("Room unban action failed:", error.message);
-    },
-
-    onSuccess: () => {
-      notify.success("User successfully unbanned");
-    },
-
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: banListKey });
-      queryClient.invalidateQueries({ queryKey: roomDetailsKey }); // Перезапитуємо деталі кімнати, щоб повернути користувача
-      queryClient.invalidateQueries({ queryKey: ['user', roomId] });
-    },
-  });
-
-  return {
-    banUser: createMutation.mutate,
-    unbanUser: unbanMutation.mutate,
-    isPending: createMutation.isPending || unbanMutation.isPending,
-  };
 };

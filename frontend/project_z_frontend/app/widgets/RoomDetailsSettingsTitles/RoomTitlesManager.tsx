@@ -7,6 +7,7 @@ import { useRoomModal } from "~/features/manageRoomSettings/hooks/useRoomModal";
 import { useRoomMemberByRoomIdAndUserId } from "~/features/manageRoomMembers";
 import { useRoomTitleActions } from "~/features/manageRoomTitles";
 import { RoomRole } from "~/entities/room";
+import { DEFAULT_IMAGE_PATH } from "~/shared/constants";
 
 export const RoomTitlesManager = ({ roomId }: { roomId: number }) => {
     const { userId } = useAuthStore();
@@ -15,7 +16,7 @@ export const RoomTitlesManager = ({ roomId }: { roomId: number }) => {
     const { data : currentUser } = useRoomMemberByRoomIdAndUserId(userId!, roomId);
 
     const isCurrentUserAdmin = currentUser?.role === RoomRole.ADMIN || currentUser?.role === RoomRole.OWNER;
-    const DEFAULT_IMAGE_PATH = "/defaultTitleRecordImage.jpg";
+
 
     
     const { data: titles = [], isLoading } = useQuery({

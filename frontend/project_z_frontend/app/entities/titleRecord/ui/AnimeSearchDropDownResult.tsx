@@ -1,13 +1,12 @@
 import FileDownloadIcon from "@mui/icons-material/FileDownload";
 import type { Anime, AnimeCardType } from "~/entities/title";
 import { Button } from "~/shared/ui/Button";
-
+import { DEFAULT_IMAGE_PATH } from "~/shared/constants";
 interface AnimeSearchDropDownResultsProps {
   results: AnimeCardType[];
   onSelect: (anime: AnimeCardType) => void;
   onClose: () => void;
 }
-const DEFAULT_IMAGE_PATH = "/defaultTitleRecordImage.jpg";
 export const AnimeSearchDropDownResults = ({
   results,
   onSelect,

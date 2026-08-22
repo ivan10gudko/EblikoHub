@@ -7,10 +7,81 @@ import { type UserShort, type UserWithRelationsToRoomDto, RoomRelationStatus } f
 import { UserSearchDropdown } from "~/entities/user";
 import { UserAvatar } from "~/entities/user";
 import { useDebounce } from "~/shared/hooks";
+import { Button } from "~/shared/ui/Button";
 
 interface FindUserTabProps {
   roomId: number;
 }
+const getUserRelationFlags = (
+  item: UserWithRelationsToRoomDto,
+  invitedUsers: UserShort[]
+) => {
+  const isInvitedInSession = invitedUsers.some((u) => u.userId === item.user.userId);
+  const isAlreadyInvited =
+    isInvitedInSession ||
+    item.relationStatus === RoomRelationStatus.PENDING_OUT ||
+    item.relationStatus === RoomRelationStatus.PENDING_IN ||
+    item.activeRequest?.status === "PENDING";
+  const isAlreadyMember = item.relationStatus === RoomRelationStatus.MEMBER;
+  const isBanned = item.relationStatus === RoomRelationStatus.BANNED;
+
+  const isActionDisabled = isAlreadyInvited || isAlreadyMember || isBanned;
+
+  return {
+    isAlreadyInvited,
+    isAlreadyMember,
+    isBanned,
+    isActionDisabled,
+  };
+};
+
+const renderUserAction = (
+  item: UserWithRelationsToRoomDto,
+  invitedUsers: UserShort[],
+  onSelect: (item: UserWithRelationsToRoomDto) => void
+) => {
+  const { isAlreadyMember, isBanned, isAlreadyInvited } = getUserRelationFlags(item, invitedUsers);
+
+  if (isAlreadyMember) {
+    return (
+      <span className="text-[11px] font-medium text-foreground-muted bg-background-muted px-2.5 py-1 rounded-lg border border-border flex-shrink-0">
+        Member
+      </span>
+    );
+  }
+
+  if (isBanned) {
+    return (
+      <span className="text-[11px] font-medium text-danger bg-danger/10 px-2.5 py-1 rounded-lg border border-danger/30 flex-shrink-0">
+        Banned
+      </span>
+    );
+  }
+
+  if (isAlreadyInvited) {
+    return (
+      <span className="text-[11px] font-semibold text-primary bg-amber-500/10 px-2.5 py-1 rounded-lg border border-amber-500/30 flex-shrink-0">
+        Pending
+      </span>
+    );
+  }
+
+  return (
+    <Button
+      type="button"
+      onClick={(e) => {
+        e.stopPropagation();
+        onSelect(item);
+      }}
+      className="p-2 bg-transparent hover:bg-primary/20 border border-border hover:border-primary/40 rounded-full transition-all group flex items-center justify-center flex-shrink-0 cursor-pointer"
+    >
+      <AddCircleOutlineIcon
+        className="text-primary group-hover:scale-110 transition-transform"
+        fontSize="small"
+      />
+    </Button>
+  );
+};
 
 export const FindUserTab = ({ roomId }: FindUserTabProps) => {
   const [query, setQuery] = useState("");
@@ -25,18 +96,13 @@ export const FindUserTab = ({ roomId }: FindUserTabProps) => {
   const searchResults = data?.pages.flatMap((page) => page.content || []) || [];
 
   const handleSelectUser = (item: UserWithRelationsToRoomDto) => {
-    const user = item.user;
+    const { isActionDisabled } = getUserRelationFlags(item, invitedUsers);
 
-    const isAlreadyInvitedLocally = invitedUsers.some((u) => u.userId === user.userId);
-    const isAlreadyInvitedOnServer =
-      item.relationStatus === RoomRelationStatus.PENDING_OUT ||
-      item.relationStatus === RoomRelationStatus.PENDING_IN;
-    const isAlreadyMember = item.relationStatus === RoomRelationStatus.MEMBER;
-    const isBanned = item.relationStatus === RoomRelationStatus.BANNED;
-
-    if (isAlreadyInvitedLocally || isAlreadyInvitedOnServer || isAlreadyMember || isBanned) {
+    if (isActionDisabled) {
       return;
     }
+
+    const user = item.user;
 
     sendInvite(
       { roomId, receiverId: user.userId },
@@ -47,57 +113,6 @@ export const FindUserTab = ({ roomId }: FindUserTabProps) => {
           }
         },
       }
-    );
-  };
-
-  const renderUserAction = (item: UserWithRelationsToRoomDto) => {
-    const isInvitedInSession = invitedUsers.some((u) => u.userId === item.user.userId);
-    const isAlreadyInvited =
-      isInvitedInSession ||
-      item.relationStatus === RoomRelationStatus.PENDING_OUT ||
-      item.relationStatus === RoomRelationStatus.PENDING_IN ||
-      item.activeRequest?.status === "PENDING";
-    const isAlreadyMember = item.relationStatus === RoomRelationStatus.MEMBER;
-    const isBanned = item.relationStatus === RoomRelationStatus.BANNED;
-
-    if (isAlreadyMember) {
-      return (
-        <span className="text-[11px] font-medium text-foreground-muted bg-background-muted px-2.5 py-1 rounded-lg border border-border flex-shrink-0">
-          Member
-        </span>
-      );
-    }
-
-    if (isBanned) {
-      return (
-        <span className="text-[11px] font-medium text-danger bg-danger/10 px-2.5 py-1 rounded-lg border border-danger/30 flex-shrink-0">
-          Banned
-        </span>
-      );
-    }
-
-    if (isAlreadyInvited) {
-      return (
-        <span className="text-[11px] font-semibold text-primary bg-amber-500/10 px-2.5 py-1 rounded-lg border border-amber-500/30 flex-shrink-0">
-          Pending
-        </span>
-      );
-    }
-
-    return (
-      <button
-        type="button"
-        onClick={(e) => {
-          e.stopPropagation();
-          handleSelectUser(item);
-        }}
-        className="p-2 bg-transparent hover:bg-primary/20 border border-border hover:border-primary/40 rounded-full transition-all group flex items-center justify-center flex-shrink-0 cursor-pointer"
-      >
-        <AddCircleOutlineIcon
-          className="text-primary group-hover:scale-110 transition-transform"
-          fontSize="small"
-        />
-      </button>
     );
   };
 
@@ -134,7 +149,7 @@ export const FindUserTab = ({ roomId }: FindUserTabProps) => {
               isLoading={isSearchLoading || isSendingInvite}
               onSelect={handleSelectUser}
               onClose={() => setIsDropdownOpen(false)}
-              renderAction={renderUserAction}
+              renderAction={(item) => renderUserAction(item, invitedUsers, handleSelectUser)}
             />
           </div>
         )}

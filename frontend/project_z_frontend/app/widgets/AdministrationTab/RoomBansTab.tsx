@@ -4,15 +4,19 @@ import { notify } from "~/shared/lib";
 import { UserSearchDropdown } from '~/entities/user/ui/UserSearchDropdownResults';
 import SearchBar from '~/shared/ui/SearchBar';
 import { useDebounce } from '~/shared/hooks';
-import { RoomBanDetailsModal, useInfiniteRoomBanSearch, useRoomBanActions, useRoomBans, type RoomBanDetailsDto } from '~/features/manageRoomBans';
-
+import { 
+  RoomBanDetailsModal, 
+  useInfiniteRoomBanSearch,
+  useRoomBans, 
+  type RoomBanDetailsDto 
+} from '~/features/manageRoomBans';
+import { useCreateRoomBan } from '~/features/manageRoomBans/hooks/useCreateRoomBan';
+import { useDeleteRoomBan } from '~/features/manageRoomBans/hooks/useDeleteRoomBan';
 interface RoomBansTabProps {
-    roomId: string | number;
+    roomId: number;
 }
 
-
-export const RoomBansTab: React.FC<RoomBansTabProps> = ({ roomId }) => {
-    const numericRoomId = Number(roomId);
+export const RoomBansTab = ({ roomId }: RoomBansTabProps) => {
 
     const [targetUsername, setTargetUsername] = useState('');
     const [targetUserId, setTargetUserId] = useState<string | null>(null);
@@ -27,7 +31,7 @@ export const RoomBansTab: React.FC<RoomBansTabProps> = ({ roomId }) => {
     const {
         data: bannedUsers = [],
         isLoading: isLoadingBans
-    } = useRoomBans(numericRoomId);
+    } = useRoomBans(roomId);
 
     const debouncedUsername = useDebounce(targetUsername.trim(), 300);
     const isSearchEnabled = debouncedUsername.length >= 2;
@@ -38,7 +42,7 @@ export const RoomBansTab: React.FC<RoomBansTabProps> = ({ roomId }) => {
         fetchNextPage,
         hasNextPage,
         isFetchingNextPage
-    } = useInfiniteRoomBanSearch(numericRoomId, {
+    } = useInfiniteRoomBanSearch(roomId, {
         name: debouncedUsername,
         limit: 10
     }, isSearchEnabled);
@@ -49,7 +53,8 @@ export const RoomBansTab: React.FC<RoomBansTabProps> = ({ roomId }) => {
         (user) => !bannedUsers.some((ban) => ban.user.userId === user.userId)
     );
 
-    const { banUser, unbanUser, isPending: isMutating } = useRoomBanActions(numericRoomId);
+    const { mutate: banUser, isPending: isBanning } = useCreateRoomBan(roomId);
+    const { mutate: unbanUser, isPending: isUnbanning } = useDeleteRoomBan(roomId);
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
@@ -180,7 +185,7 @@ export const RoomBansTab: React.FC<RoomBansTabProps> = ({ roomId }) => {
                             placeholder="Reason for ban (optional)..."
                             value={reason}
                             onChange={(e) => setReason(e.target.value)}
-                            disabled={isMutating}
+                            disabled={isBanning}
                             className="
                                 w-full min-w-0
                                 px-4 py-2 pr-14 text-xs
@@ -199,7 +204,7 @@ export const RoomBansTab: React.FC<RoomBansTabProps> = ({ roomId }) => {
 
                     <button
                         type="submit"
-                        disabled={isMutating || !targetUserId}
+                        disabled={isBanning || !targetUserId}
                         className="
                             bg-primary text-background hover:bg-primary-hover 
                             h-10 px-5 rounded-xl shadow-lg active:scale-95 transition-all 
@@ -209,7 +214,7 @@ export const RoomBansTab: React.FC<RoomBansTabProps> = ({ roomId }) => {
                             w-full sm:w-auto sm:col-start-2 sm:row-start-1 sm:row-span-2 sm:self-stretch flex items-center justify-center
                         "
                     >
-                        {isMutating ? 'Banning...' : 'Ban User'}
+                        {isBanning ? 'Banning...' : 'Ban User'}
                     </button>
                 </div>
             </form>
@@ -246,7 +251,7 @@ export const RoomBansTab: React.FC<RoomBansTabProps> = ({ roomId }) => {
                 onClose={() => setSelectedBan(null)}
                 banDetails={selectedBan}
                 onUnban={unbanUser}
-                isUnbanning={isMutating}
+                isUnbanning={isUnbanning}
             />
         </div>
     );

@@ -4,6 +4,7 @@ import { WatchlistRowShort } from "./WatchlistRowShort";
 import { InfiniteScrollLoader } from "~/shared/ui/infinityScroll";
 import { useTitleFilterStore } from "~/features/titleFilter/store/titleFilter.store";
 
+const PAGE_LIMIT = 20;
 
 interface WatchlistMicroListProps {
   userId: string;
@@ -16,14 +17,13 @@ export const WatchlistShortTitles = ({
   roomId,
   isWatchlistModeToggled,
 }: WatchlistMicroListProps) => {
- 
   const { search, sortBy, order, status: statusFilter, types } = useTitleFilterStore();
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, status } =
     useInfinityTitles(
       userId,
       {
-        limit: 20,
+        limit: PAGE_LIMIT,
         search,
         sortBy,
         order,
@@ -52,7 +52,7 @@ export const WatchlistShortTitles = ({
           >
             {data?.pages.map((page, pageIndex) =>
               page.content.map((title, titleIndex) => {
-                const absoluteIndex = pageIndex * 10 + titleIndex;
+                const absoluteIndex = pageIndex * PAGE_LIMIT + titleIndex;
 
                 return (
                   <Draggable

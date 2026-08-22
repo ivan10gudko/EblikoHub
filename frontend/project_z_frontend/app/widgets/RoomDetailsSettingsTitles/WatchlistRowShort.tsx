@@ -2,13 +2,12 @@ import type { DraggableProvidedDragHandleProps } from "@hello-pangea/dnd";
 import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
 import { ReadOnlyStatusBadge, TitleTypeThemes, type TitleRecord } from "~/entities/titleRecord";
 import { CompactRatingLabel } from "~/shared/ui/Rating";
-
+import { DEFAULT_IMAGE_PATH } from "~/shared/constants";
 interface WatchlistDragRowProps {
     title: TitleRecord;
     dragHandleProps?: DraggableProvidedDragHandleProps | null;
 }
 
-const DEFAULT_IMAGE_PATH = "/defaultTitleRecordImage.jpg";
 
 export const WatchlistRowShort = ({ title, dragHandleProps }: WatchlistDragRowProps) => {
     const themeClasses = title.titleType ? TitleTypeThemes[title.titleType] : "";

@@ -1,13 +1,12 @@
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import { TitleTypeThemes, TitleType, type TitleShort, type TitleVisual, getTitleThemeClassname } from "~/entities/titleRecord";
 import { Button } from "~/shared/ui/Button";
+import { DEFAULT_IMAGE_PATH } from "~/shared/constants";
 
 interface LinkItemProps {
   title: TitleVisual;
   onDelete: () => void;
 }
-
-const DEFAULT_IMAGE_PATH = "/defaultTitleRecordImage.jpg";
 
 
 
