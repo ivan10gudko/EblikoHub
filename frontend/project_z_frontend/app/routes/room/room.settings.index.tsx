@@ -19,12 +19,10 @@ export default function RoomsSettingsIndexLayout() {
     const { data: roomMember, isLoading: isMemberLoading } = useRoomMemberByRoomIdAndUserId(userId!, Number(roomId));
     const { room, isLoading: isRoomLoading } = useRoomDetails(Number(roomId));
 
-    // 1. Поки йде завантаження
     if (isMemberLoading || isRoomLoading) {
         return <div className="p-10 text-foreground">Loading settings...</div>;
     }
 
-    // 2. Якщо завантажилося, але немає даних або прав
     if (!room || !roomMember) {
         return <ErrorScreen title="Access Denied" message="Room not found or you don't have permission to view settings." />;
     }

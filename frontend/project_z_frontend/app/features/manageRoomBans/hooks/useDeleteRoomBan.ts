@@ -3,7 +3,7 @@ import { roomBanService } from "~/features/manageRoomBans/api/roomBanService";
 import { notify } from "~/shared/lib";
 import { roomKeys } from "~/entities/room/model/room.keys";
 import { roomBanKeys } from "../model/roomBan.keys";
-import type { RoomBanItem } from "./useCreateRoomBan";
+import type { RoomBanDetailsDto } from "../model/roomBan.types";
 
 export const useDeleteRoomBan = (roomId: number) => {
   const queryClient = useQueryClient();
@@ -16,11 +16,11 @@ export const useDeleteRoomBan = (roomId: number) => {
 
     onMutate: async (roomBanId) => {
       await queryClient.cancelQueries({ queryKey: banListKey });
-      const previousBans = queryClient.getQueryData<RoomBanItem[]>(banListKey);
+      const previousBans = queryClient.getQueryData<RoomBanDetailsDto[]>(banListKey);
 
-      queryClient.setQueryData<RoomBanItem[]>(banListKey, (oldBans) => {
+      queryClient.setQueryData<RoomBanDetailsDto[]>(banListKey, (oldBans) => {
         if (!oldBans) return [];
-        return oldBans.filter((ban) => String(ban.id) !== String(roomBanId));
+        return oldBans.filter((ban) => ban.id !== roomBanId);
       });
 
       return { previousBans };

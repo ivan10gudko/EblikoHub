@@ -108,18 +108,17 @@ export const AiTitleMatcherPage = () => {
     const isAllFilteredSelected = useMemo(() => {
         if (filteredSuggestions.length === 0) return false;
         return filteredSuggestions.every(
-            (item) => item.title?.titleId !== undefined && !!selectedMatches[String(item.title.titleId)]
+            (item) => item.title?.titleId !== undefined && !!selectedMatches[item.title.titleId]
         );
     }, [filteredSuggestions, selectedMatches]);
 
     const toggleSelect = useCallback((titleId: number, roomTitleId: string) => {
-        const key = String(titleId);
         setSelectedMatches((prev) => {
             const copy = { ...prev };
-            if (copy[key]) {
-                delete copy[key];
+            if (copy[titleId]) {
+                delete copy[titleId];
             } else {
-                copy[key] = roomTitleId;
+                copy[titleId] = roomTitleId;
             }
             return copy;
         });
@@ -131,7 +130,7 @@ export const AiTitleMatcherPage = () => {
                 const copy = { ...prev };
                 filteredSuggestions.forEach((item) => {
                     if (item.title?.titleId !== undefined) {
-                        delete copy[String(item.title.titleId)];
+                        delete copy[item.title.titleId];
                     }
                 });
                 return copy;
@@ -141,7 +140,7 @@ export const AiTitleMatcherPage = () => {
                 const next = { ...prev };
                 filteredSuggestions.forEach((item) => {
                     if (item.title?.titleId !== undefined && item.roomTitle?.id) {
-                        next[String(item.title.titleId)] = item.roomTitle.id;
+                        next[item.title.titleId] = item.roomTitle.id;
                     }
                 });
                 return next;
@@ -279,15 +278,13 @@ const SuggestionCard = ({ item, isChecked, isMobile, onToggle }: SuggestionCardP
         [userTitleType, roomTitleType, isChecked, isMobile]
     );
 
-    const badgeBg = useMemo(() => getBadgeBgClass(confidence), [confidence]);
-
+    const badgeBg = getBadgeBgClass(confidence);
     return (
         <div
             onClick={() => onToggle(currentTitleId, currentRoomTitleId)}
             style={cardStyle}
-            className={`group/row p-3 rounded-xl border-2 border-transparent bg-card cursor-pointer transition-all duration-200 ${
-                isChecked ? "scale-[1.005]" : ""
-            }`}
+            className={`group/row p-3 rounded-xl border-2 border-transparent bg-card cursor-pointer transition-all duration-200 ${isChecked ? "scale-[1.005]" : ""
+                }`}
         >
             <div className="flex flex-col md:grid md:grid-cols-[auto_1fr_auto_1fr_auto] items-stretch md:items-center gap-3">
                 <div className="flex items-center justify-between md:contents">

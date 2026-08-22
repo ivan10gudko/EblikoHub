@@ -3,8 +3,7 @@ import { RoomTitleReadOnlyList } from "./RoomTitleList";
 import { ToggleSwitch } from "~/shared/ui/Switch";
 import { TitleFiltersDropdown } from "~/features/titleFilter";
 import type { RoomTitleWithUserLinks } from "~/features/manageRoomTitles";
-import { useState, type MouseEvent } from "react";
-import { DragDropContext, type DropResult } from "@hello-pangea/dnd";
+import { useState } from "react";
 
 interface MobileTitleLinksManagerProps {
   userId: string;
@@ -31,7 +30,12 @@ export const MobileTitleLinksManager = ({
   const [selectedTitleId, setSelectedTitleId] = useState<number | null>(null);
   const [isWatchlistModeToggleActive, setWatchlistModeToggleActive] = useState(false);
 
-  const handleMobileLink = (roomTitleId: string) => {
+  const handleSelectTitle = (id: number) => {
+    setSelectedTitleId(id);
+    setActiveTab("rooms");
+  };
+
+  const handleSelectRoom = (roomTitleId: string) => {
     if (!selectedTitleId) return;
 
     const targetRoomTitle = titles.find(
@@ -46,136 +50,84 @@ export const MobileTitleLinksManager = ({
     setSelectedTitleId(null);
   };
 
-  const handleDragEnd = (_result: DropResult) => {
-  };
-
-  const handleWrapperClick = (e: MouseEvent<HTMLDivElement>) => {
-    const target = e.target as HTMLElement;
-
-    if (
-      target.closest("button") ||
-      target.closest("svg") ||
-      target.closest('[role="button"]')
-    ) {
-      return;
-    }
-
-    const watchlistCard = target.closest(
-      "[data-rfd-draggable-id], [data-draggable-id]"
-    );
-    if (watchlistCard && activeTab === "watchlist") {
-      const id =
-        watchlistCard.getAttribute("data-rfd-draggable-id") ||
-        watchlistCard.getAttribute("data-draggable-id");
-      if (id) {
-        setSelectedTitleId(Number(id));
-        setActiveTab("rooms");
-        return;
-      }
-    }
-
-    const roomZone = target.closest(
-      "[data-rfd-droppable-id], [data-droppable-id]"
-    );
-    if (roomZone && activeTab === "rooms" && selectedTitleId) {
-      const dropId =
-        roomZone.getAttribute("data-rfd-droppable-id") ||
-        roomZone.getAttribute("data-droppable-id");
-      if (dropId && dropId.startsWith("room-title-")) {
-        handleMobileLink(dropId.replace("room-title-", ""));
-      }
-    }
-  };
-
   return (
-    <DragDropContext onDragEnd={handleDragEnd}>
-      <div
-        onClick={handleWrapperClick}
-        className="flex flex-col gap-5 -mx-4 w-[calc(100%+2rem)] px-4 [&_[data-rfd-drag-handle-context-id]]:hidden [&_[data-rfd-drag-handle-context-id]]:pointer-events-none [&_[data-rfd-draggable-id]]:w-full [&_li]:w-full [&_li>div]:gap-x-2 [&_li_img]:ml-0 [&_[data-rfd-draggable-id]]:!mb-1.5 [&_[data-draggable-id]]:!mb-1.5 [&_[data-rfd-draggable-id]]:last:!mb-0 [&_[data-draggable-id]]:last:!mb-0"
-      >
-        <div className="flex w-full bg-card border border-border p-1.5 rounded-xl gap-2 shadow-md">
-          <button
-            type="button"
-            onClick={() => setActiveTab("watchlist")}
-            className={`flex-1 py-2 text-xs font-semibold rounded-lg transition-all active:scale-[0.98] cursor-pointer ${
-              activeTab === "watchlist"
-                ? "bg-primary/10 text-primary border border-primary/30 shadow-inner"
-                : "text-foreground/60 border border-transparent hover:text-foreground"
+    <div className="flex flex-col gap-5 -mx-4 w-[calc(100%+2rem)] px-4">
+      <div className="flex w-full bg-card border border-border p-1.5 rounded-xl gap-2 shadow-md">
+        <button
+          type="button"
+          onClick={() => setActiveTab("watchlist")}
+          className={`flex-1 py-2 text-xs font-semibold rounded-lg transition-all cursor-pointer ${activeTab === "watchlist"
+              ? "bg-primary/10 text-primary border border-primary/30 shadow-inner"
+              : "text-foreground/60 border border-transparent"
             }`}
-          >
-            My Watchlist {selectedTitleId && "•"}
-          </button>
+        >
+          My Watchlist {selectedTitleId && "•"}
+        </button>
 
-          <button
-            type="button"
-            onClick={() => setActiveTab("rooms")}
-            className={`flex-1 py-2 text-xs font-semibold rounded-lg transition-all active:scale-[0.98] cursor-pointer ${
-              activeTab === "rooms"
-                ? "bg-primary/10 text-primary border border-primary/30 shadow-inner"
-                : "text-foreground/60 border border-transparent hover:text-foreground"
+        <button
+          type="button"
+          onClick={() => setActiveTab("rooms")}
+          className={`flex-1 py-2 text-xs font-semibold rounded-lg transition-all cursor-pointer ${activeTab === "rooms"
+              ? "bg-primary/10 text-primary border border-primary/30 shadow-inner"
+              : "text-foreground/60 border border-transparent"
             }`}
+        >
+          Room Titles
+        </button>
+      </div>
+
+      {selectedTitleId && activeTab === "rooms" && (
+        <div className="flex items-center justify-between bg-primary/10 border border-primary/30 rounded-xl p-3 text-xs font-bold text-foreground">
+          <span>Title selected! Now tap a Room card to link.</span>
+          <button
+            onClick={() => setSelectedTitleId(null)}
+            className="underline text-[10px] opacity-80 cursor-pointer"
           >
-            Room Titles
+            Cancel
           </button>
         </div>
+      )}
 
-        {selectedTitleId && activeTab === "rooms" && (
-          <div className="flex items-center justify-between bg-primary/10 border border-primary/30 rounded-xl p-3 text-xs font-bold text-foreground animate-fade-in">
-            <span> Title selected! Now tap a Room card to link.</span>
-            <button
-              onClick={() => setSelectedTitleId(null)}
-              className="underline text-[10px] opacity-80 cursor-pointer"
-            >
-              Cancel
-            </button>
-          </div>
-        )}
-
-        {activeTab === "watchlist" && (
-          <div className="flex flex-col gap-4 w-full animate-in fade-in duration-200">
-            <div className="flex items-center justify-between px-1">
-              <p className="text-xs text-primary font-semibold">
-                Tap a title to choose it
-              </p>
-
-              <div className="flex flex-row items-center gap-3">
-                <span className="text-xs text-foreground">
-                  {isWatchlistModeToggleActive ? "No links" : "All"}
-                </span>
-                <ToggleSwitch
-                  isActive={isWatchlistModeToggleActive}
-                  onToggle={setWatchlistModeToggleActive}
-                />
-
-                <TitleFiltersDropdown />
-              </div>
-            </div>
-
-            <div className="-mx-2 w-[calc(100%+1rem)]">
-              <WatchlistShortTitles
-                userId={userId}
-                roomId={roomId}
-                isWatchlistModeToggled={isWatchlistModeToggleActive}
+      {activeTab === "watchlist" && (
+        <div className="flex flex-col gap-4 w-full">
+          <div className="flex items-center justify-between px-1">
+            <p className="text-xs text-primary font-semibold">Tap a title to choose it</p>
+            <div className="flex flex-row items-center gap-3">
+              <span className="text-xs text-foreground">
+                {isWatchlistModeToggleActive ? "No links" : "All"}
+              </span>
+              <ToggleSwitch
+                isActive={isWatchlistModeToggleActive}
+                onToggle={setWatchlistModeToggleActive}
               />
+              <TitleFiltersDropdown />
             </div>
           </div>
-        )}
 
-        {activeTab === "rooms" && (
-          <div className="flex flex-col gap-4 w-full animate-in fade-in duration-200">
-            <div className="-mx-2 w-[calc(100%+1rem)]">
-              <RoomTitleReadOnlyList
-                draggingTitleId={selectedTitleId ? String(selectedTitleId) : ""}
-                titles={titles}
-                isLoading={isLoading}
-                fetchNextPage={fetchNextPage}
-                hasNextPage={hasNextPage}
-                isFetchingNextPage={isFetchingNextPage}
-              />
-            </div>
-          </div>
-        )}
-      </div>
-    </DragDropContext>
+          <WatchlistShortTitles
+            userId={userId}
+            roomId={roomId}
+            isWatchlistModeToggled={isWatchlistModeToggleActive}
+            isMobile={true}
+            onSelectMobileTitle={handleSelectTitle}
+          />
+        </div>
+      )}
+
+      {activeTab === "rooms" && (
+        <div className="flex flex-col gap-4 w-full">
+          <RoomTitleReadOnlyList
+            draggingTitleId={selectedTitleId ? String(selectedTitleId) : ""}
+            titles={titles}
+            isLoading={isLoading}
+            fetchNextPage={fetchNextPage}
+            hasNextPage={hasNextPage}
+            isFetchingNextPage={isFetchingNextPage}
+            isMobile={true}
+            onSelectMobileRoom={handleSelectRoom}
+          />
+        </div>
+      )}
+    </div>
   );
 };

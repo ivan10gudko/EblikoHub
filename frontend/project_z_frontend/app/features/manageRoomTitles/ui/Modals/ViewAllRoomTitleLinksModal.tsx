@@ -8,6 +8,7 @@ import { TitleType, TitleTypeThemes } from "~/entities/titleRecord";
 import type { RoomTitleLinkDetailsDto } from "~/features/manageRoomTitles/model/roomTitle.types";
 import { formatDate } from "~/shared/helpers";
 import { useRoomTitleLinkActions } from "../../hooks/useRoomTitleLinkActions";
+import { roomTitleKeys } from "../../model/roomTitle.queryKeys";
 
 interface ViewLinksModalProps {
   isOpen: boolean;
@@ -16,6 +17,7 @@ interface ViewLinksModalProps {
   roomTitleId: string;
   canDelete?: boolean;
 }
+
 export const ViewAllRoomTitleLinksModal = ({
   isOpen,
   onClose,
@@ -25,7 +27,7 @@ export const ViewAllRoomTitleLinksModal = ({
 }: ViewLinksModalProps) => {
   const [deletingLinkId, setDeletingLinkId] = useState<string | null>(null);
 
-  const queryKey = ["roomTitleLinks", roomId, roomTitleId];
+  const queryKey = roomTitleKeys.userLinks(roomId, roomTitleId);
 
   const {
     data: links = [],

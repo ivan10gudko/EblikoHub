@@ -31,9 +31,8 @@ export const RoomMemberCard: React.FC<RoomMemberCardProps> = ({
 }) => {
   const navigate = useNavigate();
 
-  const numericRoomId = Number(roomId);
-  const { updateMemberRole, isUpdatingRole } = useRoomMemberActions(numericRoomId);
-  const { mutate: banUser, isPending: isBanning } = useCreateRoomBan(numericRoomId);
+  const { updateMemberRole, isUpdatingRole } = useRoomMemberActions(roomId);
+  const { mutate: banUser, isPending: isBanning } = useCreateRoomBan(roomId);
 
   const userData = member.user;
   const realUserId = userData?.userId;

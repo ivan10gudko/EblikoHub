@@ -2,28 +2,13 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { roomBanService } from "~/features/manageRoomBans/api/roomBanService";
 import type { Room } from "~/entities/room/model/room.types";
 import { notify } from "~/shared/lib";
-import type { RoomBanCreateDto } from "../model/roomBan.types";
+import type { RoomBanCreateDto, RoomBanDetailsDto } from "../model/roomBan.types";
 import { roomKeys } from "~/entities/room/model/room.keys";
 import { roomBanKeys } from "../model/roomBan.keys";
-
-export interface RoomBanItem {
-  id: string;
-  reason: string;
-  createdAt: string;
-  user: {
-    userId: string;
-    name: string;
-    nameTag?: string;
-    img?: string | null;
-  };
-}
+import type { UserShort } from "~/entities/room/model/room.types";
 
 interface OptimisticBanVariables extends RoomBanCreateDto {
-  userData?: {
-    name: string;
-    nameTag?: string;
-    img?: string | null;
-  };
+  userData?: UserShort;
 }
 
 export const useCreateRoomBan = (roomId: number) => {
@@ -42,20 +27,24 @@ export const useCreateRoomBan = (roomId: number) => {
       await queryClient.cancelQueries({ queryKey: banListKey });
       await queryClient.cancelQueries({ queryKey: roomDetailsKey });
 
-      const previousBans = queryClient.getQueryData<RoomBanItem[]>(banListKey);
+      const previousBans = queryClient.getQueryData<RoomBanDetailsDto[]>(banListKey);
       const previousRoom = queryClient.getQueryData<Room>(roomDetailsKey);
 
-      queryClient.setQueryData<RoomBanItem[]>(banListKey, (oldBans) => [
+      const fallbackUser: UserShort = {
+        userId: variables.userId,
+        name: variables.userData?.name || "Processing...",
+        nameTag: variables.userData?.nameTag || "",
+        img: variables.userData?.img,
+      };
+
+      queryClient.setQueryData<RoomBanDetailsDto[]>(banListKey, (oldBans) => [
         {
           id: `temp-ban-id-${Date.now()}`,
+          roomId,
           reason: variables.reason || "Banned by Admin",
           createdAt: new Date().toISOString(),
-          user: {
-            userId: variables.userId,
-            name: variables.userData?.name || "Processing...",
-            nameTag: variables.userData?.nameTag,
-            img: variables.userData?.img,
-          },
+          user: variables.userData || fallbackUser,
+          bannedByUser: fallbackUser, // Заповнюємо базовим об'єктом на час очікування відповіді сервера
         },
         ...(oldBans || []),
       ]);

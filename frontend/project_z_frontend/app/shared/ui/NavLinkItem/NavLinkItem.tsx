@@ -2,6 +2,7 @@ import { NavLink } from "react-router";
 import { type ElementType, type ComponentPropsWithoutRef } from "react";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import { RoomRole } from "~/entities/room/model/room.types";
+import { cn } from "~/shared/lib";
 
 export type NavChildItem = {
   key: string;
@@ -11,21 +12,30 @@ export type NavChildItem = {
   end?: boolean;
 };
 
-export type NavItem = {
-  key: string;
-  label: string;
-  path?: string;
-  Icon: ElementType;
-  allowed: RoomRole[];
-  children?: NavChildItem[];
-};
+export type NavItem =
+  | {
+      key: string;
+      label: string;
+      path: string;
+      Icon: ElementType;
+      allowed: RoomRole[];
+      children?: never;
+    }
+  | {
+      key: string;
+      label: string;
+      path?: never;
+      Icon: ElementType;
+      allowed: RoomRole[];
+      children: NavChildItem[];
+    };
 
 interface NavLinkItemProps extends ComponentPropsWithoutRef<"a"> {
-  item: NavItem;
+  item: Extract<NavItem, { path: string }>;
 }
 
 interface NavGroupItemProps extends ComponentPropsWithoutRef<"div"> {
-  item: NavItem;
+  item: Extract<NavItem, { children: NavChildItem[] }>;
   isOpen: boolean;
   isGroupActive: boolean;
   onToggle: () => void;
@@ -41,20 +51,19 @@ const linkInactive =
 
 export const NavLinkItem = ({ item, className = "", onClick }: NavLinkItemProps) => (
   <NavLink
-    to={item.path!}
+    to={item.path}
     onClick={onClick}
     className={({ isActive }) =>
-      `${linkBase} ${isActive ? linkActive : linkInactive} ${className}`
+      cn(linkBase, isActive ? linkActive : linkInactive, className)
     }
   >
     {({ isActive }) => (
       <span className="flex items-center gap-4 w-full">
         <item.Icon
-          className={
-            isActive
-              ? "scale-110 opacity-90"
-              : "text-primary scale-110 opacity-90"
-          }
+          className={cn(
+            "scale-110 opacity-90",
+            isActive ? "" : "text-primary"
+          )}
         />
         <span className="text-lg tracking-wide">{item.label}</span>
       </span>
@@ -70,53 +79,53 @@ export const NavGroupItem = ({
   onChildClick,
   className = "",
 }: NavGroupItemProps) => (
-  <div className={`flex flex-col gap-1 w-full ${className}`}>
+  <div className={cn("flex flex-col gap-1 w-full", className)}>
     <button
       type="button"
       onClick={onToggle}
-      className={`${linkBase} ${
-        isGroupActive ? linkActive : linkInactive
-      }`}
+      className={cn(linkBase, isGroupActive ? linkActive : linkInactive)}
     >
       <span className="flex items-center justify-between w-full">
         <span className="flex items-center gap-4">
           <item.Icon
-            className={
-              isGroupActive
-                ? "scale-110 opacity-90"
-                : "text-primary scale-110 opacity-90"
-            }
+            className={cn(
+              "scale-110 opacity-90",
+              isGroupActive ? "" : "text-primary"
+            )}
           />
           <span className="text-lg tracking-wide">{item.label}</span>
         </span>
         <KeyboardArrowDownIcon
-          className={`transition-transform duration-300 ${
-            isOpen ? "rotate-180" : ""
-          }`}
+          className={cn(
+            "transition-transform duration-300",
+            isOpen && "rotate-180"
+          )}
         />
       </span>
     </button>
 
     <div
-      className={`grid transition-all duration-300 ease-in-out pl-4 overflow-hidden ${
+      className={cn(
+        "grid transition-all duration-300 ease-in-out pl-4 overflow-hidden",
         isOpen
           ? "grid-rows-[1fr] opacity-100 mt-1.5"
           : "grid-rows-[0fr] opacity-0 pointer-events-none"
-      }`}
+      )}
     >
       <div className="flex flex-col gap-1 overflow-hidden">
-        {item.children!.map((child) => (
+        {item.children.map((child) => (
           <NavLink
             key={child.key}
             to={child.path}
             end={child.end}
             onClick={onChildClick}
             className={({ isActive }) =>
-              `flex items-center gap-3.5 px-5 py-2 rounded-xl font-medium transition-all duration-200 border w-full ${
+              cn(
+                "flex items-center gap-3.5 px-5 py-2 rounded-xl font-medium transition-all duration-200 border w-full",
                 isActive
                   ? "bg-primary/10 text-primary border-primary/30 font-semibold"
                   : "text-foreground/70 border-transparent hover:bg-background-muted/40 hover:text-foreground"
-              }`
+              )
             }
           >
             <span className="flex items-center gap-3.5 w-full">

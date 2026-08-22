@@ -7,7 +7,6 @@ interface RoomTitleItemProps {
   item: RoomTitleDetails;
   onDelete: (id: string) => void;
   defaultImagePath: string;
-  roomId: number;
   isCurrentUserAdmin: boolean;
   isOwn: boolean;
 }
@@ -16,7 +15,6 @@ export const RoomTitleItem = ({
   item, 
   onDelete, 
   defaultImagePath, 
-  roomId,
   isCurrentUserAdmin,
   isOwn
 }: RoomTitleItemProps) => {
@@ -49,7 +47,6 @@ export const RoomTitleItem = ({
   <div className="shrink-0">
     <RoomTitleActionMenu
       item={item}
-      roomId={roomId}
       onDelete={() => onDelete(item.id)}
       canManage={canManage}
     />

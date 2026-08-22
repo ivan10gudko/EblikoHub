@@ -10,6 +10,8 @@ export interface RoomTitleReadOnlyListProps {
   hasNextPage: boolean;
   draggingTitleId: string;
   isFetchingNextPage: boolean;
+  isMobile?: boolean;
+  onSelectMobileRoom?: (roomTitleId: string) => void;
 }
 
 export const RoomTitleReadOnlyList = ({
@@ -19,6 +21,8 @@ export const RoomTitleReadOnlyList = ({
   hasNextPage,
   draggingTitleId,
   isFetchingNextPage,
+  isMobile = false,
+  onSelectMobileRoom,
 }: RoomTitleReadOnlyListProps) => {
   if (isLoading && titles.length === 0)
     return <div className="p-4 text-sm">Loading...</div>;
@@ -35,50 +39,20 @@ export const RoomTitleReadOnlyList = ({
             (link) => String(link.title.titleId) === String(draggingTitleId)
           );
 
-          return (
-            <Droppable
+          return isMobile ? (
+            <MobileRoomItem
               key={title.id}
-              droppableId={`room-title-${title.id}`}
-              isDropDisabled={isAlreadyLinked}
-            >
-              {(provided, snapshot) => (
-                <div
-                  ref={provided.innerRef}
-                  {...provided.droppableProps}
-                  className="w-full"
-                >
-                  <div
-                    className={`relative transition-all duration-200 ease-in-out ${
-                      snapshot.isDraggingOver && !isAlreadyLinked
-                        ? "scale-[1.02] ring-2 ring-primary rounded-2xl z-20 shadow-xl"
-                        : "scale-100"
-                    }`}
-                  >
-                    <RoomTitleReadOnlyRowShort
-                      title={title}
-                      isDraggingOver={snapshot.isDraggingOver}
-                    />
-
-                    {isAlreadyLinked && draggingTitleId && (
-                      <div className="absolute inset-0 flex items-center justify-center bg-danger/10 rounded-xl z-10 pointer-events-none">
-                        <span className="text-danger font-bold text-xs uppercase">
-                          Already linked
-                        </span>
-                      </div>
-                    )}
-
-                    {!isAlreadyLinked && snapshot.isDraggingOver && (
-                      <div className="absolute inset-0 flex items-center justify-center rounded-xl z-10 pointer-events-none">
-                        <span className="text-primary font-bold text-xl">
-                          + Add
-                        </span>
-                      </div>
-                    )}
-                  </div>
-                  {provided.placeholder}
-                </div>
-              )}
-            </Droppable>
+              title={title}
+              isAlreadyLinked={isAlreadyLinked}
+              onSelectMobileRoom={onSelectMobileRoom}
+            />
+          ) : (
+            <DesktopRoomItem
+              key={title.id}
+              title={title}
+              isAlreadyLinked={isAlreadyLinked}
+              draggingTitleId={draggingTitleId}
+            />
           );
         })
       )}
@@ -95,3 +69,63 @@ export const RoomTitleReadOnlyList = ({
     </div>
   );
 };
+
+
+interface MobileRoomItemProps {
+  title: RoomTitleWithUserLinks;
+  isAlreadyLinked: boolean;
+  onSelectMobileRoom?: (roomTitleId: string) => void;
+}
+
+const MobileRoomItem = ({ title, isAlreadyLinked, onSelectMobileRoom }: MobileRoomItemProps) => (
+  <div
+    onClick={() => !isAlreadyLinked && onSelectMobileRoom?.(String(title.id))}
+    className={`relative w-full rounded-xl transition-all ${
+      isAlreadyLinked ? "opacity-50 cursor-not-allowed" : "cursor-pointer active:scale-[0.99]"
+    }`}
+  >
+    <RoomTitleReadOnlyRowShort title={title} isDraggingOver={false} />
+    {isAlreadyLinked && (
+      <div className="absolute inset-0 flex items-center justify-center bg-danger/10 rounded-xl z-10 pointer-events-none">
+        <span className="text-danger font-bold text-xs uppercase">Already linked</span>
+      </div>
+    )}
+  </div>
+);
+
+interface DesktopRoomItemProps {
+  title: RoomTitleWithUserLinks;
+  isAlreadyLinked: boolean;
+  draggingTitleId: string;
+}
+
+const DesktopRoomItem = ({ title, isAlreadyLinked, draggingTitleId }: DesktopRoomItemProps) => (
+  <Droppable droppableId={`room-title-${title.id}`} isDropDisabled={isAlreadyLinked}>
+    {(provided, snapshot) => (
+      <div ref={provided.innerRef} {...provided.droppableProps} className="w-full">
+        <div
+          className={`relative transition-all duration-200 ease-in-out ${
+            snapshot.isDraggingOver && !isAlreadyLinked
+              ? "scale-[1.02] ring-2 ring-primary rounded-2xl z-20 shadow-xl"
+              : "scale-100"
+          }`}
+        >
+          <RoomTitleReadOnlyRowShort title={title} isDraggingOver={snapshot.isDraggingOver} />
+
+          {isAlreadyLinked && draggingTitleId && (
+            <div className="absolute inset-0 flex items-center justify-center bg-danger/10 rounded-xl z-10 pointer-events-none">
+              <span className="text-danger font-bold text-xs uppercase">Already linked</span>
+            </div>
+          )}
+
+          {!isAlreadyLinked && snapshot.isDraggingOver && (
+            <div className="absolute inset-0 flex items-center justify-center rounded-xl z-10 pointer-events-none">
+              <span className="text-primary font-bold text-xl">+ Add</span>
+            </div>
+          )}
+        </div>
+        {provided.placeholder}
+      </div>
+    )}
+  </Droppable>
+);

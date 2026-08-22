@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient, type InfiniteData } from "@tanstack/react-query";
 import { roomTitleService } from "~/features/manageRoomTitles/api/roomTitleService";
 import { notify } from "~/shared/lib";
-import type { RoomTitleLinkCreate, RoomTitleLinkShort, RoomTitleWithUserLinks } from "~/features/manageRoomTitles/model/roomTitle.types";
+import type { RoomTitleLinkCreate, RoomTitleLinkShort, RoomTitleWithUserLinks, RoomTitleLinkDetailsDto } from "~/features/manageRoomTitles/model/roomTitle.types";
 import type { PageResponse } from "~/shared/types";
 import { updateInfiniteQuery } from "~/shared/helpers/updateInfinityQuery";
 import { roomTitleKeys } from "../model/roomTitle.queryKeys";
@@ -27,14 +27,14 @@ export const useRoomTitleLinkActions = (roomId: number) => {
                         getContent: (page) => page.content,
                         setContent: (page, newContent) => ({ ...page, content: newContent }),
                         updater: (allItems) => allItems.map((title) =>
-                            String(title.id) === String(dto.roomTitleId)
+                            String(title.id) === dto.roomTitleId
                                 ? {
                                     ...title,
                                     links: [
                                         ...title.links,
                                         {
                                             id: "temp-id-" + Date.now(),
-                                            roomTitleId: String(dto.roomTitleId),
+                                            roomTitleId: dto.roomTitleId,
                                             title: { titleId: dto.titleId },
                                             createdAt: new Date().toISOString(),
                                         } as RoomTitleLinkShort
@@ -65,8 +65,10 @@ export const useRoomTitleLinkActions = (roomId: number) => {
         mutationFn: ({ roomTitleLinkId }: { roomTitleLinkId: string; roomTitleId: string }) =>
             roomTitleService.deleteRoomTitleLink(roomId, roomTitleLinkId),
 
-        onMutate: async ({ roomTitleLinkId }) => {
+        onMutate: async ({ roomTitleLinkId, roomTitleId }) => {
             await queryClient.cancelQueries({ queryKey, exact: false });
+            const userLinksKey = roomTitleKeys.userLinks(roomId, roomTitleId);
+            await queryClient.cancelQueries({ queryKey: userLinksKey });
 
             queryClient.setQueriesData<InfiniteData<PageResponse<RoomTitleWithUserLinks>>>(
                 { queryKey, exact: false },
@@ -78,11 +80,16 @@ export const useRoomTitleLinkActions = (roomId: number) => {
                         setContent: (page, newContent) => ({ ...page, content: newContent }),
                         updater: (allItems) => allItems.map((title) => ({
                             ...title,
-                            links: title.links.filter(link => String(link.id) !== String(roomTitleLinkId))
+                            links: title.links.filter(link => link.id !== roomTitleLinkId)
                         }))
                     });
                 }
             );
+
+            queryClient.setQueryData<RoomTitleLinkDetailsDto[]>(userLinksKey, (oldLinks) => {
+                if (!oldLinks) return [];
+                return oldLinks.filter(link => link.id !== roomTitleLinkId);
+            });
         },
 
         onError: (err, { roomTitleId }) => {

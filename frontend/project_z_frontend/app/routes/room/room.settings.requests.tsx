@@ -2,7 +2,6 @@ import { useParams, Outlet } from "react-router";
 import { useRoomDetails } from "~/entities/room";
 import { useAuthStore } from "~/features/auth";
 import { useRoomMemberByRoomIdAndUserId } from "~/features/manageRoomMembers";
-import { RoomSettingInvitesTab } from "~/widgets/RoomSettingInvites/ui/RoomSettingInvitesTab";
 
 export default function RoomSettingsRequestsPage() {
     const { id: roomId } = useParams<{ id: string }>();
@@ -12,7 +11,7 @@ export default function RoomSettingsRequestsPage() {
     const { room, isLoading: isRoomLoading } = useRoomDetails(Number(roomId));
 
     if (isMemberLoading || isRoomLoading || !roomMember || !room) {
-        return <div className="p-10 text-white">Loading settings...</div>;
+        return <div className="p-10 text-foreground">Loading settings...</div>;
     }
 
     return (

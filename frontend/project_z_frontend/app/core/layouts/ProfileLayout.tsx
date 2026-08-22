@@ -34,7 +34,7 @@ const ProfileLayout = () => {
   }
 
   return (
-    <div className="flex flex-col lg:flex-row gap-6 p-4 sm:p-8 max-w-[1400px] mx-auto min-h-screen bg-background-muted/30">
+    <div className="flex flex-col lg:flex-row gap-6 p-4 sm:p-8 max-w-[1440px] mx-auto min-h-screen bg-background-muted/30">
       <UserProfileSidebar
         isOpen={isSidebarOpen}
         onClose={() => setIsSidebarOpen(false)}

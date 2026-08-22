@@ -38,7 +38,7 @@ export const RoomDetailsSettingsTitlesLinks = ({
   const isMobile = breakpoint === "xs" || breakpoint === "sm";
 
   const allTitles = data?.pages.flatMap((page) => page.content) ?? [];
-  const { createLink } = useRoomTitleLinkActions(Number(roomId));
+  const { createLink } = useRoomTitleLinkActions(roomId);
 
   const onDragEnd = (result: DropResult) => {
     const { source, destination, draggableId } = result;

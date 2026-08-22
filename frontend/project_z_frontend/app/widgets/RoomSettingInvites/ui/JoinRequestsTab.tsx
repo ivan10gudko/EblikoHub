@@ -4,6 +4,7 @@ import { RequestStatus, RequestType } from "~/shared/types";
 import { UserAvatar } from "~/entities/user";
 import type { RoomRequestShortWithUser } from "~/entities/room/model/room.types";
 import { roomRequestsService, useRoomRequests } from "~/features/manageRoomRequests";
+import { ErrorScreen } from "~/shared/ui/ErrorScreen";
 
 interface JoinRequestsTabProps {
   roomId: number;
@@ -21,7 +22,15 @@ export const JoinRequestsTab = ({ roomId }: JoinRequestsTabProps) => {
   const requests = data?.requests || [];
 
   if (isLoading) return <div className="text-sm text-foreground/80 animate-pulse p-4">Loading requests...</div>;
-  if (isError) return <div className="text-sm text-danger p-4">Server error.</div>;
+  if (isError) {
+    return (
+      <ErrorScreen
+        title="Failed to load requests"
+        message="Could not fetch pending join requests. Please try again."
+        onRetry={() => refetch()}
+      />
+    );
+  }
 
   return (
     <div className="flex flex-col gap-4 w-full text-foreground">

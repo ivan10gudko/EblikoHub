@@ -1,34 +1,37 @@
-import React from "react";
-
 import { Button } from "~/shared/ui/Button";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import { RoomDetailsSortVariants, roomSortOptions } from '~/entities/room';
+import { RoomDetailsSortVariants } from '~/entities/room';
 import { useRoomDetailsFilterStore } from '../../store/roomDetailsFilter.store';
 import { Select } from "~/shared/ui/Select";
+const roomSortOptions = [
+    { label: "Name", value: RoomDetailsSortVariants.titleName },
+    { label: "Average room rating", value: RoomDetailsSortVariants.avgRating },
+    { label: "Room title date added", value: RoomDetailsSortVariants.createdAt },
+];
 
 export const RoomDetailsSortControl = () => {
     const { sortBy, setSort, order, toggleOrder } = useRoomDetailsFilterStore();
 
     return (
         <div className="flex flex-col gap-2">
-         
+
             <label className="text-[13px] uppercase font-bold text-muted-foreground">
                 Sort By
             </label>
-            
+
             <div className="flex gap-2 items-center w-full">
-              
+
                 <div className="flex-1 min-w-0">
                     <Select
                         value={sortBy}
                         options={roomSortOptions}
-                        onChange={(val) => setSort(val as RoomDetailsSortVariants)} 
+                        onChange={(val) => setSort(val as RoomDetailsSortVariants)}
                         className="w-full"
                     />
                 </div>
-                
-             
+
+
                 <Button
                     variant="outline"
                     onClick={toggleOrder}

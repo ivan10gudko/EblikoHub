@@ -42,7 +42,7 @@ export default function RoomsPage({ userId }: { userId: string | null }) {
   const allRooms = useMemo(() => {
     return data?.pages.flatMap((page) => page.content) ?? [];
   }, [data]);
-  
+
   const isEmpty = !isLoading && allRooms.length === 0;
 
   return (
@@ -51,13 +51,13 @@ export default function RoomsPage({ userId }: { userId: string | null }) {
         <RoomFilters>
           <Button
             onClick={() => navigate("/rooms/requests")}
-            className={secondaryBtnStyle}
+            variant="secondaryCard"
           >
             My Requests
           </Button>
           <Button
             onClick={() => openRoomModal("add")}
-            className={secondaryBtnStyle}
+            variant="secondaryCard"
           >
             <span className="text-2xl font-extrabold leading-none relative -top-[1px] select-none">
               +

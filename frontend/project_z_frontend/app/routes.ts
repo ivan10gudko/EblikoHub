@@ -48,24 +48,24 @@ export default [
 
                 route(":id", "./routes/roomDetailsLayouts/room.details.main.tsx"), // /rooms/:id
 
-                route(":id/settings", "./routes/roomSettingsLayouts/room.settings.index.tsx", [
-                    index("./routes/roomSettingsLayouts/room.settings.general.tsx"),
-                    route("general", "./routes/roomSettingsLayouts/room.settings.general.tsx", { id: "room-settings-general-alias" }),
+                route(":id/settings", "./routes/room/room.settings.index.tsx", [
+                    index("./routes/room/room.settings.general.tsx"),
+                    route("general", "./routes/room/room.settings.general.tsx", { id: "room-settings-general-alias" }),
 
                     ...prefix("titles", [
-                        index("./routes/roomSettingsLayouts/roomSettingsTitlesLayouts/room.settings.titles.roomTitles.tsx"),
-                        route("titleLinks", "./routes/roomSettingsLayouts/roomSettingsTitlesLayouts/room.settings.titles.titleLinks.tsx"),
-                        route("ai-matcher", "./routes/roomSettingsLayouts/roomSettingsTitlesLayouts/room.settings.titles.aiMatcher.tsx"),
+                        index("./routes/room/titles/room.settings.titles.roomTitles.tsx"),
+                        route("titleLinks", "./routes/room/titles/room.settings.titles.titleLinks.tsx"),
+                        route("ai-matcher", "./routes/room/titles/room.settings.titles.aiMatcher.tsx"),
                     ]),
 
-                    route("invites", "./routes/roomSettingsLayouts/room.settings.requests.tsx", [
-                        index("./routes/roomSettingsLayouts/roomSettingsRequestsLayouts/room.settings.requests.find.tsx"),
-                        route("requests", "./routes/roomSettingsLayouts/roomSettingsRequestsLayouts/room.settings.requests.requests.tsx"),
-                        route("sent", "./routes/roomSettingsLayouts/roomSettingsRequestsLayouts/room.settings.requests.sent.tsx"),
+                    route("invites", "./routes/room/room.settings.requests.tsx", [
+                        index("./routes/room/requests/room.settings.requests.find.tsx"),
+                        route("requests", "./routes/room/requests/room.settings.requests.requests.tsx"),
+                        route("sent", "./routes/room/requests/room.settings.requests.sent.tsx"),
                     ]),
 
-                    route("members", "./routes/roomSettingsLayouts/room.settings.members.tsx"),
-                    route("admin", "./routes/roomSettingsLayouts/room.settings.admin.tsx"),
+                    route("members", "./routes/room/room.settings.members.tsx"),
+                    route("admin", "./routes/room/room.settings.admin.tsx"),
                 ]),
             ]),
         ]),

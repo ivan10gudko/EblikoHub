@@ -5,22 +5,19 @@ import { useAuthStore } from "~/features/auth";
 import { useQuery } from "@tanstack/react-query";
 import { useRoomModal } from "~/features/manageRoomSettings/hooks/useRoomModal";
 import { useRoomMemberByRoomIdAndUserId } from "~/features/manageRoomMembers";
-import { useRoomTitleActions } from "~/features/manageRoomTitles";
+import { useRoomTitleActions, roomTitleKeys } from "~/features/manageRoomTitles"; // Імпортуємо roomTitleKeys
 import { RoomRole } from "~/entities/room";
 import { DEFAULT_IMAGE_PATH } from "~/shared/constants";
 
 export const RoomTitlesManager = ({ roomId }: { roomId: number }) => {
     const { userId } = useAuthStore();
     const { openSettingsModal } = useRoomModal();
-    
-    const { data : currentUser } = useRoomMemberByRoomIdAndUserId(userId!, roomId);
+
+    const { data: currentUser } = useRoomMemberByRoomIdAndUserId(userId!, roomId);
 
     const isCurrentUserAdmin = currentUser?.role === RoomRole.ADMIN || currentUser?.role === RoomRole.OWNER;
-
-
-    
     const { data: titles = [], isLoading } = useQuery({
-        queryKey: ["roomTitles", roomId],
+        queryKey: [...roomTitleKeys.all, roomId],
         queryFn: () => roomTitleService.findAll(roomId),
     });
 
@@ -39,7 +36,6 @@ export const RoomTitlesManager = ({ roomId }: { roomId: number }) => {
                 </div>
 
                 <div className="flex items-center gap-2">
-
                     <button
                         onClick={() => openSettingsModal('add-room-title', String(roomId))}
                         disabled={isPending}
@@ -62,7 +58,6 @@ export const RoomTitlesManager = ({ roomId }: { roomId: number }) => {
                             item={item}
                             onDelete={deleteTitle}
                             defaultImagePath={DEFAULT_IMAGE_PATH}
-                            roomId={roomId}
                             isOwn={item.addedByUserId === userId}
                             isCurrentUserAdmin={isCurrentUserAdmin}
                         />

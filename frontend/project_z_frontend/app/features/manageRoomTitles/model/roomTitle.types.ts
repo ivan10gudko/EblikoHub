@@ -1,5 +1,6 @@
-import type { UserShort } from "~/entities/room";
+
 import type { TitleShort, TitleType, TitleVisual } from "~/entities/titleRecord";
+import type { UserShort } from "~/entities/user/model/user.types";
 import type { PageResponse, QueryParams, Status } from "~/shared/types";
 
 export interface RoomTitleQueryParameters extends QueryParams {

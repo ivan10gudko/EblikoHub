@@ -7,19 +7,17 @@ import { useRoomModal } from "~/features/manageRoomSettings/hooks/useRoomModal";
 
 interface RoomTitleActionMenuProps {
   item: RoomTitleDetails;
-  roomId: number;
   onDelete: () => void;
   canManage: boolean;
 }
 
 export const RoomTitleActionMenu = ({
   item,
-  roomId,
   onDelete,
   canManage
 }: RoomTitleActionMenuProps) => {
   const { openSettingsModal } = useRoomModal();
-  const itemId = String(item.id);
+  const itemId = item.id;
   return (
     <>
       <Dropdown

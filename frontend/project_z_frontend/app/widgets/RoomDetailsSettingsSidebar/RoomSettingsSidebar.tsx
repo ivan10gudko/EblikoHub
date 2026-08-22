@@ -137,7 +137,7 @@ export const RoomSettingsSidebar = ({
     <Sidebar className="flex flex-col p-4 pt-20 md:p-5 gap-3 h-auto max-h-[100vh] overflow-y-auto md:h-[calc(100vh-40px)] md:ml-5 md:my-5 w-full md:w-80 shrink-0 backdrop-blur-md bg-card/40 md:bg-card border-none md:border border-border/40 rounded-2xl md:rounded-3xl shadow-xl md:shadow-none hide-scrollbar">
       <nav className="flex flex-col gap-3.5 w-full">
         {navLinks.map((item) =>
-          item.children ? (
+          "children" in item && item.children ? (
             <NavGroupItem
               key={item.key}
               item={item}
@@ -154,7 +154,7 @@ export const RoomSettingsSidebar = ({
             <NavLinkItem
               key={item.key}
               item={item}
-              onClick={() => handleItemClick(item.path!)}
+              onClick={() => handleItemClick(item.path)}
             />
           )
         )}

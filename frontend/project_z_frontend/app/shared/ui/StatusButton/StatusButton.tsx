@@ -1,4 +1,5 @@
 import { Button } from "../Button";
+import { cn } from "~/shared/lib";
 
 interface StatusButtonProps {
     label: string;
@@ -23,36 +24,20 @@ export const StatusButton = ({
         <Button
             variant="outline"
             onClick={onClick}
-            className={`
-                h-11
-                px-4
-                rounded-xl
-                transition-all
-                duration-200
-                flex
-                items-center
-                gap-2
-                font-semibold
-                text-sm
-                active:scale-[0.97]
-                ${isActive
-                    ? activeClassName
-                    : `${inactiveClassName} ${className}`
-                }
-            `}
+            className={cn(
+                "h-11 px-4 rounded-xl transition-all duration-200 flex items-center gap-2 font-semibold text-sm active:scale-[0.97]",
+                isActive ? activeClassName : cn(inactiveClassName, className)
+            )}
         >
             <span>{label}</span>
             {count !== undefined && (
                 <span
-                    className={`
-                        px-2 py-0.5 rounded-lg
-                        text-xs font-bold
-                        transition-all
-                        ${isActive
-                            ? "bg-card border border-border text-foreground"
-                            : "bg-background-muted border border-border text-foreground-muted"
-                        }
-                    `}
+                    className={cn(
+                        "px-2 py-0.5 rounded-lg text-xs font-bold transition-all border",
+                        isActive
+                            ? "bg-card border-border text-foreground"
+                            : "bg-background-muted border-border text-foreground-muted"
+                    )}
                 >
                     {count}
                 </span>

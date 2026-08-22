@@ -3,6 +3,7 @@ import { useState, type ReactNode } from "react";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import GavelIcon from "@mui/icons-material/Gavel";
 import { Button } from "../Button";
+import { cn } from "~/shared/lib"; // Імпортуємо cn
 
 interface DropdownProps {
   trigger: ReactNode;
@@ -55,11 +56,13 @@ export const DropdownItem = ({
       className="outline-none border-none list-none"
     >
       <Button
-        className={`w-full flex items-center justify-start gap-3 px-3 py-2.5 text-xs font-bold rounded-lg transition-colors text-left border-none shadow-none bg-transparent ${
+        className={cn(
+          "w-full flex items-center justify-start gap-3 px-3 py-2.5 text-xs font-bold rounded-lg transition-colors text-left border-none shadow-none bg-transparent",
           variant === "danger"
             ? "text-danger hover:bg-danger/10"
-            : "text-foreground hover:bg-border/50"
-        } ${className}`}
+            : "text-foreground hover:bg-border/50",
+          className
+        )}
       >
         {icon && (
           <span className="flex items-center justify-center w-5 h-5 flex-shrink-0">
