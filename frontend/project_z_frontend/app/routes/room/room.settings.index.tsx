@@ -9,15 +9,17 @@ import { RoomSettingsSidebar } from "~/widgets/RoomDetailsSettingsSidebar";
 import MenuOpenIcon from "@mui/icons-material/MenuOpen";
 
 export default function RoomsSettingsIndexLayout() {
-    const { id: roomId } = useParams<{ id: string }>();
+    const { id } = useParams<{ id: string }>();
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+    const roomId = id ? Number(id) : undefined;
 
     if (!roomId) return <ErrorScreen title="Not found" message="Room with that id not found" />;
 
     const { userId } = useAuthStore();
     
-    const { data: roomMember, isLoading: isMemberLoading } = useRoomMemberByRoomIdAndUserId(userId!, Number(roomId));
-    const { room, isLoading: isRoomLoading } = useRoomDetails(Number(roomId));
+    const { data: roomMember, isLoading: isMemberLoading } = useRoomMemberByRoomIdAndUserId(userId!, roomId);
+    const { room, isLoading: isRoomLoading } = useRoomDetails(roomId);
 
     if (isMemberLoading || isRoomLoading) {
         return <div className="p-10 text-foreground">Loading settings...</div>;
@@ -43,7 +45,7 @@ export default function RoomsSettingsIndexLayout() {
                 md:relative md:translate-x-0 md:transform-none md:transition-none md:h-auto md:w-80 md:p-0 md:bg-transparent md:border-none md:z-0
             `}>
                 <RoomSettingsSidebar
-                    roomId={Number(roomId)}
+                    roomId={roomId}
                     role={roomMember.role}
                     onCloseMobileMenu={() => setIsMobileMenuOpen(false)}
                 />
@@ -67,7 +69,7 @@ export default function RoomsSettingsIndexLayout() {
                 </div>
             </main>
             
-            <RoomModalManager roomId={Number(roomId)} />
+            <RoomModalManager roomId={roomId} />
         </div>
     );
 }

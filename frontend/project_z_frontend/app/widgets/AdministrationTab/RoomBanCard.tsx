@@ -9,11 +9,11 @@ interface RoomBanCardProps {
     onClick?: () => void;
 }
 
-export const RoomBanCard: React.FC<RoomBanCardProps> = ({ 
+export const RoomBanCard = ({ 
     banDetails, 
     onUnban, 
     onClick 
-}) => {
+}:RoomBanCardProps) => {
     const user = banDetails.user;
     const username = user.name;
     const avatarSrc = user.img;

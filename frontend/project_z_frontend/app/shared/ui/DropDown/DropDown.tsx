@@ -3,7 +3,7 @@ import { useState, type ReactNode } from "react";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import GavelIcon from "@mui/icons-material/Gavel";
 import { Button } from "../Button";
-import { cn } from "~/shared/lib"; // Імпортуємо cn
+import { cn } from "~/shared/lib";
 
 interface DropdownProps {
   trigger: ReactNode;
@@ -11,7 +11,11 @@ interface DropdownProps {
   align?: "start" | "end" | "center";
 }
 
-export const Dropdown = ({ trigger, children, align = "end" }: DropdownProps) => {
+export const Dropdown = ({
+  trigger,
+  children,
+  align = "end",
+}: DropdownProps) => {
   return (
     <DropdownMenu.Root>
       <DropdownMenu.Trigger asChild>
@@ -26,9 +30,7 @@ export const Dropdown = ({ trigger, children, align = "end" }: DropdownProps) =>
           sideOffset={8}
           className="z-[9999] min-w-[160px] bg-card border border-border rounded-xl shadow-xl overflow-hidden animate-in fade-in zoom-in duration-200"
         >
-          <div className="flex flex-col p-1">
-            {children}
-          </div>
+          <div className="flex flex-col p-1">{children}</div>
         </DropdownMenu.Content>
       </DropdownMenu.Portal>
     </DropdownMenu.Root>
@@ -61,7 +63,7 @@ export const DropdownItem = ({
           variant === "danger"
             ? "text-danger hover:bg-danger/10"
             : "text-foreground hover:bg-border/50",
-          className
+          className,
         )}
       >
         {icon && (
@@ -110,8 +112,8 @@ export const BanDropdownItem = ({ onBan }: { onBan: () => void }) => {
         }
       }}
       variant="danger"
-      className="text-sm py-3" 
-      icon={<GavelIcon sx={{ fontSize: 18 }} />} 
+      className="text-sm py-3"
+      icon={<GavelIcon sx={{ fontSize: 18 }} />}
     >
       {isConfirming ? "Are you sure?" : "Ban"}
     </DropdownItem>

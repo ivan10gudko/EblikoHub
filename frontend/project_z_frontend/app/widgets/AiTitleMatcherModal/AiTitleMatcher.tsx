@@ -8,6 +8,7 @@ import { useAiTitleSuggestions } from "~/features/manageRoomTitles/hooks/useAiTi
 import { useBatchCreateRoomTitleLinks } from "~/features/manageRoomTitles/hooks/useBatchCreateRoomTitleLinks";
 import { useNavigate, useParams } from "react-router";
 import { DEFAULT_IMAGE_PATH } from "~/shared/constants";
+import { useWindowDimensions } from "~/shared/hooks";
 
 const getActiveBorder = (type?: TitleType, fallback = "rgba(255,255,255,0.8)") => {
     if (!type || !TitleTypeBorderColors[type]) return fallback;
@@ -52,6 +53,8 @@ const buildCardStyle = (
         boxShadow: isChecked ? `0 0 6px ${currentLeftBorder}, 0 0 6px ${currentRightBorder}` : "none",
     };
 };
+
+
 export const AiTitleMatcherPage = () => {
     const { id } = useParams<{ id: string }>();
     const numericRoomId = Number(id);
@@ -60,14 +63,9 @@ export const AiTitleMatcherPage = () => {
     const [selectedMatches, setSelectedMatches] = useState<Record<string, string>>({});
     const [highMatchOnly, setHighMatchOnly] = useState<boolean>(false);
     const [hasRequested, setHasRequested] = useState<boolean>(false);
-    const [isMobile, setIsMobile] = useState<boolean>(false);
 
-    useEffect(() => {
-        const handleResize = () => setIsMobile(window.innerWidth < 768);
-        handleResize();
-        window.addEventListener("resize", handleResize);
-        return () => window.removeEventListener("resize", handleResize);
-    }, []);
+    const breakpoint = useWindowDimensions();
+    const isMobile = breakpoint === 'xs' || breakpoint === 'sm';
 
     const {
         data: suggestions = [],

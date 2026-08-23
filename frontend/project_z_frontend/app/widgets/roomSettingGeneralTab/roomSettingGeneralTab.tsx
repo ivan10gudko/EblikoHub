@@ -10,7 +10,9 @@ interface RoomSettingGeneralTabProps {
   room: Room;
 }
 
-export const RoomSettingGeneralTab: React.FC<RoomSettingGeneralTabProps> = ({ room }) => {
+export const RoomSettingGeneralTab: React.FC<RoomSettingGeneralTabProps> = ({
+  room,
+}) => {
   const { updateRoom } = useRoomMutation();
 
   const [formData, setFormData] = useState<UpdateRoomPayload>({
@@ -19,7 +21,9 @@ export const RoomSettingGeneralTab: React.FC<RoomSettingGeneralTabProps> = ({ ro
     description: room?.description || "",
   });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
@@ -29,14 +33,14 @@ export const RoomSettingGeneralTab: React.FC<RoomSettingGeneralTabProps> = ({ ro
   };
 
   const handleSubmit = (e: React.FormEvent) => {
-  e.preventDefault();
-  if (room?.roomId) {
-    updateRoom.mutate({ 
-      id: room.roomId, 
-      data: formData 
-    });
-  }
-};
+    e.preventDefault();
+    if (room?.roomId) {
+      updateRoom({
+        id: room.roomId,
+        data: formData,
+      });
+    }
+  };
 
   return (
     <div className="w-full max-w-3xl bg-background border border-border rounded-2xl shadow-2xl overflow-hidden text-left transition-all">
@@ -51,7 +55,7 @@ export const RoomSettingGeneralTab: React.FC<RoomSettingGeneralTabProps> = ({ ro
           </h3>
         </div>
       </div>
-      
+
       <form onSubmit={handleSubmit} className="p-4 sm:p-6 flex flex-col gap-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 items-start">
           <div className="flex flex-col gap-2 w-full">

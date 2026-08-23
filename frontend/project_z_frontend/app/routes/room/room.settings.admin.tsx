@@ -1,6 +1,6 @@
-import React from 'react';
-import { useLocation, useParams } from 'react-router';
-import { RoomBansTab } from '~/widgets/AdministrationTab/RoomBansTab';
+import React from "react";
+import { useLocation, useParams } from "react-router";
+import { RoomBansTab } from "~/widgets/AdministrationTab/RoomBansTab";
 
 export const RoomSettingsAdmin: React.FC = () => {
   const params = useParams<Record<string, string>>();
@@ -25,7 +25,7 @@ export const RoomSettingsAdmin: React.FC = () => {
 
   return (
     <div className="w-full bg-card/40 backdrop-blur-md border border-border rounded-2xl overflow-hidden shadow-xl shadow-black/5">
-      <RoomBansTab roomId={roomId} />
+      <RoomBansTab roomId={Number(roomId)} />
     </div>
   );
 };

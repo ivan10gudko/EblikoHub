@@ -1,4 +1,4 @@
-import { useMutation, useQueryClient, type UseMutationOptions } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { AxiosError } from "axios";
 import { roomService } from "~/entities/room/api/roomService";
 import { roomKeys } from "~/entities/room/model/room.keys";
@@ -43,7 +43,9 @@ export const useRoomMutation = () => {
   });
 
   return {
-    createRoom,
-    updateRoom,
+    createRoom: createRoom.mutate,
+    updateRoom: updateRoom.mutate,
+    isCreating: createRoom.isPending,
+    isUpdating: updateRoom.isPending,
   };
 };

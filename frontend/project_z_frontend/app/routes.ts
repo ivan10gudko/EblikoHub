@@ -49,7 +49,7 @@ export default [
                 route(":id", "./routes/roomDetailsLayouts/room.details.main.tsx"), // /rooms/:id
 
                 route(":id/settings", "./routes/room/room.settings.index.tsx", [
-                    index("./routes/room/room.settings.general.tsx"),
+                    index("./routes/room/room.settings._redirect.tsx"),
                     route("general", "./routes/room/room.settings.general.tsx", { id: "room-settings-general-alias" }),
 
                     ...prefix("titles", [
