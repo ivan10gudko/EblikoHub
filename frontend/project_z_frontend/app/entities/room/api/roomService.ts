@@ -1,6 +1,6 @@
 import { apiClient } from "~/shared/api";
-import type { UserShort, Room, RoomCreateDto, RoomQueryParameters, RoomRequestCounts, RoomRequestShort, RoomSearchResult, RoomShort, UpdateRoomPayload, UserWithRelationsToRoomDto, RequestsToRoomResponse} from "../model/room.types";
-import type { PageResponse, RequestStatus, RequestType } from "~/shared/types";
+import type { Room, RoomCreateDto, RoomQueryParameters, RoomRequestCounts, RoomRequestShort, RoomSearchResult, RoomShort, UpdateRoomPayload, UserWithRelationsToRoomDto, RequestsToRoomResponse } from "../model/room.types";
+import type { PageResponse } from "~/shared/types";
 
 
 

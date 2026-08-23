@@ -1,4 +1,4 @@
-import type { UserShort } from "~/entities/room";
+import type { RoomParticipantDto } from "~/entities/room";
 
 export interface RoomBanCreateDto {
     userId: string;
@@ -8,8 +8,8 @@ export interface RoomBanCreateDto {
 export interface RoomBanDetailsDto {
     id: string;
     roomId: number;
-    user: UserShort;
+    user: RoomParticipantDto;
     reason: string;
-    bannedByUser: UserShort;
+    bannedByUser: RoomParticipantDto;
     createdAt: string;
 }

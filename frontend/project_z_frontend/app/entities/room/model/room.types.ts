@@ -1,6 +1,8 @@
 import type { QueryParams, RequestStatus, RequestType, Status } from "~/shared/types";
 
-export interface UserShort {
+//same as user/UserShort
+// TODO: think about moving it to shared/types or rewriting with generics
+export interface RoomParticipantDto {
   userId: string;
   name: string;
   nameTag: string;
@@ -67,7 +69,7 @@ export interface RoomRequestShort {
   id: string;
   room: RoomShort;
   userId: string;
-  sender: UserShort;
+  sender: RoomParticipantDto;
   status: RequestStatus;
   type: RequestType;
   createdAt: string;
@@ -75,8 +77,8 @@ export interface RoomRequestShort {
 
 export interface RoomRequestShortWithUser {
   id: string;
-  user: UserShort;
-  sender: UserShort;
+  user: RoomParticipantDto;
+  sender: RoomParticipantDto;
   status: RequestStatus;
   type: RequestType;
   createdAt: string;
@@ -94,14 +96,14 @@ export interface RoomRequestCounts {
 
 export interface RoomMemberShort {
   id: string;
-  user: UserShort;
+  user: RoomParticipantDto;
   role: RoomRole;
   createdAt: string;
 }
 
 export interface RoomMember {
   id: string;
-  user: UserShort;
+  user: RoomParticipantDto;
   role: RoomRole;
   createdAt: string;
 }
@@ -122,7 +124,7 @@ export enum RoomRelationStatus {
 }
 
 export interface UserWithRelationsToRoomDto {
-  user: UserShort;
+  user: RoomParticipantDto;
   relationStatus: RoomRelationStatus;
   activeRequest: RoomRequestShortWithoutRoomDto | null;
 }
@@ -130,7 +132,7 @@ export interface UserWithRelationsToRoomDto {
 export interface RoomRequestShortWithoutRoomDto {
   id: string;
   userId: string;
-  sender: UserShort;
+  sender: RoomParticipantDto;
   status: RequestStatus;
   type: RequestType;
   createdAt: string;

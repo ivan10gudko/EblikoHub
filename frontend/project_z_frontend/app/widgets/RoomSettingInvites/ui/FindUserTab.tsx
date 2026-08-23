@@ -2,8 +2,15 @@ import { useState } from "react";
 import SearchIcon from "@mui/icons-material/Search";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 
-import { useRoomRequests, useRoomUserSearch } from "~/features/manageRoomRequests";
-import { type UserShort, type UserWithRelationsToRoomDto, RoomRelationStatus } from "~/entities/room/model/room.types";
+import {
+  useRoomRequests,
+  useRoomUserSearch,
+} from "~/features/manageRoomRequests";
+import {
+  type RoomParticipantDto,
+  type UserWithRelationsToRoomDto,
+  RoomRelationStatus,
+} from "~/entities/room/model/room.types";
 import { UserSearchDropdown } from "~/entities/user";
 import { UserAvatar } from "~/entities/user";
 import { useDebounce } from "~/shared/hooks";
@@ -14,9 +21,11 @@ interface FindUserTabProps {
 }
 const getUserRelationFlags = (
   item: UserWithRelationsToRoomDto,
-  invitedUsers: UserShort[]
+  invitedUsers: RoomParticipantDto[],
 ) => {
-  const isInvitedInSession = invitedUsers.some((u) => u.userId === item.user.userId);
+  const isInvitedInSession = invitedUsers.some(
+    (u) => u.userId === item.user.userId,
+  );
   const isAlreadyInvited =
     isInvitedInSession ||
     item.relationStatus === RoomRelationStatus.PENDING_OUT ||
@@ -37,10 +46,13 @@ const getUserRelationFlags = (
 
 const renderUserAction = (
   item: UserWithRelationsToRoomDto,
-  invitedUsers: UserShort[],
-  onSelect: (item: UserWithRelationsToRoomDto) => void
+  invitedUsers: RoomParticipantDto[],
+  onSelect: (item: UserWithRelationsToRoomDto) => void,
 ) => {
-  const { isAlreadyMember, isBanned, isAlreadyInvited } = getUserRelationFlags(item, invitedUsers);
+  const { isAlreadyMember, isBanned, isAlreadyInvited } = getUserRelationFlags(
+    item,
+    invitedUsers,
+  );
 
   if (isAlreadyMember) {
     return (
@@ -86,11 +98,15 @@ const renderUserAction = (
 export const FindUserTab = ({ roomId }: FindUserTabProps) => {
   const [query, setQuery] = useState("");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [invitedUsers, setInvitedUsers] = useState<UserShort[]>([]);
+  const [invitedUsers, setInvitedUsers] = useState<RoomParticipantDto[]>([]);
 
   const debouncedQuery = useDebounce(query.trim(), 300);
 
-  const { data, isLoading: isSearchLoading, error: searchError } = useRoomUserSearch(roomId, debouncedQuery);
+  const {
+    data,
+    isLoading: isSearchLoading,
+    error: searchError,
+  } = useRoomUserSearch(roomId, debouncedQuery);
   const { sendInvite, isSendingInvite } = useRoomRequests(roomId);
 
   const searchResults = data?.pages.flatMap((page) => page.content || []) || [];
@@ -112,16 +128,21 @@ export const FindUserTab = ({ roomId }: FindUserTabProps) => {
             setInvitedUsers((prev) => [...prev, user]);
           }
         },
-      }
+      },
     );
   };
 
   return (
     <div className="flex flex-col gap-6 w-full text-foreground">
       <div className="flex flex-col gap-2 relative">
-        <label className="text-sm font-semibold text-foreground/80">Search Users to Invite</label>
+        <label className="text-sm font-semibold text-foreground/80">
+          Search Users to Invite
+        </label>
         <div className="relative w-full max-w-md">
-          <SearchIcon className="absolute left-4 top-1/2 -translate-y-1/2 text-foreground/80" fontSize="small" />
+          <SearchIcon
+            className="absolute left-4 top-1/2 -translate-y-1/2 text-foreground/80"
+            fontSize="small"
+          />
           <input
             type="text"
             value={query}
@@ -131,7 +152,9 @@ export const FindUserTab = ({ roomId }: FindUserTabProps) => {
               setIsDropdownOpen(true);
             }}
             onFocus={() => setIsDropdownOpen(true)}
-            placeholder={isSendingInvite ? "Sending invite..." : "Type name or @nametag..."}
+            placeholder={
+              isSendingInvite ? "Sending invite..." : "Type name or @nametag..."
+            }
             className="w-full bg-card border-2 border-border/40 rounded-xl py-3 pl-11 pr-4 text-sm text-foreground focus:outline-none focus:border-primary transition-colors disabled:opacity-50"
           />
         </div>
@@ -149,7 +172,9 @@ export const FindUserTab = ({ roomId }: FindUserTabProps) => {
               isLoading={isSearchLoading || isSendingInvite}
               onSelect={handleSelectUser}
               onClose={() => setIsDropdownOpen(false)}
-              renderAction={(item) => renderUserAction(item, invitedUsers, handleSelectUser)}
+              renderAction={(item) =>
+                renderUserAction(item, invitedUsers, handleSelectUser)
+              }
             />
           </div>
         )}
@@ -172,7 +197,9 @@ export const FindUserTab = ({ roomId }: FindUserTabProps) => {
         </div>
 
         {invitedUsers.length === 0 ? (
-          <p className="text-sm text-neutral-600 italic py-2">No invites sent yet.</p>
+          <p className="text-sm text-neutral-600 italic py-2">
+            No invites sent yet.
+          </p>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full">
             {invitedUsers.map((user) => (
@@ -181,7 +208,11 @@ export const FindUserTab = ({ roomId }: FindUserTabProps) => {
                 className="relative flex items-center gap-4 p-4 bg-card/60 backdrop-blur-md border border-border rounded-xl min-h-[96px] w-full"
               >
                 <div className="flex-shrink-0">
-                  <UserAvatar name={user.name || "Unknown"} src={user.img} size="md" />
+                  <UserAvatar
+                    name={user.name || "Unknown"}
+                    src={user.img}
+                    size="md"
+                  />
                 </div>
 
                 <div className="flex flex-col min-w-0 flex-1 pr-2">

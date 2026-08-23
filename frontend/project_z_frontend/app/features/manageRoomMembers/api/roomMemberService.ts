@@ -1,4 +1,4 @@
-import type { RoomMember, RoomMemberRoleUpdateDto, UserShort } from "~/entities/room";
+import type { RoomMember, RoomMemberRoleUpdateDto, RoomParticipantDto } from "~/entities/room";
 import { apiClient } from "~/shared/api";
 
 
@@ -7,7 +7,7 @@ export interface RoomMemberService {
     updateMemberRole(roomId: number, data: RoomMemberRoleUpdateDto): Promise<RoomMember>;
     deleteMembers(id: number, userIds: string[]): Promise<void>;
     leave(id: number): Promise<void>;
-    getAcceptedMembers(roomId: number | string): Promise<UserShort[]>;
+    getAcceptedMembers(roomId: number | string): Promise<RoomParticipantDto[]>;
 }
 
 export const roomMemberService: RoomMemberService = {

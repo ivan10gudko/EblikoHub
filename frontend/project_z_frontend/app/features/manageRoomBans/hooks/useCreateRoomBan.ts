@@ -5,10 +5,10 @@ import { notify } from "~/shared/lib";
 import type { RoomBanCreateDto, RoomBanDetailsDto } from "../model/roomBan.types";
 import { roomKeys } from "~/entities/room/model/room.keys";
 import { roomBanKeys } from "../model/roomBan.keys";
-import type { UserShort } from "~/entities/room/model/room.types";
+import type { RoomParticipantDto } from "~/entities/room/model/room.types";
 
 interface OptimisticBanVariables extends RoomBanCreateDto {
-  userData?: UserShort;
+  userData?: RoomParticipantDto;
 }
 
 export const useCreateRoomBan = (roomId: number) => {
@@ -30,7 +30,7 @@ export const useCreateRoomBan = (roomId: number) => {
       const previousBans = queryClient.getQueryData<RoomBanDetailsDto[]>(banListKey);
       const previousRoom = queryClient.getQueryData<Room>(roomDetailsKey);
 
-      const fallbackUser: UserShort = {
+      const fallbackUser: RoomParticipantDto = {
         userId: variables.userId,
         name: variables.userData?.name || "Processing...",
         nameTag: variables.userData?.nameTag || "",
