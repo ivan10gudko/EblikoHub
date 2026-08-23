@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { titleRecordService, type TitleRecord } from "~/entities/titleRecord";
 import { notify } from "~/shared/lib";
+import { getErrorMessage } from "~/shared/utils";
 
 export const useUpdateTitleRecord = (titleId: number) => {
   const queryClient = useQueryClient();
@@ -15,8 +16,8 @@ export const useUpdateTitleRecord = (titleId: number) => {
     onSuccess: () => {
       refreshAllCaches();
     },
-    onError: (error: any) => {
-      notify.error(error.response?.data?.message || "Failed to save changes");
+    onError: (error: unknown) => {
+      notify.error(getErrorMessage(error, "Failed to save changes"));
     }
   });
 
@@ -26,9 +27,8 @@ export const useUpdateTitleRecord = (titleId: number) => {
       refreshAllCaches();
       notify.success("Pinned to top!");
     },
-    onError: (error: any) => {
-      console.error(error);
-      notify.error(error.response?.data?.message || "Error while pinning");
+    onError: (error: unknown) => {
+      notify.error(getErrorMessage(error, "Error while pinning"));
     }
   });
 
@@ -38,8 +38,8 @@ export const useUpdateTitleRecord = (titleId: number) => {
       refreshAllCaches();
       notify.success("Unpinned!");
     },
-    onError: (error: any) => {
-      notify.error(error.response?.data?.message || "Error while unpinning");
+    onError: (error: unknown) => {
+      notify.error(getErrorMessage(error, "Error while unpinning"));
     }
   });
 

@@ -4,6 +4,7 @@ import { roomService } from "~/entities/room/api/roomService";
 import { roomKeys } from "~/entities/room/model/room.keys";
 import type { Room, RoomCreateDto, UpdateRoomPayload } from "~/entities/room/model/room.types";
 import { notify } from "~/shared/lib";
+import { getErrorMessage } from "~/shared/utils";
 
 interface ApiErrorResponse {
   message?: string;
@@ -19,14 +20,14 @@ export const useRoomMutation = () => {
       notify.success("Room created successfully!");
     },
     onError: (error) => {
-      const message = error.response?.data?.message || "Something went wrong";
-      notify.error(message);
+      notify.error(getErrorMessage(error, "Something went wrong"));
+
     },
   });
 
   const updateRoom = useMutation<
-    Room, 
-    AxiosError<ApiErrorResponse>, 
+    Room,
+    AxiosError<ApiErrorResponse>,
     { id: number; data: UpdateRoomPayload }
   >({
     mutationFn: ({ id, data }) => roomService.partialUpdate(id, data),
@@ -36,8 +37,8 @@ export const useRoomMutation = () => {
       notify.success("Room settings updated successfully!");
     },
     onError: (error) => {
-      const message = error.response?.data?.message || "Method not allowed or server error";
-      notify.error(message);
+      notify.error(getErrorMessage(error, "Method not allowed or server error"));
+
     },
   });
 
