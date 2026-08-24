@@ -22,7 +22,9 @@ import project_z.demo.repositories.TitleRepository;
 import project_z.demo.repositories.UserRepository;
 import project_z.demo.repositories.wheelRepositories.WheelCurrentSettingsRepository;
 import project_z.demo.repositories.wheelRepositories.WheelCurrentTitleRepository;
+import project_z.demo.repositories.wheelRepositories.WheelPresetRepository;
 import project_z.demo.services.WheelServices.WheelCurrentSettingsService;
+import project_z.demo.entity.wheelEntitys.WheelPresetEntity;
 
 @Service
 @RequiredArgsConstructor
@@ -30,6 +32,7 @@ public class WheelCurrentSettingsServiceImp implements WheelCurrentSettingsServi
 
     private final WheelCurrentSettingsRepository repository;
     private final WheelCurrentTitleRepository titleRepositoryInWheel;
+    private final WheelPresetRepository presetRepository;
     private final UserRepository userRepository;
     private final TitleRepository titleRepository;
     private final PatchHelper patchHelper;
@@ -89,6 +92,39 @@ public class WheelCurrentSettingsServiceImp implements WheelCurrentSettingsServi
 
         patchHelper.updateIfPresent(patchDto.getMode(), settings::setMode);
         patchHelper.updateIfPresent(patchDto.getSpinDuration(), settings::setSpinDuration);
+
+        repository.saveAndFlush(settings);
+        return settingsDetailsMapper.mapTo(settings);
+    }
+
+    @Override
+    @Transactional
+    public WheelCurrentSettingsDetailsDto loadPreset(UUID userId, UUID presetId) {
+        WheelCurrentSettingsEntity settings = repository.findByIdWithTitles(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("Settings not found for user: " + userId));
+
+        WheelPresetEntity preset = presetRepository.findByIdWithTitles(presetId)
+                .orElseThrow(() -> new ResourceNotFoundException("Preset not found"));
+
+        if (!preset.getUser().getUserId().equals(userId)) {
+            throw new IllegalArgumentException("Preset does not belong to the user");
+        }
+
+        settings.setMode(preset.getMode());
+        settings.setSpinDuration(preset.getSpinDuration());
+
+        settings.getCurrentTitles().clear();
+
+        List<WheelCurrentTitleEntity> newTitles = preset.getPresetTitles().stream()
+                .map(pt -> {
+                    WheelCurrentTitleEntity te = new WheelCurrentTitleEntity();
+                    te.setWheelSettings(settings);
+                    te.setTitle(pt.getTitleId());
+                    return te;
+                })
+                .toList();
+
+        settings.getCurrentTitles().addAll(newTitles);
 
         repository.saveAndFlush(settings);
         return settingsDetailsMapper.mapTo(settings);

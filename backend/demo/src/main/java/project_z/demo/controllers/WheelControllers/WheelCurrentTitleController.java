@@ -1,5 +1,6 @@
 package project_z.demo.controllers.WheelControllers;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
@@ -26,18 +27,18 @@ public class WheelCurrentTitleController {
     private final SecurityService securityService;
 
     @PostMapping
-    @PreAuthorize("@securityService.isTitleOwner(#dto.titleId())")
-    public ResponseEntity<Void> addTitle(@RequestBody WheelCurrentSettingsTitleCreateDto dto) {
+    public ResponseEntity<Void> addTitles(
+            @RequestBody List<WheelCurrentSettingsTitleCreateDto> dtos) {
         UUID userId = securityService.getCurrentUserId();
-        titleService.addTitleToWheel(userId, dto);
+        titleService.addTitlesToWheel(userId, dtos);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
-    @DeleteMapping("/{titleId}")
-    @PreAuthorize("@securityService.isTitleOwner(#dto.titleId())")
-    public ResponseEntity<Void> removeTitle(@PathVariable Long titleId) {
+    @DeleteMapping
+    public ResponseEntity<Void> removeTitles(
+            @RequestBody List<Long> titleIds) {
         UUID userId = securityService.getCurrentUserId();
-        titleService.removeTitleFromWheel(userId, titleId);
+        titleService.removeTitlesFromWheel(userId, titleIds);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

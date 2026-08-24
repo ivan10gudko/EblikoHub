@@ -1,9 +1,9 @@
-export {userService} from "./api/UserService";
-export type {UserProfile,CreateUserProfile} from "./model/user.types"
+export { userService } from "./api/UserService";
+export type { UserProfile, CreateUserProfile } from "./model/user.types"
 export { UserAvatar } from './ui/UserAvatar';
-export {generateFallbackName} from "./lib/generateFallbackName"
+export { generateFallbackName } from "./lib/generateFallbackName"
 export * from "./hooks/useUser";
 export * from "./hooks/useBadges";
 export { BadgeType } from "./model/user.types";
-export {UserSearchDropdown} from "./ui/UserSearchDropdownResults";
-export {UserShortRow} from "./ui/userShortRow";
+export { UserSearchDropdown } from "./ui/UserSearchDropdownResults";
+export { UserShortRow } from "./ui/userShortRow";

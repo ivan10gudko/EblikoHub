@@ -109,8 +109,10 @@ public class TitleServiceImpl implements TitleService {
     }
 
     @Override
-    public Optional<TitleEntity> findOne(Long titleId) {
-        return titleRepository.findById(titleId);
+    public TitleDto findOne(Long titleId) {
+        return titleMapper.mapTo(titleRepository.findById(titleId).orElseThrow(
+            () -> new ResourceNotFoundException("Title not found")
+        ));
     }
 
     @Override
@@ -267,6 +269,13 @@ public class TitleServiceImpl implements TitleService {
         return titleEntity;
     }
 
+    @Override
+    public TitleEntity findOneEntity(Long titleId) {
+        return titleRepository.findById(titleId).orElseThrow(
+            () -> new ResourceNotFoundException("Title not found")
+        );
+    }
+    
     @Override
     public TitleEntity findUserTitleByMalId(Integer titleMalId, String token) {
         UUID userId = jwtService.extractUsername(token);

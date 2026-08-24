@@ -1,6 +1,13 @@
 import { apiClient } from "~/shared/api";
-import type { FriendshipDetailsDto, FriendshipPartialUpdateDto, FriendRequestDto, FriendshipCounts, UserDtoWithFriendshipStatus, FriendshipQueryParameters } from "../model/friendship.types";
 import type { PageResponse } from "~/shared/types";
+import type {
+    FriendshipDetailsDto,
+    FriendshipPartialUpdateDto,
+    FriendRequestDto,
+    FriendshipCounts,
+    FriendshipQueryParameters,
+    WithFriendship
+} from "../model/friendship.types";
 
 interface FriendshipService {
     sendFriendRequest(receiverId: string): Promise<void>;
@@ -13,10 +20,11 @@ interface FriendshipService {
     getSentPendingRequests(userId: string): Promise<FriendRequestDto[]>;
     deleteFriendshipById(id: string): Promise<void>;
     getFriendshipCounts(userId: string): Promise<FriendshipCounts>;
-    searchUsersWithStatus(
+    getUserWithFriendshipStatus<T>(targetUserId: string): Promise<WithFriendship<T>>;
+    searchUsersWithStatus<T>(
         name: string,
         params?: FriendshipQueryParameters
-    ): Promise<PageResponse<UserDtoWithFriendshipStatus>>;
+    ): Promise<PageResponse<WithFriendship<T>>>;
 }
 
 export const friendshipService: FriendshipService = {
@@ -33,17 +41,17 @@ export const friendshipService: FriendshipService = {
     },
 
     async getFriendsByUserId(userId) {
-        const response = await apiClient.get(`/friendships/user/${userId}`);
+        const response = await apiClient.get<FriendRequestDto[]>(`/friendships/user/${userId}`);
         return response.data;
     },
 
     async getFriendshipById(id) {
-        const response = await apiClient.get(`/friendships/${id}`);
+        const response = await apiClient.get<FriendshipDetailsDto>(`/friendships/${id}`);
         return response.data;
     },
 
     async partialUpdate(id, data) {
-        const response = await apiClient.patch(`/friendships/${id}`, data);
+        const response = await apiClient.patch<FriendshipDetailsDto>(`/friendships/${id}`, data);
         return response.data;
     },
 
@@ -60,12 +68,21 @@ export const friendshipService: FriendshipService = {
         const response = await apiClient.get<FriendRequestDto[]>(`/friendships/${userId}/sentPending`);
         return response.data || [];
     },
+
     async getFriendshipCounts(userId) {
         const response = await apiClient.get<FriendshipCounts>(`/friendships/${userId}/stats`);
         return response.data;
     },
-    async searchUsersWithStatus(name, params) {
-        const response = await apiClient.get<PageResponse<UserDtoWithFriendshipStatus>>(
+    //TODO: Consider move this method to Profile feature, since it is not directly related to friendship management.
+    async getUserWithFriendshipStatus<T>(targetUserId: string) {
+        const response = await apiClient.get<WithFriendship<T>>(
+            `/friendships/userWithCurrentFriendshipStatus/${targetUserId}`
+        );
+        return response.data;
+    },
+
+    async searchUsersWithStatus<T>(name: string, params?: FriendshipQueryParameters) {
+        const response = await apiClient.get<PageResponse<WithFriendship<T>>>(
             `/friendships/search/${name}`,
             { params }
         );

@@ -5,7 +5,7 @@ export interface UserProfile {
     name: string;
     nameTag: string;
     description?: string;
-    img?: string;
+    img?: string | null;
     createdAt?: string;
 }
 
@@ -26,7 +26,7 @@ export interface UserShort {
     userId: string;
     name: string;
     nameTag: string;
-    img?: string;
+    img?: string | null;
 }
 export interface BadgeUser {
     id: string;

@@ -30,8 +30,6 @@ public class SecurityService {
     private final FriendshipRepository friendshipRepository;
     private final RoomMemberRepository roomMemberRepository;
     private final WheelPresetRepository wheelPresetRepository;
-    private final RoomTitleLinkRepository roomTitleLinkRepository;
-    private final RoomTitleEntityRepository roomTitleRepository;
 
     public UUID getCurrentUserId() {
         var auth = SecurityContextHolder.getContext().getAuthentication();
@@ -140,18 +138,16 @@ public class SecurityService {
                 .orElse(false);
     }
 
-    public boolean isRoomTitleLinkOwner(UUID roomTitleLinkId) {
+    public boolean canDeleteFriendship(UUID friendshipId) {
         UUID currentUserId = getCurrentUserId();
-        return roomTitleLinkRepository.findById(roomTitleLinkId)
-                .map(link -> link.getUserTitleRecord().getUser().getUserId().equals(currentUserId))
-                .orElse(false);
-    }
-
-    public boolean isRoomTitleOwner(UUID titleId) {
-        UUID currentUserId = getCurrentUserId();
-
-        return roomTitleRepository.findById(titleId)
-                .map(title -> title.getAddedByUserId().equals(currentUserId))
+        return friendshipRepository.findById(friendshipId)
+                .map(friendship -> {
+                    if (friendship.getStatus() == RequestStatus.REJECTED) {
+                        return friendship.getReceiver().getUserId().equals(currentUserId);
+                    }
+                    return friendship.getSender().getUserId().equals(currentUserId)
+                            || friendship.getReceiver().getUserId().equals(currentUserId);
+                })
                 .orElse(false);
     }
 }

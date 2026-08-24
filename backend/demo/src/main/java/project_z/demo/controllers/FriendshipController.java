@@ -2,6 +2,7 @@ package project_z.demo.controllers;
 
 import java.util.List;
 import java.util.UUID;
+
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,6 +30,7 @@ import project_z.demo.dto.UserDtos.UserDtoWithFriendshipStatus;
 import project_z.demo.entity.UserEntity;
 import project_z.demo.security.SecurityService;
 import project_z.demo.services.FriendshipService;
+
 @RestController
 @RequestMapping("/api/v1/friendships")
 @RequiredArgsConstructor
@@ -40,10 +42,10 @@ public class FriendshipController {
 
     @PostMapping("/request/{receiverId}")
     public ResponseEntity<Void> sendFriendRequest(@PathVariable("receiverId") UUID receiverId) {
-        UUID senderId = SecurityContextHolder.getContext().getAuthentication() != null 
-                        ? UUID.fromString(SecurityContextHolder.getContext().getAuthentication().getName()) 
-                        : null;
-        
+        UUID senderId = SecurityContextHolder.getContext().getAuthentication() != null
+                ? UUID.fromString(SecurityContextHolder.getContext().getAuthentication().getName())
+                : null;
+
         friendshipService.sendFriendRequest(senderId, receiverId);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
@@ -83,6 +85,13 @@ public class FriendshipController {
         return new ResponseEntity<>(res, HttpStatus.OK);
     }
 
+    @GetMapping("/userWithCurrentFriendshipStatus/{userId}")
+    public ResponseEntity<UserDtoWithFriendshipStatus> getUserWithFriendshipStatus(
+            @PathVariable("userId") UUID userId) {
+        UUID currentUserId = securityService.getCurrentUserId();
+        return new ResponseEntity<>(friendshipService.findUserWithFriendshipStatusToCurrentUser(userId,currentUserId), HttpStatus.OK);
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<FriendshipDetailsDto> getFriendshipById(@PathVariable("id") UUID id) {
         return ResponseEntity.ok(friendshipService.findOne(id));
@@ -111,7 +120,7 @@ public class FriendshipController {
         return ResponseEntity.ok(friendshipService.partialUpdate(id, updateDto));
     }
 
-    @PreAuthorize("hasRole('ADMIN') || @securityService.isFriendshipMember(#id)")
+    @PreAuthorize("hasRole('ADMIN') || @securityService.canDeleteFriendship(#id)")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteFriendshipById(@PathVariable("id") UUID id) {
         friendshipService.deleteFriendById(id);

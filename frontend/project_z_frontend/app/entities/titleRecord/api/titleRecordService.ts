@@ -1,4 +1,4 @@
-import { type CreateTitleRecord, type SameCriteriaRating, type TitleParams, type TitleRecord, type TitleShortDto, type TitleStats } from "../model/titleRecord"
+import { type CreateTitleRecord, type SameCriteriaRating, type TitleParams, type TitleRecord, type TitleStats } from "../model/titleRecord"
 import type { PageResponse } from "~/shared/types";
 import { apiClient } from "~/shared/api";
 import { Status } from "~/shared/types/Status";
@@ -20,6 +20,7 @@ interface TitleRecordService {
 
     get(userId: string, params?: TitleParams): Promise<PageResponse<TitleRecord>>;
     getTitlesWithNoLinksToRoom(userId: string, roomId: number, params?: TitleParams): Promise<PageResponse<TitleRecord>>;
+    getById(titleId: number): Promise<TitleRecord>;
     post(titleData: CreateTitleRecord): Promise<TitleRecord>;
     put(titleId: number, titleData: TitleRecord): Promise<TitleRecord>;
     patch(titleId: number, titleData: Partial<TitleRecord>): Promise<TitleRecord>;
@@ -59,6 +60,11 @@ export const titleRecordService: TitleRecordService = {
         return data;
     },
 
+    async getById(titleId) {
+        const response = await apiClient.get(`/titles/getTitleById/${titleId}`);
+        return response.data;
+    },
+    
     async getSameCriteriaRating(titleId, category, currentRating) {
         const response = await apiClient.get(`/titles/${titleId}/getSameCriteriaRating`, {
             params: {

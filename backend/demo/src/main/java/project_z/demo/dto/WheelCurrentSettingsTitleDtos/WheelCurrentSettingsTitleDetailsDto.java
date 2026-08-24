@@ -6,6 +6,7 @@ import project_z.demo.dto.TitleDtos.TitleShortDto;
 
 public record WheelCurrentSettingsTitleDetailsDto(
     TitleShortDto title,
+    Integer multiplier,
     LocalDateTime createdAt
 ) {}
 

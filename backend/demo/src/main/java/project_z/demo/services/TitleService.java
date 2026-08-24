@@ -24,7 +24,9 @@ public interface TitleService {
 
     List<TitleEntity> findAll();
 
-    Optional<TitleEntity> findOne(Long titleId);
+    TitleDto findOne(Long titleId);
+
+    TitleEntity findOneEntity(Long titleId);
 
     boolean isExists(Long titleId);
 
@@ -51,8 +53,11 @@ public interface TitleService {
     void titlePositionUpdate(Double newPosition, Long titleId);
 
     void reindexCustomOrder(UUID userId);
+
     TitleDto pinTitle(Long titleId, UUID userId);
+
     void unpin(UUID userId);
+
     SameCriteriaRatingResponse getNeighborsRating(Long titleId, String category, Float currentRating);
 
     TitleStatsDto getUserTitlesStats(UUID userId);
