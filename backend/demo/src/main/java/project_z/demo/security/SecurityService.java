@@ -13,6 +13,8 @@ import project_z.demo.repositories.FriendshipRepository;
 import project_z.demo.repositories.RoomMemberRepository;
 import project_z.demo.repositories.RoomRepository;
 import project_z.demo.repositories.RoomRequestRepository;
+import project_z.demo.repositories.RoomTitleEntityRepository;
+import project_z.demo.repositories.RoomTitleLinkRepository;
 import project_z.demo.repositories.SeasonRepository;
 import project_z.demo.repositories.TitleRepository;
 import project_z.demo.repositories.wheelRepositories.WheelPresetRepository;

@@ -9,6 +9,7 @@ import project_z.demo.dto.RoomTitleDtos.RoomTitleShortDto;
 import project_z.demo.dto.RoomTitleLinkDtos.RoomTitleLinkDetailsDto;
 import project_z.demo.dto.TitleDtos.TitleDto;
 import project_z.demo.dto.TitleDtos.TitleSameCriteriaDto;
+import project_z.demo.dto.TitleDtos.TitleShortDto;
 import project_z.demo.entity.RoomTitleEntity;
 import project_z.demo.entity.RoomTitleLinkEntity;
 import project_z.demo.entity.TitleEntity;
@@ -18,7 +19,7 @@ import project_z.demo.entity.TitleEntity;
 public class RoomTitleLinkDetailsMapperImpl implements Mapper<RoomTitleLinkEntity, RoomTitleLinkDetailsDto> {
 
     private final ModelMapper modelMapper;
-    private final Mapper<TitleEntity, TitleDto> titleMapper;
+    private final Mapper<TitleEntity, TitleShortDto> titleMapper;
     private final Mapper<RoomTitleEntity, RoomTitleShortDto> roomTitleMapper;
 
     @Override

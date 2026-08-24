@@ -1,9 +1,10 @@
 import WatchLaterOutlinedIcon from "@mui/icons-material/WatchLaterOutlined";
 import WatchLaterIcon from "@mui/icons-material/WatchLater";
 import { Button } from "~/shared/ui/Button";
-import { useTitleRecordMutation, type ManageTitleRecordProps } from "../../../entities/titleRecord";
+
 import { FaSpinner } from "react-icons/fa";
 import { Status } from "~/shared/types";
+import { useTitleRecordMutation, type ManageTitleRecordProps } from "~/entities/titleRecord";
 
 const WatchlistButton = ({
     initialData,

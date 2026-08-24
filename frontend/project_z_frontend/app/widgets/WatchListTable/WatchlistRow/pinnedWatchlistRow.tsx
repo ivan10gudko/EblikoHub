@@ -7,7 +7,7 @@ import { CompactRate } from "~/shared/ui/CompactRate";
 import { TitleActionsMenu } from "../../TitleActionsMenu";
 import type { Rating } from "~/shared/types";
 import { useTitleFilterStore, type TitleSortType } from "~/features/titleFilter/store/titleFilter.store";
-
+import { DEFAULT_IMAGE_PATH } from "~/shared/constants";
 interface PinnedWatchlistRowProps {
   title: TitleRecord;
   onOpenRatingModal: () => void;
@@ -30,7 +30,6 @@ export const PinnedWatchlistRow = ({ title, onOpenRatingModal }: PinnedWatchlist
     if (title.apiTitleId) navigate(`/anime/${title.apiTitleId}`);
   };
 
-  const DEFAULT_IMAGE_PATH = "/defaultTitleRecordImage.jpg";
   
   const themeClasses = title.titleType ? TitleTypeThemes[title.titleType] : "";
   const pinnedClasses = title.titleType ? TitlePinnedThemes[title.titleType] : "";
@@ -39,7 +38,7 @@ export const PinnedWatchlistRow = ({ title, onOpenRatingModal }: PinnedWatchlist
     <div
       className={`group/pinned flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-4 p-2 rounded-xl border-2 transition-all duration-300 w-full relative ${themeClasses} ${pinnedClasses}`}
     >
-      <div className="absolute -top-2.5 left-4 bg-primary text-background text-[9px] uppercase tracking-wider font-black px-2 py-0.5 rounded-full shadow-sm z-10 pointer-events-none">
+      <div className="absolute -top-2.5 left-4 bg-primary text-background text-[9px]  tracking-wider font-black px-2 py-0.5 rounded-full shadow-sm z-10 pointer-events-none">
         Pinned Title
       </div>
 
@@ -80,7 +79,7 @@ export const PinnedWatchlistRow = ({ title, onOpenRatingModal }: PinnedWatchlist
               tempTitleName !== title.titleName &&
               updateTitle({ titleName: tempTitleName })
             }
-            className="w-full font-bold text-foreground uppercase text-xs sm:text-sm bg-transparent border-none p-0 h-auto leading-tight focus:ring-0 cursor-text"
+            className="w-full font-bold text-foreground  text-2sm sm:text-lg bg-transparent border-none p-0 h-auto leading-tight focus:ring-0 cursor-text"
           />
         </div>
       </div>

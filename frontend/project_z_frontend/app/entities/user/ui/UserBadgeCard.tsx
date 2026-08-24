@@ -43,7 +43,7 @@ export const UserBadgeCard = ({ badge, variant }: UserBadgeCardProps) => {
           </>
         ) : (
           <>
-            <span className="block font-medium text-sm group-hover:text-secondary transition-colors truncate">
+            <span className="block font-medium text-sm group-hover:text-primary transition-colors truncate">
               {badge.user.name}
             </span>
             <span className="block text-[10px] uppercase text-foreground-muted opacity-60 tracking-wider">

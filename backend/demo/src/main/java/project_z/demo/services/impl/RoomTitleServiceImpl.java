@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -17,19 +18,27 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import io.swagger.v3.oas.models.parameters.QueryParameter;
 import lombok.RequiredArgsConstructor;
 import project_z.demo.JavaUtil.PagingHelper;
 import project_z.demo.JavaUtil.TitleSortingUtils;
 import project_z.demo.Mappers.Mapper;
+import project_z.demo.Mappers.impl.RoomTitleMappers.RoomTitleDetailsMapper;
+import project_z.demo.Mappers.impl.RoomTitleMappers.RoomTitleSummaryMapper;
+import project_z.demo.Mappers.impl.RoomTitleMappers.RoomTitleUpdateMapperImpl;
 import project_z.demo.common.Exceptions.ResourceNotFoundException;
-import project_z.demo.common.QueryParameters.RoomTitlesQueryParameters;
+import project_z.demo.common.QueryParameters.QueryParameters;
+import project_z.demo.common.QueryParameters.RoomTitlesQueryParameters.RoomTitlesQueryParameters;
+import project_z.demo.common.QueryParameters.RoomTitlesQueryParameters.RoomTitlesWithSearchQueryParameters;
 import project_z.demo.dto.RoomTitleDtos.RoomTitleCreateDto;
 import project_z.demo.dto.RoomTitleDtos.RoomTitleDetailsDto;
 import project_z.demo.dto.RoomTitleDtos.RoomTitleShortDto;
 import project_z.demo.dto.RoomTitleDtos.RoomTitleSummaryDto;
 import project_z.demo.dto.RoomTitleDtos.RoomTitleUpdateDto;
 import project_z.demo.dto.RoomTitleDtos.RoomTitleUserIdAndTitleStatusDto;
+import project_z.demo.dto.RoomTitleDtos.RoomTitleWithUserLinksDto;
 import project_z.demo.dto.RoomTitleDtos.RoomTitlesResponseDto;
+import project_z.demo.dto.RoomTitleLinkDtos.RoomTitleLinkShortDto;
 import project_z.demo.dto.TitleDtos.TitleDto;
 import project_z.demo.dto.TitleDtos.TitleSameCriteriaDto;
 import project_z.demo.dto.TitleDtos.TitleShortDto;
@@ -57,7 +66,7 @@ public class RoomTitleServiceImpl implements RoomTitleService {
     private final RoomRepository roomRepository;
     private final RoomTitleEntityRepository repository;
     private final Mapper<RoomTitleEntity, RoomTitleDetailsDto> mapper;
-    private final Mapper<RoomTitleEntity, RoomTitleUpdateDto> updateMapper;
+    private final RoomTitleUpdateMapperImpl updateMapper;
     private final Mapper<RoomTitleEntity, RoomTitleCreateDto> createMapper;
     private final Mapper<RoomTitleEntity, RoomTitleShortDto> roomTitleShortMapper;
     private final RoomTitleStatsRepository roomTitleStatsRepository;
@@ -66,6 +75,10 @@ public class RoomTitleServiceImpl implements RoomTitleService {
     private final Mapper<UserEntity, UserShortDto> userShortMapper;
     private final SecurityService securityService;
     private final RoomTitleLinkRepository linkRepository;
+    private final RoomTitleSummaryMapper roomTitleSummaryMapper;
+    private final Mapper<RoomTitleEntity, RoomTitleDetailsDto> roomTitleDetailsMapper;
+    private final Mapper<RoomTitleEntity, RoomTitleWithUserLinksDto> roomTitleWithUserLinksMapper;
+    private final Mapper<RoomTitleLinkEntity, RoomTitleLinkShortDto> roomTitleLinkShortMapper;
 
     @Override
     @Transactional
@@ -102,8 +115,11 @@ public class RoomTitleServiceImpl implements RoomTitleService {
 
     @Override
     @Transactional
-    public RoomTitleDetailsDto update(UUID userId, RoomTitleUpdateDto dto) {
-        RoomTitleEntity roomTitleEntity = updateMapper.mapFrom(dto);
+    public RoomTitleDetailsDto update(UUID titleId, RoomTitleUpdateDto dto) {
+        RoomTitleEntity entity = repository.findById(titleId).orElseThrow(
+                () -> new ResourceNotFoundException("Room Title not found"));
+
+        RoomTitleEntity roomTitleEntity = updateMapper.mapFrom(entity, dto);
         return mapper.mapTo(repository.save(roomTitleEntity));
     }
 
@@ -112,7 +128,6 @@ public class RoomTitleServiceImpl implements RoomTitleService {
         if (roomId == null) {
             throw new ResourceNotFoundException("room not found");
         }
-        System.out.println(params.getMemberIds());
         Specification<RoomTitleStatsView> spec = Specification
                 .where(RoomTitleStatsSpecifications.hasRoomId(roomId))
                 .and(RoomTitleStatsSpecifications
@@ -151,51 +166,44 @@ public class RoomTitleServiceImpl implements RoomTitleService {
                 return null;
 
             Double avg = statsView.getAvgRating() != null ? statsView.getAvgRating() : 0.0;
-            return mapToDto(entity, avg, linksByTitleId, currentUserId, params.getStatus());
+            return roomTitleSummaryMapper.mapTo(entity, avg, linksByTitleId, currentUserId, params.getStatus());
         });
 
         return new RoomTitlesResponseDto(page, usersCache);
     }
 
-    private RoomTitleSummaryDto mapToDto(
-            RoomTitleEntity entity,
-            Double avg,
-            Map<UUID, List<RoomTitleLinkEntity>> linksByTitleId,
-            UUID currentUserId,
-            TitleStatus targetStatus) {
-        List<RoomTitleLinkEntity> linksForTitle = linksByTitleId.getOrDefault(entity.getId(), List.of());
+    @Override
+    public Page<RoomTitleDetailsDto> getRoomTitlesWithoutLinks(Long roomId, QueryParameters params) {
+        Pageable pageable = PagingHelper.toPageable(params);
 
-        List<RoomTitleUserIdAndTitleStatusDto> participation = linksForTitle.stream()
-                .sorted(Comparator
-                        .comparing((RoomTitleLinkEntity l) -> {
-                            TitleStatus currentStatus = l.getUserTitleRecord().getStatus();
+        Page<RoomTitleEntity> titlePage = repository.findAllPagedByRoom_RoomId(roomId, pageable);
 
-                            if (targetStatus != null) {
-                                return (currentStatus == targetStatus) ? "0" : "1";
-                            }
+        return titlePage.map(roomTitleDetailsMapper::mapTo);
+    }
 
-                            return String.valueOf(TitleSortingUtils.STATUS_PRIORITY.getOrDefault(currentStatus, 99));
-                        })
-                        .thenComparing(l -> l.getUserTitleRecord().getUser().getName()))
-                .map(link -> new RoomTitleUserIdAndTitleStatusDto(
-                        link.getUserTitleRecord().getUser().getUserId(),
-                        link.getUserTitleRecord().getStatus()))
-                .collect(Collectors.toList());
+    @Override
+    public Page<RoomTitleWithUserLinksDto> getRoomTitlesWithUserLinks(long roomId, UUID userId,
+            RoomTitlesWithSearchQueryParameters queryParameters) {
+        Pageable pageable = PagingHelper.toPageable(queryParameters);
+        Specification<RoomTitleEntity> spec = Specification
+                .where(RoomTitleSpecifications.hasRoomId(roomId))
+                .and(RoomTitleSpecifications.hasTitleNameLike(queryParameters.getSearch()));
 
-        Optional<RoomTitleLinkEntity> myLink = Optional.empty();
-        for (RoomTitleLinkEntity link : linksForTitle) {
-            if (link.getUserTitleRecord().getUser().getUserId().equals(currentUserId)) {
-                myLink = Optional.of(link);
-                break;
-            }
-        }
+        Page<RoomTitleEntity> titlePage = repository.findAll(spec, pageable);
+        List<UUID> titleIds = titlePage.getContent().stream().map(RoomTitleEntity::getId).toList();
 
-        return new RoomTitleSummaryDto(
-                entity.getId(),
-                roomTitleShortMapper.mapTo(entity),
-                avg,
-                myLink.map(l -> l.getUserTitleRecord().getStatus()).orElse(null),
-                myLink.map(l -> titleMapper.mapTo(l.getUserTitleRecord())).orElse(null),
-                participation);
+        List<RoomTitleLinkEntity> links = linkRepository.findByRoomTitle_IdInAndUserTitleRecord_User_UserId(titleIds,
+                userId);
+
+        Map<UUID, List<RoomTitleLinkEntity>> linksMap = links.stream()
+                .collect(Collectors.groupingBy(l -> l.getRoomTitle().getId()));
+
+        return titlePage.map(entity -> {
+            RoomTitleWithUserLinksDto dto = roomTitleWithUserLinksMapper.mapTo(entity);
+            dto.setLinks(linksMap.getOrDefault(entity.getId(), List.of()).stream()
+                    .map(roomTitleLinkShortMapper::mapTo)
+                    .collect(Collectors.toList()));
+            return dto;
+        });
     }
 }

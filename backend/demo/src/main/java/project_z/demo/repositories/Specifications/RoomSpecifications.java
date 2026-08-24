@@ -41,7 +41,7 @@ public class RoomSpecifications {
         };
     }
 
-    public static Specification<RoomEntity> sortByMemberCount(String order) {
+    public static Specification<RoomEntity> sortByMemberCount(String order, String nameOrderDirection) {
         return (root, query, cb) -> {
             if (Long.class.equals(query.getResultType())) {
                 return cb.conjunction();
@@ -53,9 +53,12 @@ public class RoomSpecifications {
                     .where(cb.equal(m.get("room").get("roomId"), root.get("roomId")));
 
             Order countOrder = order.equalsIgnoreCase("asc") ? cb.asc(subquery) : cb.desc(subquery);
+
+            Order nameOrder = cb.asc(root.get("roomName"));
+
             Order idOrder = cb.desc(root.get("roomId"));
 
-            query.orderBy(countOrder, idOrder);
+            query.orderBy(countOrder, nameOrder, idOrder);
 
             return null;
         };
@@ -79,22 +82,32 @@ public class RoomSpecifications {
 
             Order pinnedOrder = cb.desc(pinnedSub);
 
-            Order secondaryOrder;
+            Order mainOrder;
+            boolean isSortingByName = "roomName".equalsIgnoreCase(sortBy);
+
             if ("memberCount".equalsIgnoreCase(sortBy) || "membersCount".equalsIgnoreCase(sortBy)) {
                 Subquery<Long> countSub = query.subquery(Long.class);
                 Root<RoomMemberEntity> cm = countSub.from(RoomMemberEntity.class);
 
                 countSub.select(cb.count(cm.get("id")))
                         .where(cb.equal(cm.get("room").get("roomId"), root.get("roomId")));
-                secondaryOrder = "asc".equalsIgnoreCase(order) ? cb.asc(countSub) : cb.desc(countSub);
+                mainOrder = "asc".equalsIgnoreCase(order) ? cb.asc(countSub) : cb.desc(countSub);
             } else {
-                String property = "roomName".equalsIgnoreCase(sortBy) ? "roomName" : "createdAt";
-                secondaryOrder = "asc".equalsIgnoreCase(order)
+                String property = isSortingByName ? "roomName" : "createdAt";
+                mainOrder = "asc".equalsIgnoreCase(order)
                         ? cb.asc(root.get(property))
                         : cb.desc(root.get(property));
             }
 
-            query.orderBy(pinnedOrder, secondaryOrder);
+            Order roomNameFallback = cb.asc(root.get("roomName"));
+
+            Order idOrder = cb.desc(root.get("roomId"));
+
+            if (isSortingByName) {
+                query.orderBy(pinnedOrder, mainOrder, idOrder);
+            } else {
+                query.orderBy(pinnedOrder, mainOrder, roomNameFallback, idOrder);
+            }
 
             return null;
         };

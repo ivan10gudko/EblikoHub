@@ -18,7 +18,7 @@ export function AboutPage() {
     : [];
 
   return (
-    <div className="min-h-screen bg-background text-foreground transition-colors duration-200">
+    <div className="flex flex-col lg:flex-row gap-6 p-4 sm:p-8 max-w-[1400px] mx-auto min-h-screen bg-background-muted/30">
       <div className="max-w-5xl mx-auto p-6 md:p-12">
         
         

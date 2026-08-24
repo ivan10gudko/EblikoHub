@@ -30,7 +30,7 @@ export const PinnedWatchlistRowReadOnly = ({ title, onOpenRatingModal, onRowClic
       onClick={() => onRowClick(title)}
       className={`flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-4 p-3 rounded-xl border-2 transition-all duration-300 w-full min-w-0 relative cursor-pointer ${themeClasses} ${pinnedClasses}`}
     >
-      <div className="absolute -top-2.5 left-4 bg-primary text-background text-[9px] uppercase tracking-wider font-black px-2 py-0.5 rounded-full shadow-sm z-10 pointer-events-none">
+      <div className="absolute -top-2.5 left-4 bg-primary text-background text-[9px]  tracking-wider font-black px-2 py-0.5 rounded-full shadow-sm z-10 pointer-events-none">
         Pinned Title
       </div>
 
@@ -47,7 +47,7 @@ export const PinnedWatchlistRowReadOnly = ({ title, onOpenRatingModal, onRowClic
         </div>
 
         <div className="grid flex-1 min-w-0">
-          <span className="block truncate font-bold text-foreground uppercase text-xs sm:text-sm leading-tight w-full">
+          <span className="block truncate font-bold text-foreground  text-xs sm:text-sm leading-tight w-full">
             {title.titleName}
           </span>
         </div>

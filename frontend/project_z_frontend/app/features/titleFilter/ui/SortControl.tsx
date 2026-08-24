@@ -29,12 +29,12 @@ const SortControl = () => {
           value={sortBy}
           options={sortOptions}
           onChange={(val) => setSort(val as TitleSortType)}
-          className="flex-1"
+          className="flex-1 bg-transparent"
         />
         <Button
-          variant="outline"
+          variant="accept"
           onClick={toggleOrder}
-          className="px-4 bg-background hover:bg-background-muted-hover rounded-xl transition-colors"
+          className="px-4 bg-transparent hover:bg-transparent-muted-hover rounded-xl transition-colors"
         >
           {order === "asc" ? (
             <KeyboardArrowUpIcon

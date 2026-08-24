@@ -7,6 +7,7 @@ import {
 
 interface ReadOnlyStatusBadgeProps {
   status?: Status;
+  className?: string;
 }
 
 export const getStatusLabel = (status?: Status): string => {
@@ -16,20 +17,24 @@ export const getStatusLabel = (status?: Status): string => {
 
 export const ReadOnlyStatusBadge: React.FC<ReadOnlyStatusBadgeProps> = ({
   status,
+  className = "",
 }) => {
   const currentStatus = status || Status.DEFAULT;
   const config = statusColorConfig[currentStatus];
   const isDefault = currentStatus === Status.DEFAULT;
 
   return (
-    <div className="relative flex items-center flex-shrink-0 pl-7 pr-3 py-1.5 bg-transparent text-[10px] font-black uppercase tracking-wider rounded-lg border border-border min-w-[110px] w-max select-none pointer-events-none">
+    <div 
+      className={`relative flex items-center justify-center sm:justify-start flex-shrink-0 p-0.5 sm:px-3 sm:py-1.5 bg-transparent text-[10px] font-black uppercase tracking-wider rounded-lg border-0 sm:border border-border w-6 sm:w-max min-w-[24px] sm:min-w-[110px] select-none pointer-events-none ${className}`}
+    >
       {!isDefault && (
         <div
-          className={`absolute left-2.5 w-1.5 h-1.5 rounded-full z-10 pointer-events-none ${config.dot}`}
+          className={`absolute sm:static w-2 h-2 sm:w-1.5 sm:h-1.5 rounded-full z-10 pointer-events-none sm:mr-2 ${config.dot}`}
         />
       )}
+      
       <span
-        className={`transition-all capitalize ${isDefault ? "text-foreground-muted" : config.color}`}
+        className={`hidden sm:inline transition-all capitalize ${isDefault ? "text-foreground-muted" : config.color}`}
       >
         {getStatusLabel(currentStatus)}
       </span>

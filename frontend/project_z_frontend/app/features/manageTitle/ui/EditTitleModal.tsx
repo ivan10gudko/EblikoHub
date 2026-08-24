@@ -110,7 +110,7 @@ export const EditTitleModal = ({
         <div className="flex flex-col max-h-[70vh] h-full justify-between p-2">
           <div className="overflow-y-auto flex-1 pr-2 pb-6 space-y-6 custom-scrollbar min-h-0">
             <div className="flex flex-col sm:flex-row gap-6 items-center sm:items-start text-center sm:text-left">
-              <ImageUrlField.Preview containerClassName="w-40 h-56" />
+              <ImageUrlField.Preview containerClassName="w-42 h-58" />
 
               <div className="flex-1 space-y-4 w-full text-left">
                 <div>
@@ -118,7 +118,7 @@ export const EditTitleModal = ({
                     Title Name
                   </label>
                   <Input
-                    name="Title name"
+                    
                     value={titleName}
                     onChange={(val) => setTitleName(val)}
                     placeholder="Enter custom name..."

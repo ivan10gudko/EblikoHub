@@ -14,18 +14,21 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
-import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import project_z.demo.JavaUtil.BeanUtilsHelper;
 import project_z.demo.JavaUtil.PagingHelper;
 import project_z.demo.Mappers.Mapper;
 import project_z.demo.Mappers.impl.UserMapperImpl;
+import project_z.demo.Mappers.impl.ObjectMappers.UserWithRoomRelationsMapper;
 import project_z.demo.common.Exceptions.ResourceNotFoundException;
 import project_z.demo.common.QueryParameters.UserQueryParameters;
 import project_z.demo.config.MyConfig;
 import project_z.demo.dto.UserDtos.UserDto;
+import project_z.demo.dto.UserDtos.UserWithRelationsToRoomDto;
 import project_z.demo.entity.RoomEntity;
 import project_z.demo.entity.RoomMemberEntity;
 import project_z.demo.entity.UserEntity;
@@ -36,29 +39,20 @@ import project_z.demo.repositories.UserRepository;
 import project_z.demo.services.UserService;
 
 @Service
+@RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
     @Autowired
-    private Mapper<UserEntity,UserDto> userMapper;
+    private Mapper<UserEntity, UserDto> userMapper;
 
     private final ModelMapper modelMapper;
     private final RoomMemberRepository roomMemberRepository;
     private final TitleRepository titleRepository;
-    @Autowired
-    private BeanUtilsHelper beanUtilsHelper;
-    private UserRepository userRepository;
-    @Autowired
-    private RoomRepository roomRepository;
-    private MyConfig myConfig;
-
-    public UserServiceImpl(UserRepository userRepository, TitleRepository titleRepository, MyConfig myConfig,
-            RoomMemberRepository roomMemberRepository, ModelMapper modelMapper) {
-        this.userRepository = userRepository;
-        this.titleRepository = titleRepository;
-        this.myConfig = myConfig;
-        this.roomMemberRepository = roomMemberRepository;
-        this.modelMapper = modelMapper;
-    }
+    private final UserWithRoomRelationsMapper userWithRoomRelationsMapper;
+    private final BeanUtilsHelper beanUtilsHelper;
+    private final UserRepository userRepository;
+    private final RoomRepository roomRepository;
+    private final MyConfig myConfig;
 
     @Override
     public UserEntity save(UserEntity userEntity) {
@@ -101,9 +95,18 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto findByNameTag(String nameTag) {
         UserEntity userEntity = userRepository.findByNameTag(nameTag).orElseThrow(
-            () -> new ResourceNotFoundException("User not found")
-        );
+                () -> new ResourceNotFoundException("User not found"));
         return userMapper.mapTo(userEntity);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<UserWithRelationsToRoomDto> searchUsersForRoom(String name, Long roomId,
+            UserQueryParameters queryParameters) {
+        Pageable pageable = PagingHelper.toPageable(queryParameters);
+        Page<Object[]> results = userRepository.findUsersWithRoomRelations(name, roomId, pageable);
+
+        return results.map(row -> userWithRoomRelationsMapper.mapTo(row));
     }
 
     @Override

@@ -31,7 +31,7 @@ const PRIVACY_SECTIONS = [
 
 export default function Privacy() {
   return (
-    <div className="min-h-screen bg-background text-foreground font-inter py-12 px-4 sm:px-6 lg:px-8 transition-colors duration-200">
+    <div className="flex flex-col lg:flex-row gap-6 p-4 sm:p-8 max-w-[1400px] mx-auto min-h-screen bg-background-muted/30">
       <div className="max-w-3xl mx-auto bg-card p-8 rounded-2xl border border-border/60 shadow-xs">
         
        

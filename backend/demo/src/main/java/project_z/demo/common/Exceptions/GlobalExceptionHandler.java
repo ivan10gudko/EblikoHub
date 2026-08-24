@@ -16,6 +16,7 @@ import org.springframework.dao.DataAccessException;
 
 import project_z.demo.common.Exceptions.RoomBanExceptions.RoomSelfBanException;
 import project_z.demo.common.Exceptions.RoomMembersExceptions.RoomMembersConflictException;
+import project_z.demo.common.Exceptions.RoomRequestExceptions.SelfRoomInviteException;
 import project_z.demo.common.Exceptions.RoomTitleLinkExceptions.RoomTitleLinkAlreadyExistsException;
 import project_z.demo.common.Exceptions.WheelPresetExceptions.WheelPresetAlreadyExists;
 
@@ -34,6 +35,11 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Map<String, Object>> handleLinkAlreadyExists (RoomTitleLinkAlreadyExistsException ex){
         return buildErrorResponse(ex.getMessage(), HttpStatus.CONFLICT);
     }
+
+    @ExceptionHandler(TitleLinkSuggestionAiErrorException.class)
+    public ResponseEntity<Map<String, Object>> handleTitleLinkSuggestionAiError(TitleLinkSuggestionAiErrorException ex) {
+        return buildErrorResponse(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
     
     @ExceptionHandler(WheelPresetAlreadyExists.class)
     public ResponseEntity<Map<String, Object>> handleAlreadyExists(WheelPresetAlreadyExists ex) {
@@ -49,7 +55,10 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Map<String, Object>> handleRoomSelfBan(RoomSelfBanException ex) {
         return buildErrorResponse(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
-
+     @ExceptionHandler(SelfRoomInviteException.class)
+    public ResponseEntity<Map<String, Object>> handleSelfRoomInvite(SelfRoomInviteException ex) {
+        return buildErrorResponse(ex.getMessage(), HttpStatus.CONFLICT);
+    }
     @ExceptionHandler(FriendshipConflictException.class)
     public ResponseEntity<Map<String, Object>> handleFriendshipConflict(FriendshipConflictException ex) {
         return buildErrorResponse(ex.getMessage(), HttpStatus.CONFLICT);

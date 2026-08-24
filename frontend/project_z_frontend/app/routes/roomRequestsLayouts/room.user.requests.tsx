@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { Outlet, redirect, useParams } from "react-router";
 import MenuIcon from "@mui/icons-material/Menu";
-import { RoomRequestsSidebar } from "~/entities/room";
 import { useAuthStore } from "~/features/auth";
+import { RoomRequestsSidebar } from "~/features/manageRoomRequests";
 
 export default function RoomsUserRequestsLayout() {
     
@@ -14,7 +14,7 @@ export default function RoomsUserRequestsLayout() {
     }
 
     return (
-        <div className="flex flex-col md:flex-row gap-4 md:gap-6 p-4 md:p-6 min-h-[calc(100vh-64px)]">
+        <div className="flex flex-col lg:flex-row gap-6 p-4 sm:p-8 max-w-[1400px] mx-auto min-h-screen bg-background-muted/30">
             
             <div className="md:hidden w-full">
                 <button

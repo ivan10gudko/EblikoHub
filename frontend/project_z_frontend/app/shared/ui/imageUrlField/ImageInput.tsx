@@ -54,7 +54,8 @@ export const ImageUrlInput = ({
           <Button
             onClick={handleClearImage}
             type="button"
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-foreground hover:text-danger transition-all hover:scale-110"
+            variant="altCancel"
+            className="absolute right-3 top-1/2 -translate-y-1/2 transition-all hover:scale-110"
           >
             <DeleteForeverIcon sx={{ fontSize: 22 }} />
           </Button>

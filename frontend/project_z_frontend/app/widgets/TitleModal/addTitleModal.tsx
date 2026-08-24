@@ -88,7 +88,7 @@ export const AddTitleModal = ({ isOpen, onClose }: AddTitleModalProps) => {
   return (
     <Modal
       isOpen={isOpen}
-      onClose={onClose}
+      onClose={onClose} 
       title="Add New Title"
       maxWidth="max-w-2xl"
     >
