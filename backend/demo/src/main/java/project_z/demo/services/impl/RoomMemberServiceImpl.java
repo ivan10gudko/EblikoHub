@@ -13,9 +13,13 @@ import lombok.RequiredArgsConstructor;
 import project_z.demo.Mappers.Mapper;
 import project_z.demo.common.Exceptions.ResourceNotFoundException;
 import project_z.demo.dto.RoomMemberDtos.RoomMemberDto;
+import project_z.demo.dto.RoomMemberDtos.RoomMemberIdDto;
+import project_z.demo.dto.RoomMemberDtos.RoomMemberRoleUpdateDto;
 import project_z.demo.dto.UserDtos.UserShortDto;
+import project_z.demo.entity.RoomEntity;
 import project_z.demo.entity.RoomMemberEntity;
 import project_z.demo.entity.UserEntity;
+import project_z.demo.enums.RoomRole;
 import project_z.demo.repositories.RoomBanRepository;
 import project_z.demo.repositories.RoomMemberRepository;
 import project_z.demo.repositories.RoomRepository;
@@ -29,7 +33,7 @@ public class RoomMemberServiceImpl implements RoomMemberService {
     private final Mapper<RoomMemberEntity, RoomMemberDto> memberMapper;
     private final Mapper<UserEntity, UserShortDto> userMapper;
     private final RoomBanRepository roomBanRepository;
-
+    private final RoomRepository roomRepository;
 
     @Override
     @Transactional
@@ -38,7 +42,6 @@ public class RoomMemberServiceImpl implements RoomMemberService {
                 .orElseThrow(() -> new ResourceNotFoundException("Membership not found"));
         roomMemberRepository.delete(member);
     }
-
 
     @Transactional
     public void pinRoom(Long roomId, UUID userId) {
@@ -55,6 +58,7 @@ public class RoomMemberServiceImpl implements RoomMemberService {
     public void unpinAll(UUID userId) {
         roomMemberRepository.unpinAllForUser(userId);
     }
+
     @Override
     public List<UserShortDto> getAcceptedMembers(Long roomId) {
         return roomMemberRepository.findByRoom_RoomId(roomId)
@@ -63,4 +67,56 @@ public class RoomMemberServiceImpl implements RoomMemberService {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public RoomMemberDto getRooMemberByRoomIdAndUserId(Long roomId, UUID userId){
+      RoomMemberEntity roomMemberEntity =  roomMemberRepository.findOneByRoom_RoomIdAndUser_UserId(roomId, userId).orElseThrow(
+        () -> new ResourceNotFoundException("This user dont have a membership in room " + roomId)
+      );
+      return memberMapper.mapTo((roomMemberEntity));
+    }
+
+    @Override
+    @Transactional
+    public RoomMemberDto leaveOwner(long roomId, RoomMemberIdDto dto, UUID currentUserId){
+        RoomEntity roomEntity = roomRepository.findById(roomId).orElseThrow(
+            () -> new ResourceNotFoundException("Room not found")
+        );
+        RoomMemberEntity ownerEntity = roomMemberRepository.findOneByRoom_RoomIdAndUser_UserId(roomId,currentUserId).orElseThrow();
+        RoomMemberEntity userToPromoteToOnwerEntity = roomMemberRepository.findById(dto.getRoomMemberId()).orElseThrow(
+            () -> new ResourceNotFoundException("User to promote to owner not found")
+        );
+
+        userToPromoteToOnwerEntity.setRole(RoomRole.OWNER);
+        roomMemberRepository.delete(ownerEntity);
+        return memberMapper.mapTo( roomMemberRepository.save(userToPromoteToOnwerEntity));
+    }
+    @Override
+    @Transactional
+    public RoomMemberDto updateMemberRole(UUID currentUserId, long roomId, RoomMemberRoleUpdateDto dto){
+        RoomMemberEntity currentUser = roomMemberRepository.findOneByRoom_RoomIdAndUser_UserId(roomId,currentUserId).orElseThrow(
+        () -> new ResourceNotFoundException("Room membership not found"));
+        RoomMemberEntity userMemberToChange = roomMemberRepository.findById(dto.getRoomMemberId()).orElseThrow(
+            () -> new ResourceNotFoundException("Room membership to change not found"));
+
+        if (!userMemberToChange.getRoom().getRoomId().equals(roomId)) {
+            throw new AccessDeniedException("This member does not belong to the specified room");
+        }
+
+        if (dto.getRole() == RoomRole.OWNER) {
+            RoomEntity roomEntity = roomRepository.findById(roomId).orElseThrow(
+                () -> new ResourceNotFoundException("Room not found")
+            );
+            roomEntity.setOwner(userMemberToChange.getUser());
+            roomRepository.save(roomEntity);
+
+            currentUser.setRole(RoomRole.MEMBER);
+            roomMemberRepository.save(currentUser);
+
+            userMemberToChange.setRole(RoomRole.OWNER);
+            return memberMapper.mapTo(roomMemberRepository.save(userMemberToChange));
+        }
+
+        userMemberToChange.setRole(dto.getRole());
+        return memberMapper.mapTo(roomMemberRepository.save(userMemberToChange));
+    }
 }

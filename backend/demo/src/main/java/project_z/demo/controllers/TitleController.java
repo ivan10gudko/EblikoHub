@@ -9,7 +9,17 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import project_z.demo.Mappers.Mapper;
 import project_z.demo.common.QueryParameters.TitleQueryParameters;
@@ -23,9 +33,6 @@ import project_z.demo.entity.TitleEntity;
 import project_z.demo.security.JwtService;
 import project_z.demo.services.TitleService;
 import project_z.demo.services.UserService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-
 
 @RestController
 @RequestMapping("/api/v1/titles")
@@ -68,30 +75,34 @@ public class TitleController {
     @PostMapping(path = "/{titleId}/pinTitle")
     public ResponseEntity<TitleDto> pinTitle(
             @PathVariable("titleId") Long titleId,
-            @RequestHeader("Authorization") String token
-    ) {
-        UUID userId = jwtService.extractUsername(token); 
+            @RequestHeader("Authorization") String token) {
+        UUID userId = jwtService.extractUsername(token);
         TitleDto updatedTitle = titleService.pinTitle(titleId, userId);
         return new ResponseEntity<>(updatedTitle, HttpStatus.OK);
     }
-    
+
     @PostMapping(path = "/unpin")
     public ResponseEntity<Void> unpin(@RequestHeader("Authorization") String token) {
         UUID userId = jwtService.extractUsername(token);
         titleService.unpin(userId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
-    
+
     @GetMapping("/{userId}")
     public Page<TitleDto> getTitleListByUserId(@PathVariable("userId") UUID userId, TitleQueryParameters params) {
         return titleService.findAllByUserId(params, userId);
     }
 
-    @GetMapping("/getTitleById/{titleId}")
-    public ResponseEntity<TitleDto> getMethodName(@PathVariable ("titleId") Long titleId) {
-        return new ResponseEntity<>(titleService.findOne(titleId),HttpStatus.OK);
+    @GetMapping("/getTitleWithNoLinks/{userId}")
+    public Page<TitleDto> getTitleListWithLinksByUserIdAndRoomId(@PathVariable("userId") UUID userId,
+            @RequestParam("roomId") long roomId, TitleQueryParameters params) {
+        return titleService.findAllWithLinksByUserIdAndRoomId(params, userId, roomId);
     }
-    
+
+    @GetMapping("/getTitleById/{titleId}")
+    public ResponseEntity<TitleDto> getMethodName(@PathVariable("titleId") Long titleId) {
+        return new ResponseEntity<>(titleService.findOne(titleId), HttpStatus.OK);
+    }
 
     @GetMapping(path = "/mal/{titleMalId}")
     public ResponseEntity<TitleDto> getUserTitleByMalId(@PathVariable("titleMalId") Integer titleMalId,
@@ -99,11 +110,11 @@ public class TitleController {
         TitleEntity title = titleService.findUserTitleByMalId(titleMalId, token);
         return new ResponseEntity<>(titleMapper.mapTo(title), HttpStatus.OK);
     }
+
     @GetMapping("/titleStats/{userId}")
     public TitleStatsDto getTitleStatsByUserId(@PathVariable("userId") UUID userId) {
         return titleService.getUserTitlesStats(userId);
     }
-    
 
     @GetMapping(path = "/mal/{titleMalId}/room")
     public List<TitleDto> getUsersTitlesByMalId(@PathVariable("titleMalId") Integer titleMalId,
@@ -131,7 +142,8 @@ public class TitleController {
     }
 
     @GetMapping(path = "/{titleId}/getSameCriteriaRating")
-    public SameCriteriaRatingResponse getNeighborsRating(@PathVariable("titleId") Long titleId, @RequestParam String category, @RequestParam Float currentRating ) {
+    public SameCriteriaRatingResponse getNeighborsRating(@PathVariable("titleId") Long titleId,
+            @RequestParam String category, @RequestParam Float currentRating) {
         return titleService.getNeighborsRating(titleId, category, currentRating);
     }
 

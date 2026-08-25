@@ -2,31 +2,34 @@ import React, { useState, useMemo } from "react";
 import { useManageFavoriteTitles } from "~/features/profile/hooks/useManageFavoriteTitles";
 import { InfiniteScrollLoader } from "~/shared/ui/infinityScroll";
 import { useInfinityTitles } from "~/entities/titleRecord/hooks/useInfinityTitles";
-import { useReorderWatchlist } from "~/entities/titleRecord";
-import { useUserProfile } from "~/widgets/UserProfileCard/hooks/useUserProfile";
+import { useReorderWatchlist, TitleTypeThemes } from "~/entities/titleRecord";
+import { DEFAULT_IMAGE_PATH } from "~/shared/constants";
+import { TitleHoverPreview } from "~/shared/ui/HoverPreviewImage";
+import { Button } from "~/shared/ui/Button";
+import SearchBar from "~/shared/ui/SearchBar";
+import type { FavoriteTitleItem } from "../model/favorite.types";
+import { Modal } from "~/shared/ui/Modal";
 
 interface SelectFavoriteModalProps {
   position: number;
   userId: string;
+  favoriteTitles: FavoriteTitleItem[];
   isOpen: boolean;
   onClose: () => void;
 }
 
-const DEFAULT_IMAGE_PATH = "/defaultTitleRecordImage.jpg";
-
 export const SelectFavoriteModal: React.FC<SelectFavoriteModalProps> = ({
   position,
   userId,
+  favoriteTitles,
   isOpen,
   onClose,
 }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const { addFavorite, isAdding } = useManageFavoriteTitles(userId);
 
-  const { favoriteTitles } = useUserProfile(userId);
-
   const existingFavoriteIds = useMemo(
-    () => new Set(favoriteTitles.map((f) => f.title.titleId)),
+    () => new Set(favoriteTitles?.map((f) => f.title.titleId) || []),
     [favoriteTitles]
   );
 
@@ -57,8 +60,6 @@ export const SelectFavoriteModal: React.FC<SelectFavoriteModalProps> = ({
     userId
   );
 
-  if (!isOpen) return null;
-
   const handleSelectTitle = (titleId: number) => {
     if (existingFavoriteIds.has(titleId)) return;
 
@@ -73,79 +74,66 @@ export const SelectFavoriteModal: React.FC<SelectFavoriteModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-      <div className="w-full max-w-lg bg-card border border-background-muted rounded-2xl p-6 shadow-2xl flex flex-col max-h-[80vh]">
-        <div className="flex items-center justify-between pb-4 border-b border-background-muted">
-          <h3 className="text-lg font-bold text-foreground">
-            Select title for position #{position}
-          </h3>
-          <button
-            onClick={onClose}
-            className="text-muted hover:text-foreground text-xl p-1 transition-colors cursor-pointer"
-          >
-            ✕
-          </button>
-        </div>
-
-        <div className="my-4">
-          <input
-            type="text"
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      title={`Select title for position #${position}`}
+      maxWidth="max-w-lg"
+      className="h-[80vh] max-h-[600px]"
+    >
+      <div className="flex flex-col h-full gap-3">
+        <div className="shrink-0 h-10 min-h-[40px]">
+          <SearchBar
+            onSearch={setSearchQuery}
+            debounceMs={300}
             placeholder="Search in your titles..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full px-4 py-2 bg-background-muted border border-background-muted rounded-xl text-foreground focus:outline-none focus:border-primary"
+            className="w-full h-full max-w-none rounded-xl bg-background-muted border-border"
           />
         </div>
 
-        <div className="custom-scrollbar flex-1 overflow-y-auto space-y-2 pr-1 overscroll-contain">
+        <div className="custom-scrollbar flex-1 overflow-y-auto space-y-2 pr-1 overscroll-contain min-h-0">
           {isLoading ? (
-            <div className="text-center py-8 text-muted">Loading...</div>
+            <div className="flex items-center justify-center h-full text-foreground-muted">
+              Loading...
+            </div>
           ) : optimisticTitles.length ? (
             <>
               {optimisticTitles.map((item) => {
                 const isAlreadyAdded = existingFavoriteIds.has(item.titleId);
+                const themeClasses = item.titleType
+                  ? TitleTypeThemes[item.titleType]
+                  : "";
 
                 return (
                   <div
                     key={item.titleId}
-                    onClick={() => handleSelectTitle(item.titleId)}
-                    className={`flex items-center justify-between p-3 rounded-xl border transition-all gap-3 select-none ${
-                      isAlreadyAdded
-                        ? "bg-background-muted/20 border-transparent opacity-50 cursor-not-allowed"
-                        : "bg-background-muted/40 hover:bg-primary/10 hover:border-primary/30 border-transparent cursor-pointer"
-                    }`}
+                    className={`flex items-center justify-between p-3 rounded-xl border transition-all gap-3 select-none ${themeClasses} ${isAlreadyAdded
+                        ? "opacity-50 border-transparent"
+                        : "hover:border-primary/40"
+                      }`}
                   >
                     <div className="flex items-center gap-3 overflow-hidden">
-                      <div className="w-12 h-16 shrink-0 overflow-hidden rounded-lg bg-background-muted">
-                        <img
-                          src={item.imageUrl || DEFAULT_IMAGE_PATH}
-                          alt={item.titleName}
-                          onError={(e) => {
-                            e.currentTarget.src = DEFAULT_IMAGE_PATH;
-                          }}
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
+                      <TitleHoverPreview
+                        imageUrl={item.imageUrl ?? DEFAULT_IMAGE_PATH}
+                        titleName={item.titleName}
+                      />
+
                       <span className="font-semibold text-foreground text-sm line-clamp-2">
                         {item.titleName}
                       </span>
                     </div>
 
-                    <button
+                    <Button
                       type="button"
                       disabled={isAdding || isAlreadyAdded}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleSelectTitle(item.titleId);
-                      }}
-                      className={`px-3 py-1 text-xs font-bold rounded-lg transition-colors shrink-0 ${
-                        isAlreadyAdded
-                          ? "bg-slate-700 text-slate-400 cursor-not-allowed"
-                          : "bg-primary text-white hover:bg-primary-hover cursor-pointer disabled:opacity-50"
-                      }`}
+                      onClick={() => handleSelectTitle(item.titleId)}
+                      className={`px-3 py-1 text-xs font-bold rounded-lg transition-colors shrink-0 h-auto ${isAlreadyAdded
+                          ? "bg-background-muted text-foreground-muted cursor-not-allowed border border-border hover:bg-background-muted"
+                          : "bg-primary text-background hover:bg-primary-hover cursor-pointer disabled:opacity-50"
+                        }`}
                     >
                       {isAlreadyAdded ? "Added" : "Select"}
-                    </button>
+                    </Button>
                   </div>
                 );
               })}
@@ -159,10 +147,12 @@ export const SelectFavoriteModal: React.FC<SelectFavoriteModalProps> = ({
               </div>
             </>
           ) : (
-            <div className="text-center py-8 text-muted">No titles found</div>
+            <div className="flex items-center justify-center h-full text-foreground-muted">
+              No titles found
+            </div>
           )}
         </div>
       </div>
-    </div>
+    </Modal>
   );
 };

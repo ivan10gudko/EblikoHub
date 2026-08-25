@@ -6,12 +6,13 @@ import java.util.UUID;
 import lombok.Data;
 import project_z.demo.dto.RoomTitleDtos.RoomTitleShortDto;
 import project_z.demo.dto.TitleDtos.TitleDto;
+import project_z.demo.dto.TitleDtos.TitleShortDto;
 @Data
 public class RoomTitleLinkDetailsDto {
 
     private UUID id;
 
-    private TitleDto title;
+    private TitleShortDto title;
 
     private RoomTitleShortDto roomTitle;
     

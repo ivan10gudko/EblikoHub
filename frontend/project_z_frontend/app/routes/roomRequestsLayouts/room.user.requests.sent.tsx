@@ -2,12 +2,11 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useAuthStore } from "~/features/auth";
 import { redirect } from "react-router";
-import { roomService } from "~/entities/room/api/roomService";
 import { RequestStatus, RequestType } from "~/shared/types";
-import {
-    useRoomRequests
-} from "~/entities/room";
-import { RoomSentRequestsTab } from "~/entities/room/ui/roomRequestsTabs/RoomRequestsSentTab";
+
+
+import { roomRequestsService, useRoomRequests } from "~/features/manageRoomRequests";
+import { RoomSentRequestsTab } from "~/features/manageRoomRequests/ui/roomRequestsTabs/RoomRequestsSentTab";
 
 export default function RoomUserRequestsInvitesPage() {
     const { userId } = useAuthStore();
@@ -19,7 +18,7 @@ export default function RoomUserRequestsInvitesPage() {
 
     const { data: sentRequests, isLoading } = useQuery({
         queryKey: ["room_requests", "sent"],
-        queryFn: () => roomService.getRequests(userId, RequestStatus.PENDING, RequestType.JOIN_REQUEST)
+        queryFn: () => roomRequestsService.getRequests(userId, RequestStatus.PENDING, RequestType.JOIN_REQUEST)
     });
 
     const {cancelRequest, isPendingAction} = useRoomRequests();

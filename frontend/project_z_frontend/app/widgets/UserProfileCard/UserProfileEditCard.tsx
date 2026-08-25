@@ -1,6 +1,6 @@
 import { useState, useRef } from "react";
 import { Button } from "~/shared/ui/Button";
-import { UserAvatar, type UserProfile } from "~/entities/user";
+import { UserAvatar } from "~/entities/user";
 import PhotoCameraIcon from "@mui/icons-material/PhotoCamera";
 import { getCroppedImg } from "~/shared/helpers";
 import { ImageCropper } from "~/shared/ui/ImageCropper/ImageCropper";
@@ -9,7 +9,7 @@ import { SelectFavoriteModal } from "~/features/profile/ui/SelectFavoriteModal";
 import type { UserProfileWithFavorite } from "~/features/profile";
 
 interface UserProfileEditProps {
-  user: UserProfileWithFavorite; // Змінено з UserProfile
+  user: UserProfileWithFavorite;
   onSave: (
     data: { name: string; description: string },
     file: File | null,
@@ -112,6 +112,7 @@ export const UserProfileEdit = ({
         <SelectFavoriteModal
           position={selectedPosition}
           userId={user.userId}
+          favoriteTitles={user.favoriteTitles}
           isOpen={selectedPosition !== null}
           onClose={() => setSelectedPosition(null)}
         />

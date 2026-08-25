@@ -6,7 +6,6 @@ import java.util.UUID;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
-import jakarta.persistence.PostLoad;
 import jakarta.persistence.Table;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -33,9 +32,4 @@ public class RoomTitleStatsView {
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
-
-    @PostLoad
-    private void checkData() {
-        System.out.println("DEBUG: Entity loaded with ID: " + this.id);
-    }
 }

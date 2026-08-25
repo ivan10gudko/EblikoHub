@@ -20,6 +20,7 @@ interface FriendshipService {
     getSentPendingRequests(userId: string): Promise<FriendRequestDto[]>;
     deleteFriendshipById(id: string): Promise<void>;
     getFriendshipCounts(userId: string): Promise<FriendshipCounts>;
+    getUserWithFriendshipStatus<T>(targetUserId: string): Promise<WithFriendship<T>>;
     searchUsersWithStatus<T>(
         name: string,
         params?: FriendshipQueryParameters
@@ -70,6 +71,13 @@ export const friendshipService: FriendshipService = {
 
     async getFriendshipCounts(userId) {
         const response = await apiClient.get<FriendshipCounts>(`/friendships/${userId}/stats`);
+        return response.data;
+    },
+    //TODO: Consider move this method to Profile feature, since it is not directly related to friendship management.
+    async getUserWithFriendshipStatus<T>(targetUserId: string) {
+        const response = await apiClient.get<WithFriendship<T>>(
+            `/friendships/userWithCurrentFriendshipStatus/${targetUserId}`
+        );
         return response.data;
     },
 

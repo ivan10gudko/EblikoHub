@@ -1,8 +1,9 @@
 import { useNavigate } from "react-router";
 import { Separator, SocialMediaBlock } from "~/features/auth";
 import { Button } from "~/shared/ui/Button";
-import { Input } from "~/shared/ui/Input";
 import { useSignup } from "../hooks/useSignup";
+import { Input } from "~/shared/ui/Input";
+import { SIGN_UP_SYMBOLS_LIMITS } from "../model/auth.constants";
 
 const SignupForm = () => {
   const navigate = useNavigate();
@@ -17,7 +18,6 @@ const SignupForm = () => {
     handleSubmit,
     getFieldStatus,
   } = useSignup();
-
   return (
     <div className="max-w-md w-full bg-background border-border shadow-lg py-6 px-8 rounded font-normal">
       <h2 className="text-primary text-2xl font-medium w-full text-center mb-5">
@@ -29,9 +29,10 @@ const SignupForm = () => {
           name="name"
           onChange={handleChange("name")}
           value={formData.name}
-          onBlur={handleBlur("name")}
+          onBlur={() => handleBlur("name")}
           error={touched.name ? errors.name : undefined}
           isValid={getFieldStatus("name")}
+          maxLength={SIGN_UP_SYMBOLS_LIMITS.NAME}
         >
           Name
         </Input>
@@ -41,9 +42,10 @@ const SignupForm = () => {
           name="username"
           onChange={handleChange("username")}
           value={formData.username}
-          onBlur={handleBlur("username")}
+          onBlur={() => handleBlur("username")}
           error={touched.username ? errors.username : undefined}
           isValid={getFieldStatus("username")}
+          maxLength={SIGN_UP_SYMBOLS_LIMITS.USERNAME}
         >
           Username
         </Input>
@@ -53,7 +55,7 @@ const SignupForm = () => {
           name="email"
           onChange={handleChange("email")}
           value={formData.email}
-          onBlur={handleBlur("email")}
+          onBlur={() => handleBlur("email")}
           error={touched.email ? errors.email : undefined}
           isValid={getFieldStatus("email")}
         >
@@ -65,7 +67,7 @@ const SignupForm = () => {
           name="password"
           onChange={handleChange("password")}
           value={formData.password}
-          onBlur={handleBlur("password")}
+          onBlur={() => handleBlur("password")}
           error={touched.password ? errors.password : undefined}
           isValid={getFieldStatus("password")}
         >
@@ -77,7 +79,7 @@ const SignupForm = () => {
           name="confirmPassword"
           onChange={handleChange("confirmPassword")}
           value={formData.confirmPassword}
-          onBlur={handleBlur("confirmPassword")}
+          onBlur={() => handleBlur("confirmPassword")}
           error={touched.confirmPassword ? errors.confirmPassword : undefined}
           isValid={getFieldStatus("confirmPassword")}
         >

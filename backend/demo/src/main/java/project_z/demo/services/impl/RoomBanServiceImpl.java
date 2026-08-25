@@ -3,20 +3,25 @@ package project_z.demo.services.impl;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
+import project_z.demo.JavaUtil.PagingHelper;
 import project_z.demo.Mappers.Mapper;
 import project_z.demo.common.Exceptions.ResourceNotFoundException;
 import project_z.demo.common.Exceptions.RoomBanExceptions.RoomSelfBanException;
+import project_z.demo.common.QueryParameters.UserQueryParameters;
 import project_z.demo.dto.RoomBanDtos.RoomBanCreateDto;
 import project_z.demo.dto.RoomBanDtos.RoomBanDetailsDto;
+import project_z.demo.dto.UserDtos.UserDtoWithRoomBanStatus;
 import project_z.demo.entity.RoomBanEntity;
 import project_z.demo.entity.RoomEntity;
-import project_z.demo.entity.RoomMemberEntity;
 import project_z.demo.entity.UserEntity;
 import project_z.demo.repositories.RoomBanRepository;
+import project_z.demo.repositories.RoomMemberRepository;
 import project_z.demo.repositories.RoomRepository;
 import project_z.demo.repositories.UserRepository;
 import project_z.demo.security.SecurityService;
@@ -29,31 +34,39 @@ public class RoomBanServiceImpl implements RoomBanService {
 
     private final SecurityService securityService;
     private final RoomBanRepository roomBanRepository;
+    private final RoomMemberRepository roomMemberRepository;
     private final RoomRepository roomRepository;
     private final UserRepository userRepository;
     private final Mapper<RoomBanEntity, RoomBanDetailsDto> banMapper;
     private final Mapper<RoomBanEntity, RoomBanCreateDto> banCreateMapper;
+    private final Mapper<Object[], UserDtoWithRoomBanStatus> userWithBanStatusMapper;
 
     @Override
     @Transactional
     public RoomBanDetailsDto create(RoomBanCreateDto banDto, Long roomId) {
         UUID currentUserId = securityService.getCurrentUserId();
 
-        if(currentUserId.equals(banDto.getUserId())){
+        if (currentUserId.equals(banDto.getUserId())) {
             throw new RoomSelfBanException("You cant ban yourself");
         }
 
         UserEntity userBannedByEntity = userRepository.findById(currentUserId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + currentUserId));
+
         RoomEntity roomEntity = roomRepository.findById(roomId)
                 .orElseThrow(() -> new ResourceNotFoundException("no room found with id" + roomId));
-        UserEntity userEntity = userRepository.findById(banDto.getUserId())
-                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + banDto.getUserId()));
+        UserEntity targetUserEntity = userRepository.findById(banDto.getUserId())
+                .orElseThrow(
+                        () -> new ResourceNotFoundException("User to ban not found with id: " + banDto.getUserId()));
+
         RoomBanEntity entity = new RoomBanEntity();
         entity.setReason(banDto.getReason());
         entity.setBannedBy(userBannedByEntity);
-        entity.setUser(userEntity);
+        entity.setUser(targetUserEntity);
         entity.setRoom(roomEntity);
+        roomMemberRepository.findOneByRoom_RoomIdAndUser_UserId(roomId, banDto.getUserId())
+                .ifPresent(roomMemberRepository::delete);
+
         return banMapper.mapTo(roomBanRepository.save(entity));
     }
 
@@ -67,5 +80,21 @@ public class RoomBanServiceImpl implements RoomBanService {
     @Override
     public boolean isBanned(Long roomId, UUID userId) {
         return roomBanRepository.existsByRoomRoomIdAndUserUserId(roomId, userId);
+    }
+
+    @Override
+    @Transactional
+    public void unban(UUID id) {
+        RoomBanEntity roomBanEntity = roomBanRepository.findById(id).orElseThrow(
+                () -> new ResourceNotFoundException("Room ban not found"));
+        roomBanRepository.delete(roomBanEntity);
+    }
+
+    @Override
+    public Page<UserDtoWithRoomBanStatus> searchUsers(Long roomId, UUID currentUserId,
+            UserQueryParameters queryParameters) {
+        Pageable pageable = PagingHelper.toPageable(queryParameters);
+        return userRepository.findUsersWithRoomBanStatus(queryParameters.getName(), roomId, currentUserId, pageable)
+                .map(userWithBanStatusMapper::mapTo);
     }
 }

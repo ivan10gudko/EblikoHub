@@ -23,7 +23,7 @@ const CONTACTS_CONFIG: ContactChannel[] = [
 
 export function ContactPage() {
   return (
-    <div className="min-h-[80vh] bg-background text-foreground transition-colors duration-200 flex flex-col items-center justify-start pt-16 md:pt-24">
+    <div className="flex flex-col lg:flex-row gap-6 p-4 sm:p-8 max-w-[1400px] mx-auto min-h-screen bg-background-muted/30">
       <div className="max-w-2xl w-full mx-auto p-6 space-y-8">
         
         <header className="text-center space-y-2">
@@ -42,7 +42,7 @@ export function ContactPage() {
               href={channel.href}
               target={channel.isExternal ? "_blank" : undefined}
               rel={channel.isExternal ? "noreferrer" : undefined}
-              className="flex items-center gap-6 p-6 bg-card hover:bg-accent/50 rounded-2xl border border-border shadow-md transition-all duration-300 hover:-translate-y-1 hover:shadow-lg active:scale-[0.98] group max-w-md w-full"
+              className="flex items-center gap-6 p-6 bg-card hover:bg-accept/50 rounded-2xl border border-border shadow-md transition-all duration-300 hover:-translate-y-1 hover:shadow-lg active:scale-[0.98] group max-w-md w-full"
             >
               <div className="flex items-center justify-center text-primary group-hover:scale-110 transition-transform duration-300 shrink-0">
                 {channel.icon}

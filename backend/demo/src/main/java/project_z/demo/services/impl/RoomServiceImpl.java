@@ -17,11 +17,13 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import project_z.demo.JavaUtil.BeanUtilsHelper;
 import project_z.demo.JavaUtil.PagingHelper;
+import project_z.demo.JavaUtil.PatchHelper;
 import project_z.demo.Mappers.Mapper;
 import project_z.demo.common.Exceptions.ResourceNotFoundException;
 import project_z.demo.common.QueryParameters.RoomQueryParameters;
 import project_z.demo.dto.RoomDtos.RoomCreateDto;
 import project_z.demo.dto.RoomDtos.RoomDto;
+import project_z.demo.dto.RoomDtos.RoomPatchUpdateDto;
 import project_z.demo.dto.RoomDtos.RoomSearchResultDto;
 import project_z.demo.dto.RoomDtos.RoomShortDto;
 import project_z.demo.entity.RoomEntity;
@@ -53,6 +55,8 @@ public class RoomServiceImpl implements RoomService {
     private final RoomMemberRepository roomMemberRepository;
     private final RoomRequestRepository roomRequestRepository;
     private final SecurityService securityService;
+    private final Mapper<RoomEntity, RoomPatchUpdateDto> roomUpdateMapper;
+    private final PatchHelper patchHelper;
 
     @Override
     public RoomEntity save(RoomEntity roomEntity) {
@@ -94,7 +98,8 @@ public class RoomServiceImpl implements RoomService {
         UUID currentUserId = securityService.getCurrentUserId();
         Pageable pageable = PagingHelper.toPageable(queryParameters);
 
-        Page<RoomSearchResultDto> roomPage = roomRepository.searchRoomsWithMembershipStatus(roomName, currentUserId, pageable);
+        Page<RoomSearchResultDto> roomPage = roomRepository.searchRoomsWithMembershipStatus(roomName, currentUserId,
+                pageable);
         return roomPage;
 
     }
@@ -158,5 +163,17 @@ public class RoomServiceImpl implements RoomService {
         }
 
         return roomMapper.mapTo(savedRoom);
+    }
+
+    @Override
+    public RoomDto roomPartialUpdate(RoomPatchUpdateDto source, Long roomId) {
+        RoomEntity roomEntity = roomRepository.findById(roomId).orElseThrow(
+                () -> new ResourceNotFoundException("Room not found"));
+        
+        patchHelper.updateIfPresent(source.getDescription(), roomEntity::setDescription);
+        patchHelper.updateIfPresent(source.getImageUrl(), roomEntity::setImageUrl);
+        patchHelper.updateIfPresent(source.getRoomName(), roomEntity::setRoomName);
+        RoomEntity resRoomEntity = roomRepository.save(roomEntity);
+        return roomMapper.mapTo(resRoomEntity);
     }
 }

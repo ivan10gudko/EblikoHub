@@ -85,6 +85,13 @@ public class FriendshipController {
         return new ResponseEntity<>(res, HttpStatus.OK);
     }
 
+    @GetMapping("/userWithCurrentFriendshipStatus/{userId}")
+    public ResponseEntity<UserDtoWithFriendshipStatus> getUserWithFriendshipStatus(
+            @PathVariable("userId") UUID userId) {
+        UUID currentUserId = securityService.getCurrentUserId();
+        return new ResponseEntity<>(friendshipService.findUserWithFriendshipStatusToCurrentUser(userId,currentUserId), HttpStatus.OK);
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<FriendshipDetailsDto> getFriendshipById(@PathVariable("id") UUID id) {
         return ResponseEntity.ok(friendshipService.findOne(id));
@@ -113,7 +120,7 @@ public class FriendshipController {
         return ResponseEntity.ok(friendshipService.partialUpdate(id, updateDto));
     }
 
-    @PreAuthorize("hasRole('ADMIN') || @securityService.isFriendshipMember(#id)")
+    @PreAuthorize("hasRole('ADMIN') || @securityService.canDeleteFriendship(#id)")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteFriendshipById(@PathVariable("id") UUID id) {
         friendshipService.deleteFriendById(id);

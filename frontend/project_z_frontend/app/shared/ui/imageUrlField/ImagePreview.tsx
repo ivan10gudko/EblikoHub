@@ -25,22 +25,23 @@ export const ImagePreview = ({
     handleImageError,
   } = useImageEditorContext();
 
+  
   const defaultSize =
     variant === "portrait"
-      ? { width: 190, height: 280 }
+      ? { width: 160, height: 224 }
       : { width: "100%", height: "auto" };
 
   const containerStyle = {
-    width: width ?? defaultSize.width,
-    height: height ?? defaultSize.height,
+    width: width ?? (containerClassName ? undefined : defaultSize.width),
+    height: height ?? (containerClassName ? undefined : defaultSize.height),
   };
 
   return (
-    <div className="relative group">
+    <div className="relative group shrink-0">
       <div
         style={containerStyle}
         className={cn(
-          "bg-card/50 backdrop-blur-sm rounded-2xl border-2 border-dashed border-border flex items-center justify-center overflow-hidden shadow-xl transition-all duration-300 group-hover:border-primary/50 group-hover:shadow-primary/10",
+          "bg-card/50 backdrop-blur-sm rounded-xl border border-border/40 flex items-center justify-center overflow-hidden shadow-md transition-all duration-300 group-hover:border-primary/50 group-hover:shadow-primary/10",
           variant === "landscape" && "max-w-[400px] aspect-video",
           containerClassName,
         )}
@@ -60,10 +61,10 @@ export const ImagePreview = ({
           <div className="absolute inset-0 flex items-center justify-center bg-foreground/60 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
             <Button
               variant="outline"
-              className="h-12 w-12 rounded-full border-danger bg-background p-0 text-danger transition-transform hover:bg-danger hover:text-white active:scale-90"
+              className="h-10 w-10 rounded-full border-danger bg-background p-0 text-danger transition-transform hover:bg-danger hover:text-white active:scale-90"
               onClick={handleClearImage}
             >
-              <DeleteForeverIcon sx={{ fontSize: 28 }} />
+              <DeleteForeverIcon sx={{ fontSize: 24 }} />
             </Button>
           </div>
         )}

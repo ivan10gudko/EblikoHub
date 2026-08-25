@@ -2,6 +2,7 @@ import { useMutation } from "@tanstack/react-query";
 import { titleRecordService } from "../api/titleRecordService";
 import { notify, queryClient } from "~/shared/lib";
 import type { CreateTitleRecord } from "../model/titleRecord";
+import { getErrorMessage } from "~/shared/utils";
 export const useCreateTitleRecord = () => {
 
     const createMutation = useMutation({
@@ -9,9 +10,9 @@ export const useCreateTitleRecord = () => {
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['titles'] });
         },
-        onError: (error: any) => {
-            const message = error.response?.data?.message || "Something went wrong";
-            notify.error(message);
+        onError: (error: unknown) => {
+            notify.error(getErrorMessage(error, "Something went wrong"));
+
         }
     });
 

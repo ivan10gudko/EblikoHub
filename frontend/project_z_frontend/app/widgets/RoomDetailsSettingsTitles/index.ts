@@ -1,0 +1,1 @@
+export { RoomDetailsSettingsTitlesLinks } from "./RoomDetailsSettingsTitlesLinksTab";

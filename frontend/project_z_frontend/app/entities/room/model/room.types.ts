@@ -1,86 +1,144 @@
-
-import type { InfiniteQueryPageParamsOptions } from "@tanstack/react-query";
 import type { QueryParams, RequestStatus, RequestType, Status } from "~/shared/types";
 
-export interface UserShort {
-    userId: string;
-    name: string;
-    nameTag: string;
-    imageUrl?: string;
+//same as user/UserShort
+// TODO: think about moving it to shared/types or rewriting with generics
+export interface RoomParticipantDto {
+  userId: string;
+  name: string;
+  nameTag: string;
+  img?: string;
 }
+
 export interface Room {
-    roomId: number;
-    roomName: string;
-    owner: string;
-    members: RoomMemberShort[];
-    createdAt: string;
+  roomId: number;
+  roomName: string;
+  owner: string;
+  members: RoomMemberShort[];
+  imageUrl?: string;
+  description?: string;
+  createdAt: string;
+}
+
+export interface UpdateRoomPayload {
+  roomName: string;
+  imageUrl: string;
+  description: string;
 }
 
 export enum RoomDetailsSortVariants {
-    titleName = "titleName",
-    avgRating = "avgRating",
-    createdAt = "createdAt",
+  titleName = "titleName",
+  avgRating = "avgRating",
+  createdAt = "createdAt",
 }
 
 export const roomSortOptions = [
-    { label: "Name", value: RoomDetailsSortVariants.titleName },
-    { label: "Average room rating", value: RoomDetailsSortVariants.avgRating },
-    { label: "Room title date added", value: RoomDetailsSortVariants.createdAt },
+  { label: "Name", value: RoomDetailsSortVariants.titleName },
+  { label: "Average room rating", value: RoomDetailsSortVariants.avgRating },
+  { label: "Room title date added", value: RoomDetailsSortVariants.createdAt },
 ];
 
 export interface RoomCreateDto {
-    roomName: string;
-    imageUrl: string | null;
-    members: string[];
+  roomName: string;
+  imageUrl: string | null;
+  members: string[];
 }
 
 export interface RoomShort {
-    roomId: number;
-    roomName: string;
-    imageUrl: string;
-    isPinned: boolean;
-    isOwner: boolean;
-    usersCount: number;
+  roomId: number;
+  roomName: string;
+  imageUrl: string;
+  isPinned: boolean;
+  isOwner: boolean;
+  usersCount: number;
 }
 
 export interface RoomSearchResult {
-    roomId: number;
-    roomName: string;
-    imageUrl: string;
-    isMember: boolean;
-    isRequested: boolean;
-    memberCount: number;
+  roomId: number;
+  roomName: string;
+  imageUrl: string;
+  isMember: boolean;
+  isRequested: boolean;
+  memberCount: number;
 }
 
 export interface RoomQueryParameters extends QueryParams {
-    search?: string;
+  search?: string;
 }
-
 
 export interface RoomRequestShort {
-    id: string;
-    room: RoomShort;
-    userId: string;
-    sender: UserShort;
-    status: RequestStatus;
-    type: RequestType;
-    createdAt: string;
-
+  id: string;
+  room: RoomShort;
+  userId: string;
+  sender: RoomParticipantDto;
+  status: RequestStatus;
+  type: RequestType;
+  createdAt: string;
 }
+
+export interface RoomRequestShortWithUser {
+  id: string;
+  user: RoomParticipantDto;
+  sender: RoomParticipantDto;
+  status: RequestStatus;
+  type: RequestType;
+  createdAt: string;
+}
+
+export interface RequestsToRoomResponse {
+  roomId: number;
+  requests: RoomRequestShortWithUser[];
+}
+
 export interface RoomRequestCounts {
-    incomingCount: number;
-    outgoingCount: number;
+  incomingCount: number;
+  outgoingCount: number;
 }
 
 export interface RoomMemberShort {
-    id: string;
-    user: UserShort;
-    role: RoomRole;
-    createdAt: string;
+  id: string;
+  user: RoomParticipantDto;
+  role: RoomRole;
+  createdAt: string;
+}
+
+export interface RoomMember {
+  id: string;
+  user: RoomParticipantDto;
+  role: RoomRole;
+  createdAt: string;
 }
 
 export enum RoomRole {
-    OWNER = "OWNER",
-    ADMIN = "ADMIN",
-    MEMBER = "MEMBER",
+  OWNER = "OWNER",
+  ADMIN = "ADMIN",
+  MEMBER = "MEMBER",
+}
+
+
+export enum RoomRelationStatus {
+  NONE = "NONE",
+  MEMBER = "MEMBER",
+  PENDING_IN = "PENDING_IN",
+  PENDING_OUT = "PENDING_OUT",
+  BANNED = "BANNED"
+}
+
+export interface UserWithRelationsToRoomDto {
+  user: RoomParticipantDto;
+  relationStatus: RoomRelationStatus;
+  activeRequest: RoomRequestShortWithoutRoomDto | null;
+}
+
+export interface RoomRequestShortWithoutRoomDto {
+  id: string;
+  userId: string;
+  sender: RoomParticipantDto;
+  status: RequestStatus;
+  type: RequestType;
+  createdAt: string;
+}
+
+export interface RoomMemberRoleUpdateDto {
+  roomMemberId: string;
+  role: RoomRole;
 }

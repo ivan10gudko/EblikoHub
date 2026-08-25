@@ -10,6 +10,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import PushPinIcon from "@mui/icons-material/PushPin";
 import { ReadOnlyStatusBadge } from "~/entities/titleRecord";
+import { formatDate } from "~/shared/helpers";
 
 interface ViewTitleModalProps {
   title: TitleRecord | null;
@@ -47,7 +48,7 @@ export const ViewTitleModal = ({
             <img
               src={title.imageUrl || "/defaultTitleRecordImage.jpg"}
               alt={title.titleName}
-              className="w-40 h-56 object-cover rounded-xl shadow-md border border-border/40 shrink-0"
+              className="w-42 h-58 object-cover rounded-xl shadow-md border border-border/40 shrink-0"
             />
 
             <div className="flex-1 space-y-4 w-full">
@@ -115,7 +116,7 @@ export const ViewTitleModal = ({
             {title.createdAt && (
               <span className="flex items-center gap-1">
                 <CalendarMonthIcon sx={{ fontSize: 14 }} />
-                Added: {new Date(title.createdAt).toLocaleDateString()}
+                Added: {formatDate(title.createdAt)}
               </span>
             )}
             {title.pinned && (

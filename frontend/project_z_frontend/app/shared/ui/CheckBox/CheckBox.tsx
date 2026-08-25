@@ -15,9 +15,10 @@ interface CheckboxProps extends Omit<
 
 const CHECKBOX_CLASSES = {
   base: "h-5 w-5 shrink-0 rounded-md border flex items-center justify-center transition-all cursor-pointer peer-disabled:cursor-not-allowed peer-disabled:opacity-50 select-none",
-  error: "border-danger peer-focus:ring-1 peer-focus:ring-danger",
+  error: "border-danger peer-focus-visible:ring-1 peer-focus-visible:ring-danger",
+  
   default:
-    "border-border peer-focus:border-primary peer-focus:ring-1 peer-focus:ring-primary peer-checked:border-primary peer-checked:bg-primary",
+    "border-border hover:border-primary peer-focus-visible:ring-1 peer-focus-visible:ring-primary peer-checked:border-primary peer-checked:bg-primary",
 };
 
 export const Checkbox: React.FC<CheckboxProps> = ({
@@ -40,6 +41,7 @@ export const Checkbox: React.FC<CheckboxProps> = ({
     c.startsWith("mt-") ||
     c.startsWith("mx-") ||
     c.startsWith("my-");
+
   const containerClasses = className.split(" ").filter(isMargin).join(" ");
   const checkboxClasses = className
     .split(" ")
@@ -50,13 +52,12 @@ export const Checkbox: React.FC<CheckboxProps> = ({
   const backgroundStyle = hasCustomBg ? "" : "bg-background";
 
   return (
-    <div className={`flex flex-col gap-1 w-full min-w-0 ${containerClasses}`}>
-     
+    <div className={`inline-flex flex-col gap-1 min-w-0 ${containerClasses}`}>
       <label
         htmlFor={id}
-        className="flex items-center justify-between cursor-pointer select-none group w-full"
+        className="inline-flex items-center justify-between cursor-pointer select-none group"
       >
-        <div className="flex items-center gap-3 min-w-0">
+        <div className="inline-flex items-center gap-2.5 min-w-0">
           <input
             id={id}
             type="checkbox"
@@ -92,7 +93,7 @@ export const Checkbox: React.FC<CheckboxProps> = ({
 
           {label && (
             <span
-              className={`text-sm font-semibold leading-5 transition-colors peer-disabled:opacity-50 truncate ${labelClassName} ${
+              className={`text-sm font-semibold leading-none transition-colors peer-disabled:opacity-50 truncate ${labelClassName} ${
                 labelClassName ? "" : "text-foreground"
               }`}
             >
@@ -101,9 +102,8 @@ export const Checkbox: React.FC<CheckboxProps> = ({
           )}
         </div>
 
-        
         {count !== undefined && (
-          <span className="text-xs bg-card text-foreground/80 px-2 py-0.5 rounded-md font-medium border border-border/40 min-w-[24px] text-center transition-colors group-hover:border-border">
+          <span className="text-xs bg-card text-foreground/80 px-2 py-0.5 rounded-md font-medium border border-border/40 min-w-[24px] text-center transition-colors group-hover:border-border ml-2">
             {count}
           </span>
         )}

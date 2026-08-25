@@ -35,7 +35,7 @@ const SearchPage: React.FC = () => {
   const hasResults = animeList.length > 0;
 
   return (
-    <div className="w-full my-10 px-2 md:px-8 lg:px-20">
+    <div className="w-full min-h-[calc(120vh-280px)] py-10 px-2 md:px-8 lg:px-20 flex flex-col">
       <h1 className="text-xl font-bold px-2 mb-4">
         {queryStr ? `Search results for query: "${queryStr}"` : "Search Anime"}
       </h1>

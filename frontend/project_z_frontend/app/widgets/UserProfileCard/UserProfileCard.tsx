@@ -57,7 +57,6 @@ export const UserProfileCard = ({ userId }: UserProfileCardProps) => {
                 <EditIcon className="text-primary" />
               </Button>
             )}
-
             {!isOwn && (
               <div className="flex items-center gap-3">
                 {isNone && (

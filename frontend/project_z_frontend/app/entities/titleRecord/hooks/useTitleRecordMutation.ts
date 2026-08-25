@@ -4,6 +4,7 @@ import { notify } from "~/shared/lib";
 import { getSessionUserId } from "~/shared/lib/supabase";
 import type { Rating } from "~/shared/types";
 import { Status } from "~/shared/types/Status";
+import { getErrorMessage } from "~/shared/utils";
 
 export const useTitleRecordMutation = (apiTitleId: number | undefined, initialData: CreateTitleRecord, existingTitleRecord?: TitleRecord | null) => {
     const queryClient = useQueryClient();
@@ -14,17 +15,16 @@ export const useTitleRecordMutation = (apiTitleId: number | undefined, initialDa
 
     const mutationConfig = {
         onSuccess: (updatedRecord: TitleRecord | null) => {
-            
+
             queryClient.invalidateQueries({ queryKey: ['titles'] });
             queryClient.invalidateQueries({ queryKey: ['titleRecord'] });
         },
         onSettled: () => {
             queryClient.invalidateQueries({ queryKey: queryKey });
         },
-        onError: (error: any) => {
-            console.error("Помилка зміни статусу/оцінки:", error);
-            const message = error.response?.data?.message || "Something went wrong";
-            notify.error(message);
+        onError: (error: unknown) => {
+            notify.error(getErrorMessage(error, "Something went wrong"));
+
         },
     };
 
@@ -56,9 +56,8 @@ export const useTitleRecordMutation = (apiTitleId: number | undefined, initialDa
             queryClient.invalidateQueries({ queryKey: ['titles'] });
             queryClient.invalidateQueries({ queryKey: ['titleRecord'] });
         },
-        onError: (error: any) => {
-            const message = error.response?.data?.message || "Something went wrong";
-            notify.error(message);
+        onError: (error: unknown) => {
+            notify.error(getErrorMessage(error, "Something went wrong"));
         },
     });
 

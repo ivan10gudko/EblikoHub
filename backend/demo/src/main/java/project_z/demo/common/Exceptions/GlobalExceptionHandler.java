@@ -6,19 +6,20 @@ import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.dao.DataAccessException;
 
 import project_z.demo.common.Exceptions.RoomBanExceptions.RoomSelfBanException;
 import project_z.demo.common.Exceptions.RoomMembersExceptions.RoomMembersConflictException;
+import project_z.demo.common.Exceptions.RoomRequestExceptions.SelfRoomInviteException;
 import project_z.demo.common.Exceptions.RoomTitleLinkExceptions.RoomTitleLinkAlreadyExistsException;
-import project_z.demo.common.Exceptions.UserFavoriteTitleExceptions.UserFavoriteTitlesLimitReachedException;
 import project_z.demo.common.Exceptions.UserFavoriteTitleExceptions.UserFavoriteTitlePositionOccupiedException;
+import project_z.demo.common.Exceptions.UserFavoriteTitleExceptions.UserFavoriteTitlesLimitReachedException;
 import project_z.demo.common.Exceptions.WheelPresetExceptions.WheelPresetAlreadyExists;
 
 @RestControllerAdvice
@@ -34,6 +35,11 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(RoomTitleLinkAlreadyExistsException.class)
     public ResponseEntity<Map<String, Object>> handleLinkAlreadyExists (RoomTitleLinkAlreadyExistsException ex){
         return buildErrorResponse(ex.getMessage(), HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(TitleLinkSuggestionAiErrorException.class)
+    public ResponseEntity<Map<String, Object>> handleTitleLinkSuggestionAiError(TitleLinkSuggestionAiErrorException ex) {
+        return buildErrorResponse(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
     
     @ExceptionHandler(WheelPresetAlreadyExists.class)
@@ -61,6 +67,10 @@ public class GlobalExceptionHandler {
         return buildErrorResponse(ex.getMessage(), HttpStatus.CONFLICT);
     }
 
+     @ExceptionHandler(SelfRoomInviteException.class)
+    public ResponseEntity<Map<String, Object>> handleSelfRoomInvite(SelfRoomInviteException ex) {
+        return buildErrorResponse(ex.getMessage(), HttpStatus.CONFLICT);
+    }
     @ExceptionHandler(FriendshipConflictException.class)
     public ResponseEntity<Map<String, Object>> handleFriendshipConflict(FriendshipConflictException ex) {
         return buildErrorResponse(ex.getMessage(), HttpStatus.CONFLICT);

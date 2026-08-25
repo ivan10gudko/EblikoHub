@@ -9,7 +9,7 @@ import { CompactRate } from "~/shared/ui/CompactRate";
 import { TitleActionsMenu } from "../../TitleActionsMenu";
 import type { Rating } from "~/shared/types";
 import { useTitleFilterStore, type TitleSortType } from "~/features/titleFilter/store/titleFilter.store";
-
+import { DEFAULT_IMAGE_PATH } from "~/shared/constants";
 interface WatchlistRowProps {
   title: TitleRecord;
   dragHandleProps?: DraggableProvidedDragHandleProps | null;
@@ -34,7 +34,6 @@ export const WatchlistRow = ({ title, dragHandleProps, index, showNumber, onOpen
     if (title.apiTitleId) navigate(`/anime/${title.apiTitleId}`);
   };
 
-  const DEFAULT_IMAGE_PATH = "/defaultTitleRecordImage.jpg";
   const themeClasses = title.titleType ? TitleTypeThemes[title.titleType] : "";
 
   return (
@@ -96,7 +95,7 @@ export const WatchlistRow = ({ title, dragHandleProps, index, showNumber, onOpen
             value={tempTitleName}
             onChange={(e) => setTempTitleName(e.target.value)}
             onBlur={() => tempTitleName !== title.titleName && updateTitle({ titleName: tempTitleName })}
-            className="w-full font-bold text-foreground uppercase text-xs sm:text-sm bg-transparent border-none p-0 h-auto leading-tight focus:ring-0 cursor-text"
+            className="w-full font-bold text-foreground  sm:text-lg bg-transparent border-none p-0 h-auto leading-tight focus:ring-0 cursor-text"
           />
         </div>
       </div>
