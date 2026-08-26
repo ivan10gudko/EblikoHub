@@ -1,6 +1,6 @@
 
 import { apiClient } from "~/shared/api";
-import type { UserProfileWithFavorite } from "../model/profile.types";
+import type { UserProfileWithFavorite } from "../../profile/model/profile.types";
 import type { Title } from "~/entities/title/model/animeTitle.types";
 
 export const favoriteTitlesApi = {

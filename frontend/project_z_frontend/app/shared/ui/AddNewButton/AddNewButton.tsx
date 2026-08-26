@@ -1,6 +1,6 @@
 import AddIcon from "@mui/icons-material/Add";
 import { Button } from "~/shared/ui/Button";
-import { cn } from "~/shared/lib/utils"; // переконайся, що шлях до cn правильний
+import { cn } from "~/shared/lib/utils";
 
 interface AddTitleButtonProps {
   onClick: () => void;

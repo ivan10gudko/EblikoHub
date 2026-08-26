@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { favoriteTitlesApi } from "~/features/profile/api/favoriteTitlesApi";
+import { favoriteTitlesApi } from "~/features/manageFavoriteTitles/api/favoriteTitlesApi";
 
 export const useManageFavoriteTitles = (userId: string) => {
   const queryClient = useQueryClient();

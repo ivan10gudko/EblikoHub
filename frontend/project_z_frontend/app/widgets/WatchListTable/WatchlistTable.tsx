@@ -201,7 +201,7 @@ export const WatchlistTable = ({
     {viewTitle && (
       <ViewTitleModal
         isOpen={true}
-        title={viewTitle}
+        titleId={viewTitle.titleId}
         onClose={() => setViewTitle(null)}
         isOwn={isOwn}
         onEditClick={() => openRating(viewTitle)}

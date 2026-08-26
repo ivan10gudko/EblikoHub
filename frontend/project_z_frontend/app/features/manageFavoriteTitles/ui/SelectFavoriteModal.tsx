@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from "react";
-import { useManageFavoriteTitles } from "~/features/profile/hooks/useManageFavoriteTitles";
+import { useManageFavoriteTitles } from "~/features/manageFavoriteTitles/hooks/useManageFavoriteTitles";
 import { InfiniteScrollLoader } from "~/shared/ui/infinityScroll";
 import { useInfinityTitles } from "~/entities/titleRecord/hooks/useInfinityTitles";
 import { useReorderWatchlist, TitleTypeThemes } from "~/entities/titleRecord";

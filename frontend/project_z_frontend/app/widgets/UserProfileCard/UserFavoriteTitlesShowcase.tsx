@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import StarIcon from "@mui/icons-material/Star";
-import { useManageFavoriteTitles } from "~/features/profile/hooks/useManageFavoriteTitles";
+import { useManageFavoriteTitles } from "~/features/manageFavoriteTitles/hooks/useManageFavoriteTitles";
 import type { UserProfileWithFavorite } from "~/features/profile";
-import type { TitleRecord } from "~/entities/titleRecord";
 import { ViewTitleModal } from "~/entities/titleRecord/ui/ViewTitleModal";
 import { DEFAULT_IMAGE_PATH } from "~/shared/constants";
 import { AddNewButton } from "~/shared/ui/AddNewButton";
 import CloseIcon from "@mui/icons-material/Close";
+import type { TitleShort } from "~/entities/titleRecord";
 
 interface UserFavoriteTitlesShowcaseProps {
   profile: UserProfileWithFavorite;
@@ -22,7 +22,7 @@ export const UserFavoriteTitlesShowcase: React.FC<UserFavoriteTitlesShowcaseProp
   onAddClick,
 }) => {
   const { deleteFavorite } = useManageFavoriteTitles(profile.userId);
-  const [selectedTitle, setSelectedTitle] = useState<TitleRecord | null>(null);
+  const [selectedTitle, setSelectedTitle] = useState<TitleShort | null>(null);
 
   const favoriteTitles = profile.favoriteTitles || [];
 
@@ -107,7 +107,7 @@ export const UserFavoriteTitlesShowcase: React.FC<UserFavoriteTitlesShowcaseProp
 
       {!isOwner && (
         <ViewTitleModal
-          title={selectedTitle}
+          titleId={selectedTitle?.titleId ?? null}
           isOpen={Boolean(selectedTitle)}
           onClose={() => setSelectedTitle(null)}
           isOwn={false}

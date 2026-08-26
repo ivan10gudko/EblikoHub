@@ -115,7 +115,7 @@ export const TitleActionsMenu = ({
       )}
       {isViewOpen && (
         <ViewTitleModal
-          title={title}
+          titleId={title.titleId}
           isOpen={isViewOpen}
           onClose={handleCloseView}
           isOwn={isOwn}

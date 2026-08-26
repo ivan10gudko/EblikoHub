@@ -5,8 +5,8 @@ import PhotoCameraIcon from "@mui/icons-material/PhotoCamera";
 import { getCroppedImg } from "~/shared/helpers";
 import { ImageCropper } from "~/shared/ui/ImageCropper/ImageCropper";
 import { UserFavoriteTitlesShowcase } from "./UserFavoriteTitlesShowcase";
-import { SelectFavoriteModal } from "~/features/profile/ui/SelectFavoriteModal";
 import type { UserProfileWithFavorite } from "~/features/profile";
+import { SelectFavoriteModal } from "~/features/manageFavoriteTitles";
 
 interface UserProfileEditProps {
   user: UserProfileWithFavorite;
