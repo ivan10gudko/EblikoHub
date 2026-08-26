@@ -27,18 +27,17 @@ export const useUserProfile = (userId: string) => {
     invalidateKey: profileQueryKey
   });
 
-
-
-  const rawStatus = user.friendshipStatus;
+  const rawStatus = user?.friendshipStatus;
   const friendshipStatus = rawStatus ? String(rawStatus).toUpperCase() : null;
 
   return {
     user,
+    favoriteTitles: user?.favoriteTitles || [], 
     isOwn,
     isEditing,
     setIsEditing,
     friendshipStatus,
-    friendshipId: user.friendshipId ?? null,
+    friendshipId: user?.friendshipId ?? null,
     onAction,
     isActionLoading,
     updateProfile,

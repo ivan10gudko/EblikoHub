@@ -1,14 +1,13 @@
 import { useQueryClient, type QueryKey } from "@tanstack/react-query";
+import axios from "axios";
 import { useState } from "react";
-import {
-  friendshipService,
-  type WithFriendship
-} from "~/entities/friendship";
-import type { UserProfile } from "~/entities/user/model/user.types";
+import { type WithFriendship } from "~/entities/friendship";
 import { useFriends } from "~/features/manageFriends/hooks/useFriends";
 import type { FriendActionType } from "~/features/manageFriends/types/friends.types";
+import type { UserProfileWithFavorite } from "~/features/profile";
 import { notify } from "~/shared/lib";
 import { RequestStatus } from "~/shared/types";
+import { getErrorMessage } from "~/shared/utils";
 
 interface UseFriendActionProps {
   userId: string;
@@ -29,7 +28,7 @@ export const useFriendAction = ({
     if (isActionLoading) return;
     setIsActionLoading(true);
 
-    queryClient.setQueryData<WithFriendship<UserProfile> | undefined>(
+    queryClient.setQueryData<WithFriendship<UserProfileWithFavorite> | undefined>(
       profileQueryKey,
       (oldData) => {
         if (!oldData) return oldData;
@@ -50,22 +49,17 @@ export const useFriendAction = ({
     try {
       if (action === "send") {
         await handleFriendAction("send", userId);
-
-        const updatedUser = await friendshipService.getUserWithFriendshipStatus<UserProfile>(userId);
-        if (updatedUser) {
-          queryClient.setQueryData(profileQueryKey, updatedUser);
-        }
       } else {
         await handleFriendAction(action, targetId);
-        await queryClient.invalidateQueries({ queryKey: profileQueryKey });
       }
-    } catch (error: unknown) {
-      const err = error as { response?: { status?: number }; status?: number };
-      const status = err?.response?.status || err?.status;
 
-      if (status === 409) {
+      await queryClient.invalidateQueries({ queryKey: profileQueryKey });
+    } catch (error: unknown) {
+      const isConflict = axios.isAxiosError(error) && error.response?.status === 409;
+
+      if (isConflict) {
         notify.info("Friend request is already pending");
-        queryClient.setQueryData<WithFriendship<UserProfile> | undefined>(
+        queryClient.setQueryData<WithFriendship<UserProfileWithFavorite> | undefined>(
           profileQueryKey,
           (oldData) =>
             oldData
@@ -73,7 +67,8 @@ export const useFriendAction = ({
               : oldData
         );
       } else {
-        notify.error("Action failed");
+        const errorMessage = getErrorMessage(error, "Action failed");
+        notify.error(errorMessage);
         await queryClient.invalidateQueries({ queryKey: profileQueryKey });
       }
     } finally {

@@ -18,6 +18,8 @@ import project_z.demo.dto.WheelCurrentSettingsTitleDtos.WheelCurrentSettingsTitl
 import project_z.demo.security.SecurityService;
 import project_z.demo.services.WheelServices.WheelCurrentSettingsTitleService;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/v1/wheel/settings/titles")
 @RequiredArgsConstructor

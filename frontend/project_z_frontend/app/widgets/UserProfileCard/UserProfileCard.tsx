@@ -4,6 +4,7 @@ import { UserAvatar } from "~/entities/user";
 import { RequestStatus } from "~/shared/types";
 import { Button } from "~/shared/ui/Button";
 import { UserProfileEdit } from "./UserProfileEditCard";
+import { UserFavoriteTitlesShowcase } from "./UserFavoriteTitlesShowcase";
 import { useUserProfile } from "~/widgets/UserProfileCard/hooks/useUserProfile";
 
 interface UserProfileCardProps {
@@ -34,7 +35,7 @@ export const UserProfileCard = ({ userId }: UserProfileCardProps) => {
         <>
           <div className="flex flex-col sm:flex-row items-center gap-6">
             <UserAvatar
-              src={user.img ?? undefined}
+              src={user.img || undefined}
               name={user.name}
               size="lg"
             />
@@ -107,6 +108,13 @@ export const UserProfileCard = ({ userId }: UserProfileCardProps) => {
             {user.description ||
               "No description provided yet. Let people know who you are!"}
           </p>
+
+          <div className="h-[1px] bg-background-muted w-full my-2" />
+
+          <UserFavoriteTitlesShowcase
+            profile={user}
+            isOwner={false}
+          />
         </>
       ) : (
         <UserProfileEdit
@@ -116,7 +124,7 @@ export const UserProfileCard = ({ userId }: UserProfileCardProps) => {
               { profileData: data, avatarFile: file },
               {
                 onSuccess: () => setIsEditing(false),
-              },
+              }
             )
           }
           onCancel={() => setIsEditing(false)}

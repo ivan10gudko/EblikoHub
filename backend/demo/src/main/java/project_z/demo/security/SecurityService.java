@@ -13,10 +13,9 @@ import project_z.demo.repositories.FriendshipRepository;
 import project_z.demo.repositories.RoomMemberRepository;
 import project_z.demo.repositories.RoomRepository;
 import project_z.demo.repositories.RoomRequestRepository;
-import project_z.demo.repositories.RoomTitleEntityRepository;
-import project_z.demo.repositories.RoomTitleLinkRepository;
 import project_z.demo.repositories.SeasonRepository;
 import project_z.demo.repositories.TitleRepository;
+import project_z.demo.repositories.UserFavoriteTitleRepository;
 import project_z.demo.repositories.wheelRepositories.WheelPresetRepository;
 
 @Service
@@ -30,6 +29,7 @@ public class SecurityService {
     private final FriendshipRepository friendshipRepository;
     private final RoomMemberRepository roomMemberRepository;
     private final WheelPresetRepository wheelPresetRepository;
+    private final UserFavoriteTitleRepository userFavoriteTitleRepository;
 
     public UUID getCurrentUserId() {
         var auth = SecurityContextHolder.getContext().getAuthentication();
@@ -148,6 +148,13 @@ public class SecurityService {
                     return friendship.getSender().getUserId().equals(currentUserId)
                             || friendship.getReceiver().getUserId().equals(currentUserId);
                 })
+                .orElse(false);
+    }
+
+    public boolean isFavoriteOwner(UUID favoriteId) {
+        UUID currentUserId = getCurrentUserId();
+        return userFavoriteTitleRepository.findById(favoriteId)
+                .map(favorite -> favorite.getUser().getUserId().equals(currentUserId))
                 .orElse(false);
     }
 }

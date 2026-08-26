@@ -65,4 +65,7 @@ public interface UserRepository extends CrudRepository<UserEntity, UUID> {
                         @Param("roomId") Long roomId,
                         @Param("currentUserId") UUID currentUserId,
                         Pageable pageable);
+
+        @Query("SELECT u FROM UserEntity u LEFT JOIN FETCH u.favoriteTitles f LEFT JOIN FETCH f.title WHERE u.userId = :userId")
+        Optional<UserEntity> findByIdWithFavorites(@Param("userId") UUID userId);
 }

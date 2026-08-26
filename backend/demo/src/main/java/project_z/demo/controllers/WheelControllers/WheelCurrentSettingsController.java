@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import project_z.demo.dto.WheelCurrentSettingsDtos.WheelCurrentSettingsCreateDto;
 import project_z.demo.dto.WheelCurrentSettingsDtos.WheelCurrentSettingsDetailsDto;
 import project_z.demo.dto.WheelCurrentSettingsDtos.WheelCurrentSettingsPatchDto;
+import project_z.demo.dto.WheelPresetDtos.WheelPresetLoadDto;
 import project_z.demo.security.SecurityService;
 import project_z.demo.services.WheelServices.WheelCurrentSettingsService;
 
@@ -44,5 +45,12 @@ public class WheelCurrentSettingsController {
             @RequestBody WheelCurrentSettingsPatchDto patchDto) {
         UUID userId = securityService.getCurrentUserId();
         return ResponseEntity.ok(settingsService.partialUpdate(userId, patchDto));
+    }
+
+    @PostMapping("/load-preset")
+    public ResponseEntity<WheelCurrentSettingsDetailsDto> loadPreset(
+            @RequestBody WheelPresetLoadDto dto) {
+        UUID userId = securityService.getCurrentUserId();
+        return ResponseEntity.ok(settingsService.loadPreset(userId, dto.presetId()));
     }
 }

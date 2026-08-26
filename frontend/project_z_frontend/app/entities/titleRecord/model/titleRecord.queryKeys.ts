@@ -6,8 +6,11 @@ export const titleRecordKeys = {
         [...titleRecordKeys.all, userId, params],
     noLinksList: (userId: string | null, roomId: number, params: TitleParams) =>
         [...titleRecordKeys.all, 'noLinks', userId, roomId, params],
+    detail: (titleId?: number) =>
+        [...titleRecordKeys.all, 'id', titleId] as const,
 };
 
 export type TitlesQueryKey =
     | ReturnType<typeof titleRecordKeys.list>
-    | ReturnType<typeof titleRecordKeys.noLinksList>;
+    | ReturnType<typeof titleRecordKeys.noLinksList>
+    | ReturnType<typeof titleRecordKeys.detail>;

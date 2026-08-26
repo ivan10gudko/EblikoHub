@@ -1,9 +1,15 @@
-// entities/user/api/userService.ts
 
 import { apiClient, publicClient } from "~/shared/api";
-import type { BadgeUser, CreateUserProfile, UpdateUserProfile, UserParams, UserProfile } from "../model/user.types";
+import type { 
+  BadgeUser, 
+  CreateUserProfile, 
+  UpdateUserProfile, 
+  UserParams, 
+  UserProfile,
+} from "../model/user.types";
 import { generateFallbackName } from "../lib/generateFallbackName";
 import type { PageResponse } from "~/shared/types";
+import type { WithFriendship } from "~/entities/friendship";
 
 export const userService = {
     createUser: async (userData: CreateUserProfile): Promise<UserProfile> => {
@@ -15,6 +21,8 @@ export const userService = {
         const response = await apiClient.get<UserProfile>(`/users/${supabaseId}`);
         return response.data;
     },
+
+
 
     createFallbackUser: async (userId: string): Promise<UserProfile> => {
         const altUserName = generateFallbackName();
@@ -32,7 +40,7 @@ export const userService = {
     },
 
     updateUser: async (userId: string, userData: UpdateUserProfile): Promise<UpdateUserProfile> => {
-        return (await apiClient.put<UserProfile>(`users/${userId}`, userData)).data;
+        return (await apiClient.put<UserProfile>(`/users/${userId}`, userData)).data;
     },
 
     uploadAvatar: async (userId: string, avatarFile: File): Promise<void> => {

@@ -20,7 +20,7 @@ export const WatchListPage = ({ userId }: { userId: string | null }) => {
     setStatusFromUrl,
     setOrderFromUrl,
     setTypesFromUrl
-    
+
   } = useTitleFilterStore();
 
   const filters = { search, sortBy, order, status, types };
@@ -34,25 +34,22 @@ export const WatchListPage = ({ userId }: { userId: string | null }) => {
   });
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading, queryKey } = useTitlesQuery(userId);
-  
-  
+
+
   const { data: stats } = useTitleStats(userId);
 
   const allTitles = useMemo(() => {
-    const flat = data?.pages.flatMap(page => page.content) || [];
-    return flat.filter(
-      (t, i, arr) => arr.findIndex(x => x.titleId === t.titleId) === i
-    );
+    return data?.pages.flatMap(page => page.content) || [];
   }, [data]);
-  
+
   return (
     <div className="flex flex-col lg:flex-row gap-6 p-4 sm:p-8 max-w-[1400px] mx-auto min-h-screen bg-background-muted/30">
 
       <FilterResponsiveWrapper pageTitle="Watchlist filters">
-        
-        <TitleFilters 
-          statusCount={stats?.statusCount} 
-          typeCount={stats?.typeCount} 
+
+        <TitleFilters
+          statusCount={stats?.statusCount}
+          typeCount={stats?.typeCount}
         />
       </FilterResponsiveWrapper>
 

@@ -2,7 +2,6 @@ package project_z.demo.services.impl;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import org.modelmapper.ModelMapper;
@@ -18,20 +17,22 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
+import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import project_z.demo.JavaUtil.BeanUtilsHelper;
 import project_z.demo.JavaUtil.PagingHelper;
 import project_z.demo.Mappers.Mapper;
-import project_z.demo.Mappers.impl.UserMapperImpl;
 import project_z.demo.Mappers.impl.ObjectMappers.UserWithRoomRelationsMapper;
 import project_z.demo.common.Exceptions.ResourceNotFoundException;
 import project_z.demo.common.QueryParameters.UserQueryParameters;
 import project_z.demo.config.MyConfig;
 import project_z.demo.dto.UserDtos.UserDto;
+import project_z.demo.dto.UserDtos.UserProfileDto;
 import project_z.demo.dto.UserDtos.UserWithRelationsToRoomDto;
-import project_z.demo.entity.RoomEntity;
 import project_z.demo.entity.RoomMemberEntity;
 import project_z.demo.entity.UserEntity;
+import project_z.demo.enums.RequestStatus;
+import project_z.demo.repositories.FriendshipRepository;
 import project_z.demo.repositories.RoomMemberRepository;
 import project_z.demo.repositories.RoomRepository;
 import project_z.demo.repositories.TitleRepository;
@@ -47,6 +48,8 @@ public class UserServiceImpl implements UserService {
 
     private final ModelMapper modelMapper;
     private final RoomMemberRepository roomMemberRepository;
+    private final FriendshipRepository friendshipRepository;
+    private final Mapper<UserEntity, UserProfileDto> userProfileMapper;
     private final TitleRepository titleRepository;
     private final UserWithRoomRelationsMapper userWithRoomRelationsMapper;
     private final BeanUtilsHelper beanUtilsHelper;
@@ -154,5 +157,33 @@ public class UserServiceImpl implements UserService {
     public Page<UserEntity> findByName(String name, UserQueryParameters userQueryParameters, UUID currentUserId) {
         Pageable pageable = PagingHelper.toPageable(userQueryParameters);
         return userRepository.findByNameContainingIgnoreCaseAndNotSelf(name, currentUserId, pageable);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public UserProfileDto getUserProfile(UUID userId, UUID currentUserId) {
+        UserEntity userEntity = userRepository.findByIdWithFavorites(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        UserProfileDto userProfile = userProfileMapper.mapTo(userEntity);
+
+
+        if (currentUserId != null && !currentUserId.equals(userId)) {
+            friendshipRepository.findFriendshipBetween(userId, currentUserId)
+                    .ifPresentOrElse(
+                            friendship -> {
+                                userProfile.setFriendshipStatus(friendship.getStatus());
+                                userProfile.setFriendshipId(friendship.getFriendshipId());
+                            },
+                            () -> {
+                                userProfile.setFriendshipStatus(RequestStatus.NONE);
+                                userProfile.setFriendshipId(null);
+                            });
+        } else {
+            userProfile.setFriendshipStatus(RequestStatus.NONE);
+            userProfile.setFriendshipId(null);
+        }
+
+        return userProfile;
     }
 }

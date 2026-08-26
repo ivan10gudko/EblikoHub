@@ -6,7 +6,6 @@ import java.util.UUID;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -14,7 +13,6 @@ import org.springframework.stereotype.Repository;
 
 import project_z.demo.dto.UserDtos.UserDtoWithFriendshipStatus;
 import project_z.demo.entity.FriendshipEntity;
-import project_z.demo.entity.UserEntity;
 import project_z.demo.enums.RequestStatus;
 
 @Repository
@@ -71,23 +69,32 @@ public interface FriendshipRepository extends JpaRepository<FriendshipEntity, UU
     Page<Object[]> findUsersWithStatus(@Param("name") String name, @Param("currentUserId") UUID currentUserId,
             Pageable pageable);
 
-    @Query("""
-                SELECT new project_z.demo.dto.UserDtos.UserDtoWithFriendshipStatus(
-                    u.userId,
-                    u.name,
-                    u.nameTag,
-                    u.img,
-                    COALESCE(f.status, project_z.demo.enums.RequestStatus.NONE),
-                    f.friendshipId
-                )
-                FROM UserEntity u
-                LEFT JOIN FriendshipEntity f ON (
-                    (f.sender.userId = :currentUserId AND f.receiver.userId = u.userId)
-                    OR (f.receiver.userId = :currentUserId AND f.sender.userId = u.userId)
-                )
-                WHERE u.userId = :userId
-            """)
-    Optional<UserDtoWithFriendshipStatus> findUserWithFriendshipStatusToCurrentUser(
-            @Param("userId") UUID userId,
-            @Param("currentUserId") UUID currentUserId);
+        @Query("""
+                            SELECT new project_z.demo.dto.UserDtos.UserDtoWithFriendshipStatus(
+                                u.userId,
+                                u.name,
+                                u.nameTag,
+                                u.img,
+                                COALESCE(f.status, project_z.demo.enums.RequestStatus.NONE),
+                                f.friendshipId
+                            )
+                            FROM UserEntity u
+                            LEFT JOIN FriendshipEntity f ON (
+                                (f.sender.userId = :currentUserId AND f.receiver.userId = u.userId)
+                                OR (f.receiver.userId = :currentUserId AND f.sender.userId = u.userId)
+                            )
+                            WHERE u.userId = :userId
+                        """)
+        Optional<UserDtoWithFriendshipStatus> findUserWithFriendshipStatusToCurrentUser(
+                        @Param("userId") UUID userId,
+                        @Param("currentUserId") UUID currentUserId);
+
+        @Query("""
+                            SELECT f FROM FriendshipEntity f WHERE
+                            (f.sender.userId = :currentUserId AND f.receiver.userId = :userId)
+                            OR (f.receiver.userId = :currentUserId AND f.sender.userId = :userId)
+                        """)
+        Optional<FriendshipEntity> findFriendshipBetween(
+                        @Param("userId") UUID userId,
+                        @Param("currentUserId") UUID currentUserId);
 }

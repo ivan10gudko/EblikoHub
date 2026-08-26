@@ -11,7 +11,8 @@ type ButtonVariants =
   | "resetFilters"
   | "accept"
   | "altCancel"
-  | "secondaryCard";
+  | "secondaryCard"
+  | "close";
 
 interface ButtonProps extends ComponentProps<"button"> {
   variant?: ButtonVariants;
@@ -50,6 +51,9 @@ const variantStyles: Record<ButtonVariants, string> = {
 
   // Secondary card-style button for full-width navigation and action cards (e.g., Rooms page)
   secondaryCard: "w-full h-11 gap-2 bg-card hover:bg-background-muted border border-border hover:border-primary text-foreground hover:text-primary font-bold text-sm tracking-wide shadow-md hover:shadow-orange-glow transition-all duration-200 active:scale-[0.97] cursor-pointer",
+
+  // Compact close button for modals & popups
+  close: "p-1.5 rounded-lg text-foreground-muted hover:text-foreground hover:bg-background-muted bg-transparent transition-colors",
 };
 
 const Button = ({
@@ -71,3 +75,4 @@ const Button = ({
 };
 
 export default Button;
+export { Button };
