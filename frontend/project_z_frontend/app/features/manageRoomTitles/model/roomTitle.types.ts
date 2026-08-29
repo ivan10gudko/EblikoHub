@@ -75,8 +75,7 @@ export interface RoomTitleUserIdAndTitleStatus {
     status: Status;
 }
 
-export interface RoomTitlesResponse {
-    content: PageResponse<RoomTitleSummary>;
+export interface RoomTitlesResponse extends PageResponse<RoomTitleSummary> {
     usersCache: Record<string, UserShort>;
 }
 
