@@ -5,15 +5,13 @@ import { UserSearchDropdown } from '~/entities/user/ui/UserSearchDropdownResults
 import SearchBar from '~/shared/ui/SearchBar';
 import { useDebounce } from '~/shared/hooks';
 import { 
-    RoomBanDetailsModal, 
     useInfiniteRoomBanSearch,
-    useRoomBans, 
-    type RoomBanDetailsDto 
+    useRoomBans,
 } from '~/features/manageRoomBans';
 import { useCreateRoomBan } from '~/features/manageRoomBans/hooks/useCreateRoomBan';
 import { useDeleteRoomBan } from '~/features/manageRoomBans/hooks/useDeleteRoomBan';
 import type { UserShort } from '~/entities/user/model/user.types';
-
+import { useNavigate } from 'react-router';
 
 interface RoomBansTabProps {
     roomId: number;
@@ -25,8 +23,7 @@ export const RoomBansTab = ({ roomId }: RoomBansTabProps) => {
     const [selectedUserData, setSelectedUserData] = useState<UserShort | null>(null);
     const [reason, setReason] = useState('');
     const [showDropdown, setShowDropdown] = useState(false);
-
-    const [selectedBan, setSelectedBan] = useState<RoomBanDetailsDto | null>(null);
+    const navigate = useNavigate();
 
     const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -237,20 +234,12 @@ export const RoomBansTab = ({ roomId }: RoomBansTabProps) => {
                                 key={ban.id}
                                 banDetails={ban}
                                 onUnban={unbanUser}
-                                onClick={() => setSelectedBan(ban)}
+                                onClick={() => navigate(`bans/${ban.id}`)}
                             />
                         ))}
                     </div>
                 )}
             </div>
-
-            <RoomBanDetailsModal
-                isOpen={!!selectedBan}
-                onClose={() => setSelectedBan(null)}
-                banDetails={selectedBan}
-                onUnban={unbanUser}
-                isUnbanning={isUnbanning}
-            />
         </div>
     );
 };

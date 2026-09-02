@@ -1,18 +1,16 @@
 import { useState } from "react";
-import Modal from "~/shared/ui/Modal/Modal";
 import type { AnimeCardType } from "~/entities/title";
 import { notify } from "~/shared/lib";
 import { TitleSearch } from "../../../../widgets/TitleModal/components/titleSearch";
 import { useRoomTitleActions } from "~/features/manageRoomTitles";
 import { RoomTitleForm, type RoomTitleFormData } from "./RoomTitleForm";
 
-interface AddRoomTitleModalProps {
-  isOpen: boolean;
+interface AddRoomTitleScreenProps {
   onClose: () => void;
   roomId: number;
 }
 
-export const AddRoomTitleModal = ({ isOpen, onClose, roomId }: AddRoomTitleModalProps) => {
+export const AddRoomTitleScreen = ({ onClose, roomId }: AddRoomTitleScreenProps) => {
   const { addTitle, isPending } = useRoomTitleActions(roomId);
   const [importedData, setImportedData] = useState<Partial<RoomTitleFormData> | undefined>();
 
@@ -43,22 +41,20 @@ export const AddRoomTitleModal = ({ isOpen, onClose, roomId }: AddRoomTitleModal
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={handleClose} title="Add New Room Title" maxWidth="max-w-2xl">
-      <RoomTitleForm
-        initialValues={importedData}
-        onSubmit={handleSubmit}
-        onCancel={handleClose}
-        isPending={isPending}
-        submitText="Save Title"
-        searchSlot={
-          <div className="space-y-2">
-            <label className="text-xs font-bold tracking-widest text-foreground ml-1 leading-tight uppercase">
-              Quick Import via MAL
-            </label>
-            <TitleSearch onSelect={handleImport} />
-          </div>
-        }
-      />
-    </Modal>
+    <RoomTitleForm
+      initialValues={importedData}
+      onSubmit={handleSubmit}
+      onCancel={handleClose}
+      isPending={isPending}
+      submitText="Save Title"
+      searchSlot={
+        <div className="space-y-2">
+          <label className="text-xs font-bold tracking-widest text-foreground ml-1 leading-tight uppercase">
+            Quick Import via MAL
+          </label>
+          <TitleSearch onSelect={handleImport} />
+        </div>
+      }
+    />
   );
 };

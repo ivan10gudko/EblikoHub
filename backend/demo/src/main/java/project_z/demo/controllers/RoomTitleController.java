@@ -1,28 +1,32 @@
 package project_z.demo.controllers;
 
-import lombok.RequiredArgsConstructor;
+import java.util.List;
+import java.util.UUID;
 
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import io.swagger.v3.oas.models.parameters.QueryParameter;
+import lombok.RequiredArgsConstructor;
 import project_z.demo.common.QueryParameters.QueryParameters;
 import project_z.demo.common.QueryParameters.RoomTitlesQueryParameters.RoomTitlesQueryParameters;
 import project_z.demo.common.QueryParameters.RoomTitlesQueryParameters.RoomTitlesWithSearchQueryParameters;
 import project_z.demo.dto.RoomTitleDtos.RoomTitleCreateDto;
 import project_z.demo.dto.RoomTitleDtos.RoomTitleDetailsDto;
-import project_z.demo.dto.RoomTitleDtos.RoomTitleSummaryDto;
 import project_z.demo.dto.RoomTitleDtos.RoomTitleUpdateDto;
 import project_z.demo.dto.RoomTitleDtos.RoomTitleWithUserLinksDto;
 import project_z.demo.dto.RoomTitleDtos.RoomTitlesResponseDto;
 import project_z.demo.security.SecurityService;
 import project_z.demo.services.RoomTitleService;
-
-import java.util.List;
-import java.util.UUID;
 
 
 @RestController
@@ -80,7 +84,7 @@ public class RoomTitleController {
     }
     
     @PutMapping("/{titleId}")
-    @PreAuthorize("@securityService.isAdminOrOwner(#roomId)")
+    @PreAuthorize("@securityService.isAdminOrOwner(#roomId) || @securityService.isRoomTitleOwner(#titleId)")
     public ResponseEntity<RoomTitleDetailsDto> update(
             @PathVariable Long roomId,
             @PathVariable UUID titleId,

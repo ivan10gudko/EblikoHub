@@ -30,18 +30,6 @@ export const useTitleRecordMutation = (apiTitleId: number | undefined, initialDa
 
     const getCache = () => queryClient.getQueryData<TitleRecord>(queryKey) || existingTitleRecord;
 
-    const rateMutation = useMutation({
-        mutationFn: (score: number | Rating) =>
-            titleRecordService.rate({ apiTitleId, score, initialData, existingTitle: getCache() }),
-        ...mutationConfig
-    });
-
-    const clearRateMutation = useMutation({
-        mutationFn: () =>
-            titleRecordService.clearRating({ apiTitleId, initialData, existingTitle: getCache() }),
-        ...mutationConfig
-    });
-
     const statusMutation = useMutation({
         mutationFn: (status: Status) => {
             const data = { status };
@@ -72,16 +60,12 @@ export const useTitleRecordMutation = (apiTitleId: number | undefined, initialDa
 
     return {
         updateStatus: (status: Status) => checkAuthAndRun(() => statusMutation.mutate(status)),
-        rate: (score: number | Rating) => checkAuthAndRun(() => rateMutation.mutate(score)),
-        clearRate: () => checkAuthAndRun(() => clearRateMutation.mutate()),
         deleteTitle: (titleId: number) => checkAuthAndRun(() => deleteMutation.mutate(titleId)),
         moveToPlanned: () => checkAuthAndRun(() => statusMutation.mutate(Status.PLANNED)),
         markAsWatched: () => checkAuthAndRun(() => statusMutation.mutate(Status.WATCHED)),
 
         statusLoading: statusMutation.isPending,
-        rateLoading: rateMutation.isPending,
-        clearRateLoading: clearRateMutation.isPending,
         deleteLoading: deleteMutation.isPending,
-        isAnyActionLoading: statusMutation.isPending || rateMutation.isPending || deleteMutation.isPending
+        isAnyActionLoading: statusMutation.isPending || deleteMutation.isPending
     };
 };

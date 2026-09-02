@@ -3,7 +3,7 @@ import { MoreVert, Link as LinkIcon, Edit } from "@mui/icons-material";
 import { Dropdown } from "~/shared/ui/DropDown";
 import { DropdownItem, DeleteDropdownItem } from "~/shared/ui/DropDown/DropDown";
 import type { RoomTitleDetails } from "~/features/manageRoomTitles/model/roomTitle.types";
-import { useRoomModal } from "~/features/manageRoomSettings/hooks/useRoomModal";
+import { useNavigate } from "react-router";
 
 interface RoomTitleActionMenuProps {
   item: RoomTitleDetails;
@@ -16,7 +16,7 @@ export const RoomTitleActionMenu = ({
   onDelete,
   canManage
 }: RoomTitleActionMenuProps) => {
-  const { openSettingsModal } = useRoomModal();
+  const navigate = useNavigate();
   const itemId = item.id;
   return (
     <>
@@ -28,13 +28,13 @@ export const RoomTitleActionMenu = ({
           </div>
         }
       >
-        <DropdownItem onClick={() => openSettingsModal('all-links', itemId)} icon={<LinkIcon sx={{ fontSize: 16 }} />}>
+        <DropdownItem onClick={() => navigate(`links/${itemId}`)} icon={<LinkIcon sx={{ fontSize: 16 }} />}>
           View Links
         </DropdownItem>
 
       {canManage && (
         <>
-          <DropdownItem onClick={() => openSettingsModal('edit-title', itemId)} icon={<Edit sx={{ fontSize: 16 }} />}>
+          <DropdownItem onClick={() => navigate(`edit/${itemId}`)} icon={<Edit sx={{ fontSize: 16 }} />}>
             Edit
           </DropdownItem>
           <div className="h-px bg-border my-1" />

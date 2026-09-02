@@ -6,4 +6,3 @@ export * from './hooks/useRoomModal';
 export * from './helpers/validateRoomStep';
 export * from './ui/AddRoomCardButton';
 export * from './ui/Modals/AddRoomModal';
-export * from './ui/Modals/GlobalRoomManager';

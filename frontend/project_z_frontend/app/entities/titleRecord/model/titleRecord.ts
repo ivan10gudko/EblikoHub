@@ -63,21 +63,13 @@ export interface TitleParams extends QueryParams {
     types?: TitleType[];
 }
 
-export interface TitleRatingComparasionDto {
-    titleId: number;
-    titleName: string;
-    ratingValue: number;
-}
+
 
 export interface CreateTitleRecord extends Omit<TitleRecord, 'titleId' | 'createdAt' | 'customOrder'> { }
 
 export interface ManageTitleRecordProps {
     initialData: CreateTitleRecord;
     titleRecord: TitleRecord | null;
-}
-export interface SameCriteriaRating{
-    titles : Array<TitleRatingComparasionDto>;
-    avgRating : number;
 }
 
 export interface TitleShort{

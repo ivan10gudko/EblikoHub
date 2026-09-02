@@ -1,4 +1,3 @@
-import Modal from "~/shared/ui/Modal/Modal";
 import { Button } from "~/shared/ui/Button";
 import { Input } from "~/shared/ui/Input";
 import { useEffect, useState } from "react";
@@ -10,21 +9,17 @@ import { Status } from "~/shared/types/Status";
 import { CompactRate } from "~/shared/ui/CompactRate";
 import { notify } from "~/shared/lib/notify";
 import type { Rating } from "~/shared/types";
-import { ImageUrlEditor } from "~/shared/ui/ImageUrlEditor";
 import TitleTypeSelect from "~/entities/titleRecord/ui/TitleTypeSelect";
 import { ImageUrlField } from "~/shared/ui/imageUrlField";
+import { useNavigate } from "react-router";
+import CloseIcon from "@mui/icons-material/Close";
 
-interface EditTitleModalProps {
+interface EditTitleScreenProps {
   title: TitleRecord;
-  isOpen: boolean;
-  onClose: () => void;
 }
 
-export const EditTitleModal = ({
-  title,
-  isOpen,
-  onClose,
-}: EditTitleModalProps) => {
+export const EditTitleScreen = ({ title }: EditTitleScreenProps) => {
+  const navigate = useNavigate();
   const [titleName, setTitleName] = useState(title.titleName);
   const [imageUrl, setImageUrl] = useState<string | null>(
     title.imageUrl ?? null,
@@ -41,17 +36,19 @@ export const EditTitleModal = ({
   const { updateTitle, isUpdating } = useUpdateTitleRecord(title.titleId);
 
   useEffect(() => {
-    if (isOpen) {
-      setTitleName(title.titleName);
-      setImageUrl(title.imageUrl ?? null);
-      setStatus(title.status);
-      setRating(title.rating?.overall);
-      setTitleType(title.titleType ?? TitleType.ANIME);
-      setDescription(title.description ?? "");
-    }
-  }, [isOpen]);
+    setTitleName(title.titleName);
+    setImageUrl(title.imageUrl ?? null);
+    setStatus(title.status);
+    setRating(title.rating?.overall);
+    setTitleType(title.titleType ?? TitleType.ANIME);
+    setDescription(title.description ?? "");
+  }, [title]);
 
-  const handleSave = (shouldCloseAfter = true) => {
+  const handleClose = () => {
+    navigate(-1);
+  };
+
+  const handleSave = () => {
     if (!titleName.trim()) {
       notify.error("Title name cannot be empty");
       return;
@@ -65,7 +62,7 @@ export const EditTitleModal = ({
       description !== (title.description ?? "");
 
     if (!hasChanges) {
-      if (shouldCloseAfter) onClose();
+      handleClose();
       return;
     }
 
@@ -90,7 +87,7 @@ export const EditTitleModal = ({
       {
         onSuccess: () => {
           notify.success("Changes saved successfully");
-          if (shouldCloseAfter) onClose();
+          handleClose();
         },
         onError: () => {
           notify.error("Failed to save changes");
@@ -100,46 +97,40 @@ export const EditTitleModal = ({
   };
 
   return (
-    <Modal
-      isOpen={isOpen}
-      onClose={() => handleSave(true)}
-      title={`Edit "${title.titleName}"`}
-      maxWidth="max-w-2xl"
-    >
+    <div className="flex flex-col gap-4 w-full">
       <ImageUrlField imageUrl={imageUrl} onImageChange={setImageUrl}>
-        <div className="flex flex-col max-h-[70vh] h-full justify-between p-2">
-          <div className="overflow-y-auto flex-1 pr-2 pb-6 space-y-6 custom-scrollbar min-h-0">
-            <div className="flex flex-col sm:flex-row gap-6 items-center sm:items-start text-center sm:text-left">
-              <ImageUrlField.Preview containerClassName="w-42 h-58" />
+        <div className="flex flex-col gap-5">
+          <div className="overflow-y-auto flex-1 space-y-4 pr-1 custom-scrollbar min-h-0">
+            <div className="flex flex-col sm:flex-row gap-5 items-center sm:items-start text-center sm:text-left">
+              <ImageUrlField.Preview containerClassName="w-38 h-54 sm:w-40 sm:h-56 shrink-0 rounded-xl overflow-hidden shadow-md border border-border/60" />
 
-              <div className="flex-1 space-y-4 w-full text-left">
+              <div className="flex-1 space-y-3.5 w-full text-left">
                 <div>
-                  <label className="text-xs font-bold tracking-widest text-muted-foreground uppercase opacity-60 block mb-1">
+                  <label className="text-xs font-bold tracking-widest text-muted-foreground uppercase opacity-70 block mb-1">
                     Title Name
                   </label>
                   <Input
-                    
                     value={titleName}
                     onChange={(val) => setTitleName(val)}
                     placeholder="Enter custom name..."
-                    className="h-12 border-2 p-3 border-border focus:border-primary rounded-xl font-bold w-full"
+                    className="h-11 border-2 p-3 border-border focus:border-primary rounded-xl font-bold w-full text-sm"
                   />
                 </div>
 
-                <div className="grid grid-cols-2 gap-4 pt-2">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
-                    <label className="text-xs font-bold tracking-widest text-muted-foreground uppercase opacity-60 block mb-1">
+                    <label className="text-xs font-bold tracking-widest text-muted-foreground uppercase opacity-70 block mb-1">
                       Type
                     </label>
                     <TitleTypeSelect
                       value={titleType}
                       onChange={(val: string) => setTitleType(val as TitleType)}
-                      className="h-12 border-2 border-border/60 rounded-xl font-bold text-foreground text-sm shadow-sm w-full"
+                      className="h-11 border-2 border-border/60 rounded-xl font-bold text-foreground text-sm shadow-sm w-full"
                     />
                   </div>
 
                   <div>
-                    <label className="text-xs font-bold tracking-widest text-muted-foreground uppercase opacity-60 block mb-1">
+                    <label className="text-xs font-bold tracking-widest text-muted-foreground uppercase opacity-70 block mb-1">
                       Status
                     </label>
                     <StatusSelect
@@ -147,14 +138,14 @@ export const EditTitleModal = ({
                       initialData={title}
                       titleRecord={{ ...title, status }}
                       onStatusChange={(newStatus) => setStatus(newStatus)}
-                      className="h-12 w-full border-2 border-border rounded-xl bg-background font-bold text-sm"
+                      className="h-11 w-full border-2 border-border rounded-xl bg-background font-bold text-sm"
                     />
                   </div>
                 </div>
 
-                <div className="pt-2 flex gap-4 items-start">
+                <div className="flex flex-col sm:flex-row gap-4 items-start pt-0.5">
                   <div>
-                    <label className="text-xs font-bold tracking-widest text-muted-foreground uppercase opacity-60 block mb-4">
+                    <label className="text-xs font-bold tracking-widest text-muted-foreground uppercase opacity-70 block mb-2">
                       Rating
                     </label>
                     <CompactRate
@@ -163,8 +154,8 @@ export const EditTitleModal = ({
                       onClear={() => setRating(undefined)}
                     />
                   </div>
-                  <div className="flex-1">
-                    <label className="text-xs font-bold tracking-widest text-muted-foreground uppercase opacity-60 block mb-2">
+                  <div className="flex-1 w-full">
+                    <label className="text-xs font-bold tracking-widest text-muted-foreground uppercase opacity-70 block mb-1">
                       Image URL
                     </label>
                     <ImageUrlField.Input showLabel={false} />
@@ -173,8 +164,8 @@ export const EditTitleModal = ({
               </div>
             </div>
 
-            <div className="space-y-2 border-t border-border/40 pt-4">
-              <label className="text-xs font-bold tracking-widest text-muted-foreground uppercase opacity-60 block mb-1 ml-1">
+            <div className="space-y-1.5 border-t border-border/40 pt-3.5">
+              <label className="text-xs font-bold tracking-widest text-muted-foreground uppercase opacity-70 block mb-1">
                 Description & Notes
               </label>
               <textarea
@@ -183,30 +174,30 @@ export const EditTitleModal = ({
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 rows={4}
-                className="w-full p-4 border-2 border-border focus:border-primary rounded-xl font-medium text-foreground text-sm bg-background/50 hover:border-border/80 focus:bg-background transition-all shadow-sm resize-none custom-scrollbar outline-none focus:ring-2 focus:ring-primary/10"
+                className="w-full p-3.5 border-2 border-border focus:border-primary rounded-xl font-medium text-foreground text-sm bg-background/50 hover:border-border/80 focus:bg-background transition-all shadow-sm resize-none custom-scrollbar outline-none focus:ring-2 focus:ring-primary/10"
               />
             </div>
           </div>
 
-          <div className="flex gap-3 pt-4 border-t border-border bg-background mt-auto shrink-0">
+          <div className="flex gap-3 pt-3 border-t border-border/60 bg-background shrink-0">
             <Button
-              onClick={onClose}
+              onClick={handleClose}
               variant="cancel"
-              className="w-full sm:flex-1"
+              className="w-full sm:flex-1 h-11"
             >
               Cancel
             </Button>
             <Button
-              onClick={() => handleSave(true)}
+              onClick={handleSave}
               disabled={isUpdating}
               variant="save"
-              className="w-full sm:flex-2"
+              className="w-full sm:flex-2 h-11"
             >
               {isUpdating ? "Saving Changes..." : "Save Changes"}
             </Button>
           </div>
         </div>
       </ImageUrlField>
-    </Modal>
+    </div>
   );
 };

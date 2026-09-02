@@ -1,4 +1,4 @@
-import { useParams } from "react-router";
+import { Outlet, useParams } from "react-router";
 import { RoomTitlesManager } from "~/widgets/RoomDetailsSettingsTitles/RoomTitlesManager";
 
 export default function RoomSettingsTitlesPage() {
@@ -26,6 +26,7 @@ export default function RoomSettingsTitlesPage() {
       <div className="bg-card rounded-lg border border-border p-4">
         <RoomTitlesManager roomId={roomId} />
       </div>
+      <Outlet />
     </div>
   );
 }

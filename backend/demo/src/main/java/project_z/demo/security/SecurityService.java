@@ -13,6 +13,7 @@ import project_z.demo.repositories.FriendshipRepository;
 import project_z.demo.repositories.RoomMemberRepository;
 import project_z.demo.repositories.RoomRepository;
 import project_z.demo.repositories.RoomRequestRepository;
+import project_z.demo.repositories.RoomTitleEntityRepository;
 import project_z.demo.repositories.SeasonRepository;
 import project_z.demo.repositories.TitleRepository;
 import project_z.demo.repositories.UserFavoriteTitleRepository;
@@ -30,6 +31,7 @@ public class SecurityService {
     private final RoomMemberRepository roomMemberRepository;
     private final WheelPresetRepository wheelPresetRepository;
     private final UserFavoriteTitleRepository userFavoriteTitleRepository;
+    private final RoomTitleEntityRepository roomTitleRepository;
 
     public UUID getCurrentUserId() {
         var auth = SecurityContextHolder.getContext().getAuthentication();
@@ -96,6 +98,14 @@ public class SecurityService {
         return roomRequestRepository.findById(roomRequestId)
                 .map(member -> member.getUser().getUserId().equals(currentUserId) ||
                         member.getSender().getUserId().equals(currentUserId))
+                .orElse(false);
+    }
+
+    public boolean isRoomTitleOwner(UUID titleId) {
+        UUID currentUserId = getCurrentUserId();
+
+        return roomTitleRepository.findById(titleId)
+                .map(roomTitle -> roomTitle.getAddedByUserId().equals(currentUserId))
                 .orElse(false);
     }
 

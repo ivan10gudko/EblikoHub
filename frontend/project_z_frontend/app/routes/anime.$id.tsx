@@ -3,6 +3,7 @@ import { queryClient } from "~/shared/lib/queryClient";
 import type { Route } from "./+types/anime.$id";
 import { AnimePageSceleton, getAnimeById } from "~/entities/title";
 import { AnimePage } from "~/pages/animePage";
+import { Outlet } from "react-router";
 
 export async function clientLoader({ params }: Route.LoaderArgs) {
     if (!params.id) {
@@ -26,6 +27,8 @@ export function HydrateFallback() {
 export default function AnimeRoute({ loaderData }: Route.ComponentProps) {
     if (!loaderData) return <AnimePageSceleton />;
 
-    return <AnimePage id={loaderData.id} />;
+    return <><AnimePage id={loaderData.id} />
+        <Outlet/>
+    </>;
 }
 

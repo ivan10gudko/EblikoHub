@@ -6,7 +6,7 @@ import {
   RoomDetailsSidebar,
   useRoomTitlesQuery,
 } from "~/widgets/RoomDetailsManager";
-import { RoomModalManager } from "~/widgets/RoomDetailsManager";
+import { Outlet } from "react-router";
 import { useRoomDetailsFilterStore } from "~/widgets/RoomDetailsManager/store/roomDetailsFilter.store";
 
 export default function RoomDetailsMainPage() {
@@ -47,7 +47,7 @@ export default function RoomDetailsMainPage() {
         <RoomDetailsSidebar room={room} />
       </div>
 
-      <RoomModalManager roomId={roomId} />
+      <Outlet />
     </div>
   );
 }

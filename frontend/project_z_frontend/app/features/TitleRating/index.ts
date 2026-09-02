@@ -1,1 +1,2 @@
-export {EditRatingModal} from "./ui/EditRatingModal"
+export { EditRatingScreen } from "./ui/EditRatingScreen";
+export * from "./model/rating.types";

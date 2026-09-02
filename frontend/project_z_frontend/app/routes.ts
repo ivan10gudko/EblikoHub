@@ -5,6 +5,7 @@ import {
     layout,
     prefix,
 } from "@react-router/dev/routes";
+import { adminModalRoutes, roomTitleModalRoutes, titleModalRoutes } from "./routes/modals/routes.config";
 
 export default [
     layout("./routes/_main.tsx", [
@@ -16,7 +17,7 @@ export default [
 
         route("privacy", "./routes/privacy.tsx"),
 
-        route("watchlist/:userId", "./routes/watchlist.$userId.tsx"),
+        route("watchlist/:userId", "./routes/watchlist/index.$userId.tsx", titleModalRoutes("watchlist")),
 
         route("profile/:userId/friends", "./routes/friends/friends.tsx", [
             index("./routes/friends/friends.index.tsx"),
@@ -38,22 +39,24 @@ export default [
             ]),
 
             ...prefix("rooms", [
-                route("user/:userId", "./routes/rooms._index.tsx"),     // /rooms
+                route("user/:userId", "./routes/rooms._index.tsx", [
+                    route("add", "./routes/modals/room.add.tsx", { id: "rooms-add" }),
+                ]),
 
                 route("/requests", "./routes/roomRequestsLayouts/room.user.requests.tsx", [
                     index("./routes/roomRequestsLayouts/room.user.requests.add.tsx"),
                     route("invites", "./routes/roomRequestsLayouts/room.user.requests.invites.tsx"),
                     route("sent", "./routes/roomRequestsLayouts/room.user.requests.sent.tsx"),
-                ]), // rooms requests 
+                ]),
 
-                route(":id", "./routes/roomDetailsLayouts/room.details.main.tsx"), // /rooms/:id
+                route(":id", "./routes/roomDetailsLayouts/room.details.main.tsx", roomTitleModalRoutes("room-main")),
 
                 route(":id/settings", "./routes/room/room.settings.index.tsx", [
                     index("./routes/room/room.settings._redirect.tsx"),
                     route("general", "./routes/room/room.settings.general.tsx", { id: "room-settings-general-alias" }),
 
                     ...prefix("titles", [
-                        index("./routes/room/titles/room.settings.titles.roomTitles.tsx"),
+                        route("/", "./routes/room/titles/room.settings.titles.roomTitles.tsx", roomTitleModalRoutes("room-settings-titles")),
                         route("titleLinks", "./routes/room/titles/room.settings.titles.titleLinks.tsx"),
                         route("ai-matcher", "./routes/room/titles/room.settings.titles.aiMatcher.tsx"),
                     ]),
@@ -65,14 +68,14 @@ export default [
                     ]),
 
                     route("members", "./routes/room/room.settings.members.tsx"),
-                    route("admin", "./routes/room/room.settings.admin.tsx"),
+                    route("admin", "./routes/room/room.settings.admin.tsx", adminModalRoutes("room-settings-admin")),
                 ]),
             ]),
         ]),
 
         route("search", "./routes/search.tsx"),
 
-        route("anime/:id", "./routes/anime.$id.tsx"),
+        route("anime/:id", "./routes/anime.$id.tsx", titleModalRoutes("anime", ["edit", "view", "rating", "seasons"])),
     ]),
 
     route("auth", "./routes/_auth.tsx", [

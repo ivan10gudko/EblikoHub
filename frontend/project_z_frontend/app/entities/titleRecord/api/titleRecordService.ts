@@ -1,4 +1,4 @@
-import { type CreateTitleRecord, type SameCriteriaRating, type TitleParams, type TitleRecord, type TitleStats } from "../model/titleRecord"
+import { type CreateTitleRecord, type TitleParams, type TitleRecord, type TitleStats } from "../model/titleRecord"
 import type { PageResponse } from "~/shared/types";
 import { apiClient } from "~/shared/api";
 import { Status } from "~/shared/types/Status";
@@ -32,9 +32,6 @@ interface TitleRecordService {
     getByApiTitleId(externalProviderId: number): Promise<TitleRecord>;
     pinTitle(titleId: number): Promise<TitleRecord>;
     unpin(): Promise<void>;
-    getSameCriteriaRating(titleId: number, category: string, currentRating: number): Promise<SameCriteriaRating>;
-    rate(options: RateOptions): Promise<TitleRecord>;
-    clearRating(options: ActionOptions): Promise<TitleRecord>;
     moveToPlanned(options: ActionOptions): Promise<TitleRecord>;
     markAsWatched(options: ActionOptions): Promise<TitleRecord>;
     markAsDropped(options: ActionOptions): Promise<TitleRecord>;
@@ -64,18 +61,7 @@ export const titleRecordService: TitleRecordService = {
         const response = await apiClient.get(`/titles/getTitleById/${titleId}`);
         return response.data;
     },
-    
-    async getSameCriteriaRating(titleId, category, currentRating) {
-        const response = await apiClient.get(`/titles/${titleId}/getSameCriteriaRating`, {
-            params: {
-                category: category,
-                currentRating: currentRating
 
-            }
-        });
-
-        return response.data;
-    },
     async pinTitle(titleId) {
         const response = await apiClient.post(`/titles/${titleId}/pinTitle`);
         return response.data;
@@ -146,15 +132,6 @@ export const titleRecordService: TitleRecordService = {
         return this.post({ ...initialData, ...data });
     },
 
-    async rate({ apiTitleId, score, initialData, existingTitle }) {
-        const rating = typeof score === 'number' ? { overall: score } : score;
-        console.log(rating);
-        return this.saveAction({ apiTitleId, data: { rating }, initialData, existingTitle });
-    },
-
-    async clearRating({ apiTitleId, initialData, existingTitle }) {
-        return this.rate({ apiTitleId, score: {}, initialData, existingTitle })
-    },
 
     async moveToPlanned(options) {
         return this.saveAction({ ...options, data: { status: Status.PLANNED } });
