@@ -18,7 +18,7 @@ export default function RoomAddRoute() {
             const next = new URLSearchParams(prev);
             next.set("step", String(newStep));
             return next;
-        }, { replace: true });
+        });
     };
 
     return (

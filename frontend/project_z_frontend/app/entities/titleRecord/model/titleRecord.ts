@@ -72,7 +72,7 @@ export interface ManageTitleRecordProps {
     titleRecord: TitleRecord | null;
 }
 
-export interface TitleShort{
+export interface TitleShort {
     titleId: number,
     apiTitleId?: number,
     titleName: string,
@@ -93,6 +93,16 @@ export const TitleTypeOptionsColors: Record<TitleType, string> = {
 export interface TitleStats {
     statusCount: Record<string, number>;
     typeCount: Record<string, number>;
+}
+export interface SameCriteriaRating {
+    titles: Array<TitleRatingComparasionDto>;
+    avgRating: number;
+}
+
+export interface TitleRatingComparasionDto {
+    titleId: number;
+    titleName: string;
+    ratingValue: number;
 }
 
 export const TitleTypeGradientColors: Record<TitleType, string> = {

@@ -10,6 +10,7 @@ import PushPinIcon from "@mui/icons-material/PushPin";
 import { ReadOnlyStatusBadge } from "~/entities/titleRecord";
 import { formatDate } from "~/shared/helpers";
 import { useTitleById } from "~/entities/titleRecord";
+import { ErrorScreen } from "~/shared/ui/ErrorScreen";
 
 interface ViewTitleScreenProps {
   titleId: number | null;
@@ -37,7 +38,11 @@ export const ViewTitleScreen = ({
     <div className="flex flex-col max-h-[70vh] h-full justify-between p-2">
       {!title ? (
         <div className="flex items-center justify-center py-16 text-muted-foreground animate-pulse text-sm">
-          Loading title details...
+          <ErrorScreen
+            title="Title not found"
+            message="Could not load the details for this title."
+            className="min-h-0 h-full py-8"
+          />
         </div>
       ) : (
         <>

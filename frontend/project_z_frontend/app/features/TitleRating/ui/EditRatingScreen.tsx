@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react";
-import type { TitleRecord } from "~/entities/titleRecord";
+import { useTitleRecordMutation, type TitleRecord } from "~/entities/titleRecord";
 import { RatingEditorContent } from "./RatingEditorContent";
 import { ReadonlyRatingContent } from "./ReadonlyRatingContent";
 import type { Rating } from "~/shared/types";
-import { useTitleRatingMutation } from "../hooks/useTitleRatingMutation";
 
 interface EditRatingScreenProps {
   title: TitleRecord;
@@ -18,7 +17,20 @@ export const EditRatingScreen = ({
   isOwn,
   onTitleChange,
 }: EditRatingScreenProps) => {
-  const { rate } = useTitleRatingMutation(title.titleId);
+  const { rate, rateLoading } = useTitleRecordMutation(
+    title.apiTitleId,
+    {
+      apiTitleId: title.apiTitleId,
+      titleName: title.titleName,
+      status: title.status,
+      rating: title.rating,
+      imageUrl: title.imageUrl,
+      titleType: title.titleType,
+      pinned: title.pinned,
+      description: title.description || "",
+    },
+    title,
+  );
 
   const [localRatings, setLocalRatings] = useState<Rating>(
     title.rating && "overall" in title.rating
@@ -42,8 +54,14 @@ export const EditRatingScreen = ({
       JSON.stringify(localRatings) !== JSON.stringify(title.rating);
 
     if (hasChanges) {
-      rate(localRatings);
+      rate(localRatings, {
+        onSuccess: () => {
+          onClose();
+        },
+      });
+      return;
     }
+
     onClose();
   };
 
@@ -53,7 +71,7 @@ export const EditRatingScreen = ({
       ratings={localRatings}
       avgRating={title.avgRating || 0}
       onChange={setLocalRatings}
-      isSaving={false}
+      isSaving={rateLoading}
       onSave={handleSave}
       onCancel={onClose}
       onTitleChange={onTitleChange}

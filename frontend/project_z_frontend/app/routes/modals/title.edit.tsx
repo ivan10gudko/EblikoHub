@@ -17,7 +17,7 @@ export default function EditTitleRoute() {
   useEffect(() => {
     if (!isLoading && title && !isOwn) {
       notify.error("You are not an owner!");
-      navigate(`../view/${titleId}`, { replace: true });
+      navigate(`../view/${titleId}`);
     }
   }, [isLoading, title, isOwn, titleId, navigate]);
 

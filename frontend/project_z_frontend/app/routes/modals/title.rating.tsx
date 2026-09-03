@@ -17,7 +17,7 @@ export default function WatchlistEditRoute() {
   };
 
   const handleTitleChange = (newTitleId: number) => {
-    navigate(`../${newTitleId}`, { relative: "path", replace: true });
+    navigate(`../${newTitleId}`, { relative: "path"});
   };
 
 

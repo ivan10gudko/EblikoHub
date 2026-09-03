@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { titleRecordService, type CreateTitleRecord, type TitleRecord } from "~/entities/titleRecord";
+import { checkAuthAndRun } from "~/shared/helpers";
 import { notify } from "~/shared/lib";
 import { getSessionUserId } from "~/shared/lib/supabase";
 import type { Rating } from "~/shared/types";
@@ -30,6 +31,18 @@ export const useTitleRecordMutation = (apiTitleId: number | undefined, initialDa
 
     const getCache = () => queryClient.getQueryData<TitleRecord>(queryKey) || existingTitleRecord;
 
+    const rateMutation = useMutation({
+        mutationFn: (score: number | Rating) =>
+            titleRecordService.rate({ apiTitleId, score, initialData, existingTitle: getCache() }),
+        ...mutationConfig
+    });
+
+    const clearRateMutation = useMutation({
+        mutationFn: () =>
+            titleRecordService.clearRating({ apiTitleId, initialData, existingTitle: getCache() }),
+        ...mutationConfig
+    });
+
     const statusMutation = useMutation({
         mutationFn: (status: Status) => {
             const data = { status };
@@ -49,23 +62,20 @@ export const useTitleRecordMutation = (apiTitleId: number | undefined, initialDa
         },
     });
 
-    const checkAuthAndRun = async (action: () => void) => {
-        const userId = await getSessionUserId();
-        if (!userId) {
-            notify.error("Please sign in first to perform this action");
-            return;
-        }
-        action();
-    };
 
     return {
         updateStatus: (status: Status) => checkAuthAndRun(() => statusMutation.mutate(status)),
+        rate: (score: number | Rating, options?: Parameters<typeof rateMutation.mutate>[1]) =>
+            checkAuthAndRun(() => rateMutation.mutate(score, options)),
+        clearRate: () => checkAuthAndRun(() => clearRateMutation.mutate()),
         deleteTitle: (titleId: number) => checkAuthAndRun(() => deleteMutation.mutate(titleId)),
         moveToPlanned: () => checkAuthAndRun(() => statusMutation.mutate(Status.PLANNED)),
         markAsWatched: () => checkAuthAndRun(() => statusMutation.mutate(Status.WATCHED)),
 
         statusLoading: statusMutation.isPending,
+        rateLoading: rateMutation.isPending,
+        clearRateLoading: clearRateMutation.isPending,
         deleteLoading: deleteMutation.isPending,
-        isAnyActionLoading: statusMutation.isPending || deleteMutation.isPending
+        isAnyActionLoading: statusMutation.isPending || rateMutation.isPending || deleteMutation.isPending
     };
 };

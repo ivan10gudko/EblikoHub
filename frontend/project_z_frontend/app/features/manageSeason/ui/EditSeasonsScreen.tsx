@@ -7,7 +7,7 @@ import {
   useSeasons,
   type LocalDraftSeason,
 } from "~/entities/season";
-import { SeasonRow } from "./SeasonRow";
+import { SeasonRow } from "../../../entities/season/ui/SeasonRow";
 import { useNavigate } from "react-router";
 
 interface EditSeasonsScreenProps {

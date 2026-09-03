@@ -5,7 +5,7 @@ import { useAuthStore } from "~/features/auth";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router";
 import { useRoomMemberByRoomIdAndUserId } from "~/features/manageRoomMembers";
-import { useRoomTitleActions, roomTitleKeys } from "~/features/manageRoomTitles"; // Імпортуємо roomTitleKeys
+import { useRoomTitleActions, roomTitleKeys } from "~/features/manageRoomTitles";
 import { RoomRole } from "~/entities/room";
 import { DEFAULT_IMAGE_PATH } from "~/shared/constants";
 

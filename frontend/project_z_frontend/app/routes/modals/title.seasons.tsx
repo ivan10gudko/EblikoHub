@@ -2,8 +2,8 @@ import { useNavigate, useParams } from "react-router";
 import { Modal } from "~/shared/ui/Modal";
 import { useTitleById } from "~/entities/titleRecord";
 import { useAuthStore } from "~/features/auth";
-import { EditSeasonsScreen } from "~/entities/season";
 import ErrorAnimePage from "~/pages/animePage/ui/ErrorAnimePage";
+import { EditSeasonsScreen } from "~/features/manageSeason";
 
 export default function SeasonsRoute() {
   const navigate = useNavigate();

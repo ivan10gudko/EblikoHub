@@ -17,7 +17,7 @@ export const RatingNeighborsContent = ({
   onClose,
 }: RatingNeighborsProps) => {
   const { data, isLoading } = useSameCriteriaRating(titleId, category, ratingValue);
-  const navigate = useNavigate(); // Ініціалізація навігації
+  const navigate = useNavigate(); 
 
   const neighbors = data?.titles ?? [];
   const averageRating = data?.avgRating ?? 0;
@@ -82,8 +82,7 @@ export const RatingNeighborsContent = ({
                 ref={isCurrent ? currentItemRef : null}
                 onClick={() => {
                   if (!isCurrent) {
-                    // Змінено перехід за допомогою react-router
-                    navigate(`../rating/${item.titleId}`, { replace: true });
+                    navigate(`../rating/${item.titleId}`);
                   }
                 }}
                 className={`flex items-center justify-between px-2.5 py-1.5 rounded-md transition-all text-xs gap-2 ${isCurrent

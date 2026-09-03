@@ -16,7 +16,7 @@ export default function WatchlistViewRoute() {
   };
 
   const handleEditClick = () => {
-    navigate(`../../edit/${titleId}`, { relative: "path", replace: true });
+    navigate(`../../edit/${titleId}`, { relative: "path"});
   };
 
   return (

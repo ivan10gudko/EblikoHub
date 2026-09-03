@@ -38,7 +38,7 @@ export default function RoomTitleEditRoute() {
     useEffect(() => {
         if (!isLoading && item && !canEdit) {
             notify.error("You do not have permission to edit this title!");
-            navigate(`../links/${titleId}`, { replace: true });
+            navigate(`../links/${titleId}`,);
         }
     }, [isLoading, item, canEdit, navigate, titleId]);
 
