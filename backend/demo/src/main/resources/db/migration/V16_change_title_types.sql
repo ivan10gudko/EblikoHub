@@ -1,1 +1,0 @@
-ALTER TABLE titles ALTER COLUMN description TYPE TEXT;
