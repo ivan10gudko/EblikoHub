@@ -2,7 +2,6 @@ import { useState } from "react";
 import { Outlet, useParams } from "react-router";
 import { useRoomDetails } from "~/entities/room";
 import { useAuthStore } from "~/features/auth";
-import { RoomModalManager } from "~/widgets/RoomDetailsManager";
 import { useRoomMemberByRoomIdAndUserId } from "~/features/manageRoomMembers";
 import { ErrorScreen } from "~/shared/ui/ErrorScreen";
 import { RoomSettingsSidebar } from "~/widgets/RoomDetailsSettingsSidebar";
@@ -68,8 +67,6 @@ export default function RoomsSettingsIndexLayout() {
                     <Outlet />
                 </div>
             </main>
-            
-            <RoomModalManager roomId={roomId} />
         </div>
     );
 }

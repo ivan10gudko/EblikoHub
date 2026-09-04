@@ -3,15 +3,15 @@ import { roomTitleService } from "~/features/manageRoomTitles/api/roomTitleServi
 import { RoomTitleItem } from "./RoomTitleItem";
 import { useAuthStore } from "~/features/auth";
 import { useQuery } from "@tanstack/react-query";
-import { useRoomModal } from "~/features/manageRoomSettings/hooks/useRoomModal";
+import { useNavigate } from "react-router";
 import { useRoomMemberByRoomIdAndUserId } from "~/features/manageRoomMembers";
-import { useRoomTitleActions, roomTitleKeys } from "~/features/manageRoomTitles"; // Імпортуємо roomTitleKeys
+import { useRoomTitleActions, roomTitleKeys } from "~/features/manageRoomTitles";
 import { RoomRole } from "~/entities/room";
 import { DEFAULT_IMAGE_PATH } from "~/shared/constants";
 
 export const RoomTitlesManager = ({ roomId }: { roomId: number }) => {
     const { userId } = useAuthStore();
-    const { openSettingsModal } = useRoomModal();
+    const navigate = useNavigate();
 
     const { data: currentUser } = useRoomMemberByRoomIdAndUserId(userId!, roomId);
 
@@ -37,7 +37,7 @@ export const RoomTitlesManager = ({ roomId }: { roomId: number }) => {
 
                 <div className="flex items-center gap-2">
                     <button
-                        onClick={() => openSettingsModal('add-room-title', String(roomId))}
+                        onClick={() => navigate("add")}
                         disabled={isPending}
                         className="h-10 px-4 py-1.5 bg-primary/10 hover:bg-primary/20 text-primary rounded-xl text-xs font-bold border border-primary/30 transition-all disabled:opacity-50 cursor-pointer whitespace-nowrap"
                     >

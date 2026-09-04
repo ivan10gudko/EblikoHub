@@ -2,7 +2,8 @@ import React, { useState } from "react";
 import StarIcon from "@mui/icons-material/Star";
 import { useManageFavoriteTitles } from "~/features/manageFavoriteTitles/hooks/useManageFavoriteTitles";
 import type { UserProfileWithFavorite } from "~/features/profile";
-import { ViewTitleModal } from "~/entities/titleRecord/ui/ViewTitleModal";
+import { ViewTitleScreen } from "~/entities/titleRecord/ui/ViewTitleScreen";
+import { Modal } from "~/shared/ui/Modal";
 import { DEFAULT_IMAGE_PATH } from "~/shared/constants";
 import { AddNewButton } from "~/shared/ui/AddNewButton";
 import CloseIcon from "@mui/icons-material/Close";
@@ -105,13 +106,19 @@ export const UserFavoriteTitlesShowcase: React.FC<UserFavoriteTitlesShowcaseProp
         </div>
       </section>
 
-      {!isOwner && (
-        <ViewTitleModal
-          titleId={selectedTitle?.titleId ?? null}
+      {!isOwner && selectedTitle && (
+        <Modal
           isOpen={Boolean(selectedTitle)}
           onClose={() => setSelectedTitle(null)}
-          isOwn={false}
-        />
+          title={`"${selectedTitle.titleName}"`}
+          maxWidth="max-w-2xl"
+        >
+          <ViewTitleScreen
+            titleId={selectedTitle.titleId}
+            onClose={() => setSelectedTitle(null)}
+            isOwn={false}
+          />
+        </Modal>
       )}
     </>
   );

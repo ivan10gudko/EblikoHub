@@ -1,4 +1,4 @@
-import { redirect, useParams } from "react-router";
+import { redirect, useParams, Outlet } from "react-router";
 import { RoomsPage } from "~/pages/room";
 
 export default function RoomsRoute() {
@@ -6,5 +6,8 @@ export default function RoomsRoute() {
 
     if (!userId) return redirect("/auth/login");
     
-    return <RoomsPage userId = {userId}/>;
+    return <>
+        <RoomsPage userId={userId} />
+        <Outlet />
+    </>;
 }

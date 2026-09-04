@@ -103,13 +103,6 @@ export const CategoryRow = ({
                                 category={categoryKey}
                                 ratingValue={value} 
                                 onClose={() => setIsPopoverOpen(false)}
-                                
-                                onTitleChange={(newTitleId) => {
-                                    if (onTitleChange) {
-                                        onTitleChange(newTitleId);
-                                    }
-                                    setIsPopoverOpen(false); 
-                                }}
                             />
                         </DropdownMenu.Content>
                     </DropdownMenu.Portal>

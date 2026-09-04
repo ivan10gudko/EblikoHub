@@ -3,23 +3,20 @@ import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import { useQuery } from "@tanstack/react-query";
 import { apiClient } from "~/shared/api";
 import { Button } from "~/shared/ui/Button";
-import { Modal } from "~/shared/ui/Modal";
 import { TitleType, TitleTypeThemes } from "~/entities/titleRecord";
 import type { RoomTitleLinkDetailsDto } from "~/features/manageRoomTitles/model/roomTitle.types";
 import { formatDate } from "~/shared/helpers";
 import { useRoomTitleLinkActions } from "../../hooks/useRoomTitleLinkActions";
 import { roomTitleKeys } from "../../model/roomTitle.queryKeys";
 
-interface ViewLinksModalProps {
-  isOpen: boolean;
+interface ViewLinksScreenProps {
   onClose: () => void;
   roomId: number;
   roomTitleId: string;
   canDelete?: boolean;
 }
 
-export const ViewAllRoomTitleLinksModal = ({
-  isOpen,
+export const ViewAllRoomTitleLinksScreen = ({
   onClose,
   roomId,
   roomTitleId,
@@ -41,7 +38,7 @@ export const ViewAllRoomTitleLinksModal = ({
       );
       return response.data;
     },
-    enabled: isOpen && !!roomId && !!roomTitleId,
+    enabled: !!roomId && !!roomTitleId,
   });
 
   const { deleteLink, isDeleting } = useRoomTitleLinkActions(roomId);
@@ -57,12 +54,6 @@ export const ViewAllRoomTitleLinksModal = ({
   };
 
   return (
-    <Modal
-      isOpen={isOpen}
-      onClose={onClose}
-      title="Title Links"
-      maxWidth="max-w-xl"
-    >
       <div className="flex flex-col h-[70vh]">
         <div className="flex-1 overflow-y-auto custom-scrollbar p-2">
           {isLoading ? (
@@ -98,7 +89,6 @@ export const ViewAllRoomTitleLinksModal = ({
           </Button>
         </div>
       </div>
-    </Modal>
   );
 };
 

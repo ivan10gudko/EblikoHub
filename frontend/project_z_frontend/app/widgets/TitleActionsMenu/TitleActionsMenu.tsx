@@ -5,14 +5,12 @@ import {
   DeleteDropdownItem,
   DropdownItem,
 } from "~/shared/ui/DropDown/DropDown";
-import { useState, type JSX } from "react";
+import type { JSX } from "react";
 import type { TitleRecord } from "~/entities/titleRecord";
 import StarRoundedIcon from "@mui/icons-material/StarRounded";
-import { EditSeasonsModal } from "~/entities/season";
 import ViewListIcon from "@mui/icons-material/ViewList";
 import VisibilityIcon from "@mui/icons-material/Visibility";
-import { ViewTitleModal } from "~/entities/titleRecord/ui/ViewTitleModal";
-import { EditTitleModal } from "~/features/manageTitle";
+import { useNavigate } from "react-router";
 
 interface ActionItem {
   key: string;
@@ -33,29 +31,23 @@ export const TitleActionsMenu = ({
   title,
   isOwn,
   onDelete,
-  onOpenRatingModal, 
+  onOpenRatingModal,
 }: TitleActionsMenuProps) => {
-  const [isEditOpen, setIsEditOpen] = useState(false);
-  const [isSeasonsOpen, setIsSeasonsOpen] = useState(false);
-  const [isViewOpen, setIsViewOpen] = useState(false);
-
-  const handleCloseEdit = () => setIsEditOpen(false);
-  const handleCloseSeasons = () => setIsSeasonsOpen(false);
-  const handleCloseView = () => setIsViewOpen(false);
+  const navigate = useNavigate();
 
   const actions: ActionItem[] = [
     {
       key: "view",
       label: "View Details",
       icon: <VisibilityIcon sx={{ fontSize: 16 }} />,
-      onClick: () => setIsViewOpen(true),
+      onClick: () => navigate(`view/${title.titleId}`),
       show: true,
     },
     {
       key: "edit",
       label: "Edit Record",
       icon: <EditIcon sx={{ fontSize: 16 }} />,
-      onClick: () => setIsEditOpen(true),
+      onClick: () => navigate(`edit/${title.titleId}`),
       show: isOwn,
     },
     {
@@ -69,59 +61,34 @@ export const TitleActionsMenu = ({
       key: "seasons",
       label: "Seasons",
       icon: <ViewListIcon sx={{ fontSize: 16 }} />,
-      onClick: () => setIsSeasonsOpen(true),
+      onClick: () => navigate(`seasons/${title.titleId}`),
       show: true,
     },
   ];
 
   return (
-    <>
-      <Dropdown
-        align="start"
-        trigger={
-          <div className="p-1.5 hover:bg-border/50 rounded-lg transition-colors text-foreground/50 hover:text-foreground">
-            <MoreHorizIcon sx={{ fontSize: 20 }} />
-          </div>
-        }
-      >
-        {actions
-          .filter((item) => item.show)
-          .map((item) => (
-            <DropdownItem key={item.key} onClick={item.onClick} icon={item.icon}>
-              {item.label}
-            </DropdownItem>
-          ))}
+    <Dropdown
+      align="start"
+      trigger={
+        <div className="p-1.5 hover:bg-border/50 rounded-lg transition-colors text-foreground/50 hover:text-foreground">
+          <MoreHorizIcon sx={{ fontSize: 20 }} />
+        </div>
+      }
+    >
+      {actions
+        .filter((item) => item.show)
+        .map((item) => (
+          <DropdownItem key={item.key} onClick={item.onClick} icon={item.icon}>
+            {item.label}
+          </DropdownItem>
+        ))}
 
-        {onDelete && (
-          <>
-            <div className="h-px bg-border my-1" />
-            <DeleteDropdownItem onDelete={onDelete} />
-          </>
-        )}
-      </Dropdown>
-      <EditTitleModal
-        title={title}
-        isOpen={isEditOpen}
-        onClose={handleCloseEdit}
-      />
-      {isSeasonsOpen && (
-        <EditSeasonsModal
-          titleId={title.titleId}
-          titleName={title.titleName}
-          isOpen={isSeasonsOpen}
-          onClose={handleCloseSeasons}
-          isOwn={isOwn}
-        />
+      {onDelete && (
+        <>
+          <div className="h-px bg-border my-1" />
+          <DeleteDropdownItem onDelete={onDelete} />
+        </>
       )}
-      {isViewOpen && (
-        <ViewTitleModal
-          titleId={title.titleId}
-          isOpen={isViewOpen}
-          onClose={handleCloseView}
-          isOwn={isOwn}
-          onEditClick={() => setIsEditOpen(true)}
-        />
-      )}
-    </>
+    </Dropdown>
   );
 };

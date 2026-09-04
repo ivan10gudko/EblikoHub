@@ -1,13 +1,13 @@
 import AddIcon from "@mui/icons-material/Add";
-import { useRoomModal } from "~/features/manageRoomSettings/hooks/useRoomModal";
+import { useNavigate } from "react-router";
 
 export const AddRoomCardButton = () => {
-  const { openRoomModal } = useRoomModal();
+  const navigate = useNavigate();
 
   return (
     <button
       type="button"
-      onClick={() => openRoomModal("add")}
+      onClick={() => navigate("add")}
       className="group flex flex-col items-center justify-center gap-2 w-full md:w-75 aspect-square min-h-[200px] max-h-[275px] bg-background-muted hover:bg-background-muted-hover border-2 border-dashed border-border hover:border-primary rounded-2xl transition-all duration-200 cursor-pointer p-4"
     >
       <div className="flex items-center justify-center w-9 h-9 bg-background group-hover:bg-primary rounded-full shadow-sm transition-colors">

@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { titleRecordService, type CreateTitleRecord, type TitleRecord } from "~/entities/titleRecord";
+import { checkAuthAndRun } from "~/shared/helpers";
 import { notify } from "~/shared/lib";
 import { getSessionUserId } from "~/shared/lib/supabase";
 import type { Rating } from "~/shared/types";
@@ -61,18 +62,11 @@ export const useTitleRecordMutation = (apiTitleId: number | undefined, initialDa
         },
     });
 
-    const checkAuthAndRun = async (action: () => void) => {
-        const userId = await getSessionUserId();
-        if (!userId) {
-            notify.error("Please sign in first to perform this action");
-            return;
-        }
-        action();
-    };
 
     return {
         updateStatus: (status: Status) => checkAuthAndRun(() => statusMutation.mutate(status)),
-        rate: (score: number | Rating) => checkAuthAndRun(() => rateMutation.mutate(score)),
+        rate: (score: number | Rating, options?: Parameters<typeof rateMutation.mutate>[1]) =>
+            checkAuthAndRun(() => rateMutation.mutate(score, options)),
         clearRate: () => checkAuthAndRun(() => clearRateMutation.mutate()),
         deleteTitle: (titleId: number) => checkAuthAndRun(() => deleteMutation.mutate(titleId)),
         moveToPlanned: () => checkAuthAndRun(() => statusMutation.mutate(Status.PLANNED)),

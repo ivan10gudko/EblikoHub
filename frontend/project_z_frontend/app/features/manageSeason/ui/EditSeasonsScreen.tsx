@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import AddIcon from "@mui/icons-material/Add";
-import Modal from "~/shared/ui/Modal/Modal";
 import { Button } from "~/shared/ui/Button";
 import { Status } from "~/shared/types/Status";
 import {
@@ -8,47 +7,44 @@ import {
   useSeasons,
   type LocalDraftSeason,
 } from "~/entities/season";
-import { SeasonRow } from "./SeasonRow";
-import { ModalFooter } from "~/shared/ui/Modal";
+import { SeasonRow } from "../../../entities/season/ui/SeasonRow";
+import { useNavigate } from "react-router";
 
-interface SeasonsModalProps {
+interface EditSeasonsScreenProps {
   titleId: number;
-  titleName: string;
-  isOpen: boolean;
-  onClose: () => void;
   isOwn: boolean;
 }
 
-export const EditSeasonsModal = ({
+export const EditSeasonsScreen = ({
   titleId,
-  isOpen,
-  onClose,
-  titleName,
   isOwn,
-}: SeasonsModalProps) => {
+}: EditSeasonsScreenProps) => {
+  const navigate = useNavigate();
   const { seasons: initialSeasons, refetch } = useSeasons(titleId);
-  const { syncSeasons, isSyncing } = useSeasonActions(titleId, onClose);
+  const { syncSeasons, isSyncing } = useSeasonActions(titleId, () => navigate(-1));
 
   const [localSeasons, setLocalSeasons] = useState<LocalDraftSeason[]>([]);
   const [newName, setNewName] = useState("");
 
   useEffect(() => {
-    if (isOpen) {
-      refetch();
-    }
-  }, [isOpen, refetch]);
+    refetch();
+  }, [refetch]);
 
   useEffect(() => {
-    if (Array.isArray(initialSeasons) && isOpen) {
+    if (Array.isArray(initialSeasons)) {
       const mapped = initialSeasons.map((s) => ({
         ...s,
         localId: s.seasonId ? String(s.seasonId) : `existing-${Math.random()}`,
       }));
       setLocalSeasons(mapped);
-    } else if (!initialSeasons && isOpen) {
+    } else if (!initialSeasons) {
       setLocalSeasons([]);
     }
-  }, [initialSeasons, isOpen]);
+  }, [initialSeasons]);
+
+  const handleClose = () => {
+    navigate(-1);
+  };
 
   const handleAddSeason = () => {
     if (!newName.trim() || !isOwn) return;
@@ -78,7 +74,7 @@ export const EditSeasonsModal = ({
 
   const handleSaveChanges = () => {
     if (!isOwn) {
-      onClose();
+      handleClose();
       return;
     }
     const cleanInitial = (initialSeasons || []).map(
@@ -102,7 +98,7 @@ export const EditSeasonsModal = ({
       JSON.stringify(cleanInitial) !== JSON.stringify(cleanLocal);
 
     if (!hasChanges) {
-      onClose();
+      handleClose();
       return;
     }
 
@@ -110,12 +106,7 @@ export const EditSeasonsModal = ({
   };
 
   return (
-    <Modal
-      maxWidth="max-w-2xl"
-      isOpen={isOpen}
-      onClose={isOwn ? handleSaveChanges : onClose}
-      title={`Manage Seasons "${titleName}"`}
-    >
+    <div className="flex flex-col gap-4 w-full">
       <div className="flex flex-col h-[65vh] px-1 sm:px-0">
         {isOwn && (
           <div className="pb-4 bg-background z-10 shrink-0">
@@ -125,7 +116,7 @@ export const EditSeasonsModal = ({
                 value={newName}
                 onChange={(e) => setNewName(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && handleAddSeason()}
-                className="flex-1 bg-transparent border-none px-2 sm:px-3 font-bold text-sm placeholder:text-muted-foreground/40 focus:ring-0 min-w-0"
+                className="flex-1 bg-transparent border-none px-2 sm:px-3 font-bold text-sm placeholder:text-muted-foreground/40 focus:ring-0 min-w-0 outline-none text-foreground"
               />
               <Button
                 onClick={handleAddSeason}
@@ -177,16 +168,24 @@ export const EditSeasonsModal = ({
           </div>
         </div>
 
-        <div className=" bg-background shrink-0">
-          <ModalFooter
-            onCancel={onClose}
-            onSave={handleSaveChanges}
-            isSaving={isSyncing}
-            saveLabel="Save"
-            isOwn={isOwn}
-          />
+        <div className="flex gap-3 pt-3 border-t border-border/60 bg-background shrink-0 mt-4">
+          <Button
+            onClick={handleClose}
+            variant="cancel"
+            className="w-full sm:flex-1 h-11"
+          >
+            Cancel
+          </Button>
+          <Button
+            onClick={handleSaveChanges}
+            disabled={isSyncing}
+            variant="save"
+            className="w-full sm:flex-2 h-11"
+          >
+            {isSyncing ? "Saving Changes..." : "Save Changes"}
+          </Button>
         </div>
       </div>
-    </Modal>
+    </div>
   );
 };

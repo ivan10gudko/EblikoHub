@@ -75,8 +75,9 @@ export const RoomMemberCard: React.FC<RoomMemberCardProps> = ({
       userId: realUserId,
       reason: "Banned by Admin via member list",
       userData: {
+        userId: realUserId,
         name: displayName,
-        nameTag: nameTag || undefined,
+        nameTag: nameTag,
         img: avatarSrc,
       },
     });

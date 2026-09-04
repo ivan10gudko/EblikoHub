@@ -18,7 +18,6 @@ import { Button } from "~/shared/ui/Button";
 import { RoomRole } from "~/entities/room/model/room.types";
 import { NavGroupItem, NavLinkItem } from "~/shared/ui/NavLinkItem";
 import type { NavItem } from "~/shared/ui/NavLinkItem/NavLinkItem";
-import { useRoomModal } from "~/features/manageRoomSettings/hooks/useRoomModal";
 
 const getNavLinks = (roomId: number, role: RoomRole): NavItem[] =>
   [
@@ -112,7 +111,6 @@ export const RoomSettingsSidebar = ({
 }: RoomSettingsSidebarProps) => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { isSettingsModalOpen } = useRoomModal();
 
   const [openSection, setOpenSection] = useState<string | null>(() => {
     if (location.pathname.includes("/invites")) return "invites";
@@ -131,7 +129,6 @@ export const RoomSettingsSidebar = ({
   };
 
   const navLinks = getNavLinks(roomId, role);
-  const isAiSyncActive = isSettingsModalOpen("ai-sync");
 
   return (
     <Sidebar className="flex flex-col p-4 pt-20 md:p-5 gap-3 h-auto max-h-[100vh] overflow-y-auto md:h-[calc(100vh-40px)] md:ml-5 md:my-5 w-full md:w-80 shrink-0 backdrop-blur-md bg-card/40 md:bg-card border-none md:border border-border/40 rounded-2xl md:rounded-3xl shadow-xl md:shadow-none hide-scrollbar">
@@ -142,11 +139,9 @@ export const RoomSettingsSidebar = ({
               key={item.key}
               item={item}
               isOpen={openSection === item.key}
-              isGroupActive={
-                item.children.some(
-                  (child) => location.pathname === child.path
-                ) || isAiSyncActive
-              }
+              isGroupActive={item.children.some(
+                (child) => location.pathname === child.path
+              )}
               onToggle={() => toggleSection(item.key)}
               onChildClick={onCloseMobileMenu}
             />

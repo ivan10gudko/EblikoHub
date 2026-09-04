@@ -9,7 +9,7 @@ import {
 import { useMemo } from "react";
 
 import { Button } from "~/shared/ui/Button";
-import { AddRoomCardButton, useRoomModal, GlobalModalManager } from "~/features/manageRoomSettings";
+import { AddRoomCardButton } from "~/features/manageRoomSettings";
 import { useNavigate } from "react-router";
 import { RoomCardWrapper } from "~/widgets/RoomCard";
 
@@ -34,10 +34,9 @@ export default function RoomsPage({ userId }: { userId: string | null }) {
     order: setOrderFromUrl,
   });
 
-  const { openRoomModal } = useRoomModal();
+  const navigate = useNavigate();
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
     useRoomsQuery(userId ?? null);
-  const navigate = useNavigate();
 
   const allRooms = useMemo(() => {
     return data?.pages.flatMap((page) => page.content) ?? [];
@@ -56,7 +55,7 @@ export default function RoomsPage({ userId }: { userId: string | null }) {
             My Requests
           </Button>
           <Button
-            onClick={() => openRoomModal("add")}
+            onClick={() => navigate("add")}
             variant="secondaryCard"
           >
             <span className="text-2xl font-extrabold leading-none relative -top-[1px] select-none">
@@ -93,7 +92,6 @@ export default function RoomsPage({ userId }: { userId: string | null }) {
           />
         </div>
       </main>
-      <GlobalModalManager />
     </div>
   );
 }

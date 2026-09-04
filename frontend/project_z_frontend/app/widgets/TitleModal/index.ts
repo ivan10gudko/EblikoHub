@@ -1,1 +1,1 @@
-export {AddTitleModal} from "./addTitleModal"; 
+export {AddTitleScreen} from "./addTitleScreen"; 
