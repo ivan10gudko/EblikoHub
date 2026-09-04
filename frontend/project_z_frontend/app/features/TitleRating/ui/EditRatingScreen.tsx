@@ -11,6 +11,10 @@ interface EditRatingScreenProps {
   onTitleChange?: (newTitleId: number) => void;
 }
 
+const getInitialRating = (rating: TitleRecord["rating"]): Rating => {
+  return rating && "overall" in rating ? (rating as Rating) : { overall: 0 };
+};
+
 export const EditRatingScreen = ({
   title,
   onClose,
@@ -19,28 +23,20 @@ export const EditRatingScreen = ({
 }: EditRatingScreenProps) => {
   const { rate, rateLoading } = useTitleRecordMutation(
     title.apiTitleId,
-    { ...title, description: title.description ?? "" },
     title,
   );
 
-  const [localRatings, setLocalRatings] = useState<Rating>(
-    title.rating && "overall" in title.rating
-      ? (title.rating as Rating)
-      : { overall: 0 },
+  const [localRatings, setLocalRatings] = useState<Rating>(() =>
+    getInitialRating(title.rating)
   );
 
   useEffect(() => {
     if (title.rating) {
-      setLocalRatings(title.rating as Rating);
+      setLocalRatings(getInitialRating(title.rating));
     }
   }, [title.titleId, title.rating]);
 
   const handleSave = () => {
-    if (!isOwn) {
-      onClose();
-      return;
-    }
-
     const hasChanges =
       JSON.stringify(localRatings) !== JSON.stringify(title.rating);
 
@@ -53,7 +49,18 @@ export const EditRatingScreen = ({
     }
   };
 
-  return isOwn ? (
+  if (!isOwn) {
+    return (
+      <ReadonlyRatingContent
+        ratings={getInitialRating(title.rating)}
+        onCancel={onClose}
+        onTitleChange={onTitleChange}
+        titleId={title.titleId}
+      />
+    );
+  }
+
+  return (
     <RatingEditorContent
       titleId={title.titleId}
       ratings={localRatings}
@@ -63,13 +70,6 @@ export const EditRatingScreen = ({
       onSave={handleSave}
       onCancel={onClose}
       onTitleChange={onTitleChange}
-    />
-  ) : (
-    <ReadonlyRatingContent
-      ratings={(title.rating as Rating) || { overall: 0 }}
-      onCancel={onClose}
-      onTitleChange={onTitleChange}
-      titleId={title.titleId}
     />
   );
 };
