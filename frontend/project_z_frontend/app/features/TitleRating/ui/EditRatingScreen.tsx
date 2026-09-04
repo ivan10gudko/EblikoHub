@@ -19,16 +19,7 @@ export const EditRatingScreen = ({
 }: EditRatingScreenProps) => {
   const { rate, rateLoading } = useTitleRecordMutation(
     title.apiTitleId,
-    {
-      apiTitleId: title.apiTitleId,
-      titleName: title.titleName,
-      status: title.status,
-      rating: title.rating,
-      imageUrl: title.imageUrl,
-      titleType: title.titleType,
-      pinned: title.pinned,
-      description: title.description || "",
-    },
+    { ...title, description: title.description ?? "" },
     title,
   );
 
@@ -55,14 +46,11 @@ export const EditRatingScreen = ({
 
     if (hasChanges) {
       rate(localRatings, {
-        onSuccess: () => {
-          onClose();
-        },
+        onSuccess: onClose,
       });
-      return;
+    } else {
+      onClose();
     }
-
-    onClose();
   };
 
   return isOwn ? (
