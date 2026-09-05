@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import project_z.demo.dto.TitleDtos.TitleShortDto;
+import project_z.demo.dto.TitleDtos.TitleUserParticipation;
 import project_z.demo.enums.TitleStatus;
 
 @Getter
@@ -20,6 +21,6 @@ public class RoomTitleSummaryDto {
     private Double computedAvgRating;
     private TitleStatus myStatus;
     private TitleShortDto myTitleInfo;
-    private List<RoomTitleUserIdAndTitleStatusDto> userParticipation;
+    private List<TitleUserParticipation> userParticipation;
 }
 

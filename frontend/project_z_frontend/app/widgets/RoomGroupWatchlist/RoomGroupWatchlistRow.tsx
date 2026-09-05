@@ -75,11 +75,10 @@ export const RoomGroupWatchlistRow = ({
         {/* Бейдж статусу та стрілка розгортання */}
         <div className="flex-shrink-0 flex items-center gap-2">
           <ReadOnlyStatusBadge status={title.myStatus ?? undefined} />
-          
+
           <ExpandMoreRoundedIcon
-            className={`text-muted-foreground transition-transform duration-200 ${
-              isOpen ? "rotate-180" : ""
-            }`}
+            className={`text-muted-foreground transition-transform duration-200 ${isOpen ? "rotate-180" : ""
+              }`}
           />
         </div>
       </div>
@@ -101,6 +100,7 @@ export const RoomGroupWatchlistRow = ({
                 (p) => p.userId === member.userId
               );
               const status = participation?.status;
+              const rating = participation?.overallRating;
 
               return (
                 <div

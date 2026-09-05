@@ -1,4 +1,4 @@
-package project_z.demo.dto.RoomTitleDtos;
+package project_z.demo.dto.TitleDtos;
 
 import java.util.UUID;
 
@@ -9,7 +9,8 @@ import project_z.demo.enums.TitleStatus;
 @Setter
 @Getter
 @AllArgsConstructor
-public class RoomTitleUserIdAndTitleStatusDto {
+public class TitleUserParticipation {
     private UUID userId;
     private TitleStatus status;
+    private Float overallRating;
 }

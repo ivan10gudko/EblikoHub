@@ -67,12 +67,13 @@ export interface RoomTitleSummary {
     computedAvgRating: number;
     myStatus: Status;
     myTitleInfo: TitleShort;
-    userParticipation: RoomTitleUserIdAndTitleStatus[];
+    userParticipation: TitleUserParticipation[];
 }
 
-export interface RoomTitleUserIdAndTitleStatus {
+export interface TitleUserParticipation {
     userId: string;
     status: Status;
+    overallRating: number;
 }
 
 export interface RoomTitlesResponse extends PageResponse<RoomTitleSummary> {

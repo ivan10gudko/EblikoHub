@@ -14,8 +14,8 @@ import project_z.demo.JavaUtil.TitleSortingUtils;
 import project_z.demo.Mappers.Mapper;
 import project_z.demo.dto.RoomTitleDtos.RoomTitleShortDto;
 import project_z.demo.dto.RoomTitleDtos.RoomTitleSummaryDto;
-import project_z.demo.dto.RoomTitleDtos.RoomTitleUserIdAndTitleStatusDto;
 import project_z.demo.dto.TitleDtos.TitleShortDto;
+import project_z.demo.dto.TitleDtos.TitleUserParticipation;
 import project_z.demo.entity.RoomTitleEntity;
 import project_z.demo.entity.RoomTitleLinkEntity;
 import project_z.demo.entity.TitleEntity;
@@ -28,7 +28,6 @@ public class RoomTitleSummaryMapper {
     private final Mapper<RoomTitleEntity, RoomTitleShortDto> roomTitleShortMapper;
     private final Mapper<TitleEntity, TitleShortDto> tilteShortMapper;
 
-
     public RoomTitleSummaryDto mapTo(
             RoomTitleEntity entity,
             Double avg,
@@ -37,7 +36,7 @@ public class RoomTitleSummaryMapper {
             TitleStatus targetStatus) {
         List<RoomTitleLinkEntity> linksForTitle = linksByTitleId.getOrDefault(entity.getId(), List.of());
 
-        List<RoomTitleUserIdAndTitleStatusDto> participation = linksForTitle.stream()
+        List<TitleUserParticipation> participation = linksForTitle.stream()
                 .sorted(Comparator
                         .comparing((RoomTitleLinkEntity l) -> {
                             TitleStatus currentStatus = l.getUserTitleRecord().getStatus();
@@ -49,9 +48,10 @@ public class RoomTitleSummaryMapper {
                             return String.valueOf(TitleSortingUtils.STATUS_PRIORITY.getOrDefault(currentStatus, 99));
                         })
                         .thenComparing(l -> l.getUserTitleRecord().getUser().getName()))
-                .map(link -> new RoomTitleUserIdAndTitleStatusDto(
+                .map(link -> new TitleUserParticipation(
                         link.getUserTitleRecord().getUser().getUserId(),
-                        link.getUserTitleRecord().getStatus()))
+                        link.getUserTitleRecord().getStatus(),
+                        link.getUserTitleRecord().getRating().getOrDefault("overall", 0f)))
                 .collect(Collectors.toList());
 
         Optional<RoomTitleLinkEntity> myLink = Optional.empty();
