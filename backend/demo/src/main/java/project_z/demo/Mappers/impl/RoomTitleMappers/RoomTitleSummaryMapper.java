@@ -51,7 +51,8 @@ public class RoomTitleSummaryMapper {
                 .map(link -> new TitleUserParticipation(
                         link.getUserTitleRecord().getUser().getUserId(),
                         link.getUserTitleRecord().getStatus(),
-                        link.getUserTitleRecord().getRating().getOrDefault("overall", 0f)))
+                        link.getUserTitleRecord().getRating().getOrDefault("overall", 0f),
+                        link.getUserTitleRecord().getTitleType()))
                 .collect(Collectors.toList());
 
         Optional<RoomTitleLinkEntity> myLink = Optional.empty();
