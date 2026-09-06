@@ -1,21 +1,21 @@
 import type { WheelMode } from "~/shared/types";
 
 export interface WheelPresetShort {
-    id: string,
-    name: string,
-    mode: WheelMode,
-    titlesCount: number,
-    createdAt: string,
+    id: string;
+    name: string;
+    mode: WheelMode;
+    titlesCount: number;
+    createdAt: string;
 }
 
 export interface WheelPreset<T = unknown> {
-    id: string,
-    name: string,
-    mode: WheelMode,
-    spinDuration: number,
-    createdAt: string,
-    updatedAt: string,
-    titles: Array<WheelConfigTitle<T>>,
+    id: string;
+    name: string;
+    mode: WheelMode;
+    spinDuration: number;
+    createdAt: string;
+    updatedAt: string;
+    titles: Array<WheelConfigTitle<T>>;
 }
 
 export interface WheelConfigTitle<T> {
@@ -37,5 +37,3 @@ export interface UpdateWheelPresetSettings {
     spinDuration: number;
     mode: WheelMode;
 }
-
-

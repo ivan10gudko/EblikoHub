@@ -2,42 +2,33 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { TitleRecord } from "~/entities/titleRecord";
 import {
     WheelCurrentService,
+    type UpdateWheelCurrentSettings,
     type WheelCurrent,
     wheelCurrentKeys,
 } from "~/entities/wheel-current";
 import { notify } from "~/shared/lib";
 import { getErrorMessage } from "~/shared/utils/getErrorMessage";
 
-export const useAddTitlesToCurrent = () => {
+export const useUpdateCurrentSettings = () => {
     const queryClient = useQueryClient();
     const mutation = useMutation({
-        mutationFn: async (titles: TitleRecord[]) => {
-            await WheelCurrentService.addTitles(titles.map(({ titleId }) => ({ titleId })));
+        mutationFn: async (settings: UpdateWheelCurrentSettings) => {
+            await WheelCurrentService.updateSettings(settings);
         },
-        onMutate: async (titles) => {
+        onMutate: async (settings) => {
             await queryClient.cancelQueries({ queryKey: wheelCurrentKeys.all });
 
             const previous = queryClient.getQueryData<WheelCurrent<TitleRecord>>(wheelCurrentKeys.all);
-            const now = new Date().toISOString();
 
             queryClient.setQueryData<WheelCurrent<TitleRecord>>(
                 wheelCurrentKeys.all,
                 (old: WheelCurrent<TitleRecord> | undefined) => {
                     if (!old) return old;
-
-                    const existingIds = new Set(old.titles.map((config) => config.title.titleId));
-
-                    const newTitles = titles
-                        .filter((title) => !existingIds.has(title.titleId))
-                        .map((title) => ({
-                            title,
-                            createdAt: now,
-                        }));
-
                     return {
                         ...old,
-                        titles: [...old.titles, ...newTitles],
-                        updatedAt: now,
+                        mode: settings.mode,
+                        spinDuration: settings.spinDuration,
+                        updatedAt: new Date().toISOString(),
                     };
                 },
             );
@@ -48,8 +39,8 @@ export const useAddTitlesToCurrent = () => {
             if (context?.previous) {
                 queryClient.setQueryData(wheelCurrentKeys.all, context.previous);
             }
-            console.error("Failed to add titles to current wheel:", error);
-            notify.error(getErrorMessage(error, "Failed to add titles to current wheel."));
+            console.error("Failed to update current wheel settings:", error);
+            notify.error(getErrorMessage(error, "Failed to update current wheel settings."));
         },
         onSettled: () => {
             queryClient.invalidateQueries({ queryKey: wheelCurrentKeys.all });
@@ -57,7 +48,7 @@ export const useAddTitlesToCurrent = () => {
     });
 
     return {
-        addTitles: mutation.mutate,
+        updateSettings: mutation.mutate,
         isLoading: mutation.isPending,
         isError: mutation.isError,
         error: mutation.error,

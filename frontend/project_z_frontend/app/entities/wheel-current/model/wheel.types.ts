@@ -1,11 +1,11 @@
 import type { WheelMode } from "~/shared/types";
 
 export interface WheelCurrent<T = unknown> {
-    userId: string,
-    mode: WheelMode,
-    spinDuration: number,
-    updatedAt: string,
-    titles: Array<WheelConfigTitle<T>>,
+    userId: string;
+    mode: WheelMode;
+    spinDuration: number;
+    updatedAt: string;
+    titles: Array<WheelConfigTitle<T>>;
 }
 
 export interface WheelConfigTitle<T> {

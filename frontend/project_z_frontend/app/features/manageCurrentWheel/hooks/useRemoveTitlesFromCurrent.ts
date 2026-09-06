@@ -8,36 +8,27 @@ import {
 import { notify } from "~/shared/lib";
 import { getErrorMessage } from "~/shared/utils/getErrorMessage";
 
-export const useAddTitlesToCurrent = () => {
+export const useRemoveTitlesFromCurrent = () => {
     const queryClient = useQueryClient();
     const mutation = useMutation({
-        mutationFn: async (titles: TitleRecord[]) => {
-            await WheelCurrentService.addTitles(titles.map(({ titleId }) => ({ titleId })));
+        mutationFn: async (titleIds: Array<number>) => {
+            await WheelCurrentService.removeTitles(titleIds);
         },
-        onMutate: async (titles) => {
+        onMutate: async (titleIds) => {
             await queryClient.cancelQueries({ queryKey: wheelCurrentKeys.all });
 
             const previous = queryClient.getQueryData<WheelCurrent<TitleRecord>>(wheelCurrentKeys.all);
-            const now = new Date().toISOString();
+            const idsToRemove = new Set(titleIds);
 
             queryClient.setQueryData<WheelCurrent<TitleRecord>>(
                 wheelCurrentKeys.all,
                 (old: WheelCurrent<TitleRecord> | undefined) => {
                     if (!old) return old;
 
-                    const existingIds = new Set(old.titles.map((config) => config.title.titleId));
-
-                    const newTitles = titles
-                        .filter((title) => !existingIds.has(title.titleId))
-                        .map((title) => ({
-                            title,
-                            createdAt: now,
-                        }));
-
                     return {
                         ...old,
-                        titles: [...old.titles, ...newTitles],
-                        updatedAt: now,
+                        titles: old.titles.filter((config) => !idsToRemove.has(config.title.titleId)),
+                        updatedAt: new Date().toISOString(),
                     };
                 },
             );
@@ -48,8 +39,8 @@ export const useAddTitlesToCurrent = () => {
             if (context?.previous) {
                 queryClient.setQueryData(wheelCurrentKeys.all, context.previous);
             }
-            console.error("Failed to add titles to current wheel:", error);
-            notify.error(getErrorMessage(error, "Failed to add titles to current wheel."));
+            console.error("Failed to remove titles from current wheel:", error);
+            notify.error(getErrorMessage(error, "Failed to remove titles from current wheel."));
         },
         onSettled: () => {
             queryClient.invalidateQueries({ queryKey: wheelCurrentKeys.all });
@@ -57,7 +48,7 @@ export const useAddTitlesToCurrent = () => {
     });
 
     return {
-        addTitles: mutation.mutate,
+        removeTitles: mutation.mutate,
         isLoading: mutation.isPending,
         isError: mutation.isError,
         error: mutation.error,

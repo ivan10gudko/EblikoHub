@@ -7,8 +7,8 @@ interface WheelPresetService {
     create<T = unknown>(preset: CreateWheelPreset): Promise<WheelPreset<T>>;
     delete(id: string): Promise<void>;
     updateSettings<T = unknown>(settings: UpdateWheelPresetSettings): Promise<WheelPreset<T>>;
-    addTitles(presetId: string, titleIds: Array<{ titleId: Number }>): Promise<void>;
-    removeTitles(presetId: string, titleIds: Array<Number>): Promise<void>;
+    addTitles(presetId: string, titleIds: Array<{ titleId: number }>): Promise<void>;
+    removeTitles(presetId: string, titleIds: Array<number>): Promise<void>;
 }
 
 export const WheelPresetService: WheelPresetService = {
@@ -17,12 +17,12 @@ export const WheelPresetService: WheelPresetService = {
         return response.data;
     },
 
-    getById: async<T = unknown>(id: string) => {
+    getById: async <T = unknown>(id: string) => {
         const response = await apiClient.get<WheelPreset<T>>(`/wheel/presets/${id}`);
         return response.data;
     },
 
-    create: async<T = unknown>(preset: CreateWheelPreset) => {
+    create: async <T = unknown>(preset: CreateWheelPreset) => {
         const response = await apiClient.post<WheelPreset<T>>("/wheel/presets", preset);
         return response.data;
     },
@@ -31,16 +31,16 @@ export const WheelPresetService: WheelPresetService = {
         await apiClient.delete(`/wheel/presets/${id}`);
     },
 
-    updateSettings: async<T = unknown>(settings: UpdateWheelPresetSettings) => {
+    updateSettings: async <T = unknown>(settings: UpdateWheelPresetSettings) => {
         const response = await apiClient.patch<WheelPreset<T>>("/wheel/presets/settings", settings);
         return response.data;
     },
 
-    addTitles: async<T = unknown>(presetId: string, titleIds: Array<{ titleId: number }>) => {
+    addTitles: async (presetId: string, titleIds: Array<{ titleId: number }>) => {
         await apiClient.post(`/wheel/presets/${presetId}/titles`, { titleIds });
     },
 
-    removeTitles: async<T = unknown>(presetId: string, titleIds: Array<number>) => {
+    removeTitles: async (presetId: string, titleIds: Array<number>) => {
         await apiClient.delete(`/wheel/presets/${presetId}/titles`, { data: { titleIds } });
-    }
+    },
 };
