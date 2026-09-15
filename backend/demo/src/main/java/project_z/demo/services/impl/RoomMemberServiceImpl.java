@@ -21,6 +21,7 @@ import project_z.demo.entity.RoomMemberEntity;
 import project_z.demo.entity.UserEntity;
 import project_z.demo.enums.RoomRole;
 import project_z.demo.repositories.RoomBanRepository;
+import project_z.demo.repositories.RoomTitleLinkRepository;
 import project_z.demo.repositories.RoomMemberRepository;
 import project_z.demo.repositories.RoomRepository;
 import project_z.demo.repositories.UserRepository;
@@ -34,7 +35,7 @@ public class RoomMemberServiceImpl implements RoomMemberService {
     private final Mapper<UserEntity, UserShortDto> userMapper;
     private final RoomBanRepository roomBanRepository;
     private final RoomRepository roomRepository;
-
+    private final RoomTitleLinkRepository roomTitleLinkRepository;
     @Override
     @Transactional
     public void leaveRoom(Long roomId, UUID userId) {
@@ -68,35 +69,36 @@ public class RoomMemberServiceImpl implements RoomMemberService {
     }
 
     @Override
-    public RoomMemberDto getRooMemberByRoomIdAndUserId(Long roomId, UUID userId){
-      RoomMemberEntity roomMemberEntity =  roomMemberRepository.findOneByRoom_RoomIdAndUser_UserId(roomId, userId).orElseThrow(
-        () -> new ResourceNotFoundException("This user dont have a membership in room " + roomId)
-      );
-      return memberMapper.mapTo((roomMemberEntity));
+    public RoomMemberDto getRooMemberByRoomIdAndUserId(Long roomId, UUID userId) {
+        RoomMemberEntity roomMemberEntity = roomMemberRepository.findOneByRoom_RoomIdAndUser_UserId(roomId, userId)
+                .orElseThrow(
+                        () -> new ResourceNotFoundException("This user dont have a membership in room " + roomId));
+        return memberMapper.mapTo((roomMemberEntity));
     }
 
     @Override
     @Transactional
-    public RoomMemberDto leaveOwner(long roomId, RoomMemberIdDto dto, UUID currentUserId){
+    public RoomMemberDto leaveOwner(long roomId, RoomMemberIdDto dto, UUID currentUserId) {
         RoomEntity roomEntity = roomRepository.findById(roomId).orElseThrow(
-            () -> new ResourceNotFoundException("Room not found")
-        );
-        RoomMemberEntity ownerEntity = roomMemberRepository.findOneByRoom_RoomIdAndUser_UserId(roomId,currentUserId).orElseThrow();
+                () -> new ResourceNotFoundException("Room not found"));
+        RoomMemberEntity ownerEntity = roomMemberRepository.findOneByRoom_RoomIdAndUser_UserId(roomId, currentUserId)
+                .orElseThrow();
         RoomMemberEntity userToPromoteToOnwerEntity = roomMemberRepository.findById(dto.getRoomMemberId()).orElseThrow(
-            () -> new ResourceNotFoundException("User to promote to owner not found")
-        );
+                () -> new ResourceNotFoundException("User to promote to owner not found"));
 
         userToPromoteToOnwerEntity.setRole(RoomRole.OWNER);
         roomMemberRepository.delete(ownerEntity);
-        return memberMapper.mapTo( roomMemberRepository.save(userToPromoteToOnwerEntity));
+        return memberMapper.mapTo(roomMemberRepository.save(userToPromoteToOnwerEntity));
     }
+
     @Override
     @Transactional
-    public RoomMemberDto updateMemberRole(UUID currentUserId, long roomId, RoomMemberRoleUpdateDto dto){
-        RoomMemberEntity currentUser = roomMemberRepository.findOneByRoom_RoomIdAndUser_UserId(roomId,currentUserId).orElseThrow(
-        () -> new ResourceNotFoundException("Room membership not found"));
+    public RoomMemberDto updateMemberRole(UUID currentUserId, long roomId, RoomMemberRoleUpdateDto dto) {
+        RoomMemberEntity currentUser = roomMemberRepository.findOneByRoom_RoomIdAndUser_UserId(roomId, currentUserId)
+                .orElseThrow(
+                        () -> new ResourceNotFoundException("Room membership not found"));
         RoomMemberEntity userMemberToChange = roomMemberRepository.findById(dto.getRoomMemberId()).orElseThrow(
-            () -> new ResourceNotFoundException("Room membership to change not found"));
+                () -> new ResourceNotFoundException("Room membership to change not found"));
 
         if (!userMemberToChange.getRoom().getRoomId().equals(roomId)) {
             throw new AccessDeniedException("This member does not belong to the specified room");
@@ -104,8 +106,7 @@ public class RoomMemberServiceImpl implements RoomMemberService {
 
         if (dto.getRole() == RoomRole.OWNER) {
             RoomEntity roomEntity = roomRepository.findById(roomId).orElseThrow(
-                () -> new ResourceNotFoundException("Room not found")
-            );
+                    () -> new ResourceNotFoundException("Room not found"));
             roomEntity.setOwner(userMemberToChange.getUser());
             roomRepository.save(roomEntity);
 
@@ -118,5 +119,16 @@ public class RoomMemberServiceImpl implements RoomMemberService {
 
         userMemberToChange.setRole(dto.getRole());
         return memberMapper.mapTo(roomMemberRepository.save(userMemberToChange));
+    }
+    @Override
+    @Transactional
+    public void addMemberToRoom(RoomEntity room, UserEntity user, RoomRole role) {
+        RoomMemberEntity member = new RoomMemberEntity();
+        member.setRoom(room);
+        member.setUser(user);
+        member.setRole(role);
+        roomMemberRepository.save(member);
+
+        roomTitleLinkRepository.linkUserTitlesToRoom(user.getUserId(), room.getRoomId());
     }
 }

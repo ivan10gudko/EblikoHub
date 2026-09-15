@@ -1,10 +1,14 @@
 package project_z.demo.services.impl;
 
-import lombok.RequiredArgsConstructor;
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import lombok.RequiredArgsConstructor;
 import project_z.demo.Mappers.Mapper;
 import project_z.demo.Mappers.impl.RoomRequestMappers.RequestsToRoomResponseDtoMapper;
 import project_z.demo.common.Exceptions.ResourceNotFoundException;
@@ -15,16 +19,19 @@ import project_z.demo.dto.RoomRequestsDtos.RoomRequestCountsDto;
 import project_z.demo.dto.RoomRequestsDtos.RoomRequestDetailsDto;
 import project_z.demo.dto.RoomRequestsDtos.RoomRequestShortDto;
 import project_z.demo.dto.RoomRequestsDtos.RoomRequestShortWithUserDto;
-import project_z.demo.entity.*;
+import project_z.demo.entity.RoomEntity;
+import project_z.demo.entity.RoomRequestsEntity;
+import project_z.demo.entity.UserEntity;
 import project_z.demo.enums.RequestStatus;
 import project_z.demo.enums.RequestType;
 import project_z.demo.enums.RoomRole;
-import project_z.demo.repositories.*;
+import project_z.demo.repositories.RoomBanRepository;
+import project_z.demo.repositories.RoomMemberRepository;
+import project_z.demo.repositories.RoomRepository;
+import project_z.demo.repositories.RoomRequestRepository;
+import project_z.demo.repositories.UserRepository;
+import project_z.demo.services.RoomMemberService;
 import project_z.demo.services.RoomRequestService;
-
-import java.util.List;
-import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -36,8 +43,9 @@ public class RoomRequestServiceImpl implements RoomRequestService {
     private final RoomBanRepository roomBanRepository;
     private final Mapper<RoomRequestsEntity, RoomRequestDetailsDto> requestMapper;
     private final Mapper<RoomRequestsEntity, RoomRequestShortDto> requestShortMapper;
-    private final Mapper<RoomRequestsEntity,RoomRequestShortWithUserDto> requestShortWithUserMapper;
+    private final Mapper<RoomRequestsEntity, RoomRequestShortWithUserDto> requestShortWithUserMapper;
     private final RequestsToRoomResponseDtoMapper requestsToRoomResponseDtoMapper;
+    private final RoomMemberService roomMemberService;
 
     @Override
     @Transactional
@@ -93,15 +101,12 @@ public class RoomRequestServiceImpl implements RoomRequestService {
         RoomRequestsEntity request = roomRequestRepository.findById(roomRequestId)
                 .orElseThrow(() -> new ResourceNotFoundException("Request not found"));
 
-        RoomMemberEntity member = new RoomMemberEntity();
-        member.setRoom(request.getRoom());
-        if (request.getType() == RequestType.JOIN_REQUEST) {
-            member.setUser(request.getSender());
-        } else {
-            member.setUser(request.getUser());
-        }
-        member.setRole(RoomRole.MEMBER);
-        roomMemberRepository.save(member);
+        UserEntity targetUser = (request.getType() == RequestType.JOIN_REQUEST)
+                ? request.getSender()
+                : request.getUser();
+
+        roomMemberService.addMemberToRoom(request.getRoom(), targetUser, RoomRole.MEMBER);
+
         roomRequestRepository.delete(request);
     }
 
@@ -140,9 +145,10 @@ public class RoomRequestServiceImpl implements RoomRequestService {
     @Override
     @Transactional(readOnly = true)
     public RequestsToRoomResponseDto getRequestsByRoomId(Long roomId, RequestStatus status, RequestType type) {
-        List<RoomRequestsEntity> requests = roomRequestRepository.findByRoom_RoomIdAndStatusAndType(roomId, status, type);
+        List<RoomRequestsEntity> requests = roomRequestRepository.findByRoom_RoomIdAndStatusAndType(roomId, status,
+                type);
 
-        List<RoomRequestShortWithUserDto> dtos =  requests.stream()
+        List<RoomRequestShortWithUserDto> dtos = requests.stream()
                 .map(requestShortWithUserMapper::mapTo)
                 .collect(Collectors.toList());
         return requestsToRoomResponseDtoMapper.mapTo(dtos, roomId);

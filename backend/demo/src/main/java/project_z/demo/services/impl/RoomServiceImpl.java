@@ -40,12 +40,15 @@ import project_z.demo.repositories.Specifications.RoomSpecifications;
 import project_z.demo.repositories.UserRepository;
 import project_z.demo.security.JwtService;
 import project_z.demo.security.SecurityService;
+import project_z.demo.services.RoomMemberService;
+import project_z.demo.services.RoomRequestService;
 import project_z.demo.services.RoomService;
 
 @Service
 @RequiredArgsConstructor
 public class RoomServiceImpl implements RoomService {
 
+    private final RoomRequestService roomRequestService;
     private final RoomRepository roomRepository;
     private final BeanUtilsHelper beanUtilsHelper;
     private final UserRepository userRepository;
@@ -57,6 +60,8 @@ public class RoomServiceImpl implements RoomService {
     private final SecurityService securityService;
     private final Mapper<RoomEntity, RoomPatchUpdateDto> roomUpdateMapper;
     private final PatchHelper patchHelper;
+    private final RoomMemberService roomMemberService;
+
 
     @Override
     public RoomEntity save(RoomEntity roomEntity) {
@@ -134,32 +139,14 @@ public class RoomServiceImpl implements RoomService {
                 .build();
         RoomEntity savedRoom = roomRepository.save(roomEntity);
 
-        RoomMemberEntity ownerMember = new RoomMemberEntity();
-        ownerMember.setRoom(savedRoom);
-        ownerMember.setUser(owner);
-        ownerMember.setRole(RoomRole.OWNER);
-        roomMemberRepository.save(ownerMember);
+        roomMemberService.addMemberToRoom(savedRoom, owner, RoomRole.OWNER);
 
         if (dto.getMembers() != null) {
-            List<UUID> memberIds = dto.getMembers().stream()
+            dto.getMembers().stream()
                     .filter(id -> !id.equals(ownerId))
-                    .toList();
-
-            Iterable<UserEntity> membersIterable = userRepository.findAllById(memberIds);
-            List<UserEntity> members = StreamSupport.stream(membersIterable.spliterator(), false)
-                    .collect(Collectors.toList());
-
-            List<RoomRequestsEntity> inviteRequests = members.stream().map(user -> {
-                RoomRequestsEntity request = new RoomRequestsEntity();
-                request.setRoom(savedRoom);
-                request.setUser(user);
-                request.setSender(owner);
-                request.setStatus(RequestStatus.PENDING);
-                request.setType(RequestType.INVITE);
-                return request;
-            }).collect(Collectors.toList());
-
-            roomRequestRepository.saveAll(inviteRequests);
+                    .forEach(memberId -> {
+                        roomRequestService.sendRequest(ownerId, memberId, savedRoom.getRoomId(), RequestType.INVITE);
+                    });
         }
 
         return roomMapper.mapTo(savedRoom);
@@ -169,7 +156,7 @@ public class RoomServiceImpl implements RoomService {
     public RoomDto roomPartialUpdate(RoomPatchUpdateDto source, Long roomId) {
         RoomEntity roomEntity = roomRepository.findById(roomId).orElseThrow(
                 () -> new ResourceNotFoundException("Room not found"));
-        
+
         patchHelper.updateIfPresent(source.getDescription(), roomEntity::setDescription);
         patchHelper.updateIfPresent(source.getImageUrl(), roomEntity::setImageUrl);
         patchHelper.updateIfPresent(source.getRoomName(), roomEntity::setRoomName);
