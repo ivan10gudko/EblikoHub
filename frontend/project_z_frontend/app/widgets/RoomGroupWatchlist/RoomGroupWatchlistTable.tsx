@@ -2,6 +2,7 @@ import { useRoomTitlesQuery } from "../RoomDetailsManager";
 import { RoomGroupWatchlistRow } from "./RoomGroupWatchlistRow";
 import { RoomGroupWatchlistSkeleton } from "./RoomGroupWatchlistSkeleton";
 import { useAuthStore } from "~/features/auth";
+import type { UserCacheItem } from "./RoomMemberRow";
 
 interface RoomGroupWatchlistTableProps {
     roomId: number;
@@ -12,9 +13,20 @@ export const RoomGroupWatchlistTable = ({ roomId }: RoomGroupWatchlistTableProps
 
     const { data: titlesData, isLoading: isTitlesLoading } = useRoomTitlesQuery(
         roomId,
+        [],
     );
 
     const titles = titlesData?.pages.flatMap((page) => page.content ?? []) ?? [];
+
+    const mergedUsersCache: Record<string, UserCacheItem> = titlesData?.pages.reduce(
+        (acc, page) => {
+            if (page.usersCache) {
+                Object.assign(acc, page.usersCache);
+            }
+            return acc;
+        },
+        {} as Record<string, UserCacheItem>
+    ) ?? {};
 
     if (isTitlesLoading) return <RoomGroupWatchlistSkeleton />;
 
@@ -44,6 +56,7 @@ export const RoomGroupWatchlistTable = ({ roomId }: RoomGroupWatchlistTableProps
                             key={String(titlesSummary.roomTitleId)}
                             title={titlesSummary}
                             index={index}
+                            usersCache={mergedUsersCache}
                         />
                     ))}
                 </div>
