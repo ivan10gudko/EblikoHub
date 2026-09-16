@@ -134,10 +134,16 @@ public class RoomTitleServiceImpl implements RoomTitleService {
         List<RoomTitleLinkEntity> links = fetchLinks(titleIds, currentUserId, params.getMemberIds());
         Map<UUID, List<RoomTitleLinkEntity>> linksByTitleId = CollectionUtils.groupBy(links,
                 l -> l.getRoomTitle().getId());
-        Map<UUID, UserShortDto> usersCache = buildUsersCache(links);
+
+        boolean isCurrentUserSelected = params.getMemberIds() == null
+                || params.getMemberIds().isEmpty()
+                || (currentUserId != null && params.getMemberIds().contains(currentUserId));
+
+        Map<UUID, UserShortDto> usersCache = buildUsersCache(links, currentUserId, isCurrentUserSelected);
 
         Page<RoomTitleSummaryDto> page = statsPage.map(
-                statsView -> mapToSummary(statsView, entityMap, linksByTitleId, currentUserId, params.getStatus()));
+                statsView -> mapToSummary(statsView, entityMap, linksByTitleId, currentUserId, isCurrentUserSelected,
+                        params.getStatus()));
 
         return new RoomTitlesResponseDto(page, usersCache);
     }
@@ -208,13 +214,6 @@ public class RoomTitleServiceImpl implements RoomTitleService {
         return CollectionUtils.toMapById(repository.findAllById(titleIds), RoomTitleEntity::getId);
     }
 
-    private Map<UUID, UserShortDto> buildUsersCache(List<RoomTitleLinkEntity> links) {
-        List<UserEntity> users = links.stream()
-                .map(link -> link.getUserTitleRecord().getUser())
-                .distinct()
-                .toList();
-        return CollectionUtils.toMapById(users, UserEntity::getUserId, userShortMapper::mapTo);
-    }
 
     private List<RoomTitleLinkEntity> fetchLinks(List<UUID> titleIds, UUID currentUserId, List<UUID> memberIds) {
         List<UUID> targetUserIds = new ArrayList<>();
@@ -229,13 +228,29 @@ public class RoomTitleServiceImpl implements RoomTitleService {
 
     private RoomTitleSummaryDto mapToSummary(RoomTitleStatsView statsView, Map<UUID, RoomTitleEntity> entityMap,
             Map<UUID, List<RoomTitleLinkEntity>> linksByTitleId,
-            UUID currentUserId, TitleStatus status) {
+            UUID currentUserId, boolean isCurrentUserSelected, TitleStatus status) {
         RoomTitleEntity entity = entityMap.get(statsView.getId());
         if (entity == null) {
             return null;
         }
         Double avg = statsView.getAvgRating() != null ? statsView.getAvgRating() : 0.0;
-        return roomTitleSummaryMapper.mapTo(entity, avg, linksByTitleId, currentUserId, status);
+        return roomTitleSummaryMapper.mapTo(entity, avg, linksByTitleId, currentUserId, isCurrentUserSelected, status);
     }
 
+    private Map<UUID, UserShortDto> buildUsersCache(List<RoomTitleLinkEntity> links, UUID currentUserId,
+            boolean isCurrentUserSelected) {
+        List<UserEntity> users = links.stream()
+                .map(link -> link.getUserTitleRecord().getUser())
+                .filter(user -> {
+
+                    if (!isCurrentUserSelected && currentUserId != null && user.getUserId().equals(currentUserId)) {
+                        return false;
+                    }
+                    return true;
+                })
+                .distinct()
+                .toList();
+
+        return CollectionUtils.toMapById(users, UserEntity::getUserId, userShortMapper::mapTo);
+    }
 }

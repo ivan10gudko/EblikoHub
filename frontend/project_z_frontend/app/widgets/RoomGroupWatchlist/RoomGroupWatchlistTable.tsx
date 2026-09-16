@@ -1,21 +1,14 @@
-import { useRoomTitlesQuery } from "../RoomDetailsManager";
 import { RoomGroupWatchlistRow } from "./RoomGroupWatchlistRow";
 import { RoomGroupWatchlistSkeleton } from "./RoomGroupWatchlistSkeleton";
-import { useAuthStore } from "~/features/auth";
 import type { UserCacheItem } from "./RoomMemberRow";
+import type { useRoomTitlesQuery } from "../RoomDetailsManager";
 
 interface RoomGroupWatchlistTableProps {
-    roomId: number;
+    titlesData: ReturnType<typeof useRoomTitlesQuery>["data"];
+    isLoading: boolean;
 }
 
-export const RoomGroupWatchlistTable = ({ roomId }: RoomGroupWatchlistTableProps) => {
-    const { userId } = useAuthStore();
-
-    const { data: titlesData, isLoading: isTitlesLoading } = useRoomTitlesQuery(
-        roomId,
-        [],
-    );
-
+export const RoomGroupWatchlistTable = ({ titlesData, isLoading }: RoomGroupWatchlistTableProps) => {
     const titles = titlesData?.pages.flatMap((page) => page.content ?? []) ?? [];
 
     const mergedUsersCache: Record<string, UserCacheItem> = titlesData?.pages.reduce(
@@ -28,7 +21,7 @@ export const RoomGroupWatchlistTable = ({ roomId }: RoomGroupWatchlistTableProps
         {} as Record<string, UserCacheItem>
     ) ?? {};
 
-    if (isTitlesLoading) return <RoomGroupWatchlistSkeleton />;
+    if (isLoading) return <RoomGroupWatchlistSkeleton />;
 
     return (
         <div className="bg-card border border-border rounded-2xl p-4 w-full flex flex-col gap-4">
@@ -62,5 +55,5 @@ export const RoomGroupWatchlistTable = ({ roomId }: RoomGroupWatchlistTableProps
                 </div>
             )}
         </div>
-    );  
+    );
 };
