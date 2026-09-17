@@ -35,13 +35,13 @@ export const RoomGroupWatchlistRow = ({
   const roomMembers = Object.keys(usersCache).length > 0
     ? Object.values(usersCache)
     : Array.from(
-        new Map(
-          (title.userParticipation || []).map((p) => [
-            p.userId,
-            { userId: p.userId, name: p.userId, nameTag: p.userId, img: null },
-          ])
-        ).values()
-      );
+      new Map(
+        (title.userParticipation || []).map((p) => [
+          p.userId,
+          { userId: p.userId, name: p.userId, nameTag: p.userId, img: null },
+        ])
+      ).values()
+    );
 
   return (
     <div className="flex flex-col w-full transition-all duration-200">
@@ -87,22 +87,19 @@ export const RoomGroupWatchlistRow = ({
 
           <div className="w-8 h-8 rounded-full flex items-center justify-center bg-muted/40 hover:bg-muted transition-colors">
             <ExpandMoreRoundedIcon
-              className={`text-muted-foreground transition-transform duration-300 ${
-                isOpen ? "rotate-180" : ""
-              }`}
+              className={`text-muted-foreground transition-transform duration-300 ${isOpen ? "rotate-180" : ""
+                }`}
             />
           </div>
         </div>
       </div>
 
-      {isOpen && (
+      { isOpen && (
         <div className="mt-2 bg-card/95 backdrop-blur-sm border border-border/60 rounded-2xl p-4 flex flex-col gap-2 ml-4 sm:ml-8 w-[calc(100%-1rem)] sm:w-[calc(100%-2rem)] shadow-lg animate-in fade-in slide-in-from-top-2 duration-200">
-          <div className="grid grid-cols-[1fr_auto] items-center px-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider pb-2 border-b border-border/40">
+          <div className="grid grid-cols-[1fr_80px_130px] items-center px-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider pb-2 border-b border-border/40">
             <span>Room Member</span>
-            <div className="flex items-center justify-end gap-6 min-w-[150px]">
-              <span>Rating</span>
-              <span className="min-w-[110px] text-right">Status</span>
-            </div>
+            <span className="text-center">Rating</span>
+            <span className="text-right">Status</span>
           </div>
 
           {roomMembers.length === 0 ? (

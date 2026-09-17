@@ -21,13 +21,12 @@ interface RoomMemberRowProps {
   member: UserCacheItem;
   participation?: UserParticipation;
 }
-
 export const RoomMemberRow = ({ member, participation }: RoomMemberRowProps) => {
   return (
-    <div className="grid grid-cols-[1fr_auto] items-center px-3 py-2 rounded-lg hover:bg-muted/30">
+    <div className="grid grid-cols-[1fr_80px_130px] items-center px-3 py-2 rounded-lg hover:bg-muted/30">
       <div className="flex items-center gap-3 min-w-0">
         <UserAvatar src={member.img ?? undefined} name={member.name} size="sm" />
-        
+
         <div className="flex flex-col min-w-0">
           <span className="text-sm font-medium text-foreground truncate">
             {member.name}
@@ -38,13 +37,14 @@ export const RoomMemberRow = ({ member, participation }: RoomMemberRowProps) => 
         </div>
       </div>
 
-      <div className="flex items-center justify-end gap-4 min-w-[150px]">
+      <div className="flex items-center justify-center">
         {participation?.overallRating !== undefined && participation.overallRating > 0 ? (
           <CompactRatingLabel rating={participation.overallRating} />
         ) : (
           <span className="text-xs text-muted-foreground">—</span>
         )}
-
+      </div>
+      <div className="flex items-center justify-end">
         <ReadOnlyStatusBadge status={participation?.status} />
       </div>
     </div>
