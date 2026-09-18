@@ -1,4 +1,3 @@
-
 TRUNCATE TABLE room_title_links CASCADE;
 
 ALTER TABLE room_title_links
@@ -7,7 +6,7 @@ DROP CONSTRAINT IF EXISTS uk_user_title_record_unique;
 ALTER TABLE room_title_links
 DROP CONSTRAINT IF EXISTS uk_user_record_room_title;
 
-CREATE FUNCTION check_room_title_link() RETURNS TRIGGER AS $$
+CREATE OR REPLACE FUNCTION check_room_title_link() RETURNS TRIGGER AS $$
 BEGIN
     IF EXISTS (
         SELECT 1 FROM room_title_links rtl
@@ -22,6 +21,8 @@ BEGIN
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
+
+DROP TRIGGER IF EXISTS trg_room_title_link ON room_title_links;
 
 CREATE TRIGGER trg_room_title_link
 BEFORE INSERT OR UPDATE ON room_title_links
