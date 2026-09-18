@@ -15,7 +15,6 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-
 import lombok.RequiredArgsConstructor;
 import project_z.demo.JavaUtil.CollectionUtils;
 import project_z.demo.JavaUtil.PagingHelper;
@@ -81,13 +80,18 @@ public class RoomTitleServiceImpl implements RoomTitleService {
     @Transactional
     public RoomTitleDetailsDto create(RoomTitleCreateDto dto, Long roomId) {
         UUID currentUserId = securityService.getCurrentUserId();
+
         RoomEntity roomEntity = roomRepository.findById(roomId)
                 .orElseThrow(() -> new ResourceNotFoundException("room not found"));
+
         RoomTitleEntity entity = createMapper.mapFrom(dto);
         entity.setRoom(roomEntity);
         entity.setAddedByUserId(currentUserId);
 
-        return mapper.mapTo(repository.save(entity));
+        RoomTitleEntity savedEntity = repository.save(entity);
+        linkRepository.linkExistingMembersToNewRoomTitle(savedEntity.getId());
+
+        return mapper.mapTo(savedEntity);
     }
 
     @Override
@@ -133,7 +137,8 @@ public class RoomTitleServiceImpl implements RoomTitleService {
         List<UUID> titleIds = CollectionUtils.extractIds(statsPage.getContent(), RoomTitleStatsView::getId);
         Map<UUID, RoomTitleEntity> entityMap = fetchEntityMap(titleIds);
         List<RoomTitleLinkEntity> links = fetchLinks(titleIds, currentUserId, params.getMemberIds());
-        Map<UUID, List<RoomTitleLinkEntity>> linksByTitleId = CollectionUtils.groupBy(links, l -> l.getRoomTitle().getId());
+        Map<UUID, List<RoomTitleLinkEntity>> linksByTitleId = CollectionUtils.groupBy(links,
+                l -> l.getRoomTitle().getId());
         Map<UUID, UserShortDto> usersCache = buildUsersCache(links);
 
         Page<RoomTitleSummaryDto> page = statsPage.map(
@@ -226,7 +231,6 @@ public class RoomTitleServiceImpl implements RoomTitleService {
         }
         return linkRepository.findByRoomTitleIdInAndUserIdIn(titleIds, targetUserIds);
     }
-
 
     private RoomTitleSummaryDto mapToSummary(RoomTitleStatsView statsView, Map<UUID, RoomTitleEntity> entityMap,
             Map<UUID, List<RoomTitleLinkEntity>> linksByTitleId,

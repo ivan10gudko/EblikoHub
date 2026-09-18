@@ -44,10 +44,15 @@ export const AddRoomScreen = ({
         return prevUsers;
       }
 
-      setFormData((prevForm) => ({
-        ...prevForm,
-        members: [...prevForm.members, user.userId],
-      }));
+      setFormData((prevForm) => {
+        if (prevForm.members.includes(user.userId)) {
+          return prevForm;
+        }
+        return {
+          ...prevForm,
+          members: [...prevForm.members, user.userId],
+        };
+      });
 
       return [...prevUsers, user];
     });
