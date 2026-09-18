@@ -24,7 +24,7 @@ const AnimeSidebar: React.FC<Props> = ({ data }) => {
     apiTitleId: data.mal_id,
     titleName: data.title,
     status: Status.WATCHED,
-    description: data.synopsis || "",
+    description:"",
     imageUrl: data.images.jpg.image_url,
     titleType: TitleType.ANIME,
     pinned: false,
