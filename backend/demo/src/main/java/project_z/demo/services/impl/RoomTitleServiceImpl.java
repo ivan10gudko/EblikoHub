@@ -80,13 +80,18 @@ public class RoomTitleServiceImpl implements RoomTitleService {
     @Transactional
     public RoomTitleDetailsDto create(RoomTitleCreateDto dto, Long roomId) {
         UUID currentUserId = securityService.getCurrentUserId();
+
         RoomEntity roomEntity = roomRepository.findById(roomId)
                 .orElseThrow(() -> new ResourceNotFoundException("room not found"));
+
         RoomTitleEntity entity = createMapper.mapFrom(dto);
         entity.setRoom(roomEntity);
         entity.setAddedByUserId(currentUserId);
 
-        return mapper.mapTo(repository.save(entity));
+        RoomTitleEntity savedEntity = repository.save(entity);
+        linkRepository.linkExistingMembersToNewRoomTitle(savedEntity.getId());
+
+        return mapper.mapTo(savedEntity);
     }
 
     @Override

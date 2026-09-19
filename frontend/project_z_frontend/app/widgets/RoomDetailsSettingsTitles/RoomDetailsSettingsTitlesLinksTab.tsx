@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { DragDropContext, type DropResult } from "@hello-pangea/dnd";
 import { WatchlistShortTitles } from "./WatchlistShortTitles";
 import { RoomTitleReadOnlyList } from "./RoomTitleList";
@@ -6,7 +6,7 @@ import {
   useInfiniteRoomTitlesWithLinks,
   useRoomTitleLinkActions,
 } from "~/features/manageRoomTitles";
-import { useTitleStats } from "~/features/titleFilter/hooks/useTitleStats"; 
+import { useTitleStats } from "~/features/titleFilter/hooks/useTitleStats";
 import { ToggleSwitch } from "~/shared/ui/Switch";
 import { MobileTitleLinksManager } from "./MobileRoomSettingsTitleLinksTab";
 import { TitleFiltersDropdown } from "~/features/titleFilter";
@@ -33,6 +33,7 @@ export const RoomDetailsSettingsTitlesLinks = ({
 
   const [draggingTitleId, setDraggingTitleId] = useState<string | null>(null);
   const [isWatchlistModeToggleActive, setWatchlistModeToggleActive] = useState(false);
+  const [pendingFetch, setPendingFetch] = useState(false);
 
   const breakpoint = useWindowDimensions();
   const isMobile = breakpoint === "xs" || breakpoint === "sm";
@@ -40,15 +41,27 @@ export const RoomDetailsSettingsTitlesLinks = ({
   const allTitles = data?.pages.flatMap((page) => page.content) ?? [];
   const { createLink } = useRoomTitleLinkActions(roomId);
 
+  const handleFetchNextPage = useCallback(() => {
+    if (draggingTitleId) {
+      setPendingFetch(true);
+      return;
+    }
+    fetchNextPage();
+  }, [draggingTitleId, fetchNextPage]);
+
+  useEffect(() => {
+    if (!draggingTitleId && pendingFetch) {
+      setPendingFetch(false);
+      fetchNextPage();
+    }
+  }, [draggingTitleId, pendingFetch, fetchNextPage]);
+
   const onDragEnd = (result: DropResult) => {
     const { source, destination, draggableId } = result;
     if (!destination || destination.droppableId === source.droppableId) return;
 
     if (destination.droppableId.startsWith("room-title-")) {
-      const targetRoomTitleId = destination.droppableId.replace(
-        "room-title-",
-        ""
-      );
+      const targetRoomTitleId = destination.droppableId.replace("room-title-", "");
       createLink({
         titleId: Number(draggableId),
         roomTitleId: targetRoomTitleId,
@@ -83,20 +96,15 @@ export const RoomDetailsSettingsTitlesLinks = ({
         <div className="flex flex-col gap-4 min-w-0">
           <div className="flex items-center justify-between">
             <h2 className="font-bold text-2xl">My Watchlist</h2>
-
             <div className="flex items-center gap-3">
               <span className="text-sm text-foreground">
-                {isWatchlistModeToggleActive
-                  ? "Only titles with no links"
-                  : "All titles"}
+                {isWatchlistModeToggleActive ? "Only titles with no links" : "All titles"}
               </span>
-
               <ToggleSwitch
                 isActive={isWatchlistModeToggleActive}
                 onToggle={setWatchlistModeToggleActive}
               />
-
-              <TitleFiltersDropdown 
+              <TitleFiltersDropdown
                 statusCount={stats?.statusCount}
                 typeCount={stats?.typeCount}
               />
@@ -116,7 +124,7 @@ export const RoomDetailsSettingsTitlesLinks = ({
             draggingTitleId={draggingTitleId ?? ""}
             titles={allTitles}
             isLoading={isLoading}
-            fetchNextPage={fetchNextPage}
+            fetchNextPage={handleFetchNextPage}
             hasNextPage={!!hasNextPage}
             isFetchingNextPage={isFetchingNextPage}
           />
