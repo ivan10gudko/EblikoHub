@@ -1,7 +1,8 @@
 import { RoomGroupWatchlistRow } from "./RoomGroupWatchlistRow";
 import { RoomGroupWatchlistSkeleton } from "./RoomGroupWatchlistSkeleton";
-import type { UserCacheItem } from "./RoomMemberRow";
 import type { useRoomTitlesQuery } from "../RoomDetailsManager";
+import type { UserCacheItem } from "~/entities/user/model/user.types";
+import { mergePagedCache } from "~/shared/helpers/mergePagedCache";
 
 interface RoomGroupWatchlistTableProps {
     titlesData: ReturnType<typeof useRoomTitlesQuery>["data"];
@@ -11,15 +12,10 @@ interface RoomGroupWatchlistTableProps {
 export const RoomGroupWatchlistTable = ({ titlesData, isLoading }: RoomGroupWatchlistTableProps) => {
     const titles = titlesData?.pages.flatMap((page) => page.content ?? []) ?? [];
 
-    const mergedUsersCache: Record<string, UserCacheItem> = titlesData?.pages.reduce(
-        (acc, page) => {
-            if (page.usersCache) {
-                Object.assign(acc, page.usersCache);
-            }
-            return acc;
-        },
-        {} as Record<string, UserCacheItem>
-    ) ?? {};
+    const mergedUsersCache = mergePagedCache(
+        titlesData?.pages,
+        (page) => page.usersCache
+    );
 
     if (isLoading) return <RoomGroupWatchlistSkeleton />;
 

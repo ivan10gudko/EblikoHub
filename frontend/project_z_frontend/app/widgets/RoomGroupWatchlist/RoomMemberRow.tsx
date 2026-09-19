@@ -1,26 +1,13 @@
 import { ReadOnlyStatusBadge } from "~/entities/titleRecord";
 import { UserAvatar } from "~/entities/user";
-import type { Status } from "~/shared/types/Status";
+import type { UserCacheItem, UserParticipation } from "~/entities/user/model/user.types";
 import { CompactRatingLabel } from "~/shared/ui/Rating";
-
-export interface UserCacheItem {
-  userId: string;
-  name: string;
-  nameTag: string;
-  img: string | null;
-}
-
-export interface UserParticipation {
-  userId: string;
-  status?: Status;
-  overallRating?: number;
-  type?: string;
-}
 
 interface RoomMemberRowProps {
   member: UserCacheItem;
   participation?: UserParticipation;
 }
+
 export const RoomMemberRow = ({ member, participation }: RoomMemberRowProps) => {
   return (
     <div className="grid grid-cols-[1fr_80px_130px] items-center px-3 py-2 rounded-lg hover:bg-muted/30">
