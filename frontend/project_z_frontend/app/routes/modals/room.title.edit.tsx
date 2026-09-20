@@ -27,7 +27,7 @@ export default function RoomTitleEditRoute() {
     const canEdit = useMemo(
         () => Boolean(
             currentUserId && (
-                currentUserId === item?.addedByUserId ||
+                currentUserId === item?.addedByUser.userId ||
                 currentMember?.role === RoomRole.ADMIN ||
                 currentMember?.role === RoomRole.OWNER
             )

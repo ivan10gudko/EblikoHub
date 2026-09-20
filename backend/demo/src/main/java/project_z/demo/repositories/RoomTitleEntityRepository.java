@@ -24,4 +24,11 @@ public interface RoomTitleEntityRepository
     void deleteByIdAndRoom_RoomId(UUID id, Long roomId);
 
     Page<RoomTitleEntity> findAllPagedByRoom_RoomId(Long roomId, Pageable pageable);
+
+    @Query("SELECT rt, l, t, u FROM RoomTitleEntity rt " +
+            "LEFT JOIN RoomTitleLinkEntity l ON l.roomTitle = rt " +
+            "LEFT JOIN TitleEntity t ON l.userTitleRecord = t " +
+            "LEFT JOIN UserEntity u ON t.user = u " +
+            "WHERE rt.id = :roomTitleId")
+    List<Object[]> fetchRoomTitleWithFullGraph(@Param("roomTitleId") UUID roomTitleId);
 }

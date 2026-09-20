@@ -45,12 +45,6 @@ export interface UserDtoWithRoomBanStatus{
     isBanned:boolean;
     roomBanId:string;
 }
-export interface UserCacheItem {
-  userId: string;
-  name: string;
-  nameTag: string;
-  img?: string | null;
-}
 
 export interface UserParticipation {
   userId: string;

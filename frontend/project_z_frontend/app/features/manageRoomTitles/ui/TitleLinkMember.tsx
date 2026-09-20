@@ -1,14 +1,16 @@
 import { ReadOnlyStatusBadge } from "~/entities/titleRecord";
 import { UserAvatar } from "~/entities/user";
-import type { UserCacheItem, UserParticipation } from "~/entities/user/model/user.types";
+import type { UserShort } from "~/entities/user/model/user.types";
+import type { Status } from "~/shared/types";
 import { CompactRatingLabel } from "~/shared/ui/Rating";
 
-interface RoomMemberRowProps {
-  member: UserCacheItem;
-  participation?: UserParticipation;
+interface TitleLinkMemberProps {
+  member: UserShort;
+  rating: number;
+  status: Status;
 }
 
-export const RoomMemberRow = ({ member, participation }: RoomMemberRowProps) => {
+export const TitleLinkMember = ({ member, rating, status }: TitleLinkMemberProps) => {
   return (
     <div className="grid grid-cols-[1fr_80px_130px] items-center px-3 py-2 rounded-lg hover:bg-muted/30">
       <div className="flex items-center gap-3 min-w-0">
@@ -22,15 +24,15 @@ export const RoomMemberRow = ({ member, participation }: RoomMemberRowProps) => 
       </div>
 
       <div className="flex items-center justify-center">
-        {participation?.overallRating !== undefined && participation.overallRating > 0 ? (
-          <CompactRatingLabel rating={participation.overallRating} />
+        {rating !== undefined && rating > 0 ? (
+          <CompactRatingLabel rating={rating} />
         ) : (
           <span className="text-xs text-muted-foreground">—</span>
         )}
       </div>
 
       <div className="flex items-center justify-end">
-        <ReadOnlyStatusBadge status={participation?.status} showDot={false} />
+        <ReadOnlyStatusBadge status={status} showDot={false} />
       </div>
     </div>
   );

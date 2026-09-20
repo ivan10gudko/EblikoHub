@@ -14,4 +14,6 @@ export const roomTitleKeys = {
         ['room-links', roomId, roomTitleId] as const,
     details: (roomId: number, roomTitleId: string) =>
         ['room-title-details', roomId, roomTitleId] as const,
+    detailsWithLinks: (roomId: number, roomTitleId: string) =>
+        [...roomTitleKeys.details(roomId, roomTitleId), 'withLinks'] as const,
 };

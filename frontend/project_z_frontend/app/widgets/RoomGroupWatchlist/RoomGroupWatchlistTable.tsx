@@ -1,6 +1,5 @@
 import { RoomGroupWatchlistSkeleton } from "./RoomGroupWatchlistSkeleton";
 import type { useRoomTitlesQuery } from "../RoomDetailsManager";
-import type { UserCacheItem } from "~/entities/user/model/user.types";
 import { mergePagedCache } from "~/shared/helpers/mergePagedCache";
 import { RoomGroupWatchlistRow } from "./RoomGroupWatchlistRow";
 

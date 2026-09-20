@@ -1,18 +1,21 @@
 package project_z.demo.Mappers.impl.RoomTitleMappers;
 
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import project_z.demo.Mappers.Mapper;
-import project_z.demo.dto.RoomTitleDtos.RoomTitleDetailsDto;
-import project_z.demo.entity.RoomTitleEntity;
-
 import org.springframework.stereotype.Component;
 
+import lombok.RequiredArgsConstructor;
+import project_z.demo.Mappers.Mapper;
+import project_z.demo.dto.RoomTitleDtos.RoomTitleDetailsDto;
+import project_z.demo.dto.UserDtos.UserShortDto;
+import project_z.demo.entity.RoomTitleEntity;
+import project_z.demo.entity.UserEntity;
+
 @Component
+@RequiredArgsConstructor
 public class RoomTitleDetailsMapper implements Mapper<RoomTitleEntity, RoomTitleDetailsDto> {
-    @Autowired
-    private ModelMapper modelMapper;
+
+    private final ModelMapper modelMapper;
+    private final Mapper<UserEntity, UserShortDto> userShortMapper;
 
     @Override
     public RoomTitleDetailsDto mapTo(RoomTitleEntity entity) {
@@ -22,7 +25,7 @@ public class RoomTitleDetailsMapper implements Mapper<RoomTitleEntity, RoomTitle
         dto.setImageUrl(entity.getImageUrl());
         dto.setTitleType(entity.getTitleType());
         dto.setApiTitleId(entity.getApiTitleId());
-        dto.setAddedByUserId(entity.getAddedByUserId());
+        dto.setAddedByUser(userShortMapper.mapTo(entity.getAddedByUser()));
         dto.setCreatedAt(entity.getCreatedAt());
         return dto;
     }

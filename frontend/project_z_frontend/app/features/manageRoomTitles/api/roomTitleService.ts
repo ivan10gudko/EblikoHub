@@ -8,7 +8,8 @@ import type {
     RoomTitleDetails,
     RoomTitleCreateRequest,
     RoomTitleLinkCreate,
-    RoomTitleLinkDetails
+    RoomTitleLinkDetails,
+    RoomTitleWithLinksDto
 } from "../model/roomTitle.types";
 
 export interface RoomTitlesService {
@@ -18,12 +19,14 @@ export interface RoomTitlesService {
     updateTitle(roomId: number, titleId: string, dto: RoomTitleCreateRequest): Promise<RoomTitleDetails>;
     deleteTitle(roomId: number, titleId: string): Promise<void>;
     findAll(roomId: number): Promise<RoomTitleDetails[]>;
-    findRoomTitleById(roomId:number, roomTitleId:string) : Promise<RoomTitleDetails>;
+    findRoomTitleById(roomId: number, roomTitleId: string): Promise<RoomTitleDetails>;
+
 
     //links
     createRoomTitleLink(roomId: number, dto: RoomTitleLinkCreate): Promise<RoomTitleLinkDetails>;
-    getUserLinksByRoomTitleId(roomTitleId:string, roomId:number) : Promise<RoomTitleLinkDetails[]>;
-    deleteRoomTitleLink(roomId:number, roomTitleLinkId:string) : Promise<void>;
+    getUserLinksByRoomTitleId(roomTitleId: string, roomId: number): Promise<RoomTitleLinkDetails[]>;
+    deleteRoomTitleLink(roomId: number, roomTitleLinkId: string): Promise<void>;
+    getRoomTitlesWithLinks(roomId: number, roomTitleId: string): Promise<RoomTitleWithLinksDto>;
 }
 
 export const roomTitleService: RoomTitlesService = {
@@ -55,8 +58,12 @@ export const roomTitleService: RoomTitlesService = {
         const { data } = await apiClient.get<RoomTitleDetails[]>(`/rooms/${roomId}/titles`);
         return data;
     },
-    async findRoomTitleById(roomId,roomTitleId){
+    async findRoomTitleById(roomId, roomTitleId) {
         const { data } = await apiClient.get(`/rooms/${roomId}/titles/${roomTitleId}`);
+        return data;
+    },
+    async getRoomTitlesWithLinks(roomId, roomTitleId) {
+        const { data } = await apiClient.get<RoomTitleWithLinksDto>(`/rooms/${roomId}/titles/getRoomTitlesWithLinks/${roomTitleId}`);
         return data;
     },
 
@@ -66,11 +73,11 @@ export const roomTitleService: RoomTitlesService = {
         const { data } = await apiClient.post(`/rooms/${roomId}/links`, dto);
         return data;
     },
-    async getUserLinksByRoomTitleId(roomTitleId, roomId){
-         const { data } = await apiClient.get(`/rooms/${roomId}/links/roomTitle/${roomTitleId}`);
+    async getUserLinksByRoomTitleId(roomTitleId, roomId) {
+        const { data } = await apiClient.get(`/rooms/${roomId}/links/roomTitle/${roomTitleId}`);
         return data;
     },
-    async deleteRoomTitleLink(roomId, roomTitleLinkId){
+    async deleteRoomTitleLink(roomId, roomTitleLinkId) {
         await apiClient.delete(`/rooms/${roomId}/links/${roomTitleLinkId}`)
     }
 };

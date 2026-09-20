@@ -114,7 +114,7 @@ public class SecurityService {
         UUID currentUserId = getCurrentUserId();
 
         return roomTitleRepository.findById(titleId)
-                .map(roomTitle -> roomTitle.getAddedByUserId().equals(currentUserId))
+                .map(roomTitle -> roomTitle.getAddedByUser().getUserId().equals(currentUserId))
                 .orElse(false);
     }
 

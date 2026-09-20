@@ -31,6 +31,7 @@ import project_z.demo.dto.RoomTitleDtos.RoomTitleDetailsDto;
 import project_z.demo.dto.RoomTitleDtos.RoomTitleShortDto;
 import project_z.demo.dto.RoomTitleDtos.RoomTitleSummaryDto;
 import project_z.demo.dto.RoomTitleDtos.RoomTitleUpdateDto;
+import project_z.demo.dto.RoomTitleDtos.RoomTitleWithLinksDto;
 import project_z.demo.dto.RoomTitleDtos.RoomTitleWithUserLinksDto;
 import project_z.demo.dto.RoomTitleDtos.RoomTitlesResponseDto;
 import project_z.demo.dto.RoomTitleLinkDtos.RoomTitleLinkShortDto;
@@ -51,6 +52,7 @@ import project_z.demo.repositories.RoomTitleEntityRepository;
 import project_z.demo.repositories.RoomTitleLinkRepository;
 import project_z.demo.repositories.Specifications.RoomTitleSpecifications;
 import project_z.demo.repositories.Specifications.views.RoomTitleStatsSpecifications;
+import project_z.demo.repositories.UserRepository;
 import project_z.demo.repositories.views.RoomTitleStatsRepository;
 import project_z.demo.security.SecurityService;
 import project_z.demo.services.RoomTitleService;
@@ -75,18 +77,20 @@ public class RoomTitleServiceImpl implements RoomTitleService {
     private final Mapper<RoomTitleEntity, RoomTitleDetailsDto> roomTitleDetailsMapper;
     private final Mapper<RoomTitleEntity, RoomTitleWithUserLinksDto> roomTitleWithUserLinksMapper;
     private final Mapper<RoomTitleLinkEntity, RoomTitleLinkShortDto> roomTitleLinkShortMapper;
+    private final Mapper<List<Object[]>, RoomTitleWithLinksDto> roomTitleWithLinksMapper;
+    private final UserRepository userRepository;
 
     @Override
     @Transactional
     public RoomTitleDetailsDto create(RoomTitleCreateDto dto, Long roomId) {
         UUID currentUserId = securityService.getCurrentUserId();
-
+        UserEntity user = userRepository.findById(currentUserId).orElseThrow();
         RoomEntity roomEntity = roomRepository.findById(roomId)
                 .orElseThrow(() -> new ResourceNotFoundException("room not found"));
 
         RoomTitleEntity entity = createMapper.mapFrom(dto);
         entity.setRoom(roomEntity);
-        entity.setAddedByUserId(currentUserId);
+        entity.setAddedByUser(user);
 
         RoomTitleEntity savedEntity = repository.save(entity);
         linkRepository.linkExistingMembersToNewRoomTitle(savedEntity.getId());
@@ -179,6 +183,16 @@ public class RoomTitleServiceImpl implements RoomTitleService {
         return titlePage.map(entity -> mapToWithUserLinksDto(entity, linksMap));
     }
 
+    @Override
+    public RoomTitleWithLinksDto getRoomTitleWithLinks(UUID roomTitleId) {
+        List<Object[]> rows = repository.fetchRoomTitleWithFullGraph(roomTitleId);
+
+        if (rows.isEmpty()) {
+            throw new ResourceNotFoundException("Room Title not found");
+        }
+
+        return roomTitleWithLinksMapper.mapTo(rows);
+    }
     // ---- helpers
 
     private RoomTitleWithUserLinksDto mapToWithUserLinksDto(RoomTitleEntity entity,
@@ -218,7 +232,6 @@ public class RoomTitleServiceImpl implements RoomTitleService {
     private Map<UUID, RoomTitleEntity> fetchEntityMap(List<UUID> titleIds) {
         return CollectionUtils.toMapById(repository.findAllById(titleIds), RoomTitleEntity::getId);
     }
-
 
     private List<RoomTitleLinkEntity> fetchLinks(List<UUID> titleIds, UUID currentUserId, List<UUID> memberIds) {
         List<UUID> targetUserIds = new ArrayList<>();

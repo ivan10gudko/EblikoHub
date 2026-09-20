@@ -4,20 +4,18 @@ import ExpandMoreRoundedIcon from "@mui/icons-material/ExpandMoreRounded";
 import {
   ReadOnlyStatusBadge,
   TitleTypeThemes,
-  TitleType,
 } from "~/entities/titleRecord";
 import { DEFAULT_IMAGE_PATH } from "~/shared/constants";
-import type { RoomTitleSummary } from "~/features/manageRoomTitles";
+import { TitleLinkMember, type RoomTitleSummary } from "~/features/manageRoomTitles";
 import { CompactRatingLabel } from "~/shared/ui/Rating";
-import type { UserCacheItem } from "~/entities/user/model/user.types";
 import { UserAvatar } from "~/entities/user";
-import { RoomMemberRow } from "./RoomMemberRow";
 import { Status } from "~/shared/types";
+import type { UserShort } from "~/entities/user/model/user.types";
 
 interface RoomGroupWatchlistRowProps {
   title: RoomTitleSummary;
   index: number;
-  usersCache: Record<string, UserCacheItem>;
+  usersCache: Record<string, UserShort>;
   onTypeChange?: (roomTitleId: string, newType: string) => void;
 }
 
@@ -156,10 +154,11 @@ export const RoomGroupWatchlistRow = ({
                 if (!member) return null;
 
                 return (
-                  <RoomMemberRow
+                  <TitleLinkMember
                     key={participation.userId}
                     member={member}
-                    participation={participation}
+                    rating={participation.overallRating}
+                    status={participation.status}
                   />
                 );
               })}

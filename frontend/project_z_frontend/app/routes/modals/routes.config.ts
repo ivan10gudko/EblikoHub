@@ -13,6 +13,7 @@ const roomTitleModals = {
     add: { path: "add", file: "./routes/modals/room.title.add.tsx" },
     edit: { path: "edit/:titleId", file: "./routes/modals/room.title.edit.tsx" },
     links: { path: "links/:titleId", file: "./routes/modals/room.title.links.tsx" },
+    detailsLinks: { path: "detailsLinks/:titleId", file: "./routes/modals/room.title.details.links.tsx" },
 } satisfies Record<string, ModalRouteDef>;
 
 const adminModals = {

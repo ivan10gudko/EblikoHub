@@ -13,4 +13,6 @@ export * from './ui/LinkItem';
 export * from './ui/Modals/AddRoomTitleModal';
 export * from './ui/Modals/EditRoomTitleModal';
 export * from './ui/Modals/ViewAllRoomTitleLinksModal';
-export * from "./hooks/useCachedRoomTitle";
+export { RoomTitleDetailsLinksScreen } from "./ui/Modals/RoomTitleDetailsLinksScreen";
+export { useRoomTitleWithLinks } from "./hooks/useRoomTitleWithLinks";
+export {TitleLinkMember} from "./ui/TitleLinkMember";;

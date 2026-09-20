@@ -26,9 +26,10 @@ export interface RoomTitleDetails {
     imageUrl?: string | null;
     titleType: TitleType;
     apiTitleId?: number | null;
-    addedByUserId: string;
+    addedByUser: UserShort;
     createdAt: string;
 }
+
 
 export interface RoomTitleLinkShort {
     id: string;
@@ -111,4 +112,12 @@ export interface RoomTitleLinkCreateDto {
 
 export interface RoomTitleLinkBatchCreateDto {
     links: RoomTitleLinkCreateDto[];
+}
+
+export interface RoomTitleWithLinksDto {
+    roomTitle: RoomTitleDetails;
+    links: {
+        title: TitleShort;
+        owner: UserShort;
+    }[];
 }
