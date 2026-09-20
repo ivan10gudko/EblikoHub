@@ -30,11 +30,8 @@ const statusBorderMap: Record<Status, string> = {
   [Status.UPCOMING]: "border-purple-400",
 };
 
-const getStatusBorderClass = (status?: string | null): string => {
-  if (!status || !(status in statusBorderMap)) {
-    return "border-border";
-  }
-  return statusBorderMap[status as Status];
+const getStatusBorderClass = (status: Status): string => {
+  return statusBorderMap[status];
 };
 
 export const RoomGroupWatchlistRow = ({
@@ -53,12 +50,7 @@ export const RoomGroupWatchlistRow = ({
   };
 
   const rawType = title.myTitleInfo?.type || title.titleInfo?.titleType;
-  const currentType: TitleType =
-    rawType && rawType in TitleTypeThemes
-      ? (rawType as TitleType)
-      : TitleType.ANIME;
-
-  const themeClasses = TitleTypeThemes[currentType];
+  const themeClasses = TitleTypeThemes[rawType];
 
   const participations = title.userParticipation ?? [];
   const visibleParticipations = participations.slice(0, 3);
