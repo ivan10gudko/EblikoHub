@@ -18,9 +18,6 @@ export const RoomMemberRow = ({ member, participation }: RoomMemberRowProps) => 
           <span className="text-sm font-medium text-foreground truncate">
             {member.name}
           </span>
-          <span className="text-xs text-muted-foreground truncate">
-            @{member.nameTag}
-          </span>
         </div>
       </div>
 
@@ -31,8 +28,9 @@ export const RoomMemberRow = ({ member, participation }: RoomMemberRowProps) => 
           <span className="text-xs text-muted-foreground">—</span>
         )}
       </div>
+
       <div className="flex items-center justify-end">
-        <ReadOnlyStatusBadge status={participation?.status} />
+        <ReadOnlyStatusBadge status={participation?.status} showDot={false} />
       </div>
     </div>
   );

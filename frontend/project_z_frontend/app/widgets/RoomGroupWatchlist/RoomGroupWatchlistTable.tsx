@@ -1,8 +1,8 @@
-import { RoomGroupWatchlistRow } from "./RoomGroupWatchlistRow";
 import { RoomGroupWatchlistSkeleton } from "./RoomGroupWatchlistSkeleton";
 import type { useRoomTitlesQuery } from "../RoomDetailsManager";
 import type { UserCacheItem } from "~/entities/user/model/user.types";
 import { mergePagedCache } from "~/shared/helpers/mergePagedCache";
+import { RoomGroupWatchlistRow } from "./RoomGroupWatchlistRow";
 
 interface RoomGroupWatchlistTableProps {
     titlesData: ReturnType<typeof useRoomTitlesQuery>["data"];
@@ -10,6 +10,7 @@ interface RoomGroupWatchlistTableProps {
 }
 
 export const RoomGroupWatchlistTable = ({ titlesData, isLoading }: RoomGroupWatchlistTableProps) => {
+    titlesData?.pages.flatMap((page) => page.content ?? []) ?? [];
     const titles = titlesData?.pages.flatMap((page) => page.content ?? []) ?? [];
 
     const mergedUsersCache = mergePagedCache(
@@ -27,13 +28,12 @@ export const RoomGroupWatchlistTable = ({ titlesData, isLoading }: RoomGroupWatc
                 </h2>
             </div>
 
-            <div className="grid grid-cols-[auto_1fr_auto_auto] items-center gap-4 px-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+            <div className="grid grid-cols-[auto_1fr_100px_120px] items-center gap-x-2 px-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
                 <span>#</span>
                 <span>Title</span>
-                <span className="text-right">Group Avg</span>
-                <span className="text-right">Your Status</span>
+                <span className="text-center pr-4">Group Avg</span>
+                <span className="text-right pr-20">Status</span>
             </div>
-
             {titles.length === 0 ? (
                 <div className="text-center text-muted-foreground py-8">
                     No titles in this room yet.
