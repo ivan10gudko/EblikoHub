@@ -1,3 +1,4 @@
+import { route } from "@react-router/dev/routes";
 import { pickModals, type ModalRouteDef } from "../../shared/helpers"; //direct import because of react router loading specifics
 
 
@@ -28,3 +29,14 @@ export const roomTitleModalRoutes = (prefixName: string, keys?: (keyof typeof ro
 
 export const adminModalRoutes = (prefixName: string, keys?: (keyof typeof adminModals)[]) =>
     pickModals(adminModals, prefixName, keys);
+
+export const roomMainModalRoutes = (prefixName: string) => {
+    const parentModal = roomTitleModals.detailsLinks;
+    const childModals = pickModals(titleModals, prefixName, ["view", "rating", "seasons"]);
+
+    return [
+        route(parentModal.path, parentModal.file, {
+            id: `${prefixName}-detailsLinks`,
+        }, childModals)
+    ];
+};

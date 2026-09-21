@@ -1,7 +1,7 @@
 import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
-import type { RoomTitleWithLinksDto } from "../../model/roomTitle.types";
-import { ViewRoomTitleDetailsScreen } from "./ViewRoomTitleDetailsScreen";
-import { TitleLinkMember } from "../TitleLinkMember";
+import type { RoomTitleWithLinksDto } from "../../features/manageRoomTitles/model/roomTitle.types";
+import { ViewRoomTitleDetailsScreen } from "../../features/manageRoomTitles/ui/Modals/ViewRoomTitleDetailsScreen";
+import { TitleLinkMember } from "../../features/manageRoomTitles/ui/TitleLinkMember";
 
 interface RoomTitleDetailsModalProps {
   data: RoomTitleWithLinksDto;
@@ -36,14 +36,12 @@ export const RoomTitleDetailsLinksScreen = ({ data, onEdit }: RoomTitleDetailsMo
                   member={link.owner}
                   rating={ratingNumber}
                   status={link.title.status}
+                  titleId={link.title.titleId}
                 />
               );
             })}
           </div>
 
-          <button className="w-full mt-4 h-11 flex items-center justify-center gap-2 border border-primary/30 text-primary hover:bg-primary/10 rounded-xl font-bold transition-colors">
-            <PeopleAltIcon fontSize="small" /> View all members
-          </button>
         </div>
       </div>
     </div>

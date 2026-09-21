@@ -1,8 +1,8 @@
 import { useNavigate, useParams } from "react-router";
-import { AddRoomTitleScreen, RoomTitleDetailsLinksScreen, useRoomTitleWithLinks } from "~/features/manageRoomTitles";
-import ErrorAnimePage from "~/pages/animePage/ui/ErrorAnimePage";
+import { useRoomTitleWithLinks } from "~/features/manageRoomTitles";
 import { notify } from "~/shared/lib";
 import { Modal } from "~/shared/ui/Modal";
+import { RoomTitleDetailsLinksScreen } from "~/widgets/RoomGroupWatchlist/RoomTitleDetailsLinksScreen";
 
 export default function RoomTitleDetailsLinksRoute() {
     const navigate = useNavigate();

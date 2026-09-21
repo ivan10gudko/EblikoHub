@@ -10,11 +10,7 @@ interface RoomGroupWatchlistTableProps {
 
 export const RoomGroupWatchlistTable = ({ titlesData, isLoading }: RoomGroupWatchlistTableProps) => {
     const titles = titlesData?.pages.flatMap((page) => page.content ?? []) ?? [];
-
-    const mergedUsersCache = mergePagedCache(
-        titlesData?.pages,
-        (page) => page.usersCache
-    );
+    const mergedUsersCache = mergePagedCache(titlesData?.pages, (page) => page.usersCache);
 
     if (isLoading) return <RoomGroupWatchlistSkeleton />;
 
@@ -32,16 +28,15 @@ export const RoomGroupWatchlistTable = ({ titlesData, isLoading }: RoomGroupWatc
                 <span className="text-center pr-4">Group Avg</span>
                 <span className="text-right pr-20">Status</span>
             </div>
+
             {titles.length === 0 ? (
-                <div className="text-center text-muted-foreground py-8">
-                    No titles in this room yet.
-                </div>
+                <div className="text-center text-muted-foreground py-8">No titles in this room yet.</div>
             ) : (
                 <div className="flex flex-col gap-2">
-                    {titles.map((titlesSummary, index) => (
+                    {titles.map((titleSummary, index) => (
                         <RoomGroupWatchlistRow
-                            key={String(titlesSummary.roomTitleId)}
-                            title={titlesSummary}
+                            key={String(titleSummary.roomTitleId)}
+                            title={titleSummary}
                             index={index}
                             usersCache={mergedUsersCache}
                         />

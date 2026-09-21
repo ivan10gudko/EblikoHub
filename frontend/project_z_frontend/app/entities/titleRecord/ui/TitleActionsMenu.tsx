@@ -6,7 +6,6 @@ import {
   DropdownItem,
 } from "~/shared/ui/DropDown/DropDown";
 import type { JSX } from "react";
-import type { TitleRecord } from "~/entities/titleRecord";
 import StarRoundedIcon from "@mui/icons-material/StarRounded";
 import ViewListIcon from "@mui/icons-material/ViewList";
 import VisibilityIcon from "@mui/icons-material/Visibility";
@@ -21,47 +20,45 @@ interface ActionItem {
 }
 
 interface TitleActionsMenuProps {
-  title: TitleRecord;
+  titleId: number;
   isOwn: boolean;
   onDelete?: () => void;
-  onOpenRatingModal?: () => void;
 }
 
 export const TitleActionsMenu = ({
-  title,
+  titleId,
   isOwn,
   onDelete,
-  onOpenRatingModal,
 }: TitleActionsMenuProps) => {
   const navigate = useNavigate();
-
+  const openRating = () => navigate(`rating/${titleId}`);
   const actions: ActionItem[] = [
     {
       key: "view",
       label: "View Details",
       icon: <VisibilityIcon sx={{ fontSize: 16 }} />,
-      onClick: () => navigate(`view/${title.titleId}`),
+      onClick: () => navigate(`view/${titleId}`),
       show: true,
     },
     {
       key: "edit",
       label: "Edit Record",
       icon: <EditIcon sx={{ fontSize: 16 }} />,
-      onClick: () => navigate(`edit/${title.titleId}`),
+      onClick: () => navigate(`edit/${titleId}`),
       show: isOwn,
     },
     {
       key: "rating",
       label: "Rating",
       icon: <StarRoundedIcon sx={{ fontSize: 16 }} />,
-      onClick: () => onOpenRatingModal?.(),
-      show: !!onOpenRatingModal,
+      onClick: openRating,
+      show: true,
     },
     {
       key: "seasons",
       label: "Seasons",
       icon: <ViewListIcon sx={{ fontSize: 16 }} />,
-      onClick: () => navigate(`seasons/${title.titleId}`),
+      onClick: () => navigate(`seasons/${titleId}`),
       show: true,
     },
   ];

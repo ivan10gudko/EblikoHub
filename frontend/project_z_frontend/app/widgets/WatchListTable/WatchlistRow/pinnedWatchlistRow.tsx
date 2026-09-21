@@ -1,22 +1,20 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 import PushPinIcon from "@mui/icons-material/PushPin";
-import { StatusSelect, TitleTypeThemes, TitlePinnedThemes, type TitleRecord } from "~/entities/titleRecord";
+import { StatusSelect, TitleTypeThemes, TitlePinnedThemes, type TitleRecord, TitleActionsMenu } from "~/entities/titleRecord";
 import { useUpdateTitleRecord } from "~/entities/titleRecord/hooks/useTitleRecordUpdateMutation";
 import { CompactRate } from "~/shared/ui/CompactRate";
-import { TitleActionsMenu } from "../../TitleActionsMenu";
 import type { Rating } from "~/shared/types";
 import { useTitleFilterStore, type TitleSortType } from "~/features/titleFilter/store/titleFilter.store";
 import { DEFAULT_IMAGE_PATH } from "~/shared/constants";
 interface PinnedWatchlistRowProps {
   title: TitleRecord;
-  onOpenRatingModal: () => void;
 }
 
-export const PinnedWatchlistRow = ({ title, onOpenRatingModal }: PinnedWatchlistRowProps) => {
+export const PinnedWatchlistRow = ({ title }: PinnedWatchlistRowProps) => {
   const navigate = useNavigate();
   const [tempTitleName, setTempTitleName] = useState(title.titleName);
-  
+
   const { unpinTitle, deleteTitle, updateTitle } = useUpdateTitleRecord(title.titleId);
   const sortBy = useTitleFilterStore((state) => state.sortBy);
   const isAvgView = sortBy === ("avgRating" as TitleSortType);
@@ -30,7 +28,7 @@ export const PinnedWatchlistRow = ({ title, onOpenRatingModal }: PinnedWatchlist
     if (title.apiTitleId) navigate(`/anime/${title.apiTitleId}`);
   };
 
-  
+
   const themeClasses = title.titleType ? TitleTypeThemes[title.titleType] : "";
   const pinnedClasses = title.titleType ? TitlePinnedThemes[title.titleType] : "";
 
@@ -119,10 +117,9 @@ export const PinnedWatchlistRow = ({ title, onOpenRatingModal }: PinnedWatchlist
 
         <div className="flex-shrink-0 ml-1 border-l border-border pl-2">
           <TitleActionsMenu
-            title={title}
+            titleId={title.titleId}
             onDelete={() => deleteTitle()}
             isOwn={true}
-            onOpenRatingModal={onOpenRatingModal}
           />
         </div>
       </div>

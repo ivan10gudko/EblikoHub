@@ -20,6 +20,7 @@ import project_z.demo.entity.RoomTitleEntity;
 import project_z.demo.entity.RoomTitleLinkEntity;
 import project_z.demo.entity.TitleEntity;
 import project_z.demo.enums.TitleStatus;
+
 @Component
 @RequiredArgsConstructor
 public class RoomTitleSummaryMapper {
@@ -34,13 +35,12 @@ public class RoomTitleSummaryMapper {
             UUID currentUserId,
             boolean isCurrentUserSelected,
             TitleStatus targetStatus) {
-        
+
         List<RoomTitleLinkEntity> linksForTitle = linksByTitleId.getOrDefault(entity.getId(), List.of());
 
         List<TitleUserParticipation> participation = buildParticipationList(
-                linksForTitle, currentUserId, isCurrentUserSelected, targetStatus
-        );
-        
+                linksForTitle, currentUserId, isCurrentUserSelected, targetStatus);
+
         Optional<RoomTitleLinkEntity> myLink = findUserLink(linksForTitle, currentUserId);
 
         return new RoomTitleSummaryDto(
@@ -53,16 +53,16 @@ public class RoomTitleSummaryMapper {
     }
 
     private List<TitleUserParticipation> buildParticipationList(
-            List<RoomTitleLinkEntity> links, 
-            UUID currentUserId, 
+            List<RoomTitleLinkEntity> links,
+            UUID currentUserId,
             boolean isCurrentUserSelected,
             TitleStatus targetStatus) {
-        
+
         return links.stream()
                 .filter(link -> {
                     UUID linkUserId = link.getUserTitleRecord().getUser().getUserId();
                     boolean isCurrent = linkUserId.equals(currentUserId);
-                    
+
                     if (isCurrent && !isCurrentUserSelected) {
                         return false;
                     }
@@ -93,7 +93,8 @@ public class RoomTitleSummaryMapper {
                 userRecord.getUser().getUserId(),
                 userRecord.getStatus(),
                 userRecord.getRating().getOrDefault("overall", 0f),
-                userRecord.getTitleType());
+                userRecord.getTitleType(),
+                userRecord.getTitleId());
     }
 
     private Optional<RoomTitleLinkEntity> findUserLink(List<RoomTitleLinkEntity> links, UUID currentUserId) {

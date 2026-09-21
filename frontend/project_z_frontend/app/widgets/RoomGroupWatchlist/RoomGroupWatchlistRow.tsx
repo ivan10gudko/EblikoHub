@@ -1,10 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import ExpandMoreRoundedIcon from "@mui/icons-material/ExpandMoreRounded";
-import {
-  ReadOnlyStatusBadge,
-  TitleTypeThemes,
-} from "~/entities/titleRecord";
+import { ReadOnlyStatusBadge, TitleTypeThemes } from "~/entities/titleRecord";
 import { DEFAULT_IMAGE_PATH } from "~/shared/constants";
 import { TitleLinkMember, type RoomTitleSummary } from "~/features/manageRoomTitles";
 import { CompactRatingLabel } from "~/shared/ui/Rating";
@@ -29,20 +26,15 @@ const statusBorderMap: Record<Status, string> = {
   [Status.UPCOMING]: "border-purple-400",
 };
 
-const getStatusBorderClass = (status: Status): string => {
-  return statusBorderMap[status];
-};
+const getStatusBorderClass = (status: Status): string => statusBorderMap[status];
 
-export const RoomGroupWatchlistRow = ({
-  title,
-  index,
-  usersCache,
-}: RoomGroupWatchlistRowProps) => {
+export const RoomGroupWatchlistRow = ({ title, index, usersCache }: RoomGroupWatchlistRowProps) => {
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
 
   const handleImageClick = (e: React.MouseEvent) => {
     e.stopPropagation();
+
     if (title.titleInfo?.apiTitleId) {
       navigate(`/anime/${title.titleInfo.apiTitleId}`);
     }
@@ -50,7 +42,6 @@ export const RoomGroupWatchlistRow = ({
 
   const rawType = title.myTitleInfo?.type || title.titleInfo?.titleType;
   const themeClasses = TitleTypeThemes[rawType];
-
   const participations = title.userParticipation ?? [];
   const visibleParticipations = participations.slice(0, 3);
   const extraCount = participations.length - 3;
@@ -62,9 +53,7 @@ export const RoomGroupWatchlistRow = ({
         className={`flex items-center gap-3 sm:gap-4 p-3 sm:p-3.5 rounded-2xl border w-full cursor-pointer shadow-sm hover:shadow-md transition-all ${themeClasses}`}
       >
         <div className="flex items-center justify-center h-10 w-6 flex-shrink-0">
-          <span className="text-muted-foreground font-bold text-sm sm:text-base">
-            {index + 1}
-          </span>
+          <span className="text-muted-foreground font-bold text-sm sm:text-base">{index + 1}</span>
         </div>
 
         <div className="relative h-12 w-20 flex-shrink-0 cursor-pointer overflow-hidden rounded-lg shadow-inner bg-muted/20">
@@ -112,10 +101,7 @@ export const RoomGroupWatchlistRow = ({
           )}
         </div>
 
-        <div
-          className="flex items-center justify-end flex-shrink-0"
-          onClick={(e) => e.stopPropagation()}
-        >
+        <div className="flex items-center justify-end flex-shrink-0" onClick={(e) => e.stopPropagation()}>
           <CompactRatingLabel rating={title.computedAvgRating} />
         </div>
 
@@ -140,16 +126,15 @@ export const RoomGroupWatchlistRow = ({
 
       {isOpen && (
         <div className="mt-2 bg-card/95 backdrop-blur-sm border border-border/60 rounded-2xl p-4 flex flex-col gap-2 ml-4 sm:ml-8 w-[calc(100%-1rem)] sm:w-[calc(100%-2rem)] shadow-lg animate-in fade-in slide-in-from-top-2 duration-200">
-          <div className="grid grid-cols-[1fr_80px_130px] items-center px-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider pb-2 border-b border-border/40">
+          <div className="grid grid-cols-[minmax(0,1fr)_80px_130px_40px] items-center px-3 gap-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider pb-2 border-b border-border/40">
             <span>Room Member</span>
             <span className="text-center">Rating</span>
             <span className="text-center">Status</span>
+            <span />
           </div>
 
           {participations.length === 0 ? (
-            <div className="text-center text-xs text-muted-foreground py-6">
-              No participation yet.
-            </div>
+            <div className="text-center text-xs text-muted-foreground py-6">No participation yet.</div>
           ) : (
             <div className="flex flex-col gap-1">
               {participations.map((participation) => {
@@ -163,6 +148,7 @@ export const RoomGroupWatchlistRow = ({
                     member={member}
                     rating={participation.overallRating}
                     status={participation.status}
+                    titleId={participation.titleId}
                   />
                 );
               })}
