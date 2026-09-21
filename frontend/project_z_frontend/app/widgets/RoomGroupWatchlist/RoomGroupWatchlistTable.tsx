@@ -9,7 +9,6 @@ interface RoomGroupWatchlistTableProps {
 }
 
 export const RoomGroupWatchlistTable = ({ titlesData, isLoading }: RoomGroupWatchlistTableProps) => {
-    titlesData?.pages.flatMap((page) => page.content ?? []) ?? [];
     const titles = titlesData?.pages.flatMap((page) => page.content ?? []) ?? [];
 
     const mergedUsersCache = mergePagedCache(

@@ -2,11 +2,11 @@
 interface UserAvatarProps {
     src?: string;
     name: string;
-    size?: "sm" | "md" | "lg" | "min"| "minPlus";
+    size?: "sm" | "md" | "lg" | "min"| "xs";
 }
 
 const sizes = {
-    minPlus:"w-7 h-7",
+    xs:"w-7 h-7",
     min: "w-5 h-5",
     sm: "w-10 h-10",
     md: "w-20 h-20",

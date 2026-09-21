@@ -11,6 +11,7 @@ import { CompactRatingLabel } from "~/shared/ui/Rating";
 import { UserAvatar } from "~/entities/user";
 import { Status } from "~/shared/types";
 import type { UserShort } from "~/entities/user/model/user.types";
+import { cn } from "~/shared/lib";
 
 interface RoomGroupWatchlistRowProps {
   title: RoomTitleSummary;
@@ -89,15 +90,16 @@ export const RoomGroupWatchlistRow = ({
             return (
               <div
                 key={p.userId}
-                className={`relative flex items-center justify-center rounded-full border-2 bg-card transition-transform hover:z-20 hover:scale-110 ${getStatusBorderClass(
-                  p.status
-                )}`}
+                className={cn(
+                  "relative flex items-center justify-center rounded-full border-2 bg-card transition-transform hover:z-20 hover:scale-110",
+                  getStatusBorderClass(p.status)
+                )}
                 title={`${member.name} (${p.status ?? "No status"})`}
               >
                 <UserAvatar
                   src={member.img ?? undefined}
                   name={member.name}
-                  size="minPlus"
+                  size="xs"
                 />
               </div>
             );
@@ -120,15 +122,17 @@ export const RoomGroupWatchlistRow = ({
         <div className="flex-shrink-0 flex items-center gap-3">
           <div onClick={(e) => e.stopPropagation()}>
             <ReadOnlyStatusBadge
-              status={title.myStatus ?? undefined}
+              status={title.myStatus}
               showDot={false}
             />
           </div>
 
           <div className="w-8 h-8 rounded-full flex items-center justify-center bg-muted/40 hover:bg-muted transition-colors">
             <ExpandMoreRoundedIcon
-              className={`text-muted-foreground transition-transform duration-300 ${isOpen ? "rotate-180" : ""
-                }`}
+              className={cn(
+                "text-muted-foreground transition-transform duration-300",
+                isOpen && "rotate-180"
+              )}
             />
           </div>
         </div>
