@@ -95,7 +95,7 @@ export const EditTitleScreen = ({ title }: EditTitleScreenProps) => {
   };
 
   return (
-    <div className="flex flex-col gap-4 w-full">
+    <div className="flex flex-col gap-4 w-full p-2">
       <ImageUrlField imageUrl={imageUrl} onImageChange={setImageUrl}>
         <div className="flex flex-col gap-5">
           <div className="overflow-y-auto flex-1 space-y-4 pr-1 custom-scrollbar min-h-0">

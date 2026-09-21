@@ -24,8 +24,10 @@ export const TitleLinkMember = ({ member, rating, status, titleId }: TitleLinkMe
   };
 
   return (
-    <div className="grid grid-cols-[minmax(0,1fr)_80px_130px_40px] items-center px-3 py-2 rounded-lg hover:bg-muted/30 gap-3">
-      <div className="flex items-center gap-3 min-w-0">
+    <div className="flex items-center justify-between py-3 px-2 hover:bg-muted/20 rounded-md transition-colors gap-2 border-b border-border/40 last:border-b-0">
+      
+     
+      <div className="flex items-center gap-2.5 min-w-0 flex-1">
         <div
           onClick={handleAvatarClick}
           className="cursor-pointer transition-transform hover:scale-105 flex-shrink-0"
@@ -40,20 +42,24 @@ export const TitleLinkMember = ({ member, rating, status, titleId }: TitleLinkMe
         </div>
       </div>
 
-      <div className="flex items-center justify-center">
-        {rating !== undefined && rating > 0 ? (
-          <CompactRatingLabel rating={rating} />
-        ) : (
-          <span className="text-xs text-muted-foreground">—</span>
-        )}
-      </div>
+     
+      <div className="flex items-center gap-2 shrink-0">
+        
+        <div className="flex items-center justify-center">
+          <ReadOnlyStatusBadge status={status} showDot={false} className="justify-center px-2.5 py-1" />
+        </div>
 
-      <div className="flex items-center justify-center">
-        <ReadOnlyStatusBadge status={status} showDot={false} className="justify-center" />
-      </div>
+        <div className="flex items-center justify-center min-w-[38px]">
+          {rating !== undefined && rating > 0 ? (
+            <CompactRatingLabel rating={rating} />
+          ) : (
+            <span className="text-xs text-muted-foreground">—</span>
+          )}
+        </div>
 
-      <div className="w-10 h-8 flex items-center justify-center border-l border-border">
-        <TitleActionsMenu titleId={titleId} isOwn={false} />
+        <div className="flex items-center justify-center pl-2 border-l border-border/60 h-5">
+          <TitleActionsMenu titleId={titleId} isOwn={false} />
+        </div>
       </div>
     </div>
   );

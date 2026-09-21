@@ -37,7 +37,7 @@ export default function RoomTitleDetailsLinksRoute() {
 
     return (
         <>
-            <Modal isOpen={true} onClose={handleClose} title="View room title details links" maxWidth="max-w-5xl">
+            <Modal isOpen={true} onClose={handleClose} title="View room title details links"  maxWidth="max-w-5xl">
                 <RoomTitleDetailsLinksScreen data={data} />
             </Modal>
             <Outlet></Outlet>
