@@ -20,10 +20,10 @@ export const useInfiniteRoomTitles = (
             });
         },
         getNextPageParam: (lastPage) => {
-            if (!lastPage.content || lastPage.content.last) {
+            if (!lastPage || lastPage.last) {
                 return undefined;
             }
-            return lastPage.content.number + 1;
+            return lastPage.number + 1;
         },
         initialPageParam: 0,
         staleTime: 1000 * 60 * 5,

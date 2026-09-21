@@ -26,7 +26,14 @@ export default function RoomDetailsMainPage() {
   }, [roomId, resetMembers]);
 
   const allMemberIds = room?.members.map((m) => m.user.userId) ?? [];
-  const { data: titlesData, isLoading: isTitlesLoading } = useRoomTitlesQuery(roomId, allMemberIds, !!room);
+  
+  const {
+    data: titlesData,
+    isLoading: isTitlesLoading,
+    hasNextPage,
+    isFetchingNextPage,
+    fetchNextPage,
+  } = useRoomTitlesQuery(roomId, allMemberIds, !!room);
 
   if (!roomId) {
     return <ErrorScreen title="Not found" message="Room with that id not found" />;
@@ -50,6 +57,9 @@ export default function RoomDetailsMainPage() {
         <RoomGroupWatchlistTable
           titlesData={titlesData}
           isLoading={isTitlesLoading}
+          hasNextPage={hasNextPage}
+          isFetchingNextPage={isFetchingNextPage}
+          fetchNextPage={fetchNextPage}
         />
       </div>
 

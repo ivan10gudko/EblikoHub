@@ -2,13 +2,23 @@ import { RoomGroupWatchlistSkeleton } from "./RoomGroupWatchlistSkeleton";
 import type { useRoomTitlesQuery } from "../RoomDetailsManager";
 import { mergePagedCache } from "~/shared/helpers/mergePagedCache";
 import { RoomGroupWatchlistRow } from "./RoomGroupWatchlistRow";
+import { InfiniteScrollLoader } from "~/shared/ui/infinityScroll";
 
 interface RoomGroupWatchlistTableProps {
     titlesData: ReturnType<typeof useRoomTitlesQuery>["data"];
     isLoading: boolean;
+    hasNextPage?: boolean;
+    isFetchingNextPage: boolean;
+    fetchNextPage: () => void;
 }
 
-export const RoomGroupWatchlistTable = ({ titlesData, isLoading }: RoomGroupWatchlistTableProps) => {
+export const RoomGroupWatchlistTable = ({
+    titlesData,
+    isLoading,
+    hasNextPage,
+    isFetchingNextPage,
+    fetchNextPage,
+}: RoomGroupWatchlistTableProps) => {
     const titles = titlesData?.pages.flatMap((page) => page.content ?? []) ?? [];
     const mergedUsersCache = mergePagedCache(titlesData?.pages, (page) => page.usersCache);
 
@@ -41,6 +51,11 @@ export const RoomGroupWatchlistTable = ({ titlesData, isLoading }: RoomGroupWatc
                             usersCache={mergedUsersCache}
                         />
                     ))}
+                    <InfiniteScrollLoader
+                        hasNextPage={hasNextPage}
+                        isFetchingNextPage={isFetchingNextPage}
+                        fetchNextPage={fetchNextPage}
+                    />
                 </div>
             )}
         </div>

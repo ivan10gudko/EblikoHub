@@ -41,6 +41,10 @@ export const TitleLinkMember = ({ member, rating, status, titleId }: TitleLinkMe
       </div>
 
       <div className="flex items-center justify-center">
+        <ReadOnlyStatusBadge status={status} showDot={false} className="justify-center" />
+      </div>
+      
+      <div className="flex items-center justify-center">
         {rating !== undefined && rating > 0 ? (
           <CompactRatingLabel rating={rating} />
         ) : (
@@ -48,9 +52,7 @@ export const TitleLinkMember = ({ member, rating, status, titleId }: TitleLinkMe
         )}
       </div>
 
-      <div className="flex items-center justify-center">
-        <ReadOnlyStatusBadge status={status} showDot={false} className="justify-center" />
-      </div>
+
 
       <div className="w-10 h-8 flex items-center justify-center border-l border-border">
         <TitleActionsMenu titleId={titleId} isOwn={false} />

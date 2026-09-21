@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
-import ExpandMoreRoundedIcon from "@mui/icons-material/ExpandMoreRounded";
 import { ReadOnlyStatusBadge, TitleTypeThemes } from "~/entities/titleRecord";
 import { DEFAULT_IMAGE_PATH } from "~/shared/constants";
 import { TitleLinkMember, type RoomTitleSummary } from "~/features/manageRoomTitles";
@@ -30,12 +29,23 @@ const getStatusBorderClass = (status: Status): string => statusBorderMap[status]
 export const RoomGroupWatchlistRow = ({ title, index, usersCache }: RoomGroupWatchlistRowProps) => {
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const handleImageClick = (e: React.MouseEvent) => {
     e.stopPropagation();
 
     if (title.titleInfo?.apiTitleId) {
       navigate(`/anime/${title.titleInfo.apiTitleId}`);
+    }
+  };
+
+  const handleOpenDetailsModal = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setIsDropdownOpen(false);
+
+    if (title.roomTitleId) {
+      // Використовуємо шлях 'detailsLinks', оголошений у roomTitleModals
+      navigate(`detailsLinks/${title.roomTitleId}`);
     }
   };
 
@@ -97,15 +107,38 @@ export const RoomGroupWatchlistRow = ({ title, index, usersCache }: RoomGroupWat
           <CompactRatingLabel rating={title.computedAvgRating} />
         </div>
 
-        <div className="flex-shrink-0 flex items-center gap-3">
+        <div className="flex-shrink-0 flex items-center gap-2">
           <div onClick={(e) => e.stopPropagation()}>
             <ReadOnlyStatusBadge status={title.myStatus ?? undefined} showDot={false} />
           </div>
 
-          <div className="w-8 h-8 rounded-full flex items-center justify-center bg-muted/40 hover:bg-muted transition-colors">
-            <ExpandMoreRoundedIcon
-              className={`text-muted-foreground transition-transform duration-300 ${isOpen ? "rotate-180" : ""}`}
-            />
+          <div className="relative" onClick={(e) => e.stopPropagation()}>
+            <button
+              type="button"
+              onClick={() => setIsDropdownOpen((prev) => !prev)}
+              className="w-8 h-8 rounded-full flex items-center justify-center bg-muted/40 hover:bg-muted text-muted-foreground transition-colors font-bold text-lg pb-1 cursor-pointer"
+              aria-label="Actions"
+            >
+              ⋮
+            </button>
+
+            {isDropdownOpen && (
+              <>
+                <div
+                  className="fixed inset-0 z-20 cursor-default"
+                  onClick={() => setIsDropdownOpen(false)}
+                />
+                <div className="absolute right-0 mt-2 w-48 bg-card border border-border rounded-xl shadow-xl z-30 py-1 flex flex-col text-sm animate-in fade-in zoom-in-95 duration-150">
+                  <button
+                    type="button"
+                    onClick={handleOpenDetailsModal}
+                    className="w-full text-left px-4 py-2 hover:bg-muted/60 transition-colors text-foreground font-medium cursor-pointer"
+                  >
+                    View details & links
+                  </button>
+                </div>
+              </>
+            )}
           </div>
         </div>
       </div>
@@ -114,8 +147,8 @@ export const RoomGroupWatchlistRow = ({ title, index, usersCache }: RoomGroupWat
         <div className="mt-2 bg-card/95 backdrop-blur-sm border border-border/60 rounded-2xl p-4 flex flex-col gap-2 ml-4 sm:ml-8 w-[calc(100%-1rem)] sm:w-[calc(100%-2rem)] shadow-lg animate-in fade-in slide-in-from-top-2 duration-200">
           <div className="grid grid-cols-[minmax(0,1fr)_80px_130px_40px] items-center px-3 gap-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider pb-2 border-b border-border/40">
             <span>Room Member</span>
-            <span className="text-center">Rating</span>
             <span className="text-center">Status</span>
+            <span className="text-center">Rating</span>
             <span />
           </div>
 
