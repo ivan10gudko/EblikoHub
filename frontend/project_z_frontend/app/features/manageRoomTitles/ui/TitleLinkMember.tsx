@@ -50,11 +50,7 @@ export const TitleLinkMember = ({ member, rating, status, titleId }: TitleLinkMe
         </div>
 
         <div className="flex items-center justify-center min-w-[38px]">
-          {rating !== undefined && rating > 0 ? (
             <CompactRatingLabel rating={rating} />
-          ) : (
-            <span className="text-xs text-muted-foreground">—</span>
-          )}
         </div>
 
         <div className="flex items-center justify-center pl-2 border-l border-border/60 h-5">

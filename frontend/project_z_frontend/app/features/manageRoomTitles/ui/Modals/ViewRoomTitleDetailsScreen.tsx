@@ -9,9 +9,14 @@ import { TitleTypeOptionsColors, TitleTypeThemes } from "~/entities/titleRecord"
 interface RoomTitleDetailsModalProps {
   roomTitle: RoomTitleDetails;
   onEdit?: () => void;
+  canEdit?: boolean; 
 }
 
-export const ViewRoomTitleDetailsScreen = ({ roomTitle, onEdit }: RoomTitleDetailsModalProps) => {
+export const ViewRoomTitleDetailsScreen = ({
+  roomTitle,
+  onEdit,
+  canEdit = false
+}: RoomTitleDetailsModalProps) => {
   const typeColorClass = TitleTypeOptionsColors[roomTitle.titleType];
   const themeClasses = TitleTypeThemes[roomTitle.titleType];
 
@@ -60,7 +65,6 @@ export const ViewRoomTitleDetailsScreen = ({ roomTitle, onEdit }: RoomTitleDetai
 
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3 min-w-0">
-            
             <div className="w-12 h-12 shrink-0">
               <UserAvatar
                 src={roomTitle.addedByUser.img ?? undefined}
@@ -70,7 +74,6 @@ export const ViewRoomTitleDetailsScreen = ({ roomTitle, onEdit }: RoomTitleDetai
             </div>
 
             <div className="min-w-0">
-           
               <div className="text-lg font-bold truncate leading-snug">
                 {roomTitle.addedByUser.name}
               </div>
@@ -94,14 +97,16 @@ export const ViewRoomTitleDetailsScreen = ({ roomTitle, onEdit }: RoomTitleDetai
           </div>
         </div>
 
-        <Button
-          variant="save"
-          className="px-7 h-12 bg-primary hover:bg-primary-hover text-black border-none"
-          onClick={onEdit}
-        >
-          <EditIcon className="mr-2" fontSize="small" />
-          Edit Details
-        </Button>
+        {canEdit && (
+          <Button
+            variant="save"
+            className="px-7 h-12 bg-primary hover:bg-primary-hover text-black border-none"
+            onClick={onEdit}
+          >
+            <EditIcon className="mr-2" fontSize="small" />
+            Edit Details
+          </Button>
+        )}
       </div>
     </div>
   );

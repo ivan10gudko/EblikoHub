@@ -32,9 +32,13 @@ export const adminModalRoutes = (prefixName: string, keys?: (keyof typeof adminM
 
 export const roomMainModalRoutes = (prefixName: string) => {
     const parent = roomTitleModals.detailsLinks;
-    const childrenModals = pickModals(titleModals, prefixName, ["view", "rating", "seasons"]);
+
+    const nestedTitleModals = pickModals(titleModals, `${prefixName}-nested`, ["view", "rating", "seasons"]);
+
+    const flatTitleModals = pickModals(titleModals, prefixName, ["view", "rating", "seasons"]);
 
     return [
-        route(parent.path, parent.file, { id: `${prefixName}-detailsLinks` }, childrenModals)
+        route(parent.path, parent.file, { id: `${prefixName}-detailsLinks` }, nestedTitleModals),
+        ...flatTitleModals,
     ];
 };
