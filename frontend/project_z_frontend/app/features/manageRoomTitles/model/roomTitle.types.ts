@@ -79,6 +79,7 @@ export interface TitleUserParticipation {
     status: Status;
     overallRating: number;
     type: TitleType;
+    titleId:number;
 }
 
 export interface RoomTitlesResponse extends PageResponse<RoomTitleSummary> {

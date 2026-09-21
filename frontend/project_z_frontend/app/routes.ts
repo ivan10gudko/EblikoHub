@@ -5,7 +5,7 @@ import {
     layout,
     prefix,
 } from "@react-router/dev/routes";
-import { adminModalRoutes, roomTitleModalRoutes, titleModalRoutes } from "./routes/modals/routes.config";
+import { adminModalRoutes, roomMainModalRoutes, roomTitleModalRoutes, titleModalRoutes } from "./routes/modals/routes.config";
 
 export default [
     layout("./routes/_main.tsx", [
@@ -49,14 +49,14 @@ export default [
                     route("sent", "./routes/roomRequestsLayouts/room.user.requests.sent.tsx"),
                 ]),
 
-                route(":id", "./routes/roomDetailsLayouts/room.details.main.tsx", roomTitleModalRoutes("room-main")),
+                route(":id", "./routes/roomDetailsLayouts/room.details.main.tsx", roomMainModalRoutes("room-main")),
 
                 route(":id/settings", "./routes/room/room.settings.index.tsx", [
                     index("./routes/room/room.settings._redirect.tsx"),
                     route("general", "./routes/room/room.settings.general.tsx", { id: "room-settings-general-alias" }),
 
                     ...prefix("titles", [
-                        route("/", "./routes/room/titles/room.settings.titles.roomTitles.tsx", roomTitleModalRoutes("room-settings-titles")),
+                        route("/", "./routes/room/titles/room.settings.titles.roomTitles.tsx", roomTitleModalRoutes("room-settings-titles", ["add", "edit", "links"])),
                         route("titleLinks", "./routes/room/titles/room.settings.titles.titleLinks.tsx"),
                         route("ai-matcher", "./routes/room/titles/room.settings.titles.aiMatcher.tsx"),
                     ]),

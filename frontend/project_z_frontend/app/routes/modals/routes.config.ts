@@ -28,3 +28,8 @@ export const roomTitleModalRoutes = (prefixName: string, keys?: (keyof typeof ro
 
 export const adminModalRoutes = (prefixName: string, keys?: (keyof typeof adminModals)[]) =>
     pickModals(adminModals, prefixName, keys);
+
+export const roomMainModalRoutes = (prefixName: string) => [
+    ...pickModals(titleModals, prefixName, ["view", "rating", "seasons"]),
+    ...pickModals(roomTitleModals, prefixName, ["detailsLinks"]),
+];

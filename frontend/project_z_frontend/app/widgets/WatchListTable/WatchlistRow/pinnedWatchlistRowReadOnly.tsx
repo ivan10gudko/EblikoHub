@@ -1,19 +1,18 @@
 import React from 'react';
 import { useNavigate } from "react-router";
-import { ReadOnlyStatusBadge, TitleTypeThemes, TitlePinnedThemes, type TitleRecord } from "~/entities/titleRecord";
+import { ReadOnlyStatusBadge, TitleTypeThemes, TitlePinnedThemes, type TitleRecord, TitleActionsMenu } from "~/entities/titleRecord";
 import { CompactRate } from "~/shared/ui/CompactRate";
-import { TitleActionsMenu } from "../../TitleActionsMenu";
 import { useTitleFilterStore, type TitleSortType } from "~/features/titleFilter/store/titleFilter.store";
 import { useTitleChangesHighlight } from './hooks/useTitleChangesHighlight';
 import { ChangeHighlight } from '~/shared/ui/ChangeHighlight';
 
+
 interface PinnedWatchlistRowReadOnlyProps {
   title: TitleRecord;
-  onOpenRatingModal: (title: TitleRecord) => void;
   onRowClick: (title: TitleRecord) => void;
 }
 
-export const PinnedWatchlistRowReadOnly = ({ title, onOpenRatingModal, onRowClick }: PinnedWatchlistRowReadOnlyProps) => {
+export const PinnedWatchlistRowReadOnly = ({ title, onRowClick }: PinnedWatchlistRowReadOnlyProps) => {
   const navigate = useNavigate();
 
   const changedFields = useTitleChangesHighlight(title, 1000);
@@ -66,7 +65,7 @@ export const PinnedWatchlistRowReadOnly = ({ title, onOpenRatingModal, onRowClic
         </ChangeHighlight>
 
         <div className="flex-shrink-0 ml-1 border-l border-border pl-2">
-          <TitleActionsMenu title={title} isOwn={false} onOpenRatingModal={() => onOpenRatingModal(title)} />
+          <TitleActionsMenu titleId={title.titleId} isOwn={false} />
         </div>
       </div>
     </div>
