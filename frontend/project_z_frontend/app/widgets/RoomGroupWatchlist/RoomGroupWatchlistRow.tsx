@@ -10,11 +10,28 @@ import { Status } from "~/shared/types";
 import type { UserShort } from "~/entities/user/model/user.types";
 import { cn } from "~/shared/lib";
 
+
+const getDisplayTitleInfo = (title: RoomTitleSummary, showMyVisual: boolean) => {
+  if (showMyVisual && title.myTitleInfo) {
+    return title.myTitleInfo;
+  }
+  return title.titleInfo;
+};
+
+const getTargetApiTitleId = (title: RoomTitleSummary, showMyVisual: boolean): number | undefined => {
+  if (showMyVisual) {
+    return title.myTitleInfo?.apiTitleId;
+  }
+  return title.titleInfo?.apiTitleId;
+};
+
+
 interface RoomGroupWatchlistRowProps {
   title: RoomTitleSummary;
   index: number;
   usersCache: Record<string, UserShort>;
   onTypeChange?: (roomTitleId: string, newType: string) => void;
+  showMyVisual?: boolean;
 }
 
 const statusBorderMap: Record<Status, string> = {
@@ -28,18 +45,26 @@ const statusBorderMap: Record<Status, string> = {
 
 const getStatusBorderClass = (status: Status): string => statusBorderMap[status];
 
-export const RoomGroupWatchlistRow = ({ title, index, usersCache }: RoomGroupWatchlistRowProps) => {
+export const RoomGroupWatchlistRow = ({
+  title,
+  index,
+  usersCache,
+  showMyVisual = false,
+}: RoomGroupWatchlistRowProps) => {
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
+
+  const displayInfo = getDisplayTitleInfo(title, showMyVisual);
 
   const handleImageClick = (e: React.MouseEvent) => {
     e.stopPropagation();
 
-    if (title.titleInfo?.apiTitleId) {
-      navigate(`/anime/${title.titleInfo.apiTitleId}`);
+    const targetApiId = getTargetApiTitleId(title, showMyVisual);
+
+    if (targetApiId) {
+      navigate(`/anime/${targetApiId}`);
     }
   };
-
   const rawType = title.myTitleInfo?.type || title.titleInfo?.titleType;
   const themeClasses = TitleTypeThemes[rawType];
   const participations = title.userParticipation ?? [];
@@ -58,16 +83,16 @@ export const RoomGroupWatchlistRow = ({ title, index, usersCache }: RoomGroupWat
 
         <div className="relative h-12 w-20 flex-shrink-0 cursor-pointer overflow-hidden rounded-lg shadow-inner bg-muted/20">
           <img
-            src={title.titleInfo?.imageUrl || DEFAULT_IMAGE_PATH}
+            src={displayInfo?.imageUrl || DEFAULT_IMAGE_PATH}
             onClick={handleImageClick}
             className="absolute inset-0 h-full w-full object-cover transition-transform hover:scale-105 duration-200"
-            alt={title.titleInfo?.titleName || "Title poster"}
+            alt={displayInfo?.titleName || "Title poster"}
           />
         </div>
 
         <div className="flex-1 min-w-0 px-1">
           <span className="font-bold text-foreground text-sm sm:text-base truncate block">
-            {title.titleInfo?.titleName}
+            {displayInfo?.titleName || title.titleInfo?.titleName}
           </span>
         </div>
 
