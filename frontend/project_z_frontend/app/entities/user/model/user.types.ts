@@ -1,4 +1,4 @@
-import type { QueryParams } from "~/shared/types";
+import type { QueryParams, Status } from "~/shared/types";
 
 export interface UserProfile {
     userId: string;
@@ -44,4 +44,11 @@ export interface UserDtoWithRoomBanStatus{
     img?:string;
     isBanned:boolean;
     roomBanId:string;
+}
+
+export interface UserParticipation {
+  userId: string;
+  status?: Status;
+  overallRating?: number;
+  type?: string;
 }

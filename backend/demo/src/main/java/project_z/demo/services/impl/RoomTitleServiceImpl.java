@@ -31,13 +31,14 @@ import project_z.demo.dto.RoomTitleDtos.RoomTitleDetailsDto;
 import project_z.demo.dto.RoomTitleDtos.RoomTitleShortDto;
 import project_z.demo.dto.RoomTitleDtos.RoomTitleSummaryDto;
 import project_z.demo.dto.RoomTitleDtos.RoomTitleUpdateDto;
-
+import project_z.demo.dto.RoomTitleDtos.RoomTitleWithLinksDto;
 import project_z.demo.dto.RoomTitleDtos.RoomTitleWithUserLinksDto;
 import project_z.demo.dto.RoomTitleDtos.RoomTitlesResponseDto;
 import project_z.demo.dto.RoomTitleLinkDtos.RoomTitleLinkShortDto;
 
 import project_z.demo.dto.TitleDtos.TitleSameCriteriaDto;
 import project_z.demo.dto.TitleDtos.TitleShortDto;
+import project_z.demo.dto.TitleDtos.TitleUserParticipation;
 import project_z.demo.dto.UserDtos.UserShortDto;
 import project_z.demo.entity.RoomEntity;
 import project_z.demo.entity.RoomTitleEntity;
@@ -51,6 +52,7 @@ import project_z.demo.repositories.RoomTitleEntityRepository;
 import project_z.demo.repositories.RoomTitleLinkRepository;
 import project_z.demo.repositories.Specifications.RoomTitleSpecifications;
 import project_z.demo.repositories.Specifications.views.RoomTitleStatsSpecifications;
+import project_z.demo.repositories.UserRepository;
 import project_z.demo.repositories.views.RoomTitleStatsRepository;
 import project_z.demo.security.SecurityService;
 import project_z.demo.services.RoomTitleService;
@@ -75,18 +77,20 @@ public class RoomTitleServiceImpl implements RoomTitleService {
     private final Mapper<RoomTitleEntity, RoomTitleDetailsDto> roomTitleDetailsMapper;
     private final Mapper<RoomTitleEntity, RoomTitleWithUserLinksDto> roomTitleWithUserLinksMapper;
     private final Mapper<RoomTitleLinkEntity, RoomTitleLinkShortDto> roomTitleLinkShortMapper;
+    private final Mapper<List<Object[]>, RoomTitleWithLinksDto> roomTitleWithLinksMapper;
+    private final UserRepository userRepository;
 
     @Override
     @Transactional
     public RoomTitleDetailsDto create(RoomTitleCreateDto dto, Long roomId) {
         UUID currentUserId = securityService.getCurrentUserId();
-
+        UserEntity user = userRepository.findById(currentUserId).orElseThrow();
         RoomEntity roomEntity = roomRepository.findById(roomId)
                 .orElseThrow(() -> new ResourceNotFoundException("room not found"));
 
         RoomTitleEntity entity = createMapper.mapFrom(dto);
         entity.setRoom(roomEntity);
-        entity.setAddedByUserId(currentUserId);
+        entity.setAddedByUser(user);
 
         RoomTitleEntity savedEntity = repository.save(entity);
         linkRepository.linkExistingMembersToNewRoomTitle(savedEntity.getId());
@@ -139,10 +143,16 @@ public class RoomTitleServiceImpl implements RoomTitleService {
         List<RoomTitleLinkEntity> links = fetchLinks(titleIds, currentUserId, params.getMemberIds());
         Map<UUID, List<RoomTitleLinkEntity>> linksByTitleId = CollectionUtils.groupBy(links,
                 l -> l.getRoomTitle().getId());
-        Map<UUID, UserShortDto> usersCache = buildUsersCache(links);
+
+        boolean isCurrentUserSelected = params.getMemberIds() == null
+                || params.getMemberIds().isEmpty()
+                || (currentUserId != null && params.getMemberIds().contains(currentUserId));
+
+        Map<UUID, UserShortDto> usersCache = buildUsersCache(links, currentUserId, isCurrentUserSelected);
 
         Page<RoomTitleSummaryDto> page = statsPage.map(
-                statsView -> mapToSummary(statsView, entityMap, linksByTitleId, currentUserId, params.getStatus()));
+                statsView -> mapToSummary(statsView, entityMap, linksByTitleId, currentUserId, isCurrentUserSelected,
+                        params.getStatus()));
 
         return new RoomTitlesResponseDto(page, usersCache);
     }
@@ -173,6 +183,16 @@ public class RoomTitleServiceImpl implements RoomTitleService {
         return titlePage.map(entity -> mapToWithUserLinksDto(entity, linksMap));
     }
 
+    @Override
+    public RoomTitleWithLinksDto getRoomTitleWithLinks(UUID roomTitleId) {
+        List<Object[]> rows = repository.fetchRoomTitleWithFullGraph(roomTitleId);
+
+        if (rows.isEmpty()) {
+            throw new ResourceNotFoundException("Room Title not found");
+        }
+
+        return roomTitleWithLinksMapper.mapTo(rows);
+    }
     // ---- helpers
 
     private RoomTitleWithUserLinksDto mapToWithUserLinksDto(RoomTitleEntity entity,
@@ -213,14 +233,6 @@ public class RoomTitleServiceImpl implements RoomTitleService {
         return CollectionUtils.toMapById(repository.findAllById(titleIds), RoomTitleEntity::getId);
     }
 
-    private Map<UUID, UserShortDto> buildUsersCache(List<RoomTitleLinkEntity> links) {
-        List<UserEntity> users = links.stream()
-                .map(link -> link.getUserTitleRecord().getUser())
-                .distinct()
-                .toList();
-        return CollectionUtils.toMapById(users, UserEntity::getUserId, userShortMapper::mapTo);
-    }
-
     private List<RoomTitleLinkEntity> fetchLinks(List<UUID> titleIds, UUID currentUserId, List<UUID> memberIds) {
         List<UUID> targetUserIds = new ArrayList<>();
         if (memberIds != null) {
@@ -234,13 +246,29 @@ public class RoomTitleServiceImpl implements RoomTitleService {
 
     private RoomTitleSummaryDto mapToSummary(RoomTitleStatsView statsView, Map<UUID, RoomTitleEntity> entityMap,
             Map<UUID, List<RoomTitleLinkEntity>> linksByTitleId,
-            UUID currentUserId, TitleStatus status) {
+            UUID currentUserId, boolean isCurrentUserSelected, TitleStatus status) {
         RoomTitleEntity entity = entityMap.get(statsView.getId());
         if (entity == null) {
             return null;
         }
         Double avg = statsView.getAvgRating() != null ? statsView.getAvgRating() : 0.0;
-        return roomTitleSummaryMapper.mapTo(entity, avg, linksByTitleId, currentUserId, status);
+        return roomTitleSummaryMapper.mapTo(entity, avg, linksByTitleId, currentUserId, isCurrentUserSelected, status);
     }
 
+    private Map<UUID, UserShortDto> buildUsersCache(List<RoomTitleLinkEntity> links, UUID currentUserId,
+            boolean isCurrentUserSelected) {
+        List<UserEntity> users = links.stream()
+                .map(link -> link.getUserTitleRecord().getUser())
+                .filter(user -> {
+
+                    if (!isCurrentUserSelected && currentUserId != null && user.getUserId().equals(currentUserId)) {
+                        return false;
+                    }
+                    return true;
+                })
+                .distinct()
+                .toList();
+
+        return CollectionUtils.toMapById(users, UserEntity::getUserId, userShortMapper::mapTo);
+    }
 }

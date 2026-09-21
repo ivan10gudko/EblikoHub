@@ -23,11 +23,11 @@ import project_z.demo.common.QueryParameters.RoomTitlesQueryParameters.RoomTitle
 import project_z.demo.dto.RoomTitleDtos.RoomTitleCreateDto;
 import project_z.demo.dto.RoomTitleDtos.RoomTitleDetailsDto;
 import project_z.demo.dto.RoomTitleDtos.RoomTitleUpdateDto;
+import project_z.demo.dto.RoomTitleDtos.RoomTitleWithLinksDto;
 import project_z.demo.dto.RoomTitleDtos.RoomTitleWithUserLinksDto;
 import project_z.demo.dto.RoomTitleDtos.RoomTitlesResponseDto;
 import project_z.demo.security.SecurityService;
 import project_z.demo.services.RoomTitleService;
-
 
 @RestController
 @RequestMapping("/api/v1/rooms/{roomId}/titles")
@@ -74,15 +74,17 @@ public class RoomTitleController {
                 HttpStatus.OK);
     }
 
-    @GetMapping("/getRoomTitlesWithLinks")
-    public ResponseEntity<Page<RoomTitleWithUserLinksDto>> getRoomTitlesWithLinks(@PathVariable("roomId") long roomId, @PathVariable("userId") UUID userId, RoomTitlesWithSearchQueryParameters queryParameters)  {
-        return new ResponseEntity<>(roomTitleService.getRoomTitlesWithUserLinks(roomId, userId, queryParameters), HttpStatus.OK);
+    @GetMapping("/getRoomTitlesWithLinks/{roomTitleId}")
+    public ResponseEntity<RoomTitleWithLinksDto> getRoomTitlesWithLinks(@PathVariable("roomId") long roomId,
+            @PathVariable("roomTitleId") UUID roomTitleId) {
+        return new ResponseEntity<>(roomTitleService.getRoomTitleWithLinks(roomTitleId), HttpStatus.OK);
     }
+
     @GetMapping("/{titleId}")
     public ResponseEntity<RoomTitleDetailsDto> getRoomTitleDetailsById(@PathVariable UUID titleId) {
         return new ResponseEntity<>(roomTitleService.findById(titleId), HttpStatus.OK);
     }
-    
+
     @PutMapping("/{titleId}")
     @PreAuthorize("@securityService.isAdminOrOwner(#roomId) || @securityService.isRoomTitleOwner(#titleId)")
     public ResponseEntity<RoomTitleDetailsDto> update(

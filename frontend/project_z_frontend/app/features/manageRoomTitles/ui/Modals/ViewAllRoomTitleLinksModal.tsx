@@ -21,7 +21,7 @@ export const ViewAllRoomTitleLinksScreen = ({
   roomId,
   roomTitleId,
   canDelete = false,
-}: ViewLinksModalProps) => {
+}: ViewLinksScreenProps) => {
   const [deletingLinkId, setDeletingLinkId] = useState<string | null>(null);
 
   const queryKey = roomTitleKeys.userLinks(roomId, roomTitleId);

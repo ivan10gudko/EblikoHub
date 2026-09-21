@@ -46,18 +46,20 @@ public class RoomTitleEntity {
     private String titleName;
 
     private String imageUrl;
-    
+
     @Enumerated(EnumType.STRING)
     @Column(name = "title_type", nullable = false)
-    @ColumnDefault("'ANIME'") 
+    @ColumnDefault("'ANIME'")
     @Builder.Default
     private TitleType titleType = TitleType.ANIME;
 
     private Long apiTitleId;
 
-    private UUID addedByUserId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "added_by_user_id", nullable = false)
+    private UserEntity addedByUser;
 
     @CreatedDate
-    @Column(name = "created_at",nullable = false, updatable = false)
+    @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 }

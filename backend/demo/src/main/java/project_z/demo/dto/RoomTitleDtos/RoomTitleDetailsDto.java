@@ -4,7 +4,9 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 import lombok.Data;
+import project_z.demo.dto.UserDtos.UserShortDto;
 import project_z.demo.enums.TitleType;
+
 @Data
 public class RoomTitleDetailsDto {
 
@@ -13,12 +15,12 @@ public class RoomTitleDetailsDto {
     private String titleName;
 
     private String imageUrl;
-    
+
     private TitleType titleType;
 
     private Long apiTitleId;
 
-    private UUID addedByUserId;
+    private UserShortDto addedByUser;
 
     private LocalDateTime createdAt;
 }

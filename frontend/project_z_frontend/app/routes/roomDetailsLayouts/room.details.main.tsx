@@ -8,6 +8,7 @@ import {
 } from "~/widgets/RoomDetailsManager";
 import { Outlet } from "react-router";
 import { useRoomDetailsFilterStore } from "~/widgets/RoomDetailsManager/store/roomDetailsFilter.store";
+import { RoomGroupWatchlistTable } from "~/widgets/RoomGroupWatchlist";
 
 export default function RoomDetailsMainPage() {
   const { id } = useParams<{ id: string }>();
@@ -25,7 +26,7 @@ export default function RoomDetailsMainPage() {
   }, [roomId, resetMembers]);
 
   const allMemberIds = room?.members.map((m) => m.user.userId) ?? [];
-  const { data } = useRoomTitlesQuery(roomId, allMemberIds, !!room);
+  const { data: titlesData, isLoading: isTitlesLoading } = useRoomTitlesQuery(roomId, allMemberIds, !!room);
 
   if (!roomId) {
     return <ErrorScreen title="Not found" message="Room with that id not found" />;
@@ -44,6 +45,14 @@ export default function RoomDetailsMainPage() {
       <div className="w-full lg:w-auto flex flex-col">
         <RoomDetailsSidebar room={room} />
       </div>
+
+      <div className="flex-1 min-w-0">
+        <RoomGroupWatchlistTable
+          titlesData={titlesData}
+          isLoading={isTitlesLoading}
+        />
+      </div>
+
       <Outlet />
     </div>
   );

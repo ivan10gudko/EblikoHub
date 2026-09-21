@@ -26,9 +26,10 @@ export interface RoomTitleDetails {
     imageUrl?: string | null;
     titleType: TitleType;
     apiTitleId?: number | null;
-    addedByUserId: string;
+    addedByUser: UserShort;
     createdAt: string;
 }
+
 
 export interface RoomTitleLinkShort {
     id: string;
@@ -70,16 +71,17 @@ export interface RoomTitleSummary {
     computedAvgRating: number;
     myStatus: Status;
     myTitleInfo: TitleShort;
-    userParticipation: RoomTitleUserIdAndTitleStatus[];
+    userParticipation: TitleUserParticipation[];
 }
 
-export interface RoomTitleUserIdAndTitleStatus {
+export interface TitleUserParticipation {
     userId: string;
     status: Status;
+    overallRating: number;
+    type: TitleType;
 }
 
-export interface RoomTitlesResponse {
-    content: PageResponse<RoomTitleSummary>;
+export interface RoomTitlesResponse extends PageResponse<RoomTitleSummary> {
     usersCache: Record<string, UserShort>;
 }
 
@@ -110,4 +112,12 @@ export interface RoomTitleLinkCreateDto {
 
 export interface RoomTitleLinkBatchCreateDto {
     links: RoomTitleLinkCreateDto[];
+}
+
+export interface RoomTitleWithLinksDto {
+    roomTitle: RoomTitleDetails;
+    links: {
+        title: TitleShort;
+        owner: UserShort;
+    }[];
 }
