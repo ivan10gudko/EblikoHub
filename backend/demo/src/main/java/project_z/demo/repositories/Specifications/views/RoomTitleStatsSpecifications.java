@@ -9,7 +9,6 @@ import jakarta.persistence.criteria.Root;
 import jakarta.persistence.criteria.Subquery;
 import project_z.demo.entity.RoomTitleLinkEntity;
 import project_z.demo.entity.views.RoomTitleStatsView;
-import project_z.demo.enums.TitleStatus;
 import project_z.demo.enums.TitleType;
 
 public class RoomTitleStatsSpecifications {
@@ -96,6 +95,16 @@ public class RoomTitleStatsSpecifications {
                             cb.equal(subRoot.get("roomTitle").get("id"), root.get("id")),
                             cb.like(cb.lower(subRoot.get("userTitleRecord").get("titleName")), searchPattern)));
 
+            return cb.exists(subquery);
+        };
+    }
+
+    public static Specification<RoomTitleStatsView> hasLinks() {
+        return (root, query, cb) -> {
+            Subquery<UUID> subquery = query.subquery(UUID.class);
+            Root<RoomTitleLinkEntity> subRoot = subquery.from(RoomTitleLinkEntity.class);
+            subquery.select(subRoot.get("roomTitle").get("id"))
+                    .where(cb.equal(subRoot.get("roomTitle").get("id"), root.get("id")));
             return cb.exists(subquery);
         };
     }
