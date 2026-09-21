@@ -1,4 +1,4 @@
-import { useNavigate, useParams } from "react-router";
+import { Outlet, useNavigate, useParams } from "react-router";
 import { useRoomTitleWithLinks } from "~/features/manageRoomTitles";
 import { notify } from "~/shared/lib";
 import { Modal } from "~/shared/ui/Modal";
@@ -6,13 +6,12 @@ import { RoomTitleDetailsLinksScreen } from "~/widgets/RoomGroupWatchlist/RoomTi
 
 export default function RoomTitleDetailsLinksRoute() {
     const navigate = useNavigate();
-    const { id, titleId } = useParams();
-
+    const { id, roomTitleId } = useParams();
     const handleClose = () => {
         navigate("../..", { relative: "path", replace: true });
     };
     const roomId = Number(id);
-    const { data, isLoading } = useRoomTitleWithLinks(roomId, titleId!);
+    const { data, isLoading } = useRoomTitleWithLinks(roomId, roomTitleId!);
 
     if (isLoading) {
         return (
@@ -37,8 +36,11 @@ export default function RoomTitleDetailsLinksRoute() {
 
 
     return (
-        <Modal isOpen={true} onClose={handleClose} title="View room title details links" maxWidth="max-w-5xl">
-            <RoomTitleDetailsLinksScreen data={data} />
-        </Modal>
+        <>
+            <Modal isOpen={true} onClose={handleClose} title="View room title details links" maxWidth="max-w-5xl">
+                <RoomTitleDetailsLinksScreen data={data} />
+            </Modal>
+            <Outlet></Outlet>
+        </>
     );
 }

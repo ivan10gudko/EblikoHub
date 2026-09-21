@@ -12,9 +12,9 @@ const titleModals = {
 
 const roomTitleModals = {
     add: { path: "add", file: "./routes/modals/room.title.add.tsx" },
-    edit: { path: "edit/:titleId", file: "./routes/modals/room.title.edit.tsx" },
-    links: { path: "links/:titleId", file: "./routes/modals/room.title.links.tsx" },
-    detailsLinks: { path: "detailsLinks/:titleId", file: "./routes/modals/room.title.details.links.tsx" },
+    edit: { path: "edit/:roomTitleId", file: "./routes/modals/room.title.edit.tsx" },
+    links: { path: "links/:roomTitleId", file: "./routes/modals/room.title.links.tsx" },
+    detailsLinks: { path: "detailsLinks/:roomTitleId", file: "./routes/modals/room.title.details.links.tsx" },
 } satisfies Record<string, ModalRouteDef>;
 
 const adminModals = {
@@ -30,7 +30,11 @@ export const roomTitleModalRoutes = (prefixName: string, keys?: (keyof typeof ro
 export const adminModalRoutes = (prefixName: string, keys?: (keyof typeof adminModals)[]) =>
     pickModals(adminModals, prefixName, keys);
 
-export const roomMainModalRoutes = (prefixName: string) => [
-    ...pickModals(titleModals, prefixName, ["view", "rating", "seasons"]),
-    ...pickModals(roomTitleModals, prefixName, ["detailsLinks"]),
-];
+export const roomMainModalRoutes = (prefixName: string) => {
+    const parent = roomTitleModals.detailsLinks;
+    const childrenModals = pickModals(titleModals, prefixName, ["view", "rating", "seasons"]);
+
+    return [
+        route(parent.path, parent.file, { id: `${prefixName}-detailsLinks` }, childrenModals)
+    ];
+};
