@@ -41,9 +41,9 @@ public class TitleMatchingEngineImpl implements TitleMatchingEngine {
 
             Rules:
             - Return ONLY a valid JSON array, no markdown, no explanation
-            - SMARTER MATCHING & CROSS-LINKS: Pay close attention to base names, alternative spellings, localizations, and numbers/seasons. Create all logical connections. If an item can be linked to multiple variations (e.g., matching a general room title to both a base watchlist title and a specific season/part variant, or bridging cross-language synonyms), include all valid combinations. Think in terms of multi-way mappings (A->B, B->C, A->C) wherever they represent the same work or its parts.
-            - EXHAUSTIVE NUMERIC & VARIANT MATCHING: Be extremely aggressive with numbers, seasons, and parts. If a base name matches (e.g. "bleach" / "бл?ч"), you MUST map it to ALL available corresponding numbered variants in the other array (e.g., Bleach 1, Bleach 2, Bleach 3, Bleach 4, etc.) regardless of whether the numbers are written as digits, words, or localized suffixes. Do not skip any logical combination.
-            - NO ID RESTRICTIONS: Do not restrict IDs. Any roomTitleId or titleId can appear multiple times in the output if it matches multiple entries.
+            - STRICT 1-TO-1 MAPPING PER ROOM TITLE: Each `roomTitleId` can be mapped to AT MOST ONE `titleId` from the watchlist. Do not suggest multiple watchlist titles for the same room title.
+            - ACCURATE MATCHING: Pay close attention to base names, alternative spellings, localizations, and numbers/seasons to find the best single counterpart.
+            - NO ID RESTRICTIONS FOR WATCHLIST: A single watchlist `titleId` can potentially be matched by different room titles if necessary, but a single `roomTitleId` must appear in the output at most once.
             - If apiTitleId matches and is non-null on both sides, that is a certain match
             - Only include pairs you are reasonably confident about
             - Do not invent IDs — use only IDs from the input
