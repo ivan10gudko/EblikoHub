@@ -46,7 +46,6 @@ export const WatchlistTable = ({
     return { pinnedTitle: pinned, regularTitles: regular };
   }, [optimisticTitles]);
 
-  const openRating = (title: TitleRecord) => navigate(`rating/${title.titleId}`);
   const openView = (title: TitleRecord) => navigate(`view/${title.titleId}`);
   const handleOpenAddModal = () => navigate("add");
 
@@ -71,7 +70,6 @@ export const WatchlistTable = ({
       {pinnedTitle && (
         <PinnedWatchlistRow
           title={pinnedTitle}
-          onOpenRatingModal={() => openRating(pinnedTitle)}
         />
       )}
 
@@ -101,7 +99,6 @@ export const WatchlistTable = ({
                         title={title}
                         index={index}
                         showNumber={showNumber}
-                        onOpenRatingModal={() => openRating(title)}
                       />
                     </div>
                   )}
@@ -120,7 +117,6 @@ export const WatchlistTable = ({
       {pinnedTitle && (
         <PinnedWatchlistRowReadOnly
           title={pinnedTitle}
-          onOpenRatingModal={() => openRating(pinnedTitle)}
           onRowClick={openView}
         />
       )}
@@ -132,7 +128,6 @@ export const WatchlistTable = ({
             title={title}
             index={index}
             showNumber={showNumber}
-            onOpenRatingModal={() => openRating(title)}
             onRowClick={openView}
           />
         )}

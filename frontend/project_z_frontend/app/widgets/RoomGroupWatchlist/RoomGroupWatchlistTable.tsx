@@ -2,6 +2,9 @@ import { RoomGroupWatchlistSkeleton } from "./RoomGroupWatchlistSkeleton";
 import type { useRoomTitlesQuery } from "../RoomDetailsManager";
 import { mergePagedCache } from "~/shared/helpers/mergePagedCache";
 import { RoomGroupWatchlistRow } from "./RoomGroupWatchlistRow";
+import { useRoomWatchlistVisualStore } from "./store/useRoomTitleVisual.store";
+import { ToggleSwitch } from "~/shared/ui/Switch";
+
 
 interface RoomGroupWatchlistTableProps {
     titlesData: ReturnType<typeof useRoomTitlesQuery>["data"];
@@ -10,11 +13,9 @@ interface RoomGroupWatchlistTableProps {
 
 export const RoomGroupWatchlistTable = ({ titlesData, isLoading }: RoomGroupWatchlistTableProps) => {
     const titles = titlesData?.pages.flatMap((page) => page.content ?? []) ?? [];
+    const mergedUsersCache = mergePagedCache(titlesData?.pages, (page) => page.usersCache);
 
-    const mergedUsersCache = mergePagedCache(
-        titlesData?.pages,
-        (page) => page.usersCache
-    );
+    const { showMyVisual, toggleVisual } = useRoomWatchlistVisualStore();
 
     if (isLoading) return <RoomGroupWatchlistSkeleton />;
 
@@ -24,6 +25,13 @@ export const RoomGroupWatchlistTable = ({ titlesData, isLoading }: RoomGroupWatc
                 <h2 className="text-lg font-bold text-foreground">
                     Group Watchlist <span className="text-sm font-normal text-muted-foreground">({titles.length} titles)</span>
                 </h2>
+
+                <div className="flex items-center gap-2">
+                    <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                        Personalized View
+                    </span>
+                    <ToggleSwitch isActive={showMyVisual} onToggle={toggleVisual} />
+                </div>
             </div>
 
             <div className="grid grid-cols-[auto_1fr_100px_120px] items-center gap-x-2 px-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
@@ -32,18 +40,18 @@ export const RoomGroupWatchlistTable = ({ titlesData, isLoading }: RoomGroupWatc
                 <span className="text-center pr-4">Group Avg</span>
                 <span className="text-right pr-20">Status</span>
             </div>
+
             {titles.length === 0 ? (
-                <div className="text-center text-muted-foreground py-8">
-                    No titles in this room yet.
-                </div>
+                <div className="text-center text-muted-foreground py-8">No titles in this room yet.</div>
             ) : (
                 <div className="flex flex-col gap-2">
-                    {titles.map((titlesSummary, index) => (
+                    {titles.map((titleSummary, index) => (
                         <RoomGroupWatchlistRow
-                            key={String(titlesSummary.roomTitleId)}
-                            title={titlesSummary}
+                            key={String(titleSummary.roomTitleId)}
+                            title={titleSummary}
                             index={index}
                             usersCache={mergedUsersCache}
+                            showMyVisual={showMyVisual}
                         />
                     ))}
                 </div>

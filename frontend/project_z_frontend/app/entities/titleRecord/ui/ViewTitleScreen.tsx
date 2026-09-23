@@ -82,15 +82,20 @@ export const ViewTitleScreen = ({
                 className="w-42 h-58 object-cover rounded-xl shadow-md border border-border/40 shrink-0"
               />
 
-              <div className="flex-1 space-y-4 w-full">
-                <div>
+              <div className="flex-1 space-y-4 w-full min-w-0">
+                <div className="min-w-0">
                   <span className="text-xs font-bold tracking-widest text-muted-foreground uppercase opacity-60 block mb-1">
                     Title Name
                   </span>
                   <ChangeHighlight isChanged={changedFields.titleName} className="px-1 inline-block w-full">
-                    <h2 className="text-2xl font-black text-foreground uppercase leading-tight">
-                      {title.titleName}
-                    </h2>
+                    <div className="min-w-0 w-full">
+                      <h2
+                        className="text-2xl font-black text-foreground uppercase leading-tight truncate"
+                        title={title.titleName}
+                      >
+                        {title.titleName}
+                      </h2>
+                    </div>
                   </ChangeHighlight>
                 </div>
 

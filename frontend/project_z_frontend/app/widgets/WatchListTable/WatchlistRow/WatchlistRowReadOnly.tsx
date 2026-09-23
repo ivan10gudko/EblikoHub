@@ -1,8 +1,7 @@
 import React from 'react';
 import { useNavigate } from "react-router";
-import { ReadOnlyStatusBadge, TitleTypeThemes, type TitleRecord } from "~/entities/titleRecord";
+import { ReadOnlyStatusBadge, TitleActionsMenu, TitleTypeThemes, type TitleRecord } from "~/entities/titleRecord";
 import { CompactRate } from "~/shared/ui/CompactRate";
-import { TitleActionsMenu } from "../../TitleActionsMenu";
 import { useTitleFilterStore, type TitleSortType } from "~/features/titleFilter/store/titleFilter.store";
 import { useTitleChangesHighlight } from './hooks/useTitleChangesHighlight';
 import { ChangeHighlight } from '~/shared/ui/ChangeHighlight';
@@ -11,11 +10,10 @@ interface WatchlistRowReadOnlyProps {
   title: TitleRecord;
   index: number;
   showNumber: boolean;
-  onOpenRatingModal: (title: TitleRecord) => void;
   onRowClick: (title: TitleRecord) => void;
 }
 
-export const WatchlistRowReadOnly = ({ title, index, showNumber, onOpenRatingModal, onRowClick }: WatchlistRowReadOnlyProps) => {
+export const WatchlistRowReadOnly = ({ title, index, showNumber, onRowClick }: WatchlistRowReadOnlyProps) => {
   const navigate = useNavigate();
 
   const changedFields = useTitleChangesHighlight(title, 1000);
@@ -76,7 +74,7 @@ export const WatchlistRowReadOnly = ({ title, index, showNumber, onOpenRatingMod
         </ChangeHighlight>
 
         <div className="flex-shrink-0 ml-1 border-l border-border pl-2">
-          <TitleActionsMenu title={title} isOwn={false} onOpenRatingModal={() => onOpenRatingModal(title)} />
+          <TitleActionsMenu titleId={title.titleId} isOwn={false} />
         </div>
       </div>
     </div>

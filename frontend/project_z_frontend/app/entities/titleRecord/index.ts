@@ -15,3 +15,4 @@ export { AnimeSearchDropDownResults } from "./ui/AnimeSearchDropDownResult";
 export { ReadOnlyStatusBadge } from "./ui/ReadOnlyStatusBadge";
 export {getTitleThemeClassname} from "./helpers/getTitleThemeClassname";
 export { useTitleById} from "./hooks/useTitleById";
+export {TitleActionsMenu} from "./ui/TitleActionsMenu";

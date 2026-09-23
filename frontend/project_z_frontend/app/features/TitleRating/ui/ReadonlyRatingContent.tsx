@@ -71,7 +71,6 @@ export const ReadonlyRatingContent = ({
 
               <div className="flex items-center gap-3 w-full sm:w-auto justify-end">
                 <div className="shrink-0 scale-[0.8] sm:scale-100 origin-right flex justify-end w-full sm:w-auto pointer-events-none">
-                  {/* За бажанням можна обгорнути і overall, якщо треба */}
                   <CompactRate
                     currentRating={currentOverall}
                     isOwn={false}
@@ -113,7 +112,6 @@ export const ReadonlyRatingContent = ({
                   getKey={(key) => key}
                   className="flex flex-col gap-3 sm:gap-4 w-full"
                   renderItem={(key) => {
-                    // Перевіряємо чи змінилося значення для конкретного ключа
                     const isFieldChanged = Boolean(changedFields[key]);
 
                     return (
