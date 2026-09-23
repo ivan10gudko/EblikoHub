@@ -7,7 +7,7 @@ import { useNavigate } from "react-router";
 
 interface TitleLinkMemberProps {
   member: UserShort;
-  rating: number;
+  rating: number | null;
   status: Status;
   titleId: number;
 }

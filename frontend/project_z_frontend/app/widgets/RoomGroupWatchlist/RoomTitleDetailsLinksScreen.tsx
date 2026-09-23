@@ -26,14 +26,12 @@ export const RoomTitleDetailsLinksScreen = ({ data, onEdit }: RoomTitleDetailsMo
 
         <div className="flex flex-col gap-1 flex-1 min-h-[300px] max-h-[420px] overflow-y-auto custom-scrollbar">
           {links.map((link, idx) => {
-            const rawRating = Object.values(link.title.rating || {})[0];
-            const ratingNumber = typeof rawRating === "number" ? rawRating : Number(rawRating) || 0;
 
             return (
               <TitleLinkMember
                 key={idx}
                 member={link.owner}
-                rating={ratingNumber}
+                rating={link.title.rating?.overall ?? null}
                 status={link.title.status}
                 titleId={link.title.titleId}
               />
