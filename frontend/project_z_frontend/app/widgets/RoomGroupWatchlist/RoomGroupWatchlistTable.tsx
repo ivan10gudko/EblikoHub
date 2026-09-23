@@ -2,6 +2,7 @@ import { RoomGroupWatchlistSkeleton } from "./RoomGroupWatchlistSkeleton";
 import type { useRoomTitlesQuery } from "../RoomDetailsManager";
 import { mergePagedCache } from "~/shared/helpers/mergePagedCache";
 import { RoomGroupWatchlistRow } from "./RoomGroupWatchlistRow";
+import { InfiniteScrollLoader } from "~/shared/ui/infinityScroll";
 import { useRoomWatchlistVisualStore } from "./store/useRoomTitleVisual.store";
 import { ToggleSwitch } from "~/shared/ui/Switch";
 
@@ -9,9 +10,18 @@ import { ToggleSwitch } from "~/shared/ui/Switch";
 interface RoomGroupWatchlistTableProps {
     titlesData: ReturnType<typeof useRoomTitlesQuery>["data"];
     isLoading: boolean;
+    hasNextPage?: boolean;
+    isFetchingNextPage: boolean;
+    fetchNextPage: () => void;
 }
 
-export const RoomGroupWatchlistTable = ({ titlesData, isLoading }: RoomGroupWatchlistTableProps) => {
+export const RoomGroupWatchlistTable = ({
+    titlesData,
+    isLoading,
+    hasNextPage,
+    isFetchingNextPage,
+    fetchNextPage,
+}: RoomGroupWatchlistTableProps) => {
     const titles = titlesData?.pages.flatMap((page) => page.content ?? []) ?? [];
     const mergedUsersCache = mergePagedCache(titlesData?.pages, (page) => page.usersCache);
 
@@ -34,11 +44,11 @@ export const RoomGroupWatchlistTable = ({ titlesData, isLoading }: RoomGroupWatc
                 </div>
             </div>
 
-            <div className="grid grid-cols-[auto_1fr_100px_120px] items-center gap-x-2 px-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+            <div className="grid grid-cols-[auto_1fr_100px_85px] items-center gap-x-2 px-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
                 <span>#</span>
                 <span>Title</span>
-                <span className="text-center pr-4">Group Avg</span>
-                <span className="text-right pr-20">Status</span>
+                <span className="text-center">Status</span>
+                <span className="text-right whitespace-nowrap pr-12">Avg</span>
             </div>
 
             {titles.length === 0 ? (
@@ -54,6 +64,11 @@ export const RoomGroupWatchlistTable = ({ titlesData, isLoading }: RoomGroupWatc
                             showMyVisual={showMyVisual}
                         />
                     ))}
+                    <InfiniteScrollLoader
+                        hasNextPage={hasNextPage}
+                        isFetchingNextPage={isFetchingNextPage}
+                        fetchNextPage={fetchNextPage}
+                    />
                 </div>
             )}
         </div>

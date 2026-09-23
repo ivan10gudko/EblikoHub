@@ -17,17 +17,15 @@ export const TitleLinkMember = ({ member, rating, status, titleId }: TitleLinkMe
 
   const handleAvatarClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-
     if (member.userId) {
       navigate(`/profile/${member.userId}`);
     }
   };
 
   return (
-    <div className="flex items-center justify-between py-3 px-2 hover:bg-muted/20 rounded-md transition-colors gap-2 border-b border-border/40 last:border-b-0">
-      
-     
-      <div className="flex items-center gap-2.5 min-w-0 flex-1">
+    <div className="grid grid-cols-[minmax(0,1fr)_auto_40px_24px] items-center gap-2 px-2 py-3 hover:bg-muted/20 rounded-md transition-colors border-b border-border/40 last:border-b-0">
+
+      <div className="flex items-center gap-2.5 min-w-0">
         <div
           onClick={handleAvatarClick}
           className="cursor-pointer transition-transform hover:scale-105 flex-shrink-0"
@@ -42,20 +40,16 @@ export const TitleLinkMember = ({ member, rating, status, titleId }: TitleLinkMe
         </div>
       </div>
 
-     
-      <div className="flex items-center gap-2 shrink-0">
-        
-        <div className="flex items-center justify-center">
-          <ReadOnlyStatusBadge status={status} showDot={false} className="justify-center px-2.5 py-1" />
-        </div>
+      <div className="flex items-center justify-start">
+        <ReadOnlyStatusBadge status={status} showDot={false} className="px-2 py-1" />
+      </div>
 
-        <div className="flex items-center justify-center min-w-[38px]">
-            <CompactRatingLabel rating={rating} />
-        </div>
+      <div className="flex items-center justify-center">
+        <CompactRatingLabel rating={rating} />
+      </div>
 
-        <div className="flex items-center justify-center pl-2 border-l border-border/60 h-5">
-          <TitleActionsMenu titleId={titleId} isOwn={false} />
-        </div>
+      <div className="flex items-center justify-center">
+        <TitleActionsMenu titleId={titleId} isOwn={false} />
       </div>
     </div>
   );
