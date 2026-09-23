@@ -7,12 +7,30 @@ import { CompactRatingLabel } from "~/shared/ui/Rating";
 import { UserAvatar } from "~/entities/user";
 import { Status } from "~/shared/types";
 import type { UserShort } from "~/entities/user/model/user.types";
+import { cn } from "~/shared/lib";
+import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
+
+const getDisplayTitleInfo = (title: RoomTitleSummary, showMyVisual: boolean) => {
+  if (showMyVisual && title.myTitleInfo) {
+    return title.myTitleInfo;
+  }
+  return title.titleInfo;
+};
+
+const getTargetApiTitleId = (title: RoomTitleSummary, showMyVisual: boolean): number | undefined => {
+  if (showMyVisual) {
+    return title.myTitleInfo?.apiTitleId;
+  }
+  return title.titleInfo?.apiTitleId;
+};
+
 
 interface RoomGroupWatchlistRowProps {
   title: RoomTitleSummary;
   index: number;
   usersCache: Record<string, UserShort>;
   onTypeChange?: (roomTitleId: string, newType: string) => void;
+  showMyVisual?: boolean;
 }
 
 const statusBorderMap: Record<Status, string> = {
@@ -26,16 +44,25 @@ const statusBorderMap: Record<Status, string> = {
 
 const getStatusBorderClass = (status: Status): string => statusBorderMap[status];
 
-export const RoomGroupWatchlistRow = ({ title, index, usersCache }: RoomGroupWatchlistRowProps) => {
+export const RoomGroupWatchlistRow = ({
+  title,
+  index,
+  usersCache,
+  showMyVisual = false,
+}: RoomGroupWatchlistRowProps) => {
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
+  const displayInfo = getDisplayTitleInfo(title, showMyVisual);
+
   const handleImageClick = (e: React.MouseEvent) => {
     e.stopPropagation();
 
-    if (title.titleInfo?.apiTitleId) {
-      navigate(`/anime/${title.titleInfo.apiTitleId}`);
+    const targetApiId = getTargetApiTitleId(title, showMyVisual);
+
+    if (targetApiId) {
+      navigate(`/anime/${targetApiId}`);
     }
   };
 
@@ -44,7 +71,6 @@ export const RoomGroupWatchlistRow = ({ title, index, usersCache }: RoomGroupWat
     setIsDropdownOpen(false);
 
     if (title.roomTitleId) {
-      // Використовуємо шлях 'detailsLinks', оголошений у roomTitleModals
       navigate(`detailsLinks/${title.roomTitleId}`);
     }
   };
@@ -67,16 +93,16 @@ export const RoomGroupWatchlistRow = ({ title, index, usersCache }: RoomGroupWat
 
         <div className="relative h-12 w-20 flex-shrink-0 cursor-pointer overflow-hidden rounded-lg shadow-inner bg-muted/20">
           <img
-            src={title.titleInfo?.imageUrl || DEFAULT_IMAGE_PATH}
+            src={displayInfo?.imageUrl || DEFAULT_IMAGE_PATH}
             onClick={handleImageClick}
             className="absolute inset-0 h-full w-full object-cover transition-transform hover:scale-105 duration-200"
-            alt={title.titleInfo?.titleName || "Title poster"}
+            alt={displayInfo?.titleName || "Title poster"}
           />
         </div>
 
         <div className="flex-1 min-w-0 px-1">
           <span className="font-bold text-foreground text-sm sm:text-base truncate block">
-            {title.titleInfo?.titleName}
+            {displayInfo?.titleName || title.titleInfo?.titleName}
           </span>
         </div>
 
@@ -88,10 +114,17 @@ export const RoomGroupWatchlistRow = ({ title, index, usersCache }: RoomGroupWat
             return (
               <div
                 key={p.userId}
-                className={`relative flex items-center justify-center rounded-full border-2 bg-card transition-transform hover:z-20 hover:scale-110 ${getStatusBorderClass(p.status)}`}
+                className={cn(
+                  "relative flex items-center justify-center rounded-full border-2 bg-card transition-transform hover:z-20 hover:scale-110",
+                  getStatusBorderClass(p.status)
+                )}
                 title={`${member.name} (${p.status ?? "No status"})`}
               >
-                <UserAvatar src={member.img ?? undefined} name={member.name} size="minPlus" />
+                <UserAvatar
+                  src={member.img ?? undefined}
+                  name={member.name}
+                  size="xs"
+                />
               </div>
             );
           })}
@@ -103,13 +136,18 @@ export const RoomGroupWatchlistRow = ({ title, index, usersCache }: RoomGroupWat
           )}
         </div>
 
-        <div className="flex items-center justify-end flex-shrink-0" onClick={(e) => e.stopPropagation()}>
-          <CompactRatingLabel rating={title.computedAvgRating} />
-        </div>
+
 
         <div className="flex-shrink-0 flex items-center gap-2">
           <div onClick={(e) => e.stopPropagation()}>
-            <ReadOnlyStatusBadge status={title.myStatus ?? undefined} showDot={false} />
+            <ReadOnlyStatusBadge
+              status={title.myStatus}
+              showDot={false}
+            />
+          </div>
+
+          <div className="flex items-center justify-end flex-shrink-0" onClick={(e) => e.stopPropagation()}>
+            <CompactRatingLabel rating={title.computedAvgRating} />
           </div>
 
           <div className="relative" onClick={(e) => e.stopPropagation()}>
@@ -119,7 +157,7 @@ export const RoomGroupWatchlistRow = ({ title, index, usersCache }: RoomGroupWat
               className="w-8 h-8 rounded-full flex items-center justify-center bg-muted/40 hover:bg-muted text-muted-foreground transition-colors font-bold text-lg pb-1 cursor-pointer"
               aria-label="Actions"
             >
-              ⋮
+              <MoreHorizIcon></MoreHorizIcon>
             </button>
 
             {isDropdownOpen && (
@@ -145,7 +183,7 @@ export const RoomGroupWatchlistRow = ({ title, index, usersCache }: RoomGroupWat
 
       {isOpen && (
         <div className="mt-2 bg-card/95 backdrop-blur-sm border border-border/60 rounded-2xl p-4 flex flex-col gap-2 ml-4 sm:ml-8 w-[calc(100%-1rem)] sm:w-[calc(100%-2rem)] shadow-lg animate-in fade-in slide-in-from-top-2 duration-200">
-          <div className="grid grid-cols-[minmax(0,1fr)_80px_130px_40px] items-center px-3 gap-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider pb-2 border-b border-border/40">
+          <div className="grid grid-cols-[minmax(0,1fr)_90px_19px_40px] items-center px-3 gap-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider pb-2 border-b border-border/40">
             <span>Room Member</span>
             <span className="text-center">Status</span>
             <span className="text-center">Rating</span>

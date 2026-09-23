@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import { Button } from "~/shared/ui/Button";
 import { ImageUrlField } from "~/shared/ui/imageUrlField";
 import { notify } from "~/shared/lib";
@@ -57,10 +56,6 @@ export const RoomTitleForm = ({
       return;
     }
     onSubmit(formData);
-  };
-
-  const handleClearImage = () => {
-    setFormData((prev) => ({ ...prev, imageUrl: null }));
   };
 
   return (
@@ -122,21 +117,8 @@ export const RoomTitleForm = ({
                     Source Image URL
                   </h3>
 
-                  <div className="flex items-center gap-2">
-                    <div className="flex-1 min-w-0">
-                      <ImageUrlField.Input />
-                    </div>
-
-                    {formData.imageUrl && (
-                      <button
-                        type="button"
-                        onClick={handleClearImage}
-                        title="Clear Image"
-                        className="h-11 w-11 flex items-center justify-center rounded-xl bg-danger/10 text-danger hover:bg-danger hover:text-white border-2 border-danger/20 transition-all shrink-0 active:scale-95"
-                      >
-                        <DeleteForeverIcon sx={{ fontSize: 20 }} />
-                      </button>
-                    )}
+                  <div className="w-full">
+                    <ImageUrlField.Input />
                   </div>
 
                   <ImageUrlField.Tip />

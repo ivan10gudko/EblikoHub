@@ -10,14 +10,14 @@ import { Modal } from "~/shared/ui/Modal";
 
 export default function RoomTitleEditRoute() {
     const navigate = useNavigate();
-    const { id, titleId } = useParams();
+    const { id, roomTitleId } = useParams();
 
     const handleClose = () => {
         navigate(-1);
     };
 
     const roomId = Number(id);
-    const { data: item, isLoading: isItemLoading } = useRoomTitleDetails(roomId, titleId ?? null);
+    const { data: item, isLoading: isItemLoading } = useRoomTitleDetails(roomId, roomTitleId ?? null);
 
     const currentUserId = useAuthStore((state) => state.userId);
     const { data: currentMember, isLoading: isMemberLoading } = useRoomMemberByRoomIdAndUserId(currentUserId, roomId);
@@ -38,9 +38,9 @@ export default function RoomTitleEditRoute() {
     useEffect(() => {
         if (!isLoading && item && !canEdit) {
             notify.error("You do not have permission to edit this title!");
-            navigate(`../links/${titleId}`,);
+            navigate(`../links/${roomTitleId}`,);
         }
-    }, [isLoading, item, canEdit, navigate, titleId]);
+    }, [isLoading, item, canEdit, navigate, roomTitleId]);
 
     const showPlaceholder = isLoading || (item !== undefined && !canEdit);
 

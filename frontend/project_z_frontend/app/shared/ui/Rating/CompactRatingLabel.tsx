@@ -1,4 +1,3 @@
-import React from "react";
 import { cn } from "~/shared/lib/utils";
 
 interface CompactRatingLabelProps {
@@ -34,7 +33,7 @@ export const CompactRatingLabel = ({
             hasRating ? "font-black text-primary" : "text-foreground-muted"
           )}
         >
-          {hasRating ? rating.toFixed(1) : "—"}
+          {hasRating ? rating.toFixed(1) : "0.0"}
         </span>
       </div>
     </div>

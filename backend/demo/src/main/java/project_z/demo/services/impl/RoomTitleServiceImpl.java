@@ -224,6 +224,7 @@ public class RoomTitleServiceImpl implements RoomTitleService {
                 .hasUserTitleNameLike(params.getSearch());
 
         return Specification.where(RoomTitleStatsSpecifications.hasRoomId(roomId))
+                .and(RoomTitleStatsSpecifications.hasLinks())
                 .and(statusSpec)
                 .and(typeSpec)
                 .and(searchSpec);

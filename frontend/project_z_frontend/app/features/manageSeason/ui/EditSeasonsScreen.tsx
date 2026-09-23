@@ -9,6 +9,7 @@ import {
 } from "~/entities/season";
 import { SeasonRow } from "../../../entities/season/ui/SeasonRow";
 import { useNavigate } from "react-router";
+import { ModalFooter } from "~/shared/ui/Modal";
 
 interface EditSeasonsScreenProps {
   titleId: number;
@@ -168,23 +169,13 @@ export const EditSeasonsScreen = ({
           </div>
         </div>
 
-        <div className="flex gap-3 pt-3 border-t border-border/60 bg-background shrink-0 mt-4">
-          <Button
-            onClick={handleClose}
-            variant="cancel"
-            className="w-full sm:flex-1 h-11"
-          >
-            Cancel
-          </Button>
-          <Button
-            onClick={handleSaveChanges}
-            disabled={isSyncing}
-            variant="save"
-            className="w-full sm:flex-2 h-11"
-          >
-            {isSyncing ? "Saving Changes..." : "Save Changes"}
-          </Button>
-        </div>
+        <ModalFooter
+          onCancel={handleClose}
+          onSave={handleSaveChanges}
+          isSaving={isSyncing}
+          isOwn={isOwn}
+          saveLabel="Save Changes"
+        />
       </div>
     </div>
   );
