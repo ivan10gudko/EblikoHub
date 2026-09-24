@@ -6,13 +6,13 @@ import { InfiniteScrollLoader } from "~/shared/ui/infinityScroll";
 import { useRoomWatchlistVisualStore } from "./store/useRoomTitleVisual.store";
 import { ToggleSwitch } from "~/shared/ui/Switch";
 
-
 interface RoomGroupWatchlistTableProps {
     titlesData: ReturnType<typeof useRoomTitlesQuery>["data"];
     isLoading: boolean;
     hasNextPage?: boolean;
     isFetchingNextPage: boolean;
     fetchNextPage: () => void;
+    isMember: boolean;
 }
 
 export const RoomGroupWatchlistTable = ({
@@ -21,6 +21,7 @@ export const RoomGroupWatchlistTable = ({
     hasNextPage,
     isFetchingNextPage,
     fetchNextPage,
+    isMember,
 }: RoomGroupWatchlistTableProps) => {
     const titles = titlesData?.pages.flatMap((page) => page.content ?? []) ?? [];
     const mergedUsersCache = mergePagedCache(titlesData?.pages, (page) => page.usersCache);
@@ -36,12 +37,14 @@ export const RoomGroupWatchlistTable = ({
                     Group Watchlist <span className="text-sm font-normal text-muted-foreground">({titles.length} titles)</span>
                 </h2>
 
-                <div className="flex items-center gap-2">
-                    <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                        Personalized View
-                    </span>
-                    <ToggleSwitch isActive={showMyVisual} onToggle={toggleVisual} />
-                </div>
+                {isMember && (
+                    <div className="flex items-center gap-2">
+                        <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                            Personalized View
+                        </span>
+                        <ToggleSwitch isActive={showMyVisual} onToggle={toggleVisual} />
+                    </div>
+                )}
             </div>
 
             <div className="grid grid-cols-[auto_1fr_100px_85px] items-center gap-x-2 px-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">

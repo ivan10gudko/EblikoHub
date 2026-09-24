@@ -2,6 +2,7 @@ import { InfiniteScrollLoader } from "~/shared/ui/infinityScroll";
 import { useRoomRequests } from "~/features/manageRoomRequests";
 import { RoomSearchCard } from "~/entities/room/ui/roomCard/RoomSearchCard";
 import { useRoomSearch, type RoomSearchResult } from "~/entities/room";
+import { useNavigate } from "react-router";
 
 interface RoomRequestsSearchTabProps {
   searchQuery: string;
@@ -9,9 +10,10 @@ interface RoomRequestsSearchTabProps {
 
 const RoomSearchItem = ({ room }: { room: RoomSearchResult }) => {
   const { joinRoom, isJoining } = useRoomRequests(room.roomId);
-
+  const navigate = useNavigate();
   return (
     <RoomSearchCard
+      onClick={() => navigate(`/rooms/${room.roomId}`)}
       room={room}
       onJoin={joinRoom}
       isJoining={isJoining}

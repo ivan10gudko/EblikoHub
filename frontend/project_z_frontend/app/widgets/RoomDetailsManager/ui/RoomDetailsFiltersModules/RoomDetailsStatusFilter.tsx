@@ -3,7 +3,11 @@ import { StatusButton } from '~/shared/ui/StatusButton';
 import { useRoomDetailsFilterStore } from '../../store/roomDetailsFilter.store';
 import { ToggleSwitch } from '~/shared/ui/Switch';
 
-export const RoomDetailsStatusFilter = () => {
+interface RoomDetailsStatusFilterProps {
+    isMember: boolean;
+}
+
+export const RoomDetailsStatusFilter = ({ isMember }: RoomDetailsStatusFilterProps) => {
     const { status, setStatus, isMyStatus, setIsMyStatus } = useRoomDetailsFilterStore();
 
     return (
@@ -12,12 +16,14 @@ export const RoomDetailsStatusFilter = () => {
                 <label className="text-xs font-bold text-foreground uppercase">
                     Status
                 </label>
-                <div className="flex items-center gap-2">
-                    <span className="text-xs text-muted-foreground">
-                        {isMyStatus ? 'Mine' : 'All'}
-                    </span>
-                    <ToggleSwitch isActive={isMyStatus} onToggle={setIsMyStatus} />
-                </div>
+                {isMember && (
+                    <div className="flex items-center gap-2">
+                        <span className="text-xs text-muted-foreground">
+                            {isMyStatus ? 'Mine' : 'All'}
+                        </span>
+                        <ToggleSwitch isActive={isMyStatus} onToggle={setIsMyStatus} />
+                    </div>
+                )}
             </div>
             <div className="flex flex-wrap gap-2">
                 {statusOptionsFilters.map(s => {

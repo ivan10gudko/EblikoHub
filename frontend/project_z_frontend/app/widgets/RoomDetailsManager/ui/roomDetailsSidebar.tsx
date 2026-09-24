@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import SettingsIcon from '@mui/icons-material/Settings';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import RefreshIcon from '@mui/icons-material/Refresh';
@@ -18,16 +18,16 @@ import { RoomMembersList } from '~/features/manageRoomMembers';
 
 interface RoomDetailsSidebarProps {
   room: Room;
+  isMember: boolean; 
 }
 
-export const RoomDetailsSidebar = ({ room }: RoomDetailsSidebarProps) => {
-  const { reset, memberIds, setMembers } = useRoomDetailsFilterStore();
+export const RoomDetailsSidebar = ({ room, isMember }: RoomDetailsSidebarProps) => {
+  const { reset } = useRoomDetailsFilterStore();
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
-  const allMemberIds = room.members.map((m) => m.user.userId);
+
   return (
     <Sidebar className="w-80 bg-background p-5 rounded-3xl border border-border h-fit shadow-sm">
       <div className="flex flex-col gap-4 max-h-[calc(100vh-120px)] overflow-y-auto hide-scrollbar pb-6">
-
 
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -107,9 +107,8 @@ export const RoomDetailsSidebar = ({ room }: RoomDetailsSidebarProps) => {
 
           {isFiltersOpen && (
             <div className="flex flex-col gap-4 animate-fadeIn">
-
-              <RoomDetailsStatusFilter />
-              <RoomDetailsTypeFilter />
+              <RoomDetailsStatusFilter isMember={isMember} />
+              <RoomDetailsTypeFilter isMember={isMember} />
             </div>
           )}
 

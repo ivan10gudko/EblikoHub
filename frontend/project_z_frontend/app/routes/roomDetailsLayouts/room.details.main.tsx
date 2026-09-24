@@ -9,6 +9,9 @@ import {
 import { Outlet } from "react-router";
 import { useRoomDetailsFilterStore } from "~/widgets/RoomDetailsManager/store/roomDetailsFilter.store";
 import { RoomGroupWatchlistTable } from "~/widgets/RoomGroupWatchlist";
+import { useAuthStore } from "~/features/auth";
+// Заміни імпорт нижче на реальний хук авторизації у вашому проєкті, наприклад:
+// import { useAuth } from "~/shared/lib/auth"; 
 
 export default function RoomDetailsMainPage() {
   const { id } = useParams<{ id: string }>();
@@ -18,15 +21,23 @@ export default function RoomDetailsMainPage() {
   const prevRoomId = useRef<string | undefined>(undefined);
   const { room, isLoading } = useRoomDetails(roomId);
 
+
+
+  const { userId: currentUserId } = useAuthStore();
+
+  const isMember = Boolean(
+    room?.members.some((m) => m.user.userId === currentUserId)
+  );
+
   useEffect(() => {
     if (roomId && prevRoomId.current !== id) {
       resetMembers();
     }
     prevRoomId.current = id;
-  }, [roomId, resetMembers]);
+  }, [roomId, resetMembers, id]);
 
   const allMemberIds = room?.members.map((m) => m.user.userId) ?? [];
-  
+
   const {
     data: titlesData,
     isLoading: isTitlesLoading,
@@ -50,7 +61,7 @@ export default function RoomDetailsMainPage() {
   return (
     <div className="flex flex-col lg:flex-row gap-4 md:gap-6 p-4 sm:p-6 lg:p-8 max-w-[1400px] mx-auto min-h-[calc(100vh-64px)] bg-background-muted/30">
       <div className="w-full lg:w-auto flex flex-col">
-        <RoomDetailsSidebar room={room} />
+        <RoomDetailsSidebar room={room} isMember={isMember} />
       </div>
 
       <div className="flex-1 min-w-0">
@@ -60,6 +71,7 @@ export default function RoomDetailsMainPage() {
           hasNextPage={hasNextPage}
           isFetchingNextPage={isFetchingNextPage}
           fetchNextPage={fetchNextPage}
+          isMember={isMember}
         />
       </div>
 
