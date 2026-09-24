@@ -19,7 +19,7 @@ export const RoomRequestCard = ({
     request,
     isPendingAction,
     onAccept,
-    onReject
+    onReject,
 }: RoomRequestCardProps) => {
     const { room, sender } = request;
 
