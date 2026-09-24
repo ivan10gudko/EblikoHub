@@ -10,8 +10,6 @@ import { Outlet } from "react-router";
 import { useRoomDetailsFilterStore } from "~/widgets/RoomDetailsManager/store/roomDetailsFilter.store";
 import { RoomGroupWatchlistTable } from "~/widgets/RoomGroupWatchlist";
 import { useAuthStore } from "~/features/auth";
-// Заміни імпорт нижче на реальний хук авторизації у вашому проєкті, наприклад:
-// import { useAuth } from "~/shared/lib/auth"; 
 
 export default function RoomDetailsMainPage() {
   const { id } = useParams<{ id: string }>();
