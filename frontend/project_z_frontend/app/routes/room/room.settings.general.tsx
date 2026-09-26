@@ -16,18 +16,20 @@ export default function RoomsSettingsGeneralPage() {
   if (isMemberLoading || isRoomLoading) {
     return <div className="p-10 text-muted-foreground font-semibold">Loading settings...</div>;
   }
-  if (!room || !roomMember) {
+
+  if (!room) {
     return (
       <ErrorScreen
         title="Settings unavailable"
-        message="Room not found or you don't have permission to access these settings."
+        message="Room not found."
       />
     );
   }
+
   return (
     <RoomSettingGeneralWrapper
       room={room}
-      role={roomMember.role}
+      role={roomMember?.role}
     />
   );
 }

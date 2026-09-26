@@ -3,10 +3,10 @@ import { RoomSettingGeneralReadOnlyTab } from "./RoomSettingReadOnlyTab";
 import { RoomSettingGeneralTab } from "./roomSettingGeneralTab";
 interface RoomSettingGeneralTabProps {
     room: Room;
-    role: RoomRole
+    role: RoomRole | undefined;
 }
 
 export const RoomSettingGeneralWrapper = ({ room, role }: RoomSettingGeneralTabProps) => {
-    if (role == RoomRole.MEMBER) return <RoomSettingGeneralReadOnlyTab room={room} />
+    if (role == RoomRole.MEMBER || role==undefined) return <RoomSettingGeneralReadOnlyTab room={room} />
     return <RoomSettingGeneralTab key={room.roomId} room={room} />
 }
