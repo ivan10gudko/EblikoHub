@@ -60,7 +60,6 @@ public class RoomTitleController {
     }
 
     @GetMapping
-    @PreAuthorize("@securityService.isRoomMember(#roomId)")
     public ResponseEntity<List<RoomTitleDetailsDto>> findAll(
             @PathVariable Long roomId) {
         return ResponseEntity.ok(roomTitleService.findAllByRoom(roomId));

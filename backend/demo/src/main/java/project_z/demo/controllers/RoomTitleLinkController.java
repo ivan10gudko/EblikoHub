@@ -40,7 +40,6 @@ public class RoomTitleLinkController {
     }
 
     @GetMapping("/roomTitle/{roomTitleId}")
-    @PreAuthorize("@securityService.isRoomMember(#roomId)")
     public ResponseEntity<List<RoomTitleLinkDetailsDto>> findByRoomTitle(
             @PathVariable Long roomId,
             @PathVariable UUID roomTitleId) {
