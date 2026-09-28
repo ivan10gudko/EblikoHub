@@ -14,7 +14,6 @@ export const RoomDetailsSearchFilter = () => {
 
             <div className="w-full">
                 <SearchBar
-                    key={search}
                     onSearch={setSearch}
                     className="w-full"
                     initialValue={search}
