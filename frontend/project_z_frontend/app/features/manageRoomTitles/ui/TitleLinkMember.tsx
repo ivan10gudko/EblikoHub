@@ -1,20 +1,22 @@
-import { ReadOnlyStatusBadge, TitleActionsMenu } from "~/entities/titleRecord";
+import { ReadOnlyStatusBadge, TitleActionsMenu, TitleType, TitleTypeThemes } from "~/entities/titleRecord";
 import { UserAvatar } from "~/entities/user";
 import type { UserShort } from "~/entities/user/model/user.types";
 import type { Status } from "~/shared/types";
 import { CompactRatingLabel } from "~/shared/ui/Rating";
 import { useNavigate } from "react-router";
+import { cn } from "~/shared/lib";
 
 interface TitleLinkMemberProps {
   member: UserShort;
   rating: number | null;
   status: Status;
   titleId: number;
+  type?: TitleType;
 }
 
-export const TitleLinkMember = ({ member, rating, status, titleId }: TitleLinkMemberProps) => {
+export const TitleLinkMember = ({ member, rating, status, titleId, type }: TitleLinkMemberProps) => {
   const navigate = useNavigate();
-
+  const themeClasses = type ? TitleTypeThemes[type] : "";
   const handleAvatarClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     if (member.userId) {
@@ -23,8 +25,13 @@ export const TitleLinkMember = ({ member, rating, status, titleId }: TitleLinkMe
   };
 
   return (
-    <div className="grid grid-cols-[minmax(0,1fr)_auto_40px_24px] items-center gap-2 px-2 py-3 hover:bg-muted/20 rounded-md transition-colors border-b border-border/40 last:border-b-0">
-
+    <div
+      className={cn(
+        "grid grid-cols-[minmax(0,1fr)_auto_40px_24px] items-center gap-2 px-2 py-3 hover:bg-muted/20 rounded-xl transition-colors",
+        type ? "border shadow-sm" : "border-b border-border/40 last:border-b-0",
+        themeClasses
+      )}
+    >
       <div className="flex items-center gap-2.5 min-w-0">
         <div
           onClick={handleAvatarClick}

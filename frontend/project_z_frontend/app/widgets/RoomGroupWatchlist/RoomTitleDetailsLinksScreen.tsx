@@ -34,6 +34,7 @@ export const RoomTitleDetailsLinksScreen = ({ data, onEdit }: RoomTitleDetailsMo
                 rating={link.title.rating?.overall ?? null}
                 status={link.title.status}
                 titleId={link.title.titleId}
+                type= {link.title.type}
               />
             );
           })}
