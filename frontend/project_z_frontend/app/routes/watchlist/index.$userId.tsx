@@ -10,7 +10,7 @@ export default function WatchListIndexRoute({ params }: Route.ComponentProps) {
   const { userId } = params;
 
   return <>
-    <WatchListPage userId={userId} />;
+    <WatchListPage userId={userId} />
     <Outlet />
   </>
 }

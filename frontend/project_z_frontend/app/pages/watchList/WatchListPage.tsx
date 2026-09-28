@@ -5,7 +5,6 @@ import { useTitlesQuery } from "~/features/titleFilter/hooks/useTitlesQuery";
 import { useTitleFilterStore } from "~/features/titleFilter/store/titleFilter.store";
 import { useTitleStats } from "~/features/titleFilter/hooks/useTitleStats";
 
-
 import { useSyncUrl } from "~/shared/hooks";
 import { FilterResponsiveWrapper } from "~/shared/ui/FilterResponsiveWrapper";
 import { InfiniteScrollLoader } from "~/shared/ui/infinityScroll";
@@ -25,7 +24,6 @@ export const WatchListPage = ({ userId }: { userId: string | null }) => {
     setStatusFromUrl,
     setOrderFromUrl,
     setTypesFromUrl
-
   } = useTitleFilterStore();
 
   const filters = { search, sortBy, order, status, types };

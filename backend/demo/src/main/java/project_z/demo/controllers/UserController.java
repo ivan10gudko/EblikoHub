@@ -2,6 +2,7 @@ package project_z.demo.controllers;
 
 import java.util.UUID;
 
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -46,7 +47,7 @@ public class UserController {
     private final SecurityService securityService;
 
     @PostMapping
-    public ResponseEntity<?> createUser(@RequestBody UserPostDto user) {
+    public ResponseEntity<?> createUser(@Valid @RequestBody UserPostDto user) {
         UserEntity userEntity = userPostMapper.mapFrom(user);
         if (userRepository.existsByNameTag(userEntity.getNameTag())) {
             return ResponseEntity.badRequest()
@@ -108,7 +109,7 @@ public class UserController {
     @PutMapping(path = "/{id}")
     public ResponseEntity<UserDto> fullUpdateUser(
             @PathVariable("id") UUID id,
-            @RequestBody UserUpdateDto userDto) {
+            @Valid @RequestBody UserUpdateDto userDto) {
         UserEntity userToUpdate = userService.findOne(id);
         userPutMapper.updateEntity(userDto, userToUpdate);
         UserEntity savedUserEntity = userService.save(userToUpdate);
@@ -119,7 +120,7 @@ public class UserController {
     @PatchMapping(path = "/{id}")
     public ResponseEntity<UserDto> partialUpdate(
             @PathVariable("id") UUID id,
-            @RequestBody UserDto userDto) {
+            @Valid @RequestBody UserDto userDto) {
         if (!userService.isExists(id)) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
