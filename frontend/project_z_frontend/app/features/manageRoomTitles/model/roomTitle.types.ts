@@ -16,7 +16,7 @@ export interface RoomTitleShort {
     id: string;
     titleName: string;
     imageUrl: string;
-    titleType: TitleType;
+    type: TitleType;
     apiTitleId: number;
 }
 

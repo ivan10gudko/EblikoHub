@@ -75,8 +75,7 @@ export const RoomGroupWatchlistRow = ({
     }
   };
 
-  const rawType = title.myTitleInfo?.type || title.titleInfo?.titleType;
-  const themeClasses = TitleTypeThemes[rawType];
+  const themeClasses = TitleTypeThemes[displayInfo.type];
   const participations = title.userParticipation ?? [];
   const visibleParticipations = participations.slice(0, 3);
   const extraCount = participations.length - 3;
