@@ -268,8 +268,8 @@ const SuggestionCard = ({ item, isChecked, isMobile, onToggle }: SuggestionCardP
     const roomImageUrl = item.roomTitle.imageUrl || DEFAULT_IMAGE_PATH;
 
     const confidence = item.confidence?.toLowerCase() || "medium";
-    const userTitleType = item.title.type as TitleType;
-    const roomTitleType = item.roomTitle.titleType as TitleType;
+    const userTitleType = item.title.type;
+    const roomTitleType = item.roomTitle.type;
 
     const cardStyle = useMemo(
         () => buildCardStyle(userTitleType, roomTitleType, isChecked, isMobile),
