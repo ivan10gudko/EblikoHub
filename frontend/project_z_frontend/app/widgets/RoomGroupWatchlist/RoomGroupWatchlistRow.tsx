@@ -9,7 +9,10 @@ import { Status } from "~/shared/types";
 import type { UserShort } from "~/entities/user/model/user.types";
 import { cn } from "~/shared/lib";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
-
+import OpenInNewIcon from "@mui/icons-material/OpenInNew";
+import { Dropdown } from "~/shared/ui/DropDown";
+import { DropdownItem } from "~/shared/ui/DropDown/DropDown";
+import LinkIcon from "@mui/icons-material/Link";
 const getDisplayTitleInfo = (title: RoomTitleSummary, showMyVisual: boolean) => {
   if (showMyVisual && title.myTitleInfo) {
     return title.myTitleInfo;
@@ -24,13 +27,13 @@ const getTargetApiTitleId = (title: RoomTitleSummary, showMyVisual: boolean): nu
   return title.titleInfo?.apiTitleId;
 };
 
-
 interface RoomGroupWatchlistRowProps {
   title: RoomTitleSummary;
   index: number;
   usersCache: Record<string, UserShort>;
   onTypeChange?: (roomTitleId: string, newType: string) => void;
   showMyVisual?: boolean;
+  isMember?: boolean;
 }
 
 const statusBorderMap: Record<Status, string> = {
@@ -49,10 +52,10 @@ export const RoomGroupWatchlistRow = ({
   index,
   usersCache,
   showMyVisual = false,
+  isMember = false
 }: RoomGroupWatchlistRowProps) => {
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const displayInfo = getDisplayTitleInfo(title, showMyVisual);
 
@@ -66,14 +69,14 @@ export const RoomGroupWatchlistRow = ({
     }
   };
 
-  const handleOpenDetailsModal = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setIsDropdownOpen(false);
-
+  const handleOpenDetailsModal = () => {
     if (title.roomTitleId) {
       navigate(`detailsLinks/${title.roomTitleId}`);
     }
   };
+  const handleGoToLinks = () => {
+    navigate(`settings/titles/titleLinks`)
+  }
 
   const themeClasses = TitleTypeThemes[displayInfo.type];
   const participations = title.userParticipation ?? [];
@@ -135,8 +138,6 @@ export const RoomGroupWatchlistRow = ({
           )}
         </div>
 
-
-
         <div className="flex-shrink-0 flex items-center gap-2">
           <div onClick={(e) => e.stopPropagation()}>
             <ReadOnlyStatusBadge
@@ -150,32 +151,34 @@ export const RoomGroupWatchlistRow = ({
           </div>
 
           <div className="relative" onClick={(e) => e.stopPropagation()}>
-            <button
-              type="button"
-              onClick={() => setIsDropdownOpen((prev) => !prev)}
-              className="w-8 h-8 rounded-full flex items-center justify-center bg-muted/40 hover:bg-muted text-muted-foreground transition-colors font-bold text-lg pb-1 cursor-pointer"
-              aria-label="Actions"
+            <Dropdown
+              trigger={
+                <button
+                  type="button"
+                  className="w-8 h-8 rounded-full flex items-center justify-center bg-muted/40 hover:bg-muted text-muted-foreground transition-colors font-bold text-lg pb-1 cursor-pointer"
+                  aria-label="Actions"
+                >
+                  <MoreHorizIcon />
+                </button>
+              }
+              align="end"
             >
-              <MoreHorizIcon></MoreHorizIcon>
-            </button>
+              <DropdownItem
+                onClick={handleOpenDetailsModal}
+                icon={<OpenInNewIcon sx={{ fontSize: 16 }} />}
+              >
+                View details & links
+              </DropdownItem>
 
-            {isDropdownOpen && (
-              <>
-                <div
-                  className="fixed inset-0 z-20 cursor-default"
-                  onClick={() => setIsDropdownOpen(false)}
-                />
-                <div className="absolute right-0 mt-2 w-48 bg-card border border-border rounded-xl shadow-xl z-30 py-1 flex flex-col text-sm animate-in fade-in zoom-in-95 duration-150">
-                  <button
-                    type="button"
-                    onClick={handleOpenDetailsModal}
-                    className="w-full text-left px-4 py-2 hover:bg-muted/60 transition-colors text-foreground font-medium cursor-pointer"
-                  >
-                    View details & links
-                  </button>
-                </div>
-              </>
-            )}
+              {isMember && <DropdownItem
+                onClick={handleGoToLinks}
+                icon={<LinkIcon sx={{ fontSize: 16 }} />}
+              >
+                Go to links
+              </DropdownItem>
+              }
+            </Dropdown>
+
           </div>
         </div>
       </div>
