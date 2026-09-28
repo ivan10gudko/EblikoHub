@@ -1,6 +1,7 @@
 import { notify } from "~/shared/lib";
 import { userService } from "../../../entities/user/api/UserService";
 import { useMutation, useQueryClient, type QueryKey } from "@tanstack/react-query";
+import { getErrorMessage } from "~/shared/utils";
 
 interface UseProfileUpdateProps {
     userId: string;
@@ -31,8 +32,9 @@ export const useProfileUpdate = ({ userId, invalidateKey }: UseProfileUpdateProp
             queryClient.invalidateQueries({ queryKey: invalidateKey });
             notify.success("Successfully updated");
         },
-        onError: () => {
-            notify.error("Failed to update profile");
+        onError: (error) => {
+            const message = getErrorMessage(error, "Failed to update profile");
+            notify.error(message);
         },
     });
 }
