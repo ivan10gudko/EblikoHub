@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import SettingsIcon from '@mui/icons-material/Settings';
+import MenuIcon from '@mui/icons-material/Menu';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
@@ -27,9 +27,9 @@ export const RoomDetailsSidebar = ({ room, isMember }: RoomDetailsSidebarProps) 
 
   return (
     <Sidebar className="w-80 bg-background p-5 rounded-3xl border border-border h-fit shadow-sm">
-      <div className="flex flex-col gap-4 max-h-[calc(100vh-120px)] overflow-y-auto hide-scrollbar pb-6">
+      <div className="flex flex-col gap-4 max-h-[calc(100vh-120px)] overflow-y-auto hide-scrollbar pb-6 w-full box-border">
 
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between w-full">
           <div className="flex items-center gap-3">
             <div>
               <h2 className="text-primary text-xl leading-tight font-bold">{room.roomName}</h2>
@@ -43,6 +43,7 @@ export const RoomDetailsSidebar = ({ room, isMember }: RoomDetailsSidebarProps) 
               justify-center
               h-10
               w-10
+              shrink-0
               rounded-xl
               border
               border-border
@@ -55,19 +56,22 @@ export const RoomDetailsSidebar = ({ room, isMember }: RoomDetailsSidebarProps) 
               active:scale-95
             "
           >
-            <SettingsIcon fontSize="small" />
+            <MenuIcon fontSize="medium" />
           </Link>
         </div>
 
-        <RoomMembersList members={room.members} />
+        <div className="w-full box-border">
+          <RoomMembersList members={room.members} />
+        </div>
 
-        <div className="pt-5 border-t border-border/60 flex flex-col gap-5">
+        <div className="pt-5 border-t border-border/60 flex flex-col gap-5 w-full box-border">
 
           <Button
             onClick={() => setIsFiltersOpen(!isFiltersOpen)}
             className="
               group
               w-full
+              box-border
               flex items-center justify-between
               rounded-xl
               border border-border
@@ -106,20 +110,20 @@ export const RoomDetailsSidebar = ({ room, isMember }: RoomDetailsSidebarProps) 
           </Button>
 
           {isFiltersOpen && (
-            <div className="flex flex-col gap-4 animate-fadeIn">
+            <div className="flex flex-col gap-4 animate-fadeIn w-full box-border">
               <RoomDetailsStatusFilter isMember={isMember} />
               <RoomDetailsTypeFilter isMember={isMember} />
             </div>
           )}
 
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-4 w-full box-border">
             <RoomDetailsSearchFilter />
             <RoomDetailsMemberFilter members={room.members} />
             <RoomDetailsSortControl />
 
             <Button
               variant="resetFilters"
-              className="py-3 mt-1 flex items-center justify-center gap-2"
+              className="w-full py-3 mt-1 flex items-center justify-center gap-2 cursor-pointer"
               onClick={() => reset()}
             >
               <RefreshIcon className="text-sm" /> Reset all filters

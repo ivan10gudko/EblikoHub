@@ -1,5 +1,6 @@
 import EditIcon from "@mui/icons-material/Edit";
 import PersonRemoveIcon from "@mui/icons-material/PersonRemove";
+import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import { UserAvatar } from "~/entities/user";
 import { RequestStatus } from "~/shared/types";
 import { Button } from "~/shared/ui/Button";
@@ -51,48 +52,60 @@ export const UserProfileCard = ({ userId }: UserProfileCardProps) => {
 
             {isOwn && (
               <Button
+                type="button"
                 onClick={() => setIsEditing(true)}
                 className="bg-background-muted hover:bg-background-muted-hover text-card hover:text-primary-hover p-3 rounded-2xl transition-all"
               >
                 <EditIcon className="text-primary" />
               </Button>
             )}
+
             {!isOwn && (
               <div className="flex items-center gap-3">
+            
                 {isNone && (
                   <Button
+                    type="button"
+                    variant="accept"
                     disabled={isActionLoading}
                     onClick={() => onAction("send", userId)}
-                    className="bg-primary hover:bg-primary-hover text-white px-5 py-2.5 rounded-2xl font-medium transition-all shadow-sm active:scale-95 disabled:opacity-50"
+                    className="h-11 px-5 rounded-xl gap-2 font-bold"
                   >
-                    {isActionLoading ? "Sending..." : "Add Friend"}
+                    <PersonAddIcon fontSize="small" />
+                    <span>{isActionLoading ? "Sending..." : "Add Friend"}</span>
                   </Button>
                 )}
 
+             
                 {isPending && (
                   <Button
+                    type="button"
+                    variant="altCancel"
                     disabled={isActionLoading || !friendshipId}
                     onClick={() =>
                       friendshipId && onAction("delete", friendshipId)
                     }
-                    className="group flex items-center gap-2 border border-red-500/30 hover:border-red-500/60 bg-red-500/5 hover:bg-red-500/10 text-red-500 px-5 py-2.5 rounded-2xl font-medium transition-all duration-200 active:scale-95 disabled:opacity-50"
+                    className="h-11 px-5 rounded-xl gap-2 font-bold"
                   >
-                    <PersonRemoveIcon className="w-4 h-4 text-red-500 group-hover:scale-110 transition-transform" />
+                    <PersonRemoveIcon sx={{ fontSize: 18 }} />
                     <span>
                       {isActionLoading ? "Cancelling..." : "Cancel Request"}
                     </span>
                   </Button>
                 )}
 
+               
                 {isAccepted && (
                   <Button
+                    type="button"
+                    variant="altCancel"
                     disabled={isActionLoading || !friendshipId}
                     onClick={() =>
                       friendshipId && onAction("delete", friendshipId)
                     }
-                    className="group flex items-center gap-2 bg-rose-500/10 hover:bg-rose-500/20 text-rose-500 hover:text-rose-600 border border-rose-500/20 hover:border-rose-500/40 px-5 py-2.5 rounded-2xl font-semibold transition-all duration-200 active:scale-95 shadow-sm disabled:opacity-50"
+                    className="h-11 px-5 rounded-xl gap-2 font-bold"
                   >
-                    <PersonRemoveIcon className="w-4 h-4 text-rose-500 group-hover:scale-110 transition-transform" />
+                    <PersonRemoveIcon sx={{ fontSize: 18 }} />
                     <span>
                       {isActionLoading ? "Removing..." : "Remove Friend"}
                     </span>

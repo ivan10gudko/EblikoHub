@@ -1,12 +1,13 @@
 import React, { useState } from "react";
 import StarIcon from "@mui/icons-material/Star";
+import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import { useManageFavoriteTitles } from "~/features/manageFavoriteTitles/hooks/useManageFavoriteTitles";
 import type { UserProfileWithFavorite } from "~/features/profile";
 import { ViewTitleScreen } from "~/entities/titleRecord/ui/ViewTitleScreen";
 import { Modal } from "~/shared/ui/Modal";
 import { DEFAULT_IMAGE_PATH } from "~/shared/constants";
 import { AddNewButton } from "~/shared/ui/AddNewButton";
-import CloseIcon from "@mui/icons-material/Close";
+import { Button } from "~/shared/ui/Button";
 import type { TitleShort } from "~/entities/titleRecord";
 
 interface UserFavoriteTitlesShowcaseProps {
@@ -49,11 +50,15 @@ export const UserFavoriteTitlesShowcase: React.FC<UserFavoriteTitlesShowcaseProp
                   setSelectedTitle(item.title);
                 }
               }}
-              className={`relative aspect-[2/3] rounded-2xl overflow-hidden border border-background-muted bg-card shadow-md ${!isOwner && item ? "cursor-pointer" : ""
-                }`}
+              className={`relative aspect-[2/3] rounded-2xl overflow-hidden border border-background-muted bg-card shadow-md ${
+                !isOwner && item ? "cursor-pointer" : ""
+              }`}
             >
-              <div className="absolute top-3 left-3 z-20 px-3 py-1 rounded-xl bg-background/80 backdrop-blur-md border border-white/10 text-xs font-black text-amber-400 pointer-events-none">
-                #{position}
+             
+              <div className="absolute top-2.5 left-2.5 z-20 px-2.5 h-7 rounded-md bg-card/75 backdrop-blur-md border border-white/10 flex items-center justify-center select-none pointer-events-none">
+                <span className="text-xs font-bold text-primary leading-none pt-[1px] flex items-center justify-center">
+                  #{position}
+                </span>
               </div>
 
               {item ? (
@@ -74,17 +79,20 @@ export const UserFavoriteTitlesShowcase: React.FC<UserFavoriteTitlesShowcaseProp
                     </h3>
                   </div>
 
+                  
                   {isOwner && (
-                    <button
+                    <Button
                       type="button"
+                      variant="altCancel"
                       onClick={(e) => {
                         e.stopPropagation();
                         deleteFavorite(item.id);
                       }}
-                      className="absolute top-3 right-3 z-30 p-2 rounded-xl bg-background/80 border border-border text-danger hover:bg-danger hover:text-white transition-all duration-200 disabled:opacity-50 cursor-pointer"
+                      className="absolute top-2.5 right-2.5 z-30 !w-9 !h-9 !p-0 rounded-md bg-danger/75 text-card/70 hover:text-card/90 hover:bg-danger/90 transition-all duration-200 hover:scale-110 flex items-center justify-center cursor-pointer shrink-0"
+                      aria-label="Remove title"
                     >
-                      <CloseIcon sx={{ fontSize: 16 }} />
-                    </button>
+                      <DeleteForeverIcon sx={{ fontSize: 30 }} />
+                    </Button>
                   )}
                 </>
               ) : isOwner ? (

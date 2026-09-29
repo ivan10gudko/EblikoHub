@@ -126,11 +126,16 @@ export const SelectFavoriteModal: React.FC<SelectFavoriteModalProps> = ({
                     <Button
                       type="button"
                       disabled={isAdding || isAlreadyAdded}
+                      
                       onClick={() => handleSelectTitle(item.titleId)}
-                      className={`px-3 py-1 text-xs font-bold rounded-lg transition-colors shrink-0 h-auto ${isAlreadyAdded
-                          ? "bg-background-muted text-foreground-muted cursor-not-allowed border border-border hover:bg-background-muted"
-                          : "bg-primary text-background hover:bg-primary-hover cursor-pointer disabled:opacity-50"
-                        }`}
+                     className={`h-8 px-5 rounded-xl border text-xs font-bold shrink-0
+  transition-all duration-200
+  ${
+    isAlreadyAdded
+      ? "bg-background-muted/40 border-border/50 text-foreground-muted/60 cursor-not-allowed"
+      : "bg-primary/10 border-primary/40 text-primary hover:bg-primary/15 hover:border-primary hover:shadow-[0_0_10px_rgba(var(--primary-rgb),0.15)] active:scale-[0.97] cursor-pointer"
+  }
+`}
                     >
                       {isAlreadyAdded ? "Added" : "Select"}
                     </Button>
