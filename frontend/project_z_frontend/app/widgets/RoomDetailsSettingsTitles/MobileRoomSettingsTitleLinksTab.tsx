@@ -1,34 +1,25 @@
+import { useState } from "react";
 import { WatchlistShortTitles } from "./WatchlistShortTitles";
 import { RoomTitleReadOnlyList } from "./RoomTitleList";
 import { ToggleSwitch } from "~/shared/ui/Switch";
-import { TitleFiltersDropdown } from "~/features/titleFilter";
-import type { RoomTitleWithUserLinks } from "~/features/manageRoomTitles";
-import { useState } from "react";
+import SearchBar from "~/shared/ui/SearchBar";
 
 interface MobileTitleLinksManagerProps {
   userId: string;
   roomId: number;
-  titles: RoomTitleWithUserLinks[];
-  isLoading: boolean;
-  fetchNextPage: () => void;
-  hasNextPage: boolean;
-  isFetchingNextPage: boolean;
   onCreateLink: (payload: { titleId: number; roomTitleId: string }) => void;
 }
 
 export const MobileTitleLinksManager = ({
   userId,
   roomId,
-  titles,
-  isLoading,
-  fetchNextPage,
-  hasNextPage,
-  isFetchingNextPage,
   onCreateLink,
 }: MobileTitleLinksManagerProps) => {
   const [activeTab, setActiveTab] = useState<"watchlist" | "rooms">("watchlist");
   const [selectedTitleId, setSelectedTitleId] = useState<number | null>(null);
   const [isWatchlistModeToggleActive, setWatchlistModeToggleActive] = useState(false);
+  const [watchlistSearchQuery, setWatchlistSearchQuery] = useState("");
+  const [roomSearchQuery, setRoomSearchQuery] = useState("");
 
   const handleSelectTitle = (id: number) => {
     setSelectedTitleId(id);
@@ -37,14 +28,6 @@ export const MobileTitleLinksManager = ({
 
   const handleSelectRoom = (roomTitleId: string) => {
     if (!selectedTitleId) return;
-
-    const targetRoomTitle = titles.find(
-      (t) => String(t.id) === String(roomTitleId)
-    );
-
-    if (targetRoomTitle?.links && targetRoomTitle.links.length > 0) {
-      return;
-    }
 
     onCreateLink({ titleId: selectedTitleId, roomTitleId });
     setSelectedTitleId(null);
@@ -100,14 +83,22 @@ export const MobileTitleLinksManager = ({
                 isActive={isWatchlistModeToggleActive}
                 onToggle={setWatchlistModeToggleActive}
               />
-              <TitleFiltersDropdown />
             </div>
           </div>
+
+          <SearchBar
+            placeholder="Search watchlist..."
+            onSearch={(query) => setWatchlistSearchQuery(query)}
+            debounceMs={300}
+            className="w-full"
+            initialValue={watchlistSearchQuery}
+          />
 
           <WatchlistShortTitles
             userId={userId}
             roomId={roomId}
             isWatchlistModeToggled={isWatchlistModeToggleActive}
+            searchQuery={watchlistSearchQuery}
             isMobile={true}
             onSelectMobileTitle={handleSelectTitle}
           />
@@ -116,13 +107,23 @@ export const MobileTitleLinksManager = ({
 
       {activeTab === "rooms" && (
         <div className="flex flex-col gap-4 w-full">
+          <div className="flex items-center justify-between px-1">
+            <h3 className="font-bold text-lg whitespace-nowrap">Room Titles</h3>
+          </div>
+
+          <SearchBar
+            placeholder="Search rooms..."
+            onSearch={(query) => setRoomSearchQuery(query)}
+            debounceMs={300}
+            className="w-full"
+            initialValue={roomSearchQuery}
+          />
+
           <RoomTitleReadOnlyList
+            userId={userId}
+            roomId={roomId}
+            searchQuery={roomSearchQuery}
             draggingTitleId={selectedTitleId ? String(selectedTitleId) : ""}
-            titles={titles}
-            isLoading={isLoading}
-            fetchNextPage={fetchNextPage}
-            hasNextPage={hasNextPage}
-            isFetchingNextPage={isFetchingNextPage}
             isMobile={true}
             onSelectMobileRoom={handleSelectRoom}
           />

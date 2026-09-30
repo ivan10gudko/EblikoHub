@@ -58,7 +58,7 @@ export const RoomTitlesManager = ({ roomId }: { roomId: number }) => {
                             item={item}
                             onDelete={deleteTitle}
                             defaultImagePath={DEFAULT_IMAGE_PATH}
-                            isOwn={item.addedByUserId === userId}
+                            isOwn={item.addedByUser.userId === userId}
                             isCurrentUserAdmin={isCurrentUserAdmin}
                         />
                     ))}

@@ -1,30 +1,45 @@
 import { RoomTitleReadOnlyRowShort } from "./RoomTitleReadOnlyRow";
-import type { RoomTitleWithUserLinks } from "~/features/manageRoomTitles";
+import {
+  useInfiniteRoomTitlesWithLinks,
+  type RoomTitleWithUserLinks,
+} from "~/features/manageRoomTitles";
 import { InfiniteScrollLoader } from "~/shared/ui/infinityScroll";
 import { cn } from "~/shared/lib/utils";
 import { Droppable } from "@hello-pangea/dnd";
 
+const PAGE_LIMIT = 20;
+
 export interface RoomTitleReadOnlyListProps {
-  titles: RoomTitleWithUserLinks[];
-  isLoading: boolean;
-  fetchNextPage: () => void;
-  hasNextPage: boolean;
+  userId: string;
+  roomId: number;
+  searchQuery?: string;
   draggingTitleId: string;
-  isFetchingNextPage: boolean;
   isMobile?: boolean;
   onSelectMobileRoom?: (roomTitleId: string) => void;
 }
 
 export const RoomTitleReadOnlyList = ({
-  titles,
-  isLoading,
-  fetchNextPage,
-  hasNextPage,
+  userId,
+  roomId,
+  searchQuery,
   draggingTitleId,
-  isFetchingNextPage,
   isMobile = false,
   onSelectMobileRoom,
 }: RoomTitleReadOnlyListProps) => {
+  const {
+    data,
+    isLoading,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useInfiniteRoomTitlesWithLinks(roomId, userId, {
+    page: 0,
+    limit: PAGE_LIMIT,
+    search: searchQuery || undefined,
+  });
+
+  const titles = data?.pages.flatMap((page) => page.content) ?? [];
+
   if (isLoading && titles.length === 0)
     return <div className="p-4 text-sm">Loading...</div>;
 
@@ -59,7 +74,7 @@ export const RoomTitleReadOnlyList = ({
       {titles.length > 0 && (
         <div className="py-6 flex justify-center">
           <InfiniteScrollLoader
-            hasNextPage={hasNextPage}
+            hasNextPage={!!hasNextPage}
             isFetchingNextPage={isFetchingNextPage}
             fetchNextPage={fetchNextPage}
           />
@@ -68,7 +83,6 @@ export const RoomTitleReadOnlyList = ({
     </div>
   );
 };
-
 
 interface MobileRoomItemProps {
   title: RoomTitleWithUserLinks;
