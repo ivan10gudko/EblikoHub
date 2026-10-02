@@ -12,6 +12,7 @@ interface ReadOnlyStatusBadgeProps {
 }
 
 export const getStatusLabel = (status?: Status): string => {
+  if(status === null) return "None"
   const option = statusOptions.find((opt) => opt.value === status);
   return option ? option.label : "In Progress";
 };
@@ -21,6 +22,7 @@ export const ReadOnlyStatusBadge: React.FC<ReadOnlyStatusBadgeProps> = ({
   className = "",
   showDot = true
 }) => {
+  
   const currentStatus = status || Status.DEFAULT;
   const config = statusColorConfig[currentStatus];
   const isDefault = currentStatus === Status.DEFAULT;
@@ -37,7 +39,7 @@ export const ReadOnlyStatusBadge: React.FC<ReadOnlyStatusBadgeProps> = ({
       <span
         className={`hidden sm:inline transition-all capitalize ${isDefault ? "text-foreground-muted" : config.color}`}
       >
-        {getStatusLabel(currentStatus)}
+        {getStatusLabel(status)}
       </span>
     </div>
   );

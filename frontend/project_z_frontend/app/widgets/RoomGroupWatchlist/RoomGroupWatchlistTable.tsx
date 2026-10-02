@@ -65,6 +65,7 @@ export const RoomGroupWatchlistTable = ({
                             index={index}
                             usersCache={mergedUsersCache}
                             showMyVisual={showMyVisual}
+                            isMember = {isMember}
                         />
                     ))}
                     <InfiniteScrollLoader

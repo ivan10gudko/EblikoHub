@@ -14,7 +14,7 @@ public class RoomTitleShortDto {
 
     private String imageUrl;
     
-    private TitleType titleType;
+    private TitleType type;
 
     private Long apiTitleId;
     
