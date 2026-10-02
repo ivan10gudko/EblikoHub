@@ -12,8 +12,8 @@ type ButtonVariants =
   | "accept"
   | "altCancel"
   | "secondaryCard"
-  | "close";
-
+  | "close"
+  | "filter";
 interface ButtonProps extends ComponentProps<"button"> {
   variant?: ButtonVariants;
 }
@@ -54,6 +54,8 @@ const variantStyles: Record<ButtonVariants, string> = {
 
   // Compact close button for modals & popups
   close: "p-1.5 rounded-lg text-foreground-muted hover:text-foreground hover:bg-background-muted bg-transparent transition-colors",
+  //filter
+  filter: "w-10 h-10 p-0 flex items-center justify-center rounded-xl border border-primary/40 bg-transparent bg-primary/10 hover:border-primary transition-all duration-200 cursor-pointer",
 };
 
 const Button = ({

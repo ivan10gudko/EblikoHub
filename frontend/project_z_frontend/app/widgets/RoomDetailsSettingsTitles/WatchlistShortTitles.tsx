@@ -2,7 +2,6 @@ import { Droppable, Draggable } from "@hello-pangea/dnd";
 import { useInfinityTitles } from "~/entities/titleRecord/hooks/useInfinityTitles";
 import { WatchlistRowShort } from "./WatchlistRowShort";
 import { InfiniteScrollLoader } from "~/shared/ui/infinityScroll";
-import { useTitleFilterStore } from "~/features/titleFilter/store/titleFilter.store";
 
 const PAGE_LIMIT = 20;
 
@@ -10,6 +9,7 @@ interface WatchlistMicroListProps {
   userId: string;
   roomId: number;
   isWatchlistModeToggled: boolean;
+  searchQuery?: string;
   isMobile?: boolean;
   onSelectMobileTitle?: (id: number) => void;
 }
@@ -18,21 +18,16 @@ export const WatchlistShortTitles = ({
   userId,
   roomId,
   isWatchlistModeToggled,
+  searchQuery,
   isMobile = false,
   onSelectMobileTitle,
 }: WatchlistMicroListProps) => {
-  const { search, sortBy, order, status: statusFilter, types } = useTitleFilterStore();
-
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, status } =
     useInfinityTitles(
       userId,
       {
         limit: PAGE_LIMIT,
-        search,
-        sortBy,
-        order,
-        status: statusFilter,
-        types: types.length > 0 ? types : undefined,
+        search: searchQuery || undefined,
       },
       {
         noLinksToRoom: isWatchlistModeToggled,
@@ -46,14 +41,14 @@ export const WatchlistShortTitles = ({
     return <div className="p-4 text-sm text-danger">Error loading titles!</div>;
 
   return (
-    <div className="flex flex-col gap-2 w-full bg-background-muted/10 rounded-xl p-2 h-[600px] overflow-y-auto hide-scrollbar">
+    <div className="flex flex-col gap-2 w-full bg-background-muted/10 rounded-xl p-2 h-[600px] overflow-y-auto hide-scrollbar box-border">
       {isMobile ? (
         <MobileWatchlistList data={data} onSelectMobileTitle={onSelectMobileTitle} />
       ) : (
         <DesktopWatchlistList userId={userId} data={data} />
       )}
 
-      <div className="py-10 flex justify-center">
+      <div className="py-6 flex justify-center">
         <InfiniteScrollLoader
           hasNextPage={hasNextPage}
           isFetchingNextPage={isFetchingNextPage}
@@ -64,20 +59,19 @@ export const WatchlistShortTitles = ({
   );
 };
 
-
 interface MobileWatchlistListProps {
   data: ReturnType<typeof useInfinityTitles>["data"];
   onSelectMobileTitle?: (id: number) => void;
 }
 
 const MobileWatchlistList = ({ data, onSelectMobileTitle }: MobileWatchlistListProps) => (
-  <div className="flex flex-col gap-1 w-full">
+  <div className="flex flex-col gap-2 w-full">
     {data?.pages.map((page) =>
       page.content.map((title) => (
         <div
           key={String(title.titleId)}
           onClick={() => onSelectMobileTitle?.(title.titleId)}
-          className="flex items-center justify-between rounded-lg cursor-pointer active:scale-[0.99] transition-all"
+          className="flex items-center justify-between rounded-xl cursor-pointer active:scale-[0.99] transition-all"
         >
           <WatchlistRowShort title={title} />
         </div>
@@ -97,7 +91,7 @@ const DesktopWatchlistList = ({ userId, data }: DesktopWatchlistListProps) => (
       <div
         {...provided.droppableProps}
         ref={provided.innerRef}
-        className="flex flex-col gap-1 w-full"
+        className="flex flex-col gap-2 w-full"
       >
         {data?.pages.map((page, pageIndex) =>
           page.content.map((title, titleIndex) => {
@@ -117,11 +111,10 @@ const DesktopWatchlistList = ({ userId, data }: DesktopWatchlistListProps) => (
                       ...provided.draggableProps.style,
                       ...(snapshot.isDragging && { width: "460px" }),
                     }}
-                    className={`flex items-center justify-between group rounded-lg ${
-                      snapshot.isDragging
+                    className={`flex items-center justify-between group rounded-xl ${snapshot.isDragging
                         ? "bg-card shadow-xl border border-primary/50 z-50"
                         : ""
-                    }`}
+                      }`}
                   >
                     <WatchlistRowShort
                       title={title}
