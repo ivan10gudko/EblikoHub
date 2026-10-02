@@ -19,8 +19,8 @@ import { RoomRole } from "~/entities/room/model/room.types";
 import { NavGroupItem, NavLinkItem } from "~/shared/ui/NavLinkItem";
 import type { NavItem } from "~/shared/ui/NavLinkItem/NavLinkItem";
 
-const getNavLinks = (roomId: number, role: RoomRole): NavItem[] =>
-  [
+const getNavLinks = (roomId: number, role?: RoomRole | null): NavItem[] => {
+  const allLinks: (NavItem & { allowed?: RoomRole[] })[] = [
     {
       key: "general",
       label: "General",
@@ -96,11 +96,30 @@ const getNavLinks = (roomId: number, role: RoomRole): NavItem[] =>
       Icon: AdminPanelSettingsIcon,
       allowed: [RoomRole.OWNER, RoomRole.ADMIN],
     },
-  ].filter((link) => link.allowed.includes(role));
+  ];
+
+  // Якщо користувач не є членом кімнати (!role)
+  if (!role) {
+    return allLinks
+      .filter((link) => ["general", "titles", "members"].includes(link.key))
+      .map((link) => {
+        // У розділі Titles лишаємо тільки перегляд "Room Titles" (забираємо Title Links та AI Matcher)
+        if (link.key === "titles" && link.children) {
+          return {
+            ...link,
+            children: link.children.filter((child) => child.key === "room-titles"),
+          };
+        }
+        return link;
+      });
+  }
+
+  return allLinks.filter((link) => link.allowed?.includes(role));
+};
 
 interface RoomSettingsSidebarProps {
   roomId: number;
-  role: RoomRole;
+  role?: RoomRole | null;
   onCloseMobileMenu?: () => void;
 }
 
