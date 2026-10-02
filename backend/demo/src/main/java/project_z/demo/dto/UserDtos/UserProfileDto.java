@@ -10,6 +10,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import project_z.demo.dto.UserFavoriteTitlesDtos.UserFavoriteTitleItemDto;
+import project_z.demo.dto.UserFavoriteCharacterDtos.UserFavoriteCharacterItemDto;
 import project_z.demo.enums.RequestStatus;
 @Getter
 @Setter
@@ -24,6 +25,7 @@ public class UserProfileDto {
     private String img;
     private LocalDateTime createdAt;
     private List<UserFavoriteTitleItemDto> favoriteTitles;
+    private List<UserFavoriteCharacterItemDto> favoriteCharacters;
 
     private RequestStatus friendshipStatus;
     private UUID friendshipId;

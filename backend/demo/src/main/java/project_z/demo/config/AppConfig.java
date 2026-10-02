@@ -12,5 +12,6 @@ import lombok.Setter;
 @Setter
 public class AppConfig {
     private int maxFavoriteTitles = 3;
+    private int maxFavoriteCharacters = 3;
     private long timeoutTime = 1800000L;
 }

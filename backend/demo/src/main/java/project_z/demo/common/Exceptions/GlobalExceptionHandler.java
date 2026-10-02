@@ -22,6 +22,9 @@ import project_z.demo.common.Exceptions.RoomRequestExceptions.SelfRoomInviteExce
 import project_z.demo.common.Exceptions.RoomTitleLinkExceptions.RoomTitleLinkAlreadyExistsException;
 import project_z.demo.common.Exceptions.UserFavoriteTitleExceptions.UserFavoriteTitlePositionOccupiedException;
 import project_z.demo.common.Exceptions.UserFavoriteTitleExceptions.UserFavoriteTitlesLimitReachedException;
+import project_z.demo.common.Exceptions.UserFavoriteCharacterExceptions.UserFavoriteCharacterPositionOccupiedException;
+import project_z.demo.common.Exceptions.UserFavoriteCharacterExceptions.UserFavoriteCharactersLimitReachedException;
+import project_z.demo.common.Exceptions.CharacterExceptions.CharacterWithThatMalIdAlreadyExistsException;
 import project_z.demo.common.Exceptions.WheelPresetExceptions.WheelPresetAlreadyExists;
 
 @RestControllerAdvice
@@ -63,6 +66,11 @@ public class GlobalExceptionHandler {
         return buildErrorResponse(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(CharacterWithThatMalIdAlreadyExistsException.class)
+    public ResponseEntity<Map<String, Object>> handleCharacterAlreadyExists(CharacterWithThatMalIdAlreadyExistsException ex) {
+        return buildErrorResponse(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler(RoomSelfBanException.class)
     public ResponseEntity<Map<String, Object>> handleRoomSelfBan(RoomSelfBanException ex) {
         return buildErrorResponse(ex.getMessage(), HttpStatus.BAD_REQUEST);
@@ -75,6 +83,16 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(UserFavoriteTitlePositionOccupiedException.class)
     public ResponseEntity<Map<String, Object>> handleUserFavoriteTitlePositionOccupied(UserFavoriteTitlePositionOccupiedException ex) {
+        return buildErrorResponse(ex.getMessage(), HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(UserFavoriteCharactersLimitReachedException.class)
+    public ResponseEntity<Map<String, Object>> hanleUserFavoriteCharactersLimitReached(UserFavoriteCharactersLimitReachedException ex) {
+        return buildErrorResponse(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(UserFavoriteCharacterPositionOccupiedException.class)
+    public ResponseEntity<Map<String, Object>> handleUserFavoriteCharacterPositionOccupied(UserFavoriteCharacterPositionOccupiedException ex) {
         return buildErrorResponse(ex.getMessage(), HttpStatus.CONFLICT);
     }
 

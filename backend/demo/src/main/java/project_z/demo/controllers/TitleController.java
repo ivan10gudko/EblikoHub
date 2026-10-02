@@ -107,8 +107,8 @@ public class TitleController {
     @GetMapping(path = "/mal/{titleMalId}")
     public ResponseEntity<TitleDto> getUserTitleByMalId(@PathVariable("titleMalId") Integer titleMalId,
             @RequestHeader("Authorization") String token) {
-        TitleEntity title = titleService.findUserTitleByMalId(titleMalId, token);
-        return new ResponseEntity<>(titleMapper.mapTo(title), HttpStatus.OK);
+        TitleDto title = titleService.findUserTitleByMalId(titleMalId, token);
+        return new ResponseEntity<>(title, HttpStatus.OK);
     }
 
     @GetMapping("/titleStats/{userId}")
@@ -119,25 +119,18 @@ public class TitleController {
     @GetMapping(path = "/mal/{titleMalId}/room")
     public List<TitleDto> getUsersTitlesByMalId(@PathVariable("titleMalId") Integer titleMalId,
             @RequestHeader("Authorization") String token) {
-        return titleService.findAllByMalIdInUserRooms(titleMalId, token)
-                .stream().map(titleMapper::mapTo).collect(Collectors.toList());
+        return titleService.findAllByMalIdInUserRooms(titleMalId, token);
     }
 
     @GetMapping(path = "/{userId}/WATCHED")
     public ResponseEntity<List<TitleDto>> getWatchedListByUserId(@PathVariable("userId") UUID userId) {
-        List<TitleEntity> titleEntitys = titleService.getWatchedList(userId);
-        List<TitleDto> response = titleEntitys.stream()
-                .map(titleMapper::mapTo)
-                .collect(Collectors.toList());
+        List<TitleDto> response = titleService.getWatchedList(userId);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @GetMapping(path = "/{userId}/PLANNED")
     public ResponseEntity<List<TitleDto>> getWatchListByUserId(@PathVariable("userId") UUID userId) {
-        List<TitleEntity> titleEntitys = titleService.getWatchList(userId);
-        List<TitleDto> response = titleEntitys.stream()
-                .map(titleMapper::mapTo)
-                .collect(Collectors.toList());
+        List<TitleDto> response = titleService.getWatchList(userId);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
