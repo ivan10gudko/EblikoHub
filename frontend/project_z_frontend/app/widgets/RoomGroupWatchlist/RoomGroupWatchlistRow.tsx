@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
+import * as HoverCard from "@radix-ui/react-hover-card";
+
 import { ReadOnlyStatusBadge, TitleTypeThemes } from "~/entities/titleRecord";
-import { DEFAULT_IMAGE_PATH } from "~/shared/constants";
 import { TitleLinkMember, type RoomTitleSummary } from "~/features/manageRoomTitles";
 import { CompactRatingLabel } from "~/shared/ui/Rating";
 import { UserAvatar } from "~/entities/user";
@@ -13,6 +14,9 @@ import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import { Dropdown } from "~/shared/ui/DropDown";
 import { DropdownItem } from "~/shared/ui/DropDown/DropDown";
 import LinkIcon from "@mui/icons-material/Link";
+import { TitleHoverPreview } from "~/shared/ui/HoverPreviewImage";
+
+
 const getDisplayTitleInfo = (title: RoomTitleSummary, showMyVisual: boolean) => {
   if (showMyVisual && title.myTitleInfo) {
     return title.myTitleInfo;
@@ -93,14 +97,13 @@ export const RoomGroupWatchlistRow = ({
           <span className="text-muted-foreground font-bold text-sm sm:text-base">{index + 1}</span>
         </div>
 
-        <div className="relative h-12 w-20 flex-shrink-0 cursor-pointer overflow-hidden rounded-lg shadow-inner bg-muted/20">
-          <img
-            src={displayInfo?.imageUrl || DEFAULT_IMAGE_PATH}
-            onClick={handleImageClick}
-            className="absolute inset-0 h-full w-full object-cover transition-transform hover:scale-105 duration-200"
-            alt={displayInfo?.titleName || "Title poster"}
-          />
-        </div>
+        
+        <TitleHoverPreview
+          imageUrl={displayInfo?.imageUrl ?? undefined}
+          titleName={displayInfo?.titleName || title.titleInfo?.titleName || "Title poster"}
+          onClick={handleImageClick}
+          className="h-12 w-20 rounded-lg shadow-inner bg-muted/20"
+        />
 
         <div className="flex-1 min-w-0 px-1">
           <span className="font-bold text-foreground text-sm sm:text-base truncate block">

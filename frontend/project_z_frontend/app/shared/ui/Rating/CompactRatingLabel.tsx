@@ -16,20 +16,20 @@ export const CompactRatingLabel = ({
   return (
     <div
       className={cn(
-        "flex items-center justify-center h-[34px] min-w-[34px] bg-background-muted/10 border border-border rounded-lg overflow-hidden select-none",
+        "flex items-center justify-center h-[34px] w-10 shrink-0 bg-background-muted/10 border border-border rounded-lg overflow-hidden select-none",
         className
       )}
     >
       {label && (
-        <div className="flex items-center justify-center px-2 h-full bg-background-muted/20 text-xs text-foreground-muted border-r border-border leading-none">
+        <div className="flex items-center justify-center px-2 h-full bg-background-muted/20 text-xs text-foreground-muted border-r border-border leading-none shrink-0">
           {label}
         </div>
       )}
 
-      <div className="flex items-center justify-center h-full px-2">
+      <div className="flex items-center justify-center h-full w-full">
         <span
           className={cn(
-            "text-sm leading-none pt-[1px]",
+            "text-sm leading-none pt-[1px] text-center font-bold",
             hasRating ? "font-black text-primary" : "text-foreground-muted"
           )}
         >
