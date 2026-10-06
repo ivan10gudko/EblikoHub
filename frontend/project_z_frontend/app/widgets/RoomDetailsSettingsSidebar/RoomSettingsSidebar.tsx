@@ -98,12 +98,10 @@ const getNavLinks = (roomId: number, role?: RoomRole | null): NavItem[] => {
     },
   ];
 
-  // Якщо користувач не є членом кімнати (!role)
   if (!role) {
     return allLinks
       .filter((link) => ["general", "titles", "members"].includes(link.key))
       .map((link) => {
-        // У розділі Titles лишаємо тільки перегляд "Room Titles" (забираємо Title Links та AI Matcher)
         if (link.key === "titles" && link.children) {
           return {
             ...link,

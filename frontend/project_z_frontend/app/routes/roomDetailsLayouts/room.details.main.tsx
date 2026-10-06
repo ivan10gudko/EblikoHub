@@ -10,6 +10,7 @@ import { Outlet } from "react-router";
 import { useRoomDetailsFilterStore } from "~/widgets/RoomDetailsManager/store/roomDetailsFilter.store";
 import { RoomGroupWatchlistTable } from "~/widgets/RoomGroupWatchlist";
 import { useAuthStore } from "~/features/auth";
+import { ResponsiveSidebar } from "~/shared/ui/ResponsiveSidebar";
 
 export default function RoomDetailsMainPage() {
   const { id } = useParams<{ id: string }>();
@@ -57,11 +58,10 @@ export default function RoomDetailsMainPage() {
   }
 
   return (
-    <div className="flex flex-col lg:flex-row gap-4 md:gap-6 p-4 sm:p-6 lg:p-8 max-w-[1400px] mx-auto min-h-[calc(100vh-64px)] bg-background-muted/30">
-      <div className="w-full lg:w-auto flex flex-col">
-        <RoomDetailsSidebar room={room} isMember={isMember} />
-      </div>
-
+    <ResponsiveSidebar
+      menuButtonLabel="Room Navigation"
+      sidebar={<RoomDetailsSidebar room={room} isMember={isMember} />}
+    >
       <div className="flex-1 min-w-0">
         <RoomGroupWatchlistTable
           titlesData={titlesData}
@@ -72,8 +72,7 @@ export default function RoomDetailsMainPage() {
           isMember={isMember}
         />
       </div>
-
       <Outlet />
-    </div>
+    </ResponsiveSidebar>
   );
 }

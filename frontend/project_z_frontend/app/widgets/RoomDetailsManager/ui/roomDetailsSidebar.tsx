@@ -18,16 +18,17 @@ import { RoomMembersList } from '~/features/manageRoomMembers';
 
 interface RoomDetailsSidebarProps {
   room: Room;
-  isMember: boolean; 
+  isMember: boolean;
+  onCloseMobileMenu?: () => void;
 }
 
-export const RoomDetailsSidebar = ({ room, isMember }: RoomDetailsSidebarProps) => {
+export const RoomDetailsSidebar = ({ room, isMember, onCloseMobileMenu }: RoomDetailsSidebarProps) => {
   const { reset } = useRoomDetailsFilterStore();
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
 
   return (
-    <Sidebar className="w-80 bg-background p-5 rounded-3xl border border-border h-fit shadow-sm">
-      <div className="flex flex-col gap-4 max-h-[calc(100vh-120px)] overflow-y-auto hide-scrollbar pb-6 w-full box-border">
+    <Sidebar className="w-full md:w-80 bg-background p-4 pt-16 md:pt-5 rounded-3xl border-none md:border border-border h-full md:h-fit shadow-none md:shadow-sm">
+      <div className="flex flex-col gap-4 max-h-[calc(100vh-80px)] md:max-h-[calc(100vh-120px)] overflow-y-auto hide-scrollbar pb-10 md:pb-6 w-full box-border">
 
         <div className="flex items-center justify-between w-full">
           <div className="flex items-center gap-3">
@@ -37,6 +38,7 @@ export const RoomDetailsSidebar = ({ room, isMember }: RoomDetailsSidebarProps) 
           </div>
           <Link
             to={`/rooms/${room.roomId}/settings`}
+            onClick={onCloseMobileMenu}
             className="
               flex
               items-center
@@ -67,6 +69,7 @@ export const RoomDetailsSidebar = ({ room, isMember }: RoomDetailsSidebarProps) 
         <div className="pt-5 border-t border-border/60 flex flex-col gap-5 w-full box-border">
 
           <Button
+            type="button"
             onClick={() => setIsFiltersOpen(!isFiltersOpen)}
             className="
               group
