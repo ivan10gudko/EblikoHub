@@ -13,9 +13,11 @@ import project_z.demo.dto.TitleDtos.TitleShortDto;
 import project_z.demo.dto.UserDtos.UserDto;
 import project_z.demo.dto.UserDtos.UserProfileDto;
 import project_z.demo.dto.UserFavoriteTitlesDtos.UserFavoriteTitleItemDto;
+import project_z.demo.dto.UserFavoriteCharacterDtos.UserFavoriteCharacterItemDto;
 import project_z.demo.entity.TitleEntity;
 import project_z.demo.entity.UserEntity;
 import project_z.demo.entity.UserFavoriteTitleEntity;
+import project_z.demo.entity.UserFavoriteCharacterEntity;
 
 @Component
 @AllArgsConstructor
@@ -23,6 +25,7 @@ public class UserProfileMapperImpl implements Mapper<UserEntity, UserProfileDto>
 
     private final ModelMapper modelMapper;
     private final Mapper<UserFavoriteTitleEntity, UserFavoriteTitleItemDto> favoriteTitleItemMapper;
+    private final Mapper<UserFavoriteCharacterEntity, UserFavoriteCharacterItemDto> favoriteCharacterItemMapper;
 
     @Override
     public UserProfileDto mapTo(UserEntity userEntity) {
@@ -41,6 +44,12 @@ public class UserProfileMapperImpl implements Mapper<UserEntity, UserProfileDto>
                         userEntity.getFavoriteTitles() != null
                                 ? userEntity.getFavoriteTitles().stream()
                                         .map(favoriteTitleItemMapper::mapTo)
+                                        .collect(Collectors.toList())
+                                : Collections.emptyList())
+                .favoriteCharacters(
+                        userEntity.getFavoriteCharacters() != null
+                                ? userEntity.getFavoriteCharacters().stream()
+                                        .map(favoriteCharacterItemMapper::mapTo)
                                         .collect(Collectors.toList())
                                 : Collections.emptyList())
                 .build();

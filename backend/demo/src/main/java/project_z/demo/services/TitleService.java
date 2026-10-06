@@ -34,15 +34,15 @@ public interface TitleService {
 
     TitleEntity addTitle(TitleEntity titleEntity, String token);
 
-    List<TitleEntity> getWatchedList(UUID userid);
+    List<TitleDto> getWatchedList(UUID userid);
 
-    List<TitleEntity> getWatchList(UUID userid);
+    List<TitleDto> getWatchList(UUID userid);
 
     TitleEntity addSeason(SeasonEntity seasonEntity, TitleEntity titleEntity);
 
-    TitleEntity findUserTitleByMalId(Integer titleMalId, String token);
+    TitleDto findUserTitleByMalId(Integer titleMalId, String token);
 
-    List<TitleEntity> findAllByMalIdInUserRooms(Integer titleMalId, String token);
+    List<TitleDto> findAllByMalIdInUserRooms(Integer titleMalId, String token);
 
     Page<TitleDto> findAllWithLinksByUserIdAndRoomId(TitleQueryParameters params,UUID userId, long roomId);
 

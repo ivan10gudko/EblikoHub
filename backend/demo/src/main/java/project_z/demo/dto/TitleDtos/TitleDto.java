@@ -13,6 +13,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import project_z.demo.enums.TitleStatus;
 import project_z.demo.enums.TitleType;
+import project_z.demo.dto.CharacterDtos.CharacterShortDto;
 
 @Data
 @AllArgsConstructor
@@ -34,4 +35,6 @@ public class TitleDto {
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private Double avgRating;
+
+    private CharacterShortDto character;
 }

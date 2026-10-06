@@ -267,20 +267,22 @@ public class TitleServiceImpl implements TitleService {
     }
 
     @Override
-    public List<TitleEntity> getWatchedList(UUID userId) {
+    public List<TitleDto> getWatchedList(UUID userId) {
         UserEntity userEntity = userRepository.findById(userId).orElseThrow(
                 () -> new ResourceNotFoundException("user not found"));
         return userEntity.getTitleList().stream()
                 .filter(title -> title.getStatus() == TitleStatus.WATCHED)
+                .map(titleMapper::mapTo)
                 .toList();
     }
 
     @Override
-    public List<TitleEntity> getWatchList(UUID userId) {
+    public List<TitleDto> getWatchList(UUID userId) {
         UserEntity userEntity = userRepository.findById(userId).orElseThrow(
                 () -> new ResourceNotFoundException("user not found"));
         return userEntity.getTitleList().stream()
                 .filter(title -> title.getStatus() == TitleStatus.PLANNED)
+                .map(titleMapper::mapTo)
                 .toList();
     }
 
@@ -299,16 +301,18 @@ public class TitleServiceImpl implements TitleService {
     }
 
     @Override
-    public TitleEntity findUserTitleByMalId(Integer titleMalId, String token) {
+    public TitleDto findUserTitleByMalId(Integer titleMalId, String token) {
         UUID userId = jwtService.extractUsername(token);
-        return titleRepository.findByApiTitleIdAndUserId(titleMalId, userId)
+        TitleEntity title = titleRepository.findByApiTitleIdAndUserId(titleMalId, userId)
                 .orElseThrow(() -> new ResourceNotFoundException("Title not found"));
+        return titleMapper.mapTo(title);
     }
 
     @Override
-    public List<TitleEntity> findAllByMalIdInUserRooms(Integer titleMalId, String token) {
+    public List<TitleDto> findAllByMalIdInUserRooms(Integer titleMalId, String token) {
         UUID userId = jwtService.extractUsername(token);
-        return titleRepository.findAllByApiTitleIdInUserRooms(titleMalId, userId);
+        return titleRepository.findAllByApiTitleIdInUserRooms(titleMalId, userId).stream()
+                .map(titleMapper::mapTo).collect(Collectors.toList());
     }
 
     @Override

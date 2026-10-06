@@ -102,6 +102,10 @@ public class TitleEntity {
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
+    @ManyToOne()
+    @JoinColumn(name = "character_id")
+    private CharacterEntity character;
+
     @PrePersist
     protected void onCreate() {
         if (this.customOrder == null) {

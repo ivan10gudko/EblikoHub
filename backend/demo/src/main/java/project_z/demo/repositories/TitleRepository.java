@@ -7,7 +7,9 @@ import java.util.UUID;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -20,8 +22,12 @@ import project_z.demo.entity.TitleEntity;
 @Repository
 public interface TitleRepository extends JpaRepository<TitleEntity, Long>,
         JpaSpecificationExecutor<TitleEntity> {
-    // @Query("SELECT t FROM TitleEntity t WHERE t.user.id = :userId")
-    // List<TitleEntity> findByUserId(@Param("userId") UUID userId); mal
+
+    @EntityGraph(attributePaths = {"character"})
+    Optional<TitleEntity> findById(Long id);
+
+    Page<TitleEntity> findAll(org.springframework.data.jpa.domain.Specification<TitleEntity> spec, Pageable pageable);
+
     @Query("SELECT t FROM TitleEntity t WHERE t.apiTitleId = :apiTitleId AND t.user.userId = :userId")
     Optional<TitleEntity> findByApiTitleIdAndUserId(Integer apiTitleId, UUID userId);
 
@@ -38,9 +44,11 @@ public interface TitleRepository extends JpaRepository<TitleEntity, Long>,
     List<TitleEntity> findAllByApiTitleIdInUserRooms(@Param("apiTitleId") Integer apiTitleId,
             @Param("userId") UUID userId);
 
+    @EntityGraph(attributePaths = {"character"})
     @Query("SELECT t FROM TitleEntity t WHERE t.user.userId = :userId ORDER BY t.customOrder ASC")
     List<TitleEntity> findAllByUserId(UUID userId);
 
+    @EntityGraph(attributePaths = {"character"})
     List<TitleEntity> findAllByUser_UserIdOrderByCustomOrderAsc(UUID userId);
 
     @Modifying
@@ -102,6 +110,7 @@ public interface TitleRepository extends JpaRepository<TitleEntity, Long>,
     @Query("SELECT t.titleType, COUNT(t) FROM TitleEntity t WHERE t.user.userId = :userId GROUP BY t.titleType")
     List<Object[]> countByType(@Param("userId") UUID userId);
 
+    @EntityGraph(attributePaths = {"character"})
     @Query("SELECT t FROM TitleEntity t WHERE t.user.userId = :userId AND t.titleId IN :titleIds")
     List<TitleEntity> findAllByIdsAndUserId(@Param("userId") UUID userId, @Param("titleIds") List<Long> titleIds);
 }

@@ -18,6 +18,8 @@ import project_z.demo.repositories.RoomTitleLinkRepository;
 import project_z.demo.repositories.SeasonRepository;
 import project_z.demo.repositories.TitleRepository;
 import project_z.demo.repositories.UserFavoriteTitleRepository;
+import project_z.demo.repositories.UserFavoriteCharacterRepository;
+import project_z.demo.repositories.CharacterRepository;
 import project_z.demo.repositories.wheelRepositories.WheelPresetRepository;
 
 @Service
@@ -32,6 +34,8 @@ public class SecurityService {
     private final RoomMemberRepository roomMemberRepository;
     private final WheelPresetRepository wheelPresetRepository;
     private final UserFavoriteTitleRepository userFavoriteTitleRepository;
+    private final UserFavoriteCharacterRepository userFavoriteCharacterRepository;
+    private final CharacterRepository characterRepository;
     private final RoomTitleEntityRepository roomTitleRepository;
     private final RoomTitleLinkRepository roomTitleLinkRepository;
 
@@ -174,6 +178,20 @@ public class SecurityService {
         UUID currentUserId = getCurrentUserId();
         return userFavoriteTitleRepository.findById(favoriteId)
                 .map(favorite -> favorite.getUser().getUserId().equals(currentUserId))
+                .orElse(false);
+    }
+
+    public boolean isFavoriteCharacterOwner(UUID favoriteId) {
+        UUID currentUserId = getCurrentUserId();
+        return userFavoriteCharacterRepository.findById(favoriteId)
+                .map(favorite -> favorite.getUser().getUserId().equals(currentUserId))
+                .orElse(false);
+    }
+
+    public boolean isCharacterOwner(UUID characterId) {
+        UUID currentUserId = getCurrentUserId();
+        return characterRepository.findById(characterId)
+                .map(character -> character.getUser().getUserId().equals(currentUserId))
                 .orElse(false);
     }
 }
