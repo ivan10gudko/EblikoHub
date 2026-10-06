@@ -3,7 +3,7 @@ package project_z.demo.services;
 import org.springframework.stereotype.Service;
 
 @Service
-public interface  TitleSearchService {
-   String searchTitle(String text, int page);
+public interface SearchService<T> {
+    T search(String text, int page); //TODO cache
 
 }
