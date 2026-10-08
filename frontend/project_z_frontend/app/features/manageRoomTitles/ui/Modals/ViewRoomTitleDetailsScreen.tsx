@@ -22,9 +22,10 @@ export const ViewRoomTitleDetailsScreen = ({
 
   return (
     <div className="flex-1 flex flex-col p-4 rounded-2xl border border-border bg-card">
-      <div className="flex gap-4">
+      {/* На мобілці колонка (картинка зверху, текст знизу), на десктопі — рядок */}
+      <div className="flex flex-col sm:flex-row gap-4">
         <div
-          className={`w-[190px] h-[275px] rounded-xl overflow-hidden shrink-0 border border-border shadow-lg ${themeClasses}`}
+          className={`w-full sm:w-[190px] h-[350px] sm:h-[275px] rounded-xl overflow-hidden shrink-0 border border-border shadow-lg ${themeClasses}`}
         >
           <img
             src={roomTitle.imageUrl || DEFAULT_IMAGE_PATH}
@@ -33,7 +34,7 @@ export const ViewRoomTitleDetailsScreen = ({
           />
         </div>
 
-        <div className="flex flex-col min-w-0">
+        <div className="flex flex-col min-w-0 justify-between">
           <div>
             <div className="text-xs font-semibold text-foreground-muted uppercase tracking-[0.2em] mb-2">
               Room title
@@ -44,7 +45,7 @@ export const ViewRoomTitleDetailsScreen = ({
             </h1>
           </div>
 
-          <div className="flex items-center gap-3 mt-auto">
+          <div className="flex items-center gap-3 mt-4 sm:mt-auto">
             <span className="text-[11px] font-bold text-foreground-muted uppercase tracking-wider">
               Type:
             </span>

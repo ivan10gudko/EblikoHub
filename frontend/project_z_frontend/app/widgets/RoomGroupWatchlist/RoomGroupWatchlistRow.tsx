@@ -142,41 +142,41 @@ export const RoomGroupWatchlistRow = ({
         </div>
 
         <div className="flex items-center justify-between sm:justify-end gap-3 pt-2 sm:pt-0 border-t sm:border-t-0 border-border/40 w-full sm:w-auto">
-          <div className="flex items-center gap-2">
-            <div className="flex sm:hidden items-center -space-x-2 flex-shrink-0 py-0.5 w-[76px]">
-              {visibleParticipations.map((p) => {
-                const member = usersCache[p.userId];
-                if (!member) return null;
+          <div className="flex sm:hidden items-center -space-x-2 flex-shrink-0 py-0.5">
+            {visibleParticipations.map((p) => {
+              const member = usersCache[p.userId];
+              if (!member) return null;
 
-                return (
-                  <div
-                    key={p.userId}
-                    className={cn(
-                      "relative flex items-center justify-center rounded-full border-2 bg-card transition-transform",
-                      getStatusBorderClass(p.status)
-                    )}
-                    title={`${member.name} (${p.status ?? "No status"})`}
-                  >
-                    <UserAvatar
-                      src={member.img ?? undefined}
-                      name={member.name}
-                      size="xs"
-                    />
-                  </div>
-                );
-              })}
-
-              {extraCount > 0 && (
-                <div className="flex items-center justify-center w-6 h-6 rounded-full bg-muted text-muted-foreground text-[9px] font-bold border-2 border-border z-10">
-                  +{extraCount}
+              return (
+                <div
+                  key={p.userId}
+                  className={cn(
+                    "relative flex items-center justify-center rounded-full border-2 bg-card transition-transform",
+                    getStatusBorderClass(p.status)
+                  )}
+                  title={`${member.name} (${p.status ?? "No status"})`}
+                >
+                  <UserAvatar
+                    src={member.img ?? undefined}
+                    name={member.name}
+                    size="xs"
+                  />
                 </div>
-              )}
-            </div>
+              );
+            })}
 
+            {extraCount > 0 && (
+              <div className="flex items-center justify-center w-6 h-6 rounded-full bg-muted text-muted-foreground text-[9px] font-bold border-2 border-border z-10">
+                +{extraCount}
+              </div>
+            )}
+          </div>
+
+          <div className="flex items-center gap-2 ml-auto sm:ml-0">
             <div onClick={(e) => e.stopPropagation()}>
               <ReadOnlyStatusBadge
                 status={title.myStatus}
-                showDot={false}
+                showDot={true}
               />
             </div>
 
