@@ -67,8 +67,7 @@ export const RoomTitlesManager = ({ roomId }: { roomId: number }) => {
               item={item}
               onDelete={deleteTitle}
               defaultImagePath={DEFAULT_IMAGE_PATH}
-              /* Якщо isReadOnly=true, затискаємо власні дії редагування/видалення */
-              isOwn={!isReadOnly && item.addedByUser === userId}
+              isOwn={!isReadOnly && item.addedByUser.userId === userId}
               isCurrentUserAdmin={!isReadOnly && isCurrentUserAdmin}
             />
           ))}

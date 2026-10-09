@@ -48,7 +48,7 @@ export const TitleLinkMember = ({ member, rating, status, titleId, type }: Title
       </div>
 
       <div className="flex items-center justify-start">
-        <ReadOnlyStatusBadge status={status} showDot={false} className="px-2 py-1" />
+        <ReadOnlyStatusBadge status={status} showDot={true} className="px-2 py-1" />
       </div>
 
       <div className="flex items-center justify-center">
