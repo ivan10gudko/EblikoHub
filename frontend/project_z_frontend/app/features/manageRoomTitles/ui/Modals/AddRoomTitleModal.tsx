@@ -1,7 +1,7 @@
 import { useState } from "react";
 import type { AnimeCardType } from "~/entities/title";
 import { notify } from "~/shared/lib";
-import { TitleSearch } from "../../../../widgets/TitleModal/components/titleSearch";
+import { TitleSearch } from "../../../../entities/title/ui/titleSearch";
 import { useRoomTitleActions } from "~/features/manageRoomTitles";
 import { RoomTitleForm, type RoomTitleFormData } from "./RoomTitleForm";
 

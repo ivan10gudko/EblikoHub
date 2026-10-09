@@ -1,15 +1,18 @@
 import { useEffect, useState } from "react";
-import AddIcon from "@mui/icons-material/Add";
-import { Button } from "~/shared/ui/Button";
-import { Status } from "~/shared/types/Status";
 import {
   useSeasonActions,
   useSeasons,
   type LocalDraftSeason,
 } from "~/entities/season";
-import { SeasonRow } from "../../../entities/season/ui/SeasonRow";
 import { useNavigate } from "react-router";
 import { ModalFooter } from "~/shared/ui/Modal";
+import AddIcon from "@mui/icons-material/Add";
+import { Button } from "~/shared/ui/Button";
+import { cn } from "~/shared/lib/utils";
+import { SeasonRow } from "~/entities/season/ui/SeasonRow";
+import { AddNewButton } from "~/shared/ui/AddNewButton";
+
+
 
 interface EditSeasonsScreenProps {
   titleId: number;
@@ -25,7 +28,6 @@ export const EditSeasonsScreen = ({
   const { syncSeasons, isSyncing } = useSeasonActions(titleId, () => navigate(-1));
 
   const [localSeasons, setLocalSeasons] = useState<LocalDraftSeason[]>([]);
-  const [newName, setNewName] = useState("");
 
   useEffect(() => {
     refetch();
@@ -45,20 +47,6 @@ export const EditSeasonsScreen = ({
 
   const handleClose = () => {
     navigate(-1);
-  };
-
-  const handleAddSeason = () => {
-    if (!newName.trim() || !isOwn) return;
-
-    const newSeason: LocalDraftSeason = {
-      seasonId: null,
-      localId: `new-${Date.now()}-${Math.random()}`,
-      name: newName,
-      status: Status.INPROGRESS,
-      rating: {},
-    };
-    setLocalSeasons((prev) => [...prev, newSeason]);
-    setNewName("");
   };
 
   const handleRemove = (localId: string) => {
@@ -111,24 +99,12 @@ export const EditSeasonsScreen = ({
       <div className="flex flex-col h-[65vh] px-1 sm:px-0">
         {isOwn && (
           <div className="pb-4 bg-background z-10 shrink-0">
-            <div className="flex gap-2 p-1.5 sm:p-2 bg-background-muted/50 rounded-2xl border-2 border-primary/30 shadow-sm focus-within:border-primary/60 transition-all">
-              <input
-                placeholder="Add new season..."
-                value={newName}
-                onChange={(e) => setNewName(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && handleAddSeason()}
-                className="flex-1 bg-transparent border-none px-2 sm:px-3 font-bold text-sm placeholder:text-muted-foreground/40 focus:ring-0 min-w-0 outline-none text-foreground"
-              />
-              <Button
-                onClick={handleAddSeason}
-                className="bg-primary text-background hover:bg-primary-hover h-9 sm:h-10 px-3 sm:px-5 rounded-xl shadow-lg active:scale-95 transition-all shrink-0"
-              >
-                <AddIcon fontSize="small" />
-                <span className="hidden xs:inline ml-1 font-black uppercase text-[11px]">
-                  Add
-                </span>
-              </Button>
-            </div>
+            <AddNewButton
+              onClick={() => {
+                navigate("add")
+              }}
+              placeholder="season"
+            />
           </div>
         )}
 

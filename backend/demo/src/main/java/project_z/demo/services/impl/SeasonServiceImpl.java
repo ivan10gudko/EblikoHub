@@ -53,8 +53,11 @@ public class SeasonServiceImpl implements SeasonService {
     }
 
     @Override
-    public Optional<SeasonEntity> findById(long seasonId) {
-        return seasonRepository.findById(seasonId);
+    public SeasonDto findById(long seasonId) {
+        var res = seasonRepository.findById(seasonId).orElseThrow(
+                () -> new ResourceNotFoundException("season not found")
+        );
+        return seasonMapper.mapTo(res);
     }
 
     @Override

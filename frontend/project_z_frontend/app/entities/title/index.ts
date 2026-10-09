@@ -21,3 +21,5 @@ export { default as Title } from './ui/Title';
 export { default as Trailer } from './ui/Trailer';
 export { default as AnimeCardMenu } from './ui/AnimeCardMenu';
 export { searchOptions } from "./model/searchOptions"
+export {AnimeSearchDropDownResults} from "./ui/AnimeSearchDropDownResult";
+export {TitleSearch} from "./ui/titleSearch";

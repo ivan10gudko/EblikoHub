@@ -14,12 +14,24 @@ export interface Season {
     name: string;
     rating?: Rating;
     status: Status;
-    apiTitleId?: number;
     description?: string;
+    apiTitleId?: number;
     type?: SeasonType;
     imageUrl?: string;
 }
 
+export const SEASON_TYPE_OPTIONS = [
+  { label: "TV", value: SeasonType.TV },
+  { label: "Film", value: SeasonType.FILM },
+  { label: "OVA", value: SeasonType.OVA },
+  { label: "Chibi", value: SeasonType.CHIBI },
+];
+export const SEASON_TYPE_LABELS: Record<SeasonType, string> = {
+    [SeasonType.TV]: "TV",
+    [SeasonType.FILM]: "Film",
+    [SeasonType.OVA]: "OVA",
+    [SeasonType.CHIBI]: "Chibi",
+};
 export interface CreateSeasonDto {
     name: string;
     status: Status;
