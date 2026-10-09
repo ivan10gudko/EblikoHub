@@ -73,7 +73,7 @@ export const SeasonRow = ({
           </div>
 
           <div className="border-l border-border/40 pl-1 ml-1">
-            <SeasonActionsMenu season={season} onDelete={onDelete} />
+            <SeasonActionsMenu titleId={titleId} isOwn={isOwn} season={season} onDelete={onDelete} />
           </div>
         </div>
       </div>

@@ -14,7 +14,7 @@ public interface SeasonService {
     SeasonEntity save(SeasonEntity seasonEntity); 
     List<SeasonDto> findAll(Long titleId);
     boolean isExists(long Id);
-    Optional<SeasonEntity> findById(long seasonId);
+    SeasonDto findById(long seasonId);
     SeasonEntity partialUpdate(Long seasonId, SeasonPatchUpdateDto source);
     void deleteById(long seasonId);
     List<SeasonDto> batchUpdate (Long titleId, List<SeasonDto> dtos);

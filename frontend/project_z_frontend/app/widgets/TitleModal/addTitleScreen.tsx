@@ -1,12 +1,11 @@
 import { useState } from "react";
 import { Button } from "~/shared/ui/Button";
-import type { AnimeCardType } from "~/entities/title";
+import { TitleSearch, type AnimeCardType } from "~/entities/title";
 import {
   TitleType,
   useCreateTitleRecord,
   type CreateTitleRecord,
 } from "~/entities/titleRecord";
-import { TitleSearch } from "./components/titleSearch";
 import DeleteSweepIcon from "@mui/icons-material/DeleteSweep";
 import { formatRatingInput } from "~/shared/helpers/formatRating";
 import { Status, statusOptions } from "~/shared/types/Status";
