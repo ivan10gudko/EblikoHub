@@ -1,4 +1,4 @@
-package project_z.demo.Mappers.impl;
+package project_z.demo.Mappers.impl.SeasonMappers;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -12,6 +12,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import project_z.demo.entity.TitleEntity;
 import project_z.demo.enums.TitleStatus;
+import project_z.demo.enums.seasons.SeasonType;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -22,4 +24,8 @@ public class SeasonDto {
     private String name;
     private Map<String, Float> rating;
     private TitleStatus status;
+    private Integer apiTitleId;
+    private String description;
+    private SeasonType type;
+    private String imageUrl;
 }

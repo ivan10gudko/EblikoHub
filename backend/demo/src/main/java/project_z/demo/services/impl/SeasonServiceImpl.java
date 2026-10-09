@@ -65,6 +65,10 @@ public class SeasonServiceImpl implements SeasonService {
                     patchHelper.updateIfPresent(source.getSeasonName(), target::setName);
                     patchHelper.updateIfPresent(source.getStatus(), target::setStatus);
                     patchHelper.updateIfPresent(source.getRating(), target::setRating);
+                    patchHelper.updateIfPresent(source.getApiTitleId(), target::setApiTitleId);
+                    patchHelper.updateIfPresent(source.getDescription(), target::setDescription);
+                    patchHelper.updateIfPresent(source.getImageUrl(), target::setImageUrl);
+                    patchHelper.updateIfPresent(source.getType(), target::setType);
                     return seasonRepository.save(target);
                 })
                 .orElseThrow(() -> new ResourceNotFoundException("Season not found"));
@@ -92,7 +96,7 @@ public class SeasonServiceImpl implements SeasonService {
                 .filter(s -> !dtoIds.contains(s.getSeasonId()))
                 .toList();
 
-        seasonRepository.deleteAll(toRemove); 
+        seasonRepository.deleteAll(toRemove);
 
         List<SeasonEntity> entitiesToSave = dtos.stream().map(dto -> {
             SeasonEntity entity;
@@ -108,7 +112,7 @@ public class SeasonServiceImpl implements SeasonService {
             entity.setName(dto.getName());
             entity.setRating(dto.getRating());
             entity.setStatus(dto.getStatus());
-            entity.setTitle(title); 
+            entity.setTitle(title);
             return entity;
         }).toList();
         return StreamSupport.stream(seasonRepository.saveAll(entitiesToSave).spliterator(), false)
