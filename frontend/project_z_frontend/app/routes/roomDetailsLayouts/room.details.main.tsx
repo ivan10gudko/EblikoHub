@@ -10,7 +10,7 @@ import { Outlet } from "react-router";
 import { useRoomDetailsFilterStore } from "~/widgets/RoomDetailsManager/store/roomDetailsFilter.store";
 import { RoomGroupWatchlistTable } from "~/widgets/RoomGroupWatchlist";
 import { useAuthStore } from "~/features/auth";
-import { ResponsiveSidebar } from "~/shared/ui/ResponsiveSidebar";
+import { LayoutWithSidebar } from "~/shared/ui/ResponsiveSidebar";
 
 export default function RoomDetailsMainPage() {
   const { id } = useParams<{ id: string }>();
@@ -58,7 +58,7 @@ export default function RoomDetailsMainPage() {
   }
 
   return (
-    <ResponsiveSidebar
+    <LayoutWithSidebar
       menuButtonLabel="Room Navigation"
       sidebar={<RoomDetailsSidebar room={room} isMember={isMember} />}
     >
@@ -73,6 +73,6 @@ export default function RoomDetailsMainPage() {
         />
       </div>
       <Outlet />
-    </ResponsiveSidebar>
+    </LayoutWithSidebar>
   );
 }

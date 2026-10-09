@@ -3,7 +3,7 @@ import { useRoomDetails } from "~/entities/room";
 import { useAuthStore } from "~/features/auth";
 import { useRoomMemberByRoomIdAndUserId } from "~/features/manageRoomMembers";
 import { ErrorScreen } from "~/shared/ui/ErrorScreen";
-import { ResponsiveSidebar } from "~/shared/ui/ResponsiveSidebar";
+import { LayoutWithSidebar } from "~/shared/ui/ResponsiveSidebar";
 import { RoomSettingsSidebar } from "~/widgets/RoomDetailsSettingsSidebar";
 
 export default function RoomsSettingsIndexLayout() {
@@ -26,7 +26,7 @@ export default function RoomsSettingsIndexLayout() {
   }
 
   return (
-    <ResponsiveSidebar
+    <LayoutWithSidebar
       menuButtonLabel="Settings Navigation"
       sidebar={
         <RoomSettingsSidebar
@@ -36,6 +36,6 @@ export default function RoomsSettingsIndexLayout() {
       }
     >
       <Outlet />
-    </ResponsiveSidebar>
+    </LayoutWithSidebar>
   );
 }

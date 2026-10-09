@@ -8,7 +8,7 @@ interface ResponsiveSidebarProps {
     className?: string;
 }
 
-export const ResponsiveSidebar = ({
+export const LayoutWithSidebar = ({
     sidebar,
     children,
     menuButtonLabel = "Navigation",

@@ -1,1 +1,1 @@
-export {ResponsiveSidebar} from "./ResponsiveSidebar";
+export {LayoutWithSidebar} from "./LayoutWithSidebar";
