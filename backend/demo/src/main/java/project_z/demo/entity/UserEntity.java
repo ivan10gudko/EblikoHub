@@ -1,16 +1,15 @@
 package project_z.demo.entity;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+
 import java.util.List;
 import java.util.UUID;
 
 import org.hibernate.annotations.DynamicUpdate;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
@@ -19,9 +18,6 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -30,6 +26,7 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import project_z.demo.enums.UserRole;
+
 @EntityListeners(AuditingEntityListener.class)
 @Data
 @AllArgsConstructor
@@ -38,26 +35,37 @@ import project_z.demo.enums.UserRole;
 @Entity
 @DynamicUpdate
 @Table(name = "users")
-@JsonIgnoreProperties(ignoreUnknown=true)
+@JsonIgnoreProperties(ignoreUnknown = true)
 @Getter
 public class UserEntity {
     @Id
     private UUID userId;
     private String name;
-    @Column(unique= true, nullable= false)
+    @Column(unique = true, nullable = false)
     private String nameTag;
     @Builder.Default
     private UserRole role = UserRole.USER;
     private String description;
     private String img;
-    @ManyToMany(mappedBy = "members")
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    private List<RoomEntity> rooms = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user")
+    private List<RoomMemberEntity> roomMembers = new ArrayList<>();
     @CreatedDate
-    @Column(nullable=false, updatable=false)
+    @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
-    @OneToMany(mappedBy= "user",cascade = CascadeType.ALL, orphanRemoval=true)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private List<TitleEntity> titleList;
-    
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private List<UserFavoriteTitleEntity> favoriteTitles = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private List<CharacterEntity> characters = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private List<UserFavoriteCharacterEntity> favoriteCharacters = new ArrayList<>();
 }

@@ -1,13 +1,12 @@
 import FileDownloadIcon from "@mui/icons-material/FileDownload";
 import type { Anime, AnimeCardType } from "~/entities/title";
 import { Button } from "~/shared/ui/Button";
-
+import { DEFAULT_IMAGE_PATH } from "~/shared/constants";
 interface AnimeSearchDropDownResultsProps {
   results: AnimeCardType[];
   onSelect: (anime: AnimeCardType) => void;
   onClose: () => void;
 }
-const DEFAULT_IMAGE_PATH = "/defaultTitleRecordImage.jpg";
 export const AnimeSearchDropDownResults = ({
   results,
   onSelect,
@@ -47,7 +46,7 @@ export const AnimeSearchDropDownResults = ({
             </div>
             <Button
               onClick={(e) => handleImport(e, anime)}
-              className="p-1 hover:bg-primary/70 rounded-full transition-colors"
+              className="p-2 bg-transparent hover:bg-primary/20 border border-border hover:border-primary/40 rounded-full transition-all group flex items-center justify-center flex-shrink-0"
               title="Import to my list"
             >
               <FileDownloadIcon
@@ -57,10 +56,11 @@ export const AnimeSearchDropDownResults = ({
             </Button>
           </div>
         ))}
-        <div className="p-2 bg-background-muted border-t border-border flex justify-end">
+        <div className="p-2 bg-background border-t border-border flex justify-end">
           <Button
             onClick={onClose}
-            className="text-xs font-bold text-foreground-muted hover:text-foregroundpx-3 py-1 transition-colors"
+            
+            className=" border  border-danger/40 text-white/70 hover:bg-danger/20 hover:text-danger gap-2 px-4 py-2 rounded-xl bg-danger/40"
           >
             Cancel Search
           </Button>

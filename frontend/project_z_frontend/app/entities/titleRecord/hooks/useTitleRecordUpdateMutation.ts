@@ -1,124 +1,52 @@
-import { useMutation, useQueryClient, type InfiniteData } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { titleRecordService, type TitleRecord } from "~/entities/titleRecord";
 import { notify } from "~/shared/lib";
-import type { PageResponse } from "~/shared/types";
+import { getErrorMessage } from "~/shared/utils";
 
 export const useUpdateTitleRecord = (titleId: number) => {
   const queryClient = useQueryClient();
 
-  const updateMutation = useMutation({
-    mutationFn: (updates: Partial<TitleRecord>) =>
-      titleRecordService.patch(titleId, updates),
+  const refreshAllCaches = () => {
+    queryClient.invalidateQueries({ queryKey: ['titles'] });
+    queryClient.invalidateQueries({ queryKey: ['titleRecord'] });
+  };
 
-    onSuccess: (updatedRecord: TitleRecord) => {
-      queryClient.setQueriesData<InfiniteData<PageResponse<TitleRecord>>>(
-        { queryKey: ['titles'] },
-        (oldData) => {
-          if (!oldData) return oldData;
-          return {
-            ...oldData,
-            pages: oldData.pages.map((page) => ({
-              ...page,
-              content: page.content.map((item) =>
-                item.titleId === updatedRecord.titleId ? updatedRecord : item
-              ),
-            })),
-          };
-        }
-      );
-      if (updatedRecord?.apiTitleId) {
-        queryClient.setQueryData(['titleRecord', updatedRecord.apiTitleId], updatedRecord);
-      }
+  const updateMutation = useMutation({
+    mutationFn: (updates: Partial<TitleRecord>) => titleRecordService.patch(titleId, updates),
+    onSuccess: () => {
+      refreshAllCaches();
     },
-    onError: (error: any) => {
-      notify.error(error.response?.data?.message || "Error while updating");
+    onError: (error: unknown) => {
+      notify.error(getErrorMessage(error, "Failed to save changes"));
     }
   });
+
   const pinMutation = useMutation({
     mutationFn: () => titleRecordService.pinTitle(titleId),
-
-    onSuccess: (updatedRecord: TitleRecord) => {
-      queryClient.setQueriesData<InfiniteData<PageResponse<TitleRecord>>>(
-        { queryKey: ['titles'] },
-        (oldData) => {
-          if (!oldData) return oldData;
-          return {
-            ...oldData,
-            pages: oldData.pages.map((page) => ({
-              ...page,
-              content: page.content.map((item) => {
-                if (item.titleId === updatedRecord.titleId) {
-                  return { ...item, pinned: true };
-                }
-                if (item.pinned) {
-                  return { ...item, pinned: false };
-                }
-                return item;
-              }),
-            })),
-          };
-        }
-      );
-
-      if (updatedRecord?.apiTitleId) {
-        queryClient.setQueryData(['titleRecord', updatedRecord.apiTitleId], { ...updatedRecord, pinned: true });
-      }
-
+    onSuccess: () => {
+      refreshAllCaches();
       notify.success("Pinned to top!");
     },
-    onError: (error: any) => {
-      notify.error(error.response?.data?.message || "Error while pinning");
+    onError: (error: unknown) => {
+      notify.error(getErrorMessage(error, "Error while pinning"));
     }
   });
 
- const unpinMutation = useMutation({
-  mutationFn: () => {
-    return titleRecordService.unpin();
-  },
+  const unpinMutation = useMutation({
+    mutationFn: () => titleRecordService.unpin(),
     onSuccess: () => {
-      queryClient.setQueriesData<InfiniteData<PageResponse<TitleRecord>>>(
-        { queryKey: ['titles'] },
-        (oldData) => {
-          if (!oldData) return oldData;
-          return {
-            ...oldData,
-            pages: oldData.pages.map((page) => ({
-              ...page,
-              content: page.content.map((item) => {
-                return { ...item, pinned: false };
-              }),
-            })),
-          };
-        }
-      );
-
+      refreshAllCaches();
       notify.success("Unpinned!");
     },
-    onError: (error: any) => {
-      notify.error(error.response?.data?.message || "Error while unpinning");
+    onError: (error: unknown) => {
+      notify.error(getErrorMessage(error, "Error while unpinning"));
     }
   });
 
   const deleteMutation = useMutation({
     mutationFn: () => titleRecordService.delete(titleId),
     onSuccess: () => {
-      queryClient.setQueriesData<InfiniteData<PageResponse<TitleRecord>>>(
-        { queryKey: ['titles'] },
-        (oldData) => {
-          if (!oldData) return oldData;
-          return {
-            ...oldData,
-            pages: oldData.pages.map((page) => ({
-              ...page,
-              content: page.content.filter((item) => item.titleId !== titleId),
-            })),
-          };
-        }
-      );
-      notify.success("deleted!");
-    },
-    onError: (error: any) => {
-      notify.error(error.response?.data?.message || "error while deleting");
+      refreshAllCaches();
     }
   });
 

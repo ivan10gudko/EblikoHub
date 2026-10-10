@@ -52,7 +52,7 @@ public class SeasonEntity {
     @Enumerated(EnumType.STRING)
     private TitleStatus status;
     @ManyToOne
-    @JoinColumn(name = "TitleId")
+    @JoinColumn(name = "title_id")
     @JsonBackReference
     private TitleEntity title;
 

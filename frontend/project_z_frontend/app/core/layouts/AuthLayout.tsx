@@ -1,12 +1,17 @@
 import { Link, Outlet } from "react-router";
 import Logo from "~/shared/ui/Logo/Logo";
 
-const AuthLayout : React.FC = ()=> {
-    return (
+const AuthLayout = () => {
+  return (
     <div className="min-h-screen flex items-center justify-center p-4 bg-[url(/placeholder.jpg)]">
-        <div className="absolute top-4 left-8"><Link to="/"><Logo /></Link></div>
-        <Outlet />
-    </div> );
-}
+      <div className="absolute top-4 left-8">
+        <Link to="/">
+          <Logo />
+        </Link>
+      </div>
+      <Outlet />
+    </div>
+  );
+};
 
 export default AuthLayout;

@@ -1,7 +1,10 @@
 package project_z.demo.config;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import io.github.cdimascio.dotenv.Dotenv;
+import jakarta.annotation.PostConstruct;
 import lombok.Getter;
 
 @Component
@@ -24,4 +27,6 @@ public class MyConfig {
     private String googleApiUrl;
     @Value("${app.api.anime-api-base-url}")
     private String animeApiBaseUrl;
+    @Value("${app.api.google-title-links-api-key}")
+    private String googleTitleLinksApiKey;
 }

@@ -1,0 +1,21 @@
+package project_z.demo.dto.RoomTitleDtos;
+
+import java.time.LocalDateTime;
+import java.util.UUID;
+
+import lombok.Data;
+import project_z.demo.dto.RoomDtos.RoomShortDto;
+import project_z.demo.enums.TitleType;
+@Data
+public class RoomTitleShortDto {
+    private UUID id;
+
+    private String titleName;
+
+    private String imageUrl;
+    
+    private TitleType type;
+
+    private Long apiTitleId;
+    
+}

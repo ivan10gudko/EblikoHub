@@ -2,9 +2,9 @@ package project_z.demo.services.impl;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -13,38 +13,49 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
-import jakarta.transaction.Transactional;
+import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import project_z.demo.JavaUtil.BeanUtilsHelper;
 import project_z.demo.JavaUtil.PagingHelper;
+import project_z.demo.Mappers.Mapper;
+import project_z.demo.Mappers.impl.ObjectMappers.UserWithRoomRelationsMapper;
 import project_z.demo.common.Exceptions.ResourceNotFoundException;
 import project_z.demo.common.QueryParameters.UserQueryParameters;
 import project_z.demo.config.MyConfig;
-import project_z.demo.entity.RoomEntity;
+import project_z.demo.dto.UserDtos.UserDto;
+import project_z.demo.dto.UserDtos.UserProfileDto;
+import project_z.demo.dto.UserDtos.UserWithRelationsToRoomDto;
+import project_z.demo.entity.RoomMemberEntity;
 import project_z.demo.entity.UserEntity;
+import project_z.demo.enums.RequestStatus;
+import project_z.demo.repositories.FriendshipRepository;
+import project_z.demo.repositories.RoomMemberRepository;
 import project_z.demo.repositories.RoomRepository;
 import project_z.demo.repositories.TitleRepository;
 import project_z.demo.repositories.UserRepository;
 import project_z.demo.services.UserService;
 
 @Service
+@RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
-    private final TitleRepository titleRepository;
     @Autowired
-    private BeanUtilsHelper beanUtilsHelper;
-    private UserRepository userRepository;
-    @Autowired
-    private RoomRepository roomRepository;
-    private MyConfig myConfig;
+    private Mapper<UserEntity, UserDto> userMapper;
 
-    public UserServiceImpl(UserRepository userRepository, TitleRepository titleRepository, MyConfig myConfig) {
-        this.userRepository = userRepository;
-        this.titleRepository = titleRepository;
-        this.myConfig = myConfig;
-    }
+    private final ModelMapper modelMapper;
+    private final RoomMemberRepository roomMemberRepository;
+    private final FriendshipRepository friendshipRepository;
+    private final Mapper<UserEntity, UserProfileDto> userProfileMapper;
+    private final TitleRepository titleRepository;
+    private final UserWithRoomRelationsMapper userWithRoomRelationsMapper;
+    private final BeanUtilsHelper beanUtilsHelper;
+    private final UserRepository userRepository;
+    private final RoomRepository roomRepository;
+    private final MyConfig myConfig;
 
     @Override
     public UserEntity save(UserEntity userEntity) {
@@ -73,21 +84,32 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new ResourceNotFoundException("user not found"));
     }
 
-    @Override
     public void deleteById(UUID id) {
         UserEntity user = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("user not found"));
-        for (RoomEntity room : user.getRooms()) {
-            room.getMembers().remove(user);
-            roomRepository.save(room);
-        }
-        user.getRooms().clear();
+
+        List<RoomMemberEntity> memberships = roomMemberRepository.findByUser_UserId(user.getUserId());
+
+        roomMemberRepository.deleteAll(memberships);
+
         userRepository.deleteById(id);
     }
 
     @Override
-    public Optional<UserEntity> findByNameTag(String nameTag) {
-        return userRepository.findByNameTag(nameTag);
+    public UserDto findByNameTag(String nameTag) {
+        UserEntity userEntity = userRepository.findByNameTag(nameTag).orElseThrow(
+                () -> new ResourceNotFoundException("User not found"));
+        return userMapper.mapTo(userEntity);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<UserWithRelationsToRoomDto> searchUsersForRoom(String name, Long roomId,
+            UserQueryParameters queryParameters) {
+        Pageable pageable = PagingHelper.toPageable(queryParameters);
+        Page<Object[]> results = userRepository.findUsersWithRoomRelations(name, roomId, pageable);
+
+        return results.map(row -> userWithRoomRelationsMapper.mapTo(row));
     }
 
     @Override
@@ -132,10 +154,36 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Page<UserEntity> findByName(String name, UserQueryParameters userQueryParameters) {
-        System.out.println(name);
-        System.out.println(userQueryParameters);
+    public Page<UserEntity> findByName(String name, UserQueryParameters userQueryParameters, UUID currentUserId) {
         Pageable pageable = PagingHelper.toPageable(userQueryParameters);
-        return userRepository.findByNameContainingIgnoreCase(name, pageable);
+        return userRepository.findByNameContainingIgnoreCaseAndNotSelf(name, currentUserId, pageable);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public UserProfileDto getUserProfile(UUID userId, UUID currentUserId) {
+        UserEntity userEntity = userRepository.findByIdWithFavorites(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        UserProfileDto userProfile = userProfileMapper.mapTo(userEntity);
+
+
+        if (currentUserId != null && !currentUserId.equals(userId)) {
+            friendshipRepository.findFriendshipBetween(userId, currentUserId)
+                    .ifPresentOrElse(
+                            friendship -> {
+                                userProfile.setFriendshipStatus(friendship.getStatus());
+                                userProfile.setFriendshipId(friendship.getFriendshipId());
+                            },
+                            () -> {
+                                userProfile.setFriendshipStatus(RequestStatus.NONE);
+                                userProfile.setFriendshipId(null);
+                            });
+        } else {
+            userProfile.setFriendshipStatus(RequestStatus.NONE);
+            userProfile.setFriendshipId(null);
+        }
+
+        return userProfile;
     }
 }

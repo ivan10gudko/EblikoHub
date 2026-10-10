@@ -16,6 +16,8 @@ import org.springframework.web.client.RestTemplate;
 import lombok.RequiredArgsConstructor;
 import project_z.demo.common.Exceptions.TranslationAiErrorException;
 import project_z.demo.config.MyConfig;
+import project_z.demo.enums.translation.TranslationTarget;
+import project_z.demo.services.GoogleAiClient;
 import project_z.demo.services.TranslationService;
 
 @Service
@@ -24,27 +26,73 @@ public class TranslationServiceImpl implements TranslationService {
     private static final String huggingFaceApiUrl = "https://router.huggingface.co/v1/chat/completions";
     private final RestTemplate restTemplate = new RestTemplate();
     private final MyConfig myConfig;
+    private final GoogleAiClient googleAiClient;
+
+    private static final Map<TranslationTarget, String> DEEPSEEK_PROMPTS = Map.of(
+            TranslationTarget.ANIME_TITLE, """
+                    IMPORTANT: RETURN ONLY THE OFFICIAL ENGLISH ANIME TITLE.
+                    START YOUR ANSWER WITH "RESULT: " FOLLOWED BY THE TITLE.
+                    DO NOT INCLUDE ANY EXPLANATIONS, REASONING, COMMENTS, OR <think> TAGS.
+                    
+                    You are a Japanese anime expert and translator.
+                    The user will give you the title of an anime in any language, including Japanese, romaji, or kanji.
+                    Your task is to return ONLY the official English title used internationally.
+                    
+                    Example:
+                    Input: "ВанПіс"
+                    RESULT: One Piece
+                    """,
+            TranslationTarget.CHARACTER_NAME, """
+                    IMPORTANT: RETURN ONLY THE ENGLISH/ROMAJI NAME OF THE ANIME CHARACTER.
+                    START YOUR ANSWER WITH "RESULT: " FOLLOWED BY THE NAME.
+                    DO NOT INCLUDE ANY EXPLANATIONS, REASONING, COMMENTS, OR <think> TAGS.
+                    
+                    You are an anime character expert and translator.
+                    The user will give you the name of an anime character in any language.
+                    Your task is to return ONLY the standard English/Romaji name.
+                    
+                    Example:
+                    Input: "Лелуш Ламперуж"
+                    RESULT: Lelouch Lamperouge
+                    """
+    );
+
+    private static final Map<TranslationTarget, String> GEMINI_PROMPTS = Map.of(
+            TranslationTarget.ANIME_TITLE, """
+                    IMPORTANT: RETURN ONLY THE OFFICIAL ENGLISH ANIME TITLE.
+                    START YOUR ANSWER WITH "RESULT: " FOLLOWED BY THE TITLE.
+                    DO NOT INCLUDE ANY EXPLANATIONS, REASONING, COMMENTS, OR <think> TAGS.
+                    
+                    You are a Japanese anime expert and translator.
+                    The user will give you the title of an anime in any language.
+                    Your task is to return ONLY the official English title.
+                    """,
+            TranslationTarget.CHARACTER_NAME, """
+                    IMPORTANT: RETURN ONLY THE ENGLISH/ROMAJI NAME OF THE ANIME CHARACTER.
+                    START YOUR ANSWER WITH "RESULT: " FOLLOWED BY THE NAME.
+                    DO NOT INCLUDE ANY EXPLANATIONS, REASONING, COMMENTS, OR <think> TAGS.
+                    
+                    You are an anime character expert and translator.
+                    The user will give you the name of an anime character in any language.
+                    Your task is to return ONLY the standard English/Romaji name.
+                    """
+    );
 
     @Override
     public String translateToEnglishWithDeepSeek(String text) {
-        String systemPrompt = """
-                       IMPORTANT: RETURN ONLY THE OFFICIAL ENGLISH ANIME TITLE.
-                START YOUR ANSWER WITH "RESULT: " FOLLOWED BY THE TITLE.
-                DO NOT INCLUDE ANY EXPLANATIONS, REASONING, COMMENTS, OR <think> TAGS.
+        return translateWithDeepSeek(text, TranslationTarget.ANIME_TITLE);
+    }
+    @Override
+    public String translateCharacterWithDeepSeek(String text) {
+        return translateWithDeepSeek(text, TranslationTarget.CHARACTER_NAME);
+    }
 
-                You are a Japanese anime expert and translator.
-                The user will give you the title of an anime in any language, including Japanese, romaji, or kanji.
-                Your task is to return ONLY the official English title used internationally.
-
-                Example:
-                Input: "ВанПіс
-                RESULT: One Piece"
-                    """;
+    private String translateWithDeepSeek(String text, TranslationTarget target) {
+        String systemPrompt = DEEPSEEK_PROMPTS.getOrDefault(target, DEEPSEEK_PROMPTS.get(TranslationTarget.ANIME_TITLE));
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        String huggingFaceApiAccesToken = myConfig.getHugfaceToken();
-        headers.setBearerAuth(huggingFaceApiAccesToken);
+        headers.setBearerAuth(myConfig.getHugfaceToken());
 
         Map<String, Object> body = Map.of(
                 "model", "deepseek-ai/DeepSeek-R1",
@@ -66,16 +114,7 @@ public class TranslationServiceImpl implements TranslationService {
 
                     String cleanContent = content.replaceAll("(?s)<think>.*?</think>", "").trim();
                     System.out.println(cleanContent);
-                    Pattern p = Pattern.compile("RESULT:\\s*(.*)", Pattern.CASE_INSENSITIVE);
-                    Matcher m = p.matcher(cleanContent);
-
-                    if (m.find()) {
-                        String animeTitle = m.group(1).trim();
-                        return animeTitle.replace("\"", "").replace("}", "");
-                    }
-
-                    String res = cleanContent.replace("RESULT:", "").trim();
-                    return res;
+                    return parseResult(cleanContent, text);
                 }
             }
         } catch (HttpClientErrorException e) {
@@ -89,85 +128,41 @@ public class TranslationServiceImpl implements TranslationService {
 
     @Override
     public String translateToEnglistWithGoogleAI(String text) {
-        String systemPrompt = """
-                IMPORTANT: RETURN ONLY THE OFFICIAL ENGLISH ANIME TITLE.
-                START YOUR ANSWER WITH "RESULT: " FOLLOWED BY THE TITLE.
-                DO NOT INCLUDE ANY EXPLANATIONS, REASONING, COMMENTS, OR <think> TAGS.
+        return translateWithGoogleAI(text, TranslationTarget.ANIME_TITLE);
+    }
+    @Override
+    public String translateCharacterWithGoogleAI(String text) {
+        return translateWithGoogleAI(text, TranslationTarget.CHARACTER_NAME);
+    }
 
-                You are a Japanese anime expert and translator.
-                The user will give you the title of an anime in any language.
-                Your task is to return ONLY the official English title.
-                """;
-
-        String apiUrl = myConfig.getGoogleApiUrl();
-        String apiKey = myConfig.getGoogleApiKey();
-        String urlWithKey = apiUrl + "?key=" + apiKey;
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-
-        Map<String, Object> requestBody = Map.of(
-                "contents", List.of(
-                        Map.of("parts", List.of(
-                                Map.of("text", systemPrompt + "\nInput: " + text)))));
-
-        HttpEntity<Map<String, Object>> request = new HttpEntity<>(requestBody, headers);
+    private String translateWithGoogleAI(String text, TranslationTarget target) {
+        String systemPrompt = GEMINI_PROMPTS.getOrDefault(target, GEMINI_PROMPTS.get(TranslationTarget.ANIME_TITLE));
 
         try {
-            ResponseEntity<Map> response = restTemplate.postForEntity(urlWithKey, request, Map.class);
+            String responseText = googleAiClient.generateContent(
+                    myConfig.getGoogleApiKey(),
+                    systemPrompt + "\nInput: " + text);
 
-            if (response.getBody() != null) {
-                List<?> candidates = (List<?>) response.getBody().get("candidates");
-                if (candidates != null && !candidates.isEmpty()) {
-                    Map<?, ?> firstCandidate = (Map<?, ?>) candidates.get(0);
-                    Map<?, ?> content = (Map<?, ?>) firstCandidate.get("content");
-                    List<?> parts = (List<?>) content.get("parts");
-                    Map<?, ?> firstPart = (Map<?, ?>) parts.get(0);
+            System.out.println("AI Response: " + responseText);
+            return parseResult(responseText, text);
 
-                    String responseText = firstPart.get("text").toString().trim();
-                    System.out.println("Gemini Response: " + responseText);
-
-                    Pattern p = Pattern.compile("RESULT:\\s*(.*)", Pattern.CASE_INSENSITIVE);
-                    Matcher m = p.matcher(responseText);
-
-                    if (m.find()) {
-                        return m.group(1).trim().replace("\"", "").replace("}", "");
-                    }
-
-                    return responseText.replace("RESULT:", "").trim();
-                }
-            }
-            throw new TranslationAiErrorException("Empty or invalid response structure from Google AI");
         } catch (HttpClientErrorException.TooManyRequests e) {
             System.err.println("Google API Rate limit exceeded: " + e.getResponseBodyAsString());
             throw e;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             System.err.println("Google API Error: " + e.getMessage());
-            throw new TranslationAiErrorException("Genimi is unavailable");
+            throw new TranslationAiErrorException("Gemini is unavailable");
         }
     }
+
+    private String parseResult(String responseContent, String fallbackText) {
+        Pattern p = Pattern.compile("RESULT:\\s*(.*)", Pattern.CASE_INSENSITIVE);
+        Matcher m = p.matcher(responseContent);
+
+        if (m.find()) {
+            return m.group(1).trim().replace("\"", "").replace("}", "");
+        }
+
+        return responseContent.replace("RESULT:", "").trim();
+    }
 }
-/*
- * String apiKey = "5539d20c91424a044d5f";
- * String url = "http://localhost:5000/translate";
- * Map<String, String> requestBody = Map.of(
- * "q", text,
- * "source", "auto",
- * "target", "en",
- * "format", "text"
- * );
- * 
- * try {
- * Map response = restTemplate.postForObject(url, requestBody, Map.class);
- * if(response != null && response.containsKey("translatedText")){
- * System.out.println(response.get("translatedText"));
- * return (String) response.get("translatedText");
- * }
- * } catch (Exception e) {
- * e.printStackTrace();
- * }
- * System.out.println("xuy");
- * return text;
- * }
- */

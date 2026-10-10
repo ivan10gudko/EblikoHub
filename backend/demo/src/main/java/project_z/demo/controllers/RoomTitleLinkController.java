@@ -1,0 +1,82 @@
+package project_z.demo.controllers;
+
+import lombok.RequiredArgsConstructor;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+import project_z.demo.dto.RoomTitleLinkDtos.RoomTitleLinkBatchCreateDto;
+import project_z.demo.dto.RoomTitleLinkDtos.RoomTitleLinkCreateDto;
+import project_z.demo.dto.RoomTitleLinkDtos.RoomTitleLinkDetailsDto;
+import project_z.demo.dto.RoomTitleLinkDtos.SuggestedTitleLinkDto;
+import project_z.demo.security.SecurityService;
+import project_z.demo.services.RoomTitleLinkService;
+
+import java.util.List;
+import java.util.UUID;
+
+@RestController
+@RequestMapping("/api/v1/rooms/{roomId}/links")
+@RequiredArgsConstructor
+public class RoomTitleLinkController {
+
+    private final RoomTitleLinkService linkService;
+    private final SecurityService securityService;
+
+    @PostMapping
+    @PreAuthorize("@securityService.isRoomMember(#roomId)")
+    public ResponseEntity<RoomTitleLinkDetailsDto> create(
+            @PathVariable Long roomId,
+            @RequestBody RoomTitleLinkCreateDto dto) {
+        return ResponseEntity.ok(linkService.createLink(dto));
+    }
+
+    @PostMapping("/batch")
+    @PreAuthorize("@securityService.isRoomMember(#roomId)")
+    public ResponseEntity<List<RoomTitleLinkDetailsDto>> batchCreate(
+            @PathVariable Long roomId,
+            @RequestBody RoomTitleLinkBatchCreateDto dto) {
+        return ResponseEntity.ok(linkService.batchCreateLinks(dto));
+    }
+
+    @GetMapping("/roomTitle/{roomTitleId}")
+    public ResponseEntity<List<RoomTitleLinkDetailsDto>> findByRoomTitle(
+            @PathVariable Long roomId,
+            @PathVariable UUID roomTitleId) {
+        return ResponseEntity.ok(linkService.findByRoomTitleId(roomTitleId));
+    }
+
+    @GetMapping("/user/{userId}")
+    @PreAuthorize("@securityService.isRoomMember(#roomId)")
+    public ResponseEntity<List<RoomTitleLinkDetailsDto>> findUserLinks(
+            @PathVariable Long roomId,
+            @PathVariable UUID userId) {
+        return ResponseEntity.ok(linkService.findUserLinksInRoom(userId, roomId));
+    }
+
+    @GetMapping("/suggestions")
+    @PreAuthorize("@securityService.isRoomMember(#roomId)")
+    public ResponseEntity<List<SuggestedTitleLinkDto>> suggestLinks(
+            @PathVariable Long roomId) {
+        UUID userId = securityService.getCurrentUserId();
+        return ResponseEntity.ok(linkService.suggestLinks(userId, roomId));
+    }
+
+    @DeleteMapping("/{roomTitleLinkId}")
+    @PreAuthorize("@securityService.isAdminOrOwner(#roomId) || @securityService.isRoomTitleLinkOwner(#roomTitleLinkId)")
+    public ResponseEntity<Void> deleteLink(
+            @PathVariable Long roomId,
+            @PathVariable UUID roomTitleLinkId) {
+        linkService.deleteLink(roomTitleLinkId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/room-title/{roomTitleId}/all")
+    @PreAuthorize("@securityService.isAdminOrOwner(#roomId)")
+    public ResponseEntity<Void> deleteAllByRoomTitle(
+            @PathVariable Long roomId,
+            @PathVariable UUID roomTitleId) {
+        linkService.deleteLinksByRoomTitle(roomTitleId);
+        return ResponseEntity.noContent().build();
+    }
+}

@@ -1,0 +1,1 @@
+export {RoomSettingsSidebar} from "./RoomSettingsSidebar";

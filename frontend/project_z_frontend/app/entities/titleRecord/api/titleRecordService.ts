@@ -1,8 +1,9 @@
-import { type CreateTitleRecord, type SameCriteriaRating, type TitleParams, type TitleRecord, type TitleShortDto } from "../model/titleRecord"
+import { type CreateTitleRecord, type SameCriteriaRating, type TitleParams, type TitlePositionUpdate, type TitleRecord, type TitleStats } from "../model/titleRecord"
 import type { PageResponse } from "~/shared/types";
 import { apiClient } from "~/shared/api";
 import { Status } from "~/shared/types/Status";
 import type { Rating } from "~/shared/types/Rating";
+
 
 export interface ActionOptions {
     apiTitleId?: number | null;
@@ -16,25 +17,28 @@ export interface RateOptions extends ActionOptions {
 
 
 interface TitleRecordService {
+
     get(userId: string, params?: TitleParams): Promise<PageResponse<TitleRecord>>;
+    getTitlesWithNoLinksToRoom(userId: string, roomId: number, params?: TitleParams): Promise<PageResponse<TitleRecord>>;
+    getById(titleId: number): Promise<TitleRecord>;
     post(titleData: CreateTitleRecord): Promise<TitleRecord>;
     put(titleId: number, titleData: TitleRecord): Promise<TitleRecord>;
     patch(titleId: number, titleData: Partial<TitleRecord>): Promise<TitleRecord>;
     delete(titleId: number): Promise<void>;
-    patchCustomOrder(titleId: number, newTitlePosition: number): Promise<void>;
+    patchCustomOrder(titleId: number, dto: TitlePositionUpdate): Promise<void>;
     reindexCustomOrder(userId: string): Promise<void>;
     getWatched(userId: string): Promise<Array<TitleRecord>>;
     getPlanned(userId: string): Promise<Array<TitleRecord>>;
-    getByApiTitleId(jikanId: number): Promise<TitleRecord>;
-    pinTitle(titleId : number) : Promise<TitleRecord>;
-    unpin() : Promise<void>;
+    getByApiTitleId(externalProviderId: number): Promise<TitleRecord>;
+    pinTitle(titleId: number): Promise<TitleRecord>;
+    unpin(): Promise<void>;
     getSameCriteriaRating(titleId: number, category: string, currentRating: number): Promise<SameCriteriaRating>;
     rate(options: RateOptions): Promise<TitleRecord>;
     clearRating(options: ActionOptions): Promise<TitleRecord>;
     moveToPlanned(options: ActionOptions): Promise<TitleRecord>;
     markAsWatched(options: ActionOptions): Promise<TitleRecord>;
     markAsDropped(options: ActionOptions): Promise<TitleRecord>;
-
+    getTitleStats(userId: string): Promise<TitleStats>;
     saveAction(options: ActionOptions & { data: Partial<TitleRecord> }): Promise<TitleRecord>;
 }
 
@@ -46,6 +50,21 @@ export const titleRecordService: TitleRecordService = {
 
         return response.data;
     },
+    async getTitlesWithNoLinksToRoom(userId, roomId, params) {
+        const { data } = await apiClient.get(`/titles/getTitleWithNoLinks/${userId}`, {
+            params: {
+                roomId,
+                ...params
+            }
+        })
+        return data;
+    },
+
+    async getById(titleId) {
+        const response = await apiClient.get(`/titles/getTitleById/${titleId}`);
+        return response.data;
+    },
+    
     async getSameCriteriaRating(titleId, category, currentRating) {
         const response = await apiClient.get(`/titles/${titleId}/getSameCriteriaRating`, {
             params: {
@@ -57,11 +76,11 @@ export const titleRecordService: TitleRecordService = {
 
         return response.data;
     },
-    async pinTitle(titleId){
+    async pinTitle(titleId) {
         const response = await apiClient.post(`/titles/${titleId}/pinTitle`);
         return response.data;
     },
-    async unpin(){
+    async unpin() {
         await apiClient.post("/titles/unpin");
     },
     async post(titleData) {
@@ -80,8 +99,8 @@ export const titleRecordService: TitleRecordService = {
 
         return response.data;
     },
-    async patchCustomOrder(titleId, newTitlePosition) {
-        await apiClient.patch(`titles/${titleId}/position`, { customOrder: newTitlePosition });
+    async patchCustomOrder(titleId, dto) {
+        await apiClient.patch(`titles/${titleId}/position`, dto );
 
     },
     async reindexCustomOrder(userId) {
@@ -147,5 +166,9 @@ export const titleRecordService: TitleRecordService = {
 
     async markAsDropped(options) {
         return this.saveAction({ ...options, data: { status: Status.DROPPED } });
+    },
+    async getTitleStats(userId) {
+        const response = await apiClient.get(`/titles/titleStats/${userId}`);
+        return response.data;
     }
 };

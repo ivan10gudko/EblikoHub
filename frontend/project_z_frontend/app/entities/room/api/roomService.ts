@@ -1,17 +1,17 @@
 import { apiClient } from "~/shared/api";
-import type { Room, RoomCreateDto, RoomQueryParameters, RoomShort } from "../model/room.types";
+import type { Room, RoomCreateDto, RoomQueryParameters, RoomRequestCounts, RoomRequestShort, RoomSearchResult, RoomShort, UpdateRoomPayload, UserWithRelationsToRoomDto, RequestsToRoomResponse } from "../model/room.types";
 import type { PageResponse } from "~/shared/types";
+
+
 
 interface RoomService {
     create(data: RoomCreateDto): Promise<Room>;
     getById(roomId: number): Promise<Room>;
     getByUserId(userId: string, params?: RoomQueryParameters): Promise<PageResponse<RoomShort>>;
-    fullUpdate(id: number, data: Room): Promise<Room>;
+    partialUpdate(id: number, data: UpdateRoomPayload): Promise<Room>;
     patch(id: number, data: Partial<Room>): Promise<Room>;
-    addMembers(id: number, userIds: string[]): Promise<Room>;
-    deleteMembers(id: number, userIds: string[]): Promise<void>;
-    leave(id: number): Promise<void>;
     delete(id: number): Promise<void>;
+    searchRoomByName(roomName: string, params?: RoomQueryParameters): Promise<PageResponse<RoomSearchResult>>;
 }
 
 export const roomService: RoomService = {
@@ -30,8 +30,8 @@ export const roomService: RoomService = {
         return data;
     },
 
-    async fullUpdate(id, data) {
-        const { data: response } = await apiClient.put(`/rooms/${id}`, data);
+    async partialUpdate(id, data) {
+        const { data: response } = await apiClient.patch(`/rooms/${id}`, data);
         return response;
     },
 
@@ -40,20 +40,15 @@ export const roomService: RoomService = {
         return response;
     },
 
-    async addMembers(id, userIds) {
-        const { data } = await apiClient.patch(`/rooms/${id}/members`, userIds);
+    async delete(id) {
+        await apiClient.delete(`/rooms/${id}`);
+    },
+
+    async searchRoomByName(roomName, params) {
+        const { data } = await apiClient.get(`/rooms/roomSearch`, {
+            params: { roomName, ...params }
+        });
         return data;
     },
 
-    async deleteMembers(id, userIds) {
-        await apiClient.delete(`/rooms/${id}/members`, { data: userIds });
-    },
-
-    async leave(id) {
-        await apiClient.post(`/rooms/${id}/leave`);
-    },
-
-    async delete(id) {
-        await apiClient.delete(`/rooms/${id}`);
-    }
 };

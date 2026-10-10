@@ -4,72 +4,152 @@ import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.client.HttpClientErrorException;
 
+import project_z.demo.common.Exceptions.RoomBanExceptions.RoomSelfBanException;
+import project_z.demo.common.Exceptions.RoomMembersExceptions.RoomMembersConflictException;
+import project_z.demo.common.Exceptions.RoomRequestExceptions.SelfRoomInviteException;
+import project_z.demo.common.Exceptions.RoomTitleLinkExceptions.RoomTitleLinkAlreadyExistsException;
+import project_z.demo.common.Exceptions.UserFavoriteTitleExceptions.UserFavoriteTitlePositionOccupiedException;
+import project_z.demo.common.Exceptions.UserFavoriteTitleExceptions.UserFavoriteTitlesLimitReachedException;
+import project_z.demo.common.Exceptions.UserFavoriteCharacterExceptions.UserFavoriteCharacterPositionOccupiedException;
+import project_z.demo.common.Exceptions.UserFavoriteCharacterExceptions.UserFavoriteCharactersLimitReachedException;
+import project_z.demo.common.Exceptions.CharacterExceptions.CharacterWithThatMalIdAlreadyExistsException;
+import project_z.demo.common.Exceptions.WheelPresetExceptions.WheelPresetAlreadyExists;
+
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+    private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<Map<String, Object>> handleValidationExceptions(MethodArgumentNotValidException ex) {
+
+        FieldError fieldError = ex.getBindingResult().getFieldError();
+        String message = (fieldError != null) ? fieldError.getDefaultMessage() : "Validation failed";
+
+        return buildErrorResponse(message, HttpStatus.BAD_REQUEST);
+    }
 
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<Map<String, Object>> handleNotFound(ResourceNotFoundException ex) {
-        Map<String, Object> body = new LinkedHashMap<>();
-        body.put("timestamp", LocalDateTime.now());
-        body.put("message", ex.getMessage());
-        body.put("status", HttpStatus.NOT_FOUND.value());
+        return buildErrorResponse(ex.getMessage(), HttpStatus.NOT_FOUND);
+    }
 
-        return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
+    @ExceptionHandler(RoomTitleLinkAlreadyExistsException.class)
+    public ResponseEntity<Map<String, Object>> handleLinkAlreadyExists (RoomTitleLinkAlreadyExistsException ex){
+        return buildErrorResponse(ex.getMessage(), HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(TitleLinkSuggestionAiErrorException.class)
+    public ResponseEntity<Map<String, Object>> handleTitleLinkSuggestionAiError(TitleLinkSuggestionAiErrorException ex) {
+        return buildErrorResponse(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+    
+    @ExceptionHandler(WheelPresetAlreadyExists.class)
+    public ResponseEntity<Map<String, Object>> handleAlreadyExists(WheelPresetAlreadyExists ex) {
+        return buildErrorResponse(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(TitleWithThatMalIdAlreadyExistsException.class)
     public ResponseEntity<Map<String, Object>> handleAlreadyExists(TitleWithThatMalIdAlreadyExistsException ex) {
-        Map<String, Object> body = new LinkedHashMap<>();
-        body.put("timestamp", LocalDateTime.now());
-        body.put("message", ex.getMessage());
-        body.put("status", HttpStatus.NOT_FOUND.value());
-
-        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+        return buildErrorResponse(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(CharacterWithThatMalIdAlreadyExistsException.class)
+    public ResponseEntity<Map<String, Object>> handleCharacterAlreadyExists(CharacterWithThatMalIdAlreadyExistsException ex) {
+        return buildErrorResponse(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(RoomSelfBanException.class)
+    public ResponseEntity<Map<String, Object>> handleRoomSelfBan(RoomSelfBanException ex) {
+        return buildErrorResponse(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(UserFavoriteTitlesLimitReachedException.class)
+    public ResponseEntity<Map<String, Object>> hanleUserFavoriteTitlesLimitReached(UserFavoriteTitlesLimitReachedException ex) {
+        return buildErrorResponse(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(UserFavoriteTitlePositionOccupiedException.class)
+    public ResponseEntity<Map<String, Object>> handleUserFavoriteTitlePositionOccupied(UserFavoriteTitlePositionOccupiedException ex) {
+        return buildErrorResponse(ex.getMessage(), HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(UserFavoriteCharactersLimitReachedException.class)
+    public ResponseEntity<Map<String, Object>> hanleUserFavoriteCharactersLimitReached(UserFavoriteCharactersLimitReachedException ex) {
+        return buildErrorResponse(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(UserFavoriteCharacterPositionOccupiedException.class)
+    public ResponseEntity<Map<String, Object>> handleUserFavoriteCharacterPositionOccupied(UserFavoriteCharacterPositionOccupiedException ex) {
+        return buildErrorResponse(ex.getMessage(), HttpStatus.CONFLICT);
+    }
+
+     @ExceptionHandler(SelfRoomInviteException.class)
+    public ResponseEntity<Map<String, Object>> handleSelfRoomInvite(SelfRoomInviteException ex) {
+        return buildErrorResponse(ex.getMessage(), HttpStatus.CONFLICT);
+    }
     @ExceptionHandler(FriendshipConflictException.class)
     public ResponseEntity<Map<String, Object>> handleFriendshipConflict(FriendshipConflictException ex) {
-        Map<String, Object> body = new LinkedHashMap<>();
-        body.put("timestamp", LocalDateTime.now());
-        body.put("message", ex.getMessage());
-        body.put("status", HttpStatus.CONFLICT.value());
+        return buildErrorResponse(ex.getMessage(), HttpStatus.CONFLICT);
+    }
 
-        return new ResponseEntity<>(body, HttpStatus.CONFLICT);
+    @ExceptionHandler(RoomMembersConflictException.class)
+    public ResponseEntity<Map<String, Object>> handleRoomMembersConflict(RoomMembersConflictException ex) {
+        return buildErrorResponse(ex.getMessage(), HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler(SelfFriendRequestException.class)
     public ResponseEntity<Map<String, Object>> handleSelfFriendRequest(SelfFriendRequestException ex) {
-        Map<String, Object> body = new LinkedHashMap<>();
-        body.put("timestamp", LocalDateTime.now());
-        body.put("message", ex.getMessage());
-        body.put("status", HttpStatus.BAD_REQUEST.value());
-
-        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+        return buildErrorResponse(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
     
+    @ExceptionHandler(AccessDeniedException.class)
+    public  ResponseEntity<Map<String, Object>> handleAccessDenied(AccessDeniedException ex){
+        return buildErrorResponse(ex.getMessage(), HttpStatus.FORBIDDEN);
+    }
+
     @ExceptionHandler(HttpClientErrorException.class)
     public ResponseEntity<Map<String, Object>> handleHttpClientError(HttpClientErrorException ex) {
-        Map<String, Object> body = new LinkedHashMap<>();
-        body.put("timestamp", LocalDateTime.now());
-        body.put("status", ex.getStatusCode().value());
-
         if (ex.getStatusCode().value() == 402) {
-            body.put("message", "AI transaltion Service: Limit exhausted");
-            return new ResponseEntity<>(body, HttpStatus.PAYMENT_REQUIRED);
+            return buildErrorResponse("AI translation Service: Limit exhausted", HttpStatus.PAYMENT_REQUIRED);
         }
-        if(ex.getStatusCode().value() == 429){
-           body.put("message", "AI Translation Service: Daily quota or balance exhausted.");
-           return new ResponseEntity<>(body, HttpStatus.TOO_MANY_REQUESTS);
+        if (ex.getStatusCode().value() == 429) {
+            return buildErrorResponse("AI Translation Service: Daily quota or balance exhausted.", HttpStatus.TOO_MANY_REQUESTS);
         }
-        body.put("message", ex.getMessage());
-        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+        return buildErrorResponse(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
-    
+    @ExceptionHandler(DataAccessException.class)
+    public ResponseEntity<Map<String, Object>> handleDatabaseException(DataAccessException ex) {
+        log.error("Database error occurred: ", ex);
+        return buildErrorResponse("Database error occurred", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<Map<String, Object>> handleGlobalException(Exception ex) {
+        log.error("Unhandled exception occurred: ", ex);
+        return buildErrorResponse("Internal Server Error: " + ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+
+    private ResponseEntity<Map<String, Object>> buildErrorResponse(String message, HttpStatus status) {
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("timestamp", LocalDateTime.now());
+        body.put("message", message);
+        body.put("status", status.value());
+
+        return new ResponseEntity<>(body, status);
+    }
 }

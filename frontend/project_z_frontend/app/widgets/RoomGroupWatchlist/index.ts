@@ -1,0 +1,1 @@
+export { RoomGroupWatchlistTable } from "./RoomGroupWatchlistTable";

@@ -1,0 +1,78 @@
+import { useEffect, useRef } from "react";
+import { useParams } from "react-router";
+import { useRoomDetails } from "~/entities/room";
+import { ErrorScreen } from "~/shared/ui/ErrorScreen";
+import {
+  RoomDetailsSidebar,
+  useRoomTitlesQuery,
+} from "~/widgets/RoomDetailsManager";
+import { Outlet } from "react-router";
+import { useRoomDetailsFilterStore } from "~/widgets/RoomDetailsManager/store/roomDetailsFilter.store";
+import { RoomGroupWatchlistTable } from "~/widgets/RoomGroupWatchlist";
+import { useAuthStore } from "~/features/auth";
+import { LayoutWithSidebar } from "~/shared/ui/ResponsiveSidebar";
+
+export default function RoomDetailsMainPage() {
+  const { id } = useParams<{ id: string }>();
+  const roomId = id ? Number(id) : undefined;
+
+  const { resetMembers } = useRoomDetailsFilterStore();
+  const prevRoomId = useRef<string | undefined>(undefined);
+  const { room, isLoading } = useRoomDetails(roomId);
+
+
+
+  const { userId: currentUserId } = useAuthStore();
+
+  const isMember = Boolean(
+    room?.members.some((m) => m.user.userId === currentUserId)
+  );
+
+  useEffect(() => {
+    if (roomId && prevRoomId.current !== id) {
+      resetMembers();
+    }
+    prevRoomId.current = id;
+  }, [roomId, resetMembers, id]);
+
+  const allMemberIds = room?.members.map((m) => m.user.userId) ?? [];
+
+  const {
+    data: titlesData,
+    isLoading: isTitlesLoading,
+    hasNextPage,
+    isFetchingNextPage,
+    fetchNextPage,
+  } = useRoomTitlesQuery(roomId, allMemberIds, !!room);
+
+  if (!roomId) {
+    return <ErrorScreen title="Not found" message="Room with that id not found" />;
+  }
+
+  if (isLoading || !room) {
+    return (
+      <div className="p-10 text-foreground bg-background min-h-screen">
+        Loading room...
+      </div>
+    );
+  }
+
+  return (
+    <LayoutWithSidebar
+      menuButtonLabel="Room Navigation"
+      sidebar={<RoomDetailsSidebar room={room} isMember={isMember} />}
+    >
+      <div className="flex-1 min-w-0">
+        <RoomGroupWatchlistTable
+          titlesData={titlesData}
+          isLoading={isTitlesLoading}
+          hasNextPage={hasNextPage}
+          isFetchingNextPage={isFetchingNextPage}
+          fetchNextPage={fetchNextPage}
+          isMember={isMember}
+        />
+      </div>
+      <Outlet />
+    </LayoutWithSidebar>
+  );
+}

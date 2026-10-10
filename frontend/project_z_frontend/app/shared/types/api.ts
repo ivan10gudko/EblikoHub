@@ -1,4 +1,4 @@
-// for jikan
+// for externalProvider
 export interface PaginationMeta {
     last_visible_page: number;
     has_next_page: boolean;
@@ -9,6 +9,11 @@ export interface PaginationMeta {
         per_page: number;
     };
 }
+export interface SearchResponse<T> {
+    data: T[];
+    pagination: PaginationMeta;
+}
+
 //for our back
 export interface PageResponse<T> {
     content: T[];

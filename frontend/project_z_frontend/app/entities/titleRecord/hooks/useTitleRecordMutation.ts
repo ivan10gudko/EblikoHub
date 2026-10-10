@@ -1,10 +1,11 @@
-import { useMutation, useQueryClient, type InfiniteData } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { titleRecordService, type CreateTitleRecord, type TitleRecord } from "~/entities/titleRecord";
+import { checkAuthAndRun } from "~/shared/helpers";
 import { notify } from "~/shared/lib";
 import { getSessionUserId } from "~/shared/lib/supabase";
-import type { PageResponse, Rating } from "~/shared/types";
+import type { Rating } from "~/shared/types";
 import { Status } from "~/shared/types/Status";
-
+import { getErrorMessage } from "~/shared/utils";
 
 export const useTitleRecordMutation = (apiTitleId: number | undefined, initialData: CreateTitleRecord, existingTitleRecord?: TitleRecord | null) => {
     const queryClient = useQueryClient();
@@ -15,36 +16,21 @@ export const useTitleRecordMutation = (apiTitleId: number | undefined, initialDa
 
     const mutationConfig = {
         onSuccess: (updatedRecord: TitleRecord | null) => {
-            queryClient.setQueryData(queryKey, updatedRecord);
-            if (updatedRecord) {
-                queryClient.setQueriesData<InfiniteData<PageResponse<TitleRecord>>>(
-                    { queryKey: ['titles'] },
-                    (oldData) => {
-                        if (!oldData) return oldData;
 
-                        return {
-                            ...oldData,
-                            pages: oldData.pages.map((page) => ({
-                                ...page,
-                                content: page.content.map((item) =>
-                                    item.titleId === updatedRecord.titleId ? updatedRecord : item
-                                ),
-                            })),
-                        };
-                    }
-                );
-            }
+            queryClient.invalidateQueries({ queryKey: ['titles'] });
+            queryClient.invalidateQueries({ queryKey: ['titleRecord'] });
         },
         onSettled: () => {
             queryClient.invalidateQueries({ queryKey: queryKey });
         },
-        onError: (error: any) => {
-            const message = error.response?.data?.message || "Something went wrong";
-            notify.error(message);
+        onError: (error: unknown) => {
+            notify.error(getErrorMessage(error, "Something went wrong"));
+
         },
     };
 
     const getCache = () => queryClient.getQueryData<TitleRecord>(queryKey) || existingTitleRecord;
+
     const rateMutation = useMutation({
         mutationFn: (score: number | Rating) =>
             titleRecordService.rate({ apiTitleId, score, initialData, existingTitle: getCache() }),
@@ -68,29 +54,19 @@ export const useTitleRecordMutation = (apiTitleId: number | undefined, initialDa
     const deleteMutation = useMutation({
         mutationFn: (titleId: number) => titleRecordService.delete(titleId),
         onSuccess: () => {
-            queryClient.setQueryData(queryKey, null);
+            queryClient.invalidateQueries({ queryKey: ['titles'] });
+            queryClient.invalidateQueries({ queryKey: ['titleRecord'] });
         },
-        onSettled: () => {
-            queryClient.invalidateQueries({ queryKey: queryKey });
-        },
-        onError: (error: any) => {
-            const message = error.response?.data?.message || "Something went wrong";
-            notify.error(message);
+        onError: (error: unknown) => {
+            notify.error(getErrorMessage(error, "Something went wrong"));
         },
     });
 
-    const checkAuthAndRun = async (action: () => void) => {
-        const userId = await getSessionUserId();
-        if (!userId) {
-            notify.error("Please sign in first to perform this action")
-            return;
-        }
-        action();
-    };
 
     return {
         updateStatus: (status: Status) => checkAuthAndRun(() => statusMutation.mutate(status)),
-        rate: (score: number | Rating) => checkAuthAndRun(() => rateMutation.mutate(score)),
+        rate: (score: number | Rating, options?: Parameters<typeof rateMutation.mutate>[1]) =>
+            checkAuthAndRun(() => rateMutation.mutate(score, options)),
         clearRate: () => checkAuthAndRun(() => clearRateMutation.mutate()),
         deleteTitle: (titleId: number) => checkAuthAndRun(() => deleteMutation.mutate(titleId)),
         moveToPlanned: () => checkAuthAndRun(() => statusMutation.mutate(Status.PLANNED)),

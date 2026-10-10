@@ -1,71 +1,89 @@
 package project_z.demo.services.impl;
 
-import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Arrays;
+import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import jakarta.transaction.Transactional;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import lombok.RequiredArgsConstructor;
+import project_z.demo.Events.EventDtos.TitleEvent.TitleCreatedEvent;
+import project_z.demo.Events.EventDtos.TitleEvent.TitleDeletedEvent;
+import project_z.demo.Events.EventDtos.TitleEvent.TitlePositionUpdatedEvent;
+import project_z.demo.Events.EventDtos.TitleEvent.TitleUpdatedEvent;
 import project_z.demo.JavaUtil.BeanUtilsHelper;
 import project_z.demo.JavaUtil.PagingHelper;
 import project_z.demo.JavaUtil.PatchHelper;
 import project_z.demo.Mappers.Mapper;
+import project_z.demo.Mappers.impl.TitleMappers.TitleShortWithLinksToRoomTitleMapper;
+import project_z.demo.Mappers.impl.TitleMappers.TitleStatsMapper;
 import project_z.demo.common.Exceptions.ResourceNotFoundException;
 import project_z.demo.common.Exceptions.TitleWithThatMalIdAlreadyExistsException;
 import project_z.demo.common.QueryParameters.TitleQueryParameters;
 import project_z.demo.dto.TitleDtos.SameCriteriaRatingResponse;
 import project_z.demo.dto.TitleDtos.TargetTitleContext;
 import project_z.demo.dto.TitleDtos.TitleBatchCreateDto;
+import project_z.demo.dto.TitleDtos.TitleDeletedEventDto;
 import project_z.demo.dto.TitleDtos.TitleDto;
 import project_z.demo.dto.TitleDtos.TitlePatchUpdateDto;
+import project_z.demo.dto.TitleDtos.TitlePositionUpdateDto;
+import project_z.demo.dto.TitleDtos.TitlePositionUpdateEventDto;
+import project_z.demo.dto.TitleDtos.TitleSameCriteriaDto;
 import project_z.demo.dto.TitleDtos.TitleShortDto;
+import project_z.demo.dto.TitleDtos.TitleShortWithLinksToRoomTitleDto;
+import project_z.demo.dto.TitleDtos.TitleStatsDto;
+import project_z.demo.entity.RoomTitleLinkEntity;
 import project_z.demo.entity.SeasonEntity;
 import project_z.demo.entity.TitleEntity;
 import project_z.demo.entity.UserEntity;
 import project_z.demo.enums.TitleStatus;
+import project_z.demo.enums.TitleType;
 import project_z.demo.repositories.Specifications.TitleSpecifications;
+import project_z.demo.repositories.RoomTitleLinkRepository;
 import project_z.demo.repositories.TitleRepository;
 import project_z.demo.repositories.UserRepository;
 import project_z.demo.security.JwtService;
+import project_z.demo.services.RoomTitleLinkService;
 import project_z.demo.services.SeasonService;
 import project_z.demo.services.TitleService;
 import org.springframework.data.domain.Sort;
 
 @Service
+@RequiredArgsConstructor
 public class TitleServiceImpl implements TitleService {
 
     private final TitleSeachServiceImpl titleSeachServiceImpl;
     private final SeasonService seasonService;
     private final PatchHelper patchHelper;
+    private final TitleStatsMapper titleStatsMapper;
+    private final Mapper<TitleEntity, TitleShortDto> titleShortMapper;
+    private final RoomTitleLinkRepository roomTitleLinkRepository;
+    private final TitleShortWithLinksToRoomTitleMapper titleShortWithLinksToRoomTitleMapper;
+    private final ApplicationEventPublisher eventPublisher;
 
-    @Autowired
-    private BeanUtilsHelper beanUtilsHelper;
-    @Autowired
-    private TitleRepository titleRepository;
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private JwtService jwtService;
-    @Autowired
-    private Mapper<TitleEntity, TitleDto> titleMapper;
+    @PersistenceContext
+    private EntityManager entityManager;
 
-    TitleServiceImpl(SeasonService seasonService, TitleSeachServiceImpl titleSeachServiceImpl,
-            PatchHelper patchHelper) {
-        this.seasonService = seasonService;
-        this.titleSeachServiceImpl = titleSeachServiceImpl;
-        this.patchHelper = patchHelper;
-    }
+    private final BeanUtilsHelper beanUtilsHelper;
+    private final TitleRepository titleRepository;
+    private final UserRepository userRepository;
+    private final JwtService jwtService;
+    private final Mapper<TitleEntity, TitleDto> titleMapper;
 
     @Override
     public TitleEntity createTitle(TitleEntity title) {
@@ -96,8 +114,9 @@ public class TitleServiceImpl implements TitleService {
     }
 
     @Override
-    public Optional<TitleEntity> findOne(Long titleId) {
-        return titleRepository.findById(titleId);
+    public TitleDto findOne(Long titleId) {
+        return titleMapper.mapTo(titleRepository.findById(titleId).orElseThrow(
+                () -> new ResourceNotFoundException("Title not found")));
     }
 
     @Override
@@ -139,39 +158,90 @@ public class TitleServiceImpl implements TitleService {
     }
 
     @Override
+    public Page<TitleDto> findAllWithLinksByUserIdAndRoomId(TitleQueryParameters params,
+            UUID userId, long roomId) {
+        Pageable pageable = PagingHelper.toPageable(params);
+
+        Specification<TitleEntity> spec = Specification
+                .where(TitleSpecifications.belongsToUser(userId))
+                .and(TitleSpecifications.hasStatus(params.getStatus()))
+                .and(TitleSpecifications.hasName(params.getSearch()))
+                .and(TitleSpecifications.hasTitleTypes(params.getTypes()))
+                .and(TitleSpecifications.notLinkedToRoom(roomId, userId));
+
+        Pageable finalPageable;
+        boolean isAvgSort = "avgRating".equals(params.getSortBy());
+
+        if (isAvgSort) {
+            spec = spec.and(TitleSpecifications.sortByAvgRating(params.getOrder()));
+            finalPageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.unsorted());
+        } else if ("rating".equals(params.getSortBy())) {
+            spec = spec.and(TitleSpecifications.sortByRating(params.getOrder()));
+            finalPageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.unsorted());
+        } else {
+            Sort finalSort = Sort.by(Sort.Direction.DESC, "isPinned").and(pageable.getSort());
+            finalPageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), finalSort);
+        }
+
+        Page<TitleEntity> titlesPage = titleRepository.findAll(spec, finalPageable);
+
+        return titlesPage.map(title -> titleMapper.mapTo(title));
+    }
+
+    @Override
     public boolean isExists(Long titleId) {
         return titleRepository.existsById(titleId);
     }
 
     @Override
     @Transactional
-    public TitleEntity partialUpdate(Long titleId, TitlePatchUpdateDto source) {
-        return titleRepository.findById(titleId)
-                .map(target -> {
-                    patchHelper.updateIfPresent(source.getApiTitleId(), target::setApiTitleId);
-                    patchHelper.updateIfPresent(source.getTitleName(), target::setTitleName);
-                    patchHelper.updateIfPresent(source.getStatus(), target::setStatus);
-                    patchHelper.updateIfPresent(source.getTitleType(), target::setTitleType);
-                    patchHelper.updateIfPresent(source.getRating(), target::setRating);
-                    patchHelper.updateIfPresent(source.getCustomOrder(), target::setCustomOrder);
-                    patchHelper.updateIfPresent(source.getImageUrl(), target::setImageUrl);
-                    return titleRepository.save(target);
-                })
+    public TitleDto partialUpdate(Long titleId, TitlePatchUpdateDto source) {
+        TitleEntity titleEntity = titleRepository.findById(titleId)
                 .orElseThrow(() -> new ResourceNotFoundException("Title not found"));
+
+        patchHelper.updateIfPresent(source.getApiTitleId(), titleEntity::setApiTitleId);
+        patchHelper.updateIfPresent(source.getTitleName(), titleEntity::setTitleName);
+        patchHelper.updateIfPresent(source.getStatus(), titleEntity::setStatus);
+        patchHelper.updateIfPresent(source.getTitleType(), titleEntity::setTitleType);
+        patchHelper.updateIfPresent(source.getRating(), titleEntity::setRating);
+        patchHelper.updateIfPresent(source.getCustomOrder(), titleEntity::setCustomOrder);
+        patchHelper.updateIfPresent(source.getImageUrl(), titleEntity::setImageUrl);
+        patchHelper.updateIfPresent(source.getDescription(), titleEntity::setDescription);
+
+        titleRepository.saveAndFlush(titleEntity);
+        entityManager.refresh(titleEntity);
+        TitleDto updatedDto = titleMapper.mapTo(titleEntity);
+        eventPublisher.publishEvent(new TitleUpdatedEvent(titleEntity.getUser().getUserId(), updatedDto));
+        return updatedDto;
     }
 
     @Override
     @Transactional
-    public void titlePositionUpdate(Double newPosition, Long titleId) {
+    public void titlePositionUpdate(TitlePositionUpdateDto titleDto, Long titleId) {
         TitleEntity titleEntity = titleRepository.findById(titleId).orElseThrow(
                 () -> new ResourceNotFoundException("title not found"));
-        titleEntity.setCustomOrder(newPosition);
+        titleEntity.setCustomOrder(titleDto.getCustomOrder());
         titleRepository.save(titleEntity);
+
+        TitlePositionUpdateEventDto eventDto = new TitlePositionUpdateEventDto(
+                titleId,
+                titleDto.getCustomOrder(),
+                titleDto.getNewIndex(),
+                titleDto.getSortMode());
+        eventPublisher.publishEvent(new TitlePositionUpdatedEvent(titleEntity.getUser().getUserId(), eventDto));
     }
 
     @Override
+    @Transactional
     public void deleteById(Long id) {
-        titleRepository.deleteById(id);
+        TitleEntity titleEntity = titleRepository.findById(id).orElse(null);
+        if (titleEntity != null) {
+            UUID userId = titleEntity.getUser().getUserId();
+            titleRepository.deleteById(id);
+
+            TitleDeletedEventDto deleteDto = new TitleDeletedEventDto(id);
+            eventPublisher.publishEvent(new TitleDeletedEvent(userId, deleteDto));
+        }
     }
 
     @Override
@@ -188,24 +258,31 @@ public class TitleServiceImpl implements TitleService {
                 });
 
         titleEntity.setUser(userEntity);
-        return titleRepository.save(titleEntity);
+        TitleEntity savedTitle = titleRepository.save(titleEntity);
+
+        TitleDto createdDto = titleMapper.mapTo(savedTitle);
+        eventPublisher.publishEvent(new TitleCreatedEvent(userId, createdDto));
+
+        return savedTitle;
     }
 
     @Override
-    public List<TitleEntity> getWatchedList(UUID userId) {
+    public List<TitleDto> getWatchedList(UUID userId) {
         UserEntity userEntity = userRepository.findById(userId).orElseThrow(
                 () -> new ResourceNotFoundException("user not found"));
         return userEntity.getTitleList().stream()
                 .filter(title -> title.getStatus() == TitleStatus.WATCHED)
+                .map(titleMapper::mapTo)
                 .toList();
     }
 
     @Override
-    public List<TitleEntity> getWatchList(UUID userId) {
+    public List<TitleDto> getWatchList(UUID userId) {
         UserEntity userEntity = userRepository.findById(userId).orElseThrow(
                 () -> new ResourceNotFoundException("user not found"));
         return userEntity.getTitleList().stream()
                 .filter(title -> title.getStatus() == TitleStatus.PLANNED)
+                .map(titleMapper::mapTo)
                 .toList();
     }
 
@@ -218,16 +295,24 @@ public class TitleServiceImpl implements TitleService {
     }
 
     @Override
-    public TitleEntity findUserTitleByMalId(Integer titleMalId, String token) {
-        UUID userId = jwtService.extractUsername(token);
-        return titleRepository.findByApiTitleIdAndUserId(titleMalId, userId)
-                .orElseThrow(() -> new ResourceNotFoundException("Title not found"));
+    public TitleEntity findOneEntity(Long titleId) {
+        return titleRepository.findById(titleId).orElseThrow(
+                () -> new ResourceNotFoundException("Title not found"));
     }
 
     @Override
-    public List<TitleEntity> findAllByMalIdInUserRooms(Integer titleMalId, String token) {
+    public TitleDto findUserTitleByMalId(Integer titleMalId, String token) {
         UUID userId = jwtService.extractUsername(token);
-        return titleRepository.findAllByApiTitleIdInUserRooms(titleMalId, userId);
+        TitleEntity title = titleRepository.findByApiTitleIdAndUserId(titleMalId, userId)
+                .orElseThrow(() -> new ResourceNotFoundException("Title not found"));
+        return titleMapper.mapTo(title);
+    }
+
+    @Override
+    public List<TitleDto> findAllByMalIdInUserRooms(Integer titleMalId, String token) {
+        UUID userId = jwtService.extractUsername(token);
+        return titleRepository.findAllByApiTitleIdInUserRooms(titleMalId, userId).stream()
+                .map(titleMapper::mapTo).collect(Collectors.toList());
     }
 
     @Override
@@ -248,9 +333,9 @@ public class TitleServiceImpl implements TitleService {
 
         List<Object[]> rows = titleRepository.findAllTitlesInLeaderboard(context);
 
-        List<TitleShortDto> titles = TitleShortDto.fromRows(rows);
+        List<TitleSameCriteriaDto> titles = TitleSameCriteriaDto.fromRows(rows);
         Float ratingSum = 0.0f;
-        for (TitleShortDto title : titles) {
+        for (TitleSameCriteriaDto title : titles) {
             ratingSum += title.getRatingValue();
 
         }
@@ -279,5 +364,21 @@ public class TitleServiceImpl implements TitleService {
     @Override
     public void unpin(UUID userId) {
         titleRepository.unpinAllTitlesForUser(userId);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public TitleStatsDto getUserTitlesStats(UUID userId) {
+        Map<TitleStatus, Long> statusCount = Arrays.stream(TitleStatus.values())
+                .collect(Collectors.toMap(s -> s, s -> 0L, (a, b) -> a, () -> new EnumMap<>(TitleStatus.class)));
+
+        Map<TitleType, Long> typeCount = Arrays.stream(TitleType.values())
+                .collect(Collectors.toMap(t -> t, t -> 0L, (a, b) -> a, () -> new EnumMap<>(TitleType.class)));
+
+        titleRepository.countByStatus(userId).forEach(obj -> statusCount.put((TitleStatus) obj[0], (Long) obj[1]));
+
+        titleRepository.countByType(userId).forEach(obj -> typeCount.put((TitleType) obj[0], (Long) obj[1]));
+
+        return titleStatsMapper.mapToDto(statusCount, typeCount);
     }
 }

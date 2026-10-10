@@ -1,3 +1,4 @@
+import { formatDate } from "~/shared/helpers";
 
 interface UserInfoProps {
     description?: string;
@@ -15,7 +16,7 @@ export const UserInfo = ({ description, createdAt }: UserInfoProps) => {
             </div>
             
             <div className="text-xs text-gray-400">
-                Joined: {createdAt ? new Date(createdAt).toLocaleDateString() : "Long ago"}
+                Joined: {formatDate(createdAt)}
             </div>
         </div>
     );

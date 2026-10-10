@@ -4,37 +4,36 @@ import AnimePageSceleton from "~/pages/animePage/ui/AnimePageSkeleton";
 import ErrorAnimePage from "~/pages/animePage/ui/ErrorAnimePage";
 import AnimeInfo from "~/widgets/AnimeInfo/AnimeInfo";
 import AnimeSidebar from "~/widgets/AnimeSidebar/AnimeSidebar";
-import { getAnimeById } from "~/entities/title/api/jikan.api";
+import { getAnimeById } from "~/entities/title/api/externalProvider.api";
 import type { Anime } from "~/entities/title/model/animeTitle.types";
 import { Suspense } from "react";
 import { AnimeSidebarSkeleton } from "~/widgets/AnimeSidebar";
 
-const AnimePage = ({id}:{id: number | undefined}) => {
-    
-    if (!id){
-        return <ErrorAnimePage />
-    }
+const AnimePage = ({ id }: { id: number | undefined }) => {
+  if (!id) {
+    return <ErrorAnimePage />;
+  }
 
-    const { isPending, error, data } = useQuery<Anime>({
-            queryKey: ["anime-page",id],
-            queryFn: () => getAnimeById(id)
-        });
+  const { isPending, error, data } = useQuery<Anime>({
+    queryKey: ["anime-page", id],
+    queryFn: () => getAnimeById(id),
+  });
 
-    if (isPending) return <AnimePageSceleton />
+  if (isPending) return <AnimePageSceleton />;
 
-    if (error){
-        console.error(error.message)
-        return <ErrorAnimePage />
-    }
+  if (error) {
+    console.error(error.message);
+    return <ErrorAnimePage />;
+  }
 
-    return (
-        <div className="sm:flex sm:gap-8 mx-auto my-8 w-[90%]  h-fit">
-            <Suspense fallback={<AnimeSidebarSkeleton/>}>
-                <AnimeSidebar data={data} />
-            </Suspense>
-            <AnimeInfo data={data} />
-        </div>
-    )
-}
+  return (
+    <div className="sm:flex sm:gap-8 mx-auto my-8 w-[90%]  h-fit">
+      <Suspense fallback={<AnimeSidebarSkeleton />}>
+        <AnimeSidebar data={data} />
+      </Suspense>
+      <AnimeInfo data={data} />
+    </div>
+  );
+};
 
 export default AnimePage;
