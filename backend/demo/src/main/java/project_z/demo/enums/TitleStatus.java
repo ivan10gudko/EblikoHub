@@ -5,5 +5,6 @@ public enum TitleStatus {
     PLANNED,
     INPROGRESS,
     DROPPED,
-    DEFAULT
+    DEFAULT,
+    UPCOMING
 }

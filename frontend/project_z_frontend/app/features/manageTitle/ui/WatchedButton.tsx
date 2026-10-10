@@ -1,9 +1,10 @@
 import LibraryAddCheckOutlinedIcon from "@mui/icons-material/LibraryAddCheckOutlined";
 import LibraryAddCheckIcon from "@mui/icons-material/LibraryAddCheck";
 import { Button } from "~/shared/ui/Button";
-import { useTitleRecordMutation, type ManageTitleRecordProps } from "../../../entities/titleRecord";
+
 import { FaSpinner } from "react-icons/fa";
 import { Status } from "~/shared/types";
+import { useTitleRecordMutation, type ManageTitleRecordProps } from "~/entities/titleRecord";
 
 const WatchedButton = ({
     initialData,

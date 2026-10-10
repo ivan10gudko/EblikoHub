@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 import lombok.Data;
-import project_z.demo.enums.FriendshipStatus;
+import project_z.demo.enums.RequestStatus;
 
 @Data
 public class FriendshipDetailsDto {
@@ -14,7 +14,7 @@ public class FriendshipDetailsDto {
     
     private UUID receiver;
 
-    private FriendshipStatus status;
+    private RequestStatus status;
 
     private LocalDateTime createdAt;
 }

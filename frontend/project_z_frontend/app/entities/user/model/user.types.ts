@@ -1,24 +1,54 @@
-import type { QueryParams } from "~/shared/types";
+import type { QueryParams, Status } from "~/shared/types";
 
-export interface UserProfile{
+export interface UserProfile {
     userId: string;
     name: string;
     nameTag: string;
     description?: string;
-    img?: string;
+    img?: string | null;
     createdAt?: string;
 }
 
-export interface CreateUserProfile{
+export interface CreateUserProfile {
     userId: string;
     name: string;
     nameTag: string;
 }
 
-export interface UpdateUserProfile{
+export interface UpdateUserProfile {
     name: string;
     description?: string;
 }
-export interface UserParams extends QueryParams{
+export interface UserParams extends QueryParams {
+   name?:string;
+}
+export interface UserShort {
+    userId: string;
+    name: string;
+    nameTag: string;
+    img?: string | null;
+}
+export interface BadgeUser {
+    id: string;
+    type: BadgeType;
+    user: UserProfile;
+}
+export enum BadgeType {
+    DEVELOPER = "DEVELOPER",
+    RESPECTED = "RESPECTED"
+}
+export interface UserDtoWithRoomBanStatus{
+    userId: string;
+    name:string;
+    nameTag:string;
+    img?:string;
+    isBanned:boolean;
+    roomBanId:string;
+}
 
+export interface UserParticipation {
+  userId: string;
+  status?: Status;
+  overallRating?: number;
+  type?: string;
 }

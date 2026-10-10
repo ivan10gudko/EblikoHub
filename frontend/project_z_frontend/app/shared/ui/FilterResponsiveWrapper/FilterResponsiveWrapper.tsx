@@ -1,5 +1,4 @@
 import FilterListIcon from "@mui/icons-material/FilterList";
-import CloseIcon from "@mui/icons-material/Close";
 import { Button } from "~/shared/ui/Button";
 import { useState, type ReactNode } from "react";
 
@@ -7,12 +6,15 @@ interface FilterResponsiveWrapperProps {
   children: ReactNode;
   pageTitle: string;
   filterTitle?: string;
+  modal?: ReactNode;
+  actionButtons?: ReactNode[];
 }
 
 export const FilterResponsiveWrapper = ({
   children,
   pageTitle,
   filterTitle = "Filters",
+  actionButtons,
 }: FilterResponsiveWrapperProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const close = () => setIsOpen(false);
@@ -23,10 +25,7 @@ export const FilterResponsiveWrapper = ({
         <h1 className="text-2xl font-black text-foreground tracking-tight">
           {pageTitle}
         </h1>
-        <Button
-          onClick={() => setIsOpen(true)}
-          className="flex items-center gap-2 bg-primary hover:bg-primary-hover text-background px-5 py-2.5 rounded-2xl shadow-md shadow-amber-200 transition-all active:scale-95"
-        >
+        <Button onClick={() => setIsOpen(true)} variant="accept" className="">
           <FilterListIcon sx={{ fontSize: 20 }} />
           <span className="font-bold text-sm">Filters</span>
         </Button>
@@ -51,20 +50,17 @@ export const FilterResponsiveWrapper = ({
           ${isOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}
         `}
         >
-          <div className="lg:hidden flex justify-between items-center p-5 border-b border-border bg-background-muted/50">
-            <span className="font-black uppercase tracking-wider text-foreground-muted text-xs">
-              {filterTitle}
-            </span>
-            <button
-              className="p-2 hover:bg-background-muted-hover rounded-xl transition-colors text-foreground-muted"
-              onClick={close}
-            >
-              <CloseIcon />
-            </button>
-          </div>
+          <div className="p-5 lg:p-0 lg:h-auto overflow-y-auto lg:overflow-visible flex flex-col gap-6">
+            <div className="lg:hidden flex justify-between items-center pt-6 p-5 border-b border-border bg-transparent"></div>
+            <div>{children}</div>
 
-          <div className="p-5 lg:p-0 h-[calc(100%-70px)] lg:h-auto overflow-y-auto lg:overflow-visible">
-            {children}
+            {actionButtons && actionButtons.length > 0 && (
+              <div className="px-5 lg:px-0 mt-auto pb-5 flex flex-col gap-2">
+                {actionButtons.map((btn, index) => (
+                  <div key={index}>{btn}</div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </aside>

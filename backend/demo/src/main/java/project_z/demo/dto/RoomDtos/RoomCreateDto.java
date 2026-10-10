@@ -16,4 +16,5 @@ import lombok.NoArgsConstructor;
 public class RoomCreateDto {
     private String roomName;
     private List<UUID> members;
+    private String imageUrl;
 }

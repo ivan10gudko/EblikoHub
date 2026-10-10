@@ -1,16 +1,22 @@
+import React from 'react';
 import { useNavigate } from "react-router";
-import { TitleTypeThemes, type TitleRecord } from "~/entities/titleRecord";
+import { ReadOnlyStatusBadge, TitleActionsMenu, TitleTypeThemes, type TitleRecord } from "~/entities/titleRecord";
 import { CompactRate } from "~/shared/ui/CompactRate";
-import { TitleActionsMenu } from "../../TitleActionsMenu";
-import { Status, statusColorConfig } from "~/shared/types/Status";
 import { useTitleFilterStore, type TitleSortType } from "~/features/titleFilter/store/titleFilter.store";
+import { useTitleChangesHighlight } from './hooks/useTitleChangesHighlight';
+import { ChangeHighlight } from '~/shared/ui/ChangeHighlight';
 
 interface WatchlistRowReadOnlyProps {
   title: TitleRecord;
+  index: number;
+  showNumber: boolean;
+  onRowClick: (title: TitleRecord) => void;
 }
 
-export const WatchlistRowReadOnly = ({ title }: WatchlistRowReadOnlyProps) => {
+export const WatchlistRowReadOnly = ({ title, index, showNumber, onRowClick }: WatchlistRowReadOnlyProps) => {
   const navigate = useNavigate();
+
+  const changedFields = useTitleChangesHighlight(title, 1000);
 
   const handleImageClick = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -20,15 +26,24 @@ export const WatchlistRowReadOnly = ({ title }: WatchlistRowReadOnlyProps) => {
   const themeClasses = title.titleType ? TitleTypeThemes[title.titleType] : "";
   const sortBy = useTitleFilterStore((state) => state.sortBy);
   const isAvgView = sortBy === "avgRating" as TitleSortType;
-  const currentStatus = (title?.status as Status) || Status.DEFAULT;
-  const config = statusColorConfig[currentStatus];
 
   return (
     <div
-      className={`flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-4 bg-card p-2 rounded-xl border transition-all duration-300 w-full min-w-0 ${themeClasses} ${title.pinned ? "border-primary/30" : ""
+      onClick={() => onRowClick(title)}
+      className={`flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-4 bg-card p-2 rounded-xl border transition-all duration-300 w-full min-w-0 cursor-pointer hover:border-border/80 ${themeClasses} ${title.pinned ? "border-primary/30" : ""
         }`}
     >
       <div className="flex items-center flex-1 gap-3 min-w-0 max-w-full">
+        {showNumber && !title.pinned && (
+          <div className="flex items-center justify-center h-10 w-6 pl-1 select-none flex-shrink-0">
+            <span translate="no" className="text-gray-400 font-bold text-sm sm:text-base">
+              {index + 1}
+            </span>
+          </div>
+        )}
+
+        {showNumber && title.pinned && <div className="w-6 pl-1 flex-shrink-0" />}
+
         <div className="relative h-10 w-16 flex-shrink-0 transition-transform duration-500 hover:scale-[3.0] hover:z-10 cursor-pointer">
           <img
             src={title.imageUrl || "/defaultTitleRecordImage.jpg"}
@@ -38,41 +53,28 @@ export const WatchlistRowReadOnly = ({ title }: WatchlistRowReadOnlyProps) => {
           />
         </div>
 
-        <div className="grid flex-1 min-w-0">
-          <span className="block truncate font-bold text-foreground uppercase text-xs sm:text-sm leading-tight w-full">
+        <ChangeHighlight isChanged={changedFields.titleName} className="grid flex-1 min-w-0 px-1">
+          <span className="block truncate font-bold text-foreground text-xs sm:text-lg leading-tight w-full">
             {title.titleName}
           </span>
-        </div>
+        </ChangeHighlight>
       </div>
 
-      <div className="flex items-center justify-between sm:justify-end gap-3 sm:w-auto mt-2 sm:mt-0 flex-shrink-0">
-        <div className="relative flex items-center flex-shrink-0 pl-7 pr-3 py-1.5 bg-transparent text-[10px] font-black uppercase tracking-wider rounded-lg border border-border min-w-[110px]">
-          {currentStatus !== Status.DEFAULT && (
-            <div
-              className={`absolute left-2.5 w-1.5 h-1.5 rounded-full z-10 pointer-events-none ${config.dot}`}
-            />
-          )}
+      <div className="flex items-center justify-between sm:justify-end gap-3 sm:w-auto mt-2 sm:mt-0 flex-shrink-0" onClick={(e) => e.stopPropagation()}>
+        <ChangeHighlight isChanged={changedFields.status}>
+          <ReadOnlyStatusBadge status={title.status} />
+        </ChangeHighlight>
 
-          <span
-            className={`transition-all select-none capitalize ${currentStatus !== Status.DEFAULT ? config.color : "text-foreground-muted"
-              }`}
-          >
-            {title.status === "INPROGRESS"
-              ? "In Progress"
-              : title.status === "WATCHED"
-                ? "Watched"
-                : (title.status || "No Status")}
-          </span>
-        </div>
-
-        <div className="pointer-events-none opacity-90 flex-shrink-0">
+        <ChangeHighlight isChanged={changedFields.rating} className="pointer-events-none opacity-90 flex-shrink-0 p-0.5">
           <CompactRate
-            currentRating={title.rating?.overall} avgRating={title.avgRating}
-            isAvgView={isAvgView} />
-        </div>
+            currentRating={title.rating?.overall}
+            avgRating={title.avgRating}
+            isAvgView={isAvgView}
+          />
+        </ChangeHighlight>
 
         <div className="flex-shrink-0 ml-1 border-l border-border pl-2">
-          <TitleActionsMenu title={title} isOwn={false} />
+          <TitleActionsMenu titleId={title.titleId} isOwn={false} />
         </div>
       </div>
     </div>

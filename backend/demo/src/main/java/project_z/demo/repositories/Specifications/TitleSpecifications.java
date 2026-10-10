@@ -9,6 +9,9 @@ import jakarta.persistence.criteria.Expression;
 import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.MapJoin;
 import jakarta.persistence.criteria.Order;
+import jakarta.persistence.criteria.Root;
+import jakarta.persistence.criteria.Subquery;
+import project_z.demo.entity.RoomTitleLinkEntity;
 import project_z.demo.entity.TitleEntity;
 import project_z.demo.enums.TitleStatus;
 import project_z.demo.enums.TitleType;
@@ -82,12 +85,10 @@ public class TitleSpecifications {
 
     public static Specification<TitleEntity> sortByAvgRating(String order) {
         return (root, query, cb) -> {
-            // Захист від COUNT-запиту пагінації.
             if (query.getResultType() == Long.class || query.getResultType() == long.class) {
                 return null;
             }
 
-            // 1. Створюємо Correlated Subquery до таблиці рейтингів
             jakarta.persistence.criteria.Subquery<Double> subquery = query.subquery(Double.class);
             jakarta.persistence.criteria.Root<TitleEntity> subRoot = subquery.correlate(root);
             MapJoin<TitleEntity, String, Float> ratings = subRoot.joinMap("rating", JoinType.LEFT);
@@ -95,33 +96,48 @@ public class TitleSpecifications {
             subquery.select(cb.avg(ratings.value()))
                     .where(cb.notEqual(ratings.key(), "overall"));
 
-            // 2. Дефолтний пріоритет для закріплених
             jakarta.persistence.criteria.Order pinnedOrder = cb.desc(root.get("isPinned"));
 
-            // 3. Обходимо відсутність .nullsLast() через cb.coalesce на рівні бази даних
             if ("desc".equalsIgnoreCase(order)) {
-                // Якщо NULL (немає оцінок) -> даємо -1.0, щоб вони впали вниз списку DESC
                 jakarta.persistence.criteria.Expression<Double> avgWithCoalesce = cb.coalesce(subquery, -1.0);
 
                 query.orderBy(
                         pinnedOrder,
                         cb.desc(avgWithCoalesce),
                         cb.asc(root.get("titleName")),
-                        cb.asc(root.get("titleId")) // Виправив на titleId з твоєї сутності
-                );
+                        cb.asc(root.get("titleId")));
             } else {
-                // Якщо NULL (немає оцінок) -> даємо 99.0, щоб вони впали вниз списку ASC
                 jakarta.persistence.criteria.Expression<Double> avgWithCoalesce = cb.coalesce(subquery, 99.0);
 
                 query.orderBy(
                         pinnedOrder,
                         cb.asc(avgWithCoalesce),
                         cb.asc(root.get("titleName")),
-                        cb.asc(root.get("titleId")) // Виправив на titleId з твоєї сутності
-                );
+                        cb.asc(root.get("titleId")));
             }
 
             return null;
+        };
+    }
+
+    public static Specification<TitleEntity> notLinkedToRoom(Long roomId, UUID userId) {
+        return (root, query, cb) -> {
+            // Ми хочемо вибрати тайтли поточного користувача
+            // які НЕ знаходяться в таблиці лінків для КОНКРЕТНОГО roomId
+
+            Subquery<Long> subquery = query.subquery(Long.class);
+            Root<RoomTitleLinkEntity> link = subquery.from(RoomTitleLinkEntity.class);
+
+            // Вибираємо ID тайтла (який лежить у полі userTitleRecord)
+            subquery.select(link.get("userTitleRecord").get("titleId"));
+
+            // ВАЖЛИВО: Join тільки до roomTitle, щоб дістати room_id
+            // НЕ джойнимося до Titles або Users всередині підзапиту, якщо це можливо
+            subquery.where(cb.and(
+                    cb.equal(link.get("roomTitle").get("room").get("id"), roomId),
+                    cb.equal(link.get("userTitleRecord").get("user").get("userId"), userId)));
+
+            return cb.not(root.get("titleId").in(subquery));
         };
     }
 }

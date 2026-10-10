@@ -7,6 +7,6 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class SameCriteriaRatingResponse {
-    private List<TitleShortDto> titles;
+    private List<TitleSameCriteriaDto> titles;
     private Float avgRating;
 }

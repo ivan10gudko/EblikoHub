@@ -1,54 +1,50 @@
 import { notify } from "~/shared/lib";
 import { validatePassword } from "../utils/validators";
 import { useNavigate } from "react-router";
-import { useState } from "react";
-import { authService } from "~/entities/session";
+import { useForm } from "~/shared/hooks";
+import { useAuthStore } from "../store/auth.store";
 
+export interface ResetPasswordData {
+    password: string;
+}
 export const useResetPassword = () => {
-    const [password, setPassword] = useState("");
-    const [error, setError] = useState<string | undefined>(undefined);
-    const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
+    const updatePassword = useAuthStore((state) => state.updatePassword);
+    const isLoading = useAuthStore((state) => state.isLoading);
 
-    const handlePasswordChange = (val: string) => {
-        setPassword(val);
-        setError(validatePassword(val));
-    };
-
-    const handleConfirmReset = async (e: React.FormEvent) => {
-        e.preventDefault();
-
-        const passwordError = validatePassword(password);
-        if (passwordError) {
-            setError(passwordError);
-            notify.error(passwordError);
-            return;
-        }
-
-        setIsLoading(true);
-        const updateNotifyId = notify.loading("Updating your password...");
-        try {
-            await authService.updatePassword(password);
-
-            notify.updateSuccess(updateNotifyId, "Password updated successfully! Please log in.");
-
-            await authService.logout();
-
-            navigate("/auth/login");
-        } catch (err) {
-            const errorMessage = err instanceof Error ? err.message : "An unexpected error occurred. Please try again.";
-            notify.updateError(updateNotifyId, errorMessage);
-        } finally {
-            setIsLoading(false);
-        }
-
-    };
+    const {
+        formData,
+        errors,
+        touched,
+        handleChange,
+        handleBlur,
+        handleSubmit,
+        getFieldStatus,
+    } = useForm<ResetPasswordData>({
+        initialValues: { password: "" },
+        validate: (name, value) => {
+            if (name === "password") return validatePassword(value);
+            return undefined;
+        },
+        onSubmit: async (values) => {
+            const updateNotifyId = notify.loading("Updating your password...");
+            try {
+                await updatePassword(values.password);
+                notify.updateSuccess(updateNotifyId, "Password updated successfully! Please log in.");
+                navigate("/auth/login");
+            } catch (err) {
+                notify.updateError(updateNotifyId, "Failed to update password");
+            }
+        },
+    });
 
     return {
-        password,
-        error,
+        password: formData.password,
+        error: touched.password ? errors.password : undefined,
         isLoading,
-        handlePasswordChange,
-        handleConfirmReset,
+        handleChange: handleChange("password"),
+        handleBlur: handleBlur("password"),
+        handleSubmit,
+        getFieldStatus: getFieldStatus("password"),
     };
 };

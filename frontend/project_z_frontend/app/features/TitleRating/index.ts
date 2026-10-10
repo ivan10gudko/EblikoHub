@@ -1,1 +1,1 @@
-export {EditRatingModal} from "./ui/EditRatingModal"
+export { EditRatingScreen } from "./ui/EditRatingScreen";

@@ -6,6 +6,5 @@ export { default as PageRate } from './ui/PageRate';
 export { default as RateCardAction } from './ui/RateCardAction';
 export { default as AddToWatchedCardAction } from './ui/AddToWatchedCardAction';
 export { default as AddToWatchlistCardAction } from './ui/AddToWatchlistCardAction';
-export {default as ManagedAnimeCard} from './ui/ManagedAnimeCard';
-export {TitleImageEditor} from "./ui/TitleImageEditor";
-export {EditTitleModal} from "./ui/EditTitleModal";
+export { default as ManagedAnimeCard } from './ui/ManagedAnimeCard';
+export { EditTitleScreen } from "./ui/EditTitleScreen";

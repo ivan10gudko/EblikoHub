@@ -1,40 +1,50 @@
-
-import { Button } from "~/shared/ui/Button";
 import { useTitleFilterStore } from "../store/titleFilter.store";
-import { Status } from "~/shared/types/Status";
+import { statusFilterStyles, statusOptionsFilters } from "~/shared/types/Status";
+import { getBackendCount } from "~/shared/helpers";
+import { StatusButton } from "~/shared/ui/StatusButton";
 
-const statusOptions = [
-  { label: "All", value: undefined },
-  { label: "In Progress", value: Status.INPROGRESS },
-  { label: "Planned", value: Status.PLANNED },
-  { label: "Watched", value: Status.WATCHED },
-  { label: "Dropped", value: Status.DROPPED },
-];
+interface StatusFilterProps {
+  statusCount?: Record<string, number>;
+}
 
-const StatusFilter = () => {
+const StatusFilter = ({ statusCount }: StatusFilterProps) => {
   const { status, setStatus } = useTitleFilterStore();
+
+  const totalTitles = statusCount
+    ? Object.values(statusCount).reduce((sum, count) => sum + count, 0)
+    : 0;
+
   return (
     <div className="flex flex-col gap-2">
       <label className="text-sm font-bold text-foreground uppercase px-1">
         Status
       </label>
       <div className="flex flex-wrap gap-2">
-        {statusOptions.map((opt) => (
-          <Button
-            variant="outline"
-            key={opt.label}
-            onClick={() => setStatus(opt.value)}
-            className={`border-none px-4 py-2 rounded-full text-sm font-semibold transition-all ${
-              (status === opt.value || (opt.value === undefined && status === undefined))
-                ? 'bg-primary text-foreground shadow-xs shadow-yellow-100'
-                : 'bg-background-muted text-foreground hover:bg-background-muted-hover hover:text-foreground-muted '
-            }`}
-          >
-            {opt.label}
-          </Button>
-        ))}
+        {statusOptionsFilters.map((s) => {
+          const styleKey = s.value ?? "ALL";
+          const styles = statusFilterStyles[styleKey];
+          const count =
+            s.value === undefined
+              ? totalTitles
+              : getBackendCount(statusCount, s.value);
+          const isActive = (status ?? undefined) === (s.value ?? undefined);
+
+          return (
+            <StatusButton
+              key={styleKey}
+              label={s.label}
+              count={count}
+              isActive={isActive}
+              onClick={() => setStatus(s.value)}
+              className={styles.text}
+              activeClassName={styles.active}
+              inactiveClassName={styles.inactive}
+            />
+          );
+        })}
       </div>
     </div>
   );
 };
+
 export default StatusFilter;

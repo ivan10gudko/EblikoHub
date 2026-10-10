@@ -4,6 +4,10 @@ import type { Providers } from "../model/session.types";
 
 export const authService = {
 
+    getSession: async () => {
+        return await supabase.auth.getSession();
+    },
+
     signUp: async (email: string, password: string) => {
         const { data, error } = await supabase.auth.signUp({
             email,
@@ -33,6 +37,16 @@ export const authService = {
 
         return data;
     },
+
+    changePassword: async (currentPassword: string, newPassword: string) => {
+        const { data, error } = await supabase.auth.updateUser({
+            password: newPassword,
+            current_password: currentPassword,//currentPassword in docks is not working, attribute name can change in future
+        });
+        if (error) throw error;
+        return data;
+    },
+
     sendPasswordResetEmail: async (email: string) => {
         const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
             redirectTo: `${window.location.origin}/auth/reset-password`,

@@ -10,19 +10,26 @@ import org.springframework.stereotype.Service;
 import project_z.demo.common.QueryParameters.RoomQueryParameters;
 import project_z.demo.dto.RoomDtos.RoomCreateDto;
 import project_z.demo.dto.RoomDtos.RoomDto;
+import project_z.demo.dto.RoomDtos.RoomSearchResultDto;
 import project_z.demo.dto.RoomDtos.RoomShortDto;
+import project_z.demo.dto.RoomDtos.RoomPatchUpdateDto;
 import project_z.demo.entity.RoomEntity;
 
 @Service
 public interface RoomService {
-RoomEntity save(RoomEntity roomEntity);
-Page<RoomShortDto> getRoomsByUserId(UUID userId, RoomQueryParameters queryParameters);
-RoomEntity partialUpdate(Long id, RoomEntity source);
-boolean isExists(Long id);
-Optional<RoomEntity> findOne(Long titleId);
-void deleteById(Long id);
-RoomEntity addMembersToRoom(Long roomId, List<UUID> userIds);
-void deleteMembers(Long roomId, List<UUID> userIds);
-RoomDto createRoom(String token, RoomCreateDto dto);
-void leaveRoom(UUID userId, Long roomId);
+    RoomEntity save(RoomEntity roomEntity);
+
+    Page<RoomShortDto> getRoomsByUserId(UUID userId, RoomQueryParameters queryParameters);
+
+    boolean isExists(Long id);
+
+    RoomDto findOne(Long titleId);
+
+    void deleteById(Long id);
+
+    RoomDto createRoom(String token, RoomCreateDto dto);
+
+    Page<RoomSearchResultDto> findRoomsByName(String roomName, RoomQueryParameters queryParameters);
+
+    RoomDto roomPartialUpdate(RoomPatchUpdateDto source, Long roomId);
 }

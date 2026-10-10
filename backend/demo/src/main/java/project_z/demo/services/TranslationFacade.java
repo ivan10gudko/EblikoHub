@@ -4,5 +4,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public interface TranslationFacade {
-    String translateToEnglish(String rawTitle);
+    String translateAnimeTitle(String rawTitle);
+
+    String translateCharacterName(String rawName);
 }

@@ -1,14 +1,16 @@
 package project_z.demo.config;
 
-import java.util.Collection;
 
-import org.modelmapper.Converter;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import project_z.demo.dto.RoomDtos.RoomDto;
 import project_z.demo.dto.RoomDtos.RoomShortDto;
+
 import project_z.demo.entity.RoomEntity;
+
 
 @Configuration
 public class MapperConfig {
@@ -17,18 +19,14 @@ public class MapperConfig {
     public ModelMapper modelMapper() {
         ModelMapper mapper = new ModelMapper();
 
-        Converter<Collection<?>, Long> collectionSizeConverter = context -> context.getSource() != null
-                ? (long) context.getSource().size()
-                : 0L;
-
         mapper.typeMap(RoomEntity.class, RoomShortDto.class).addMappings(m -> {
-
-            m.using(collectionSizeConverter)
-                    .map(RoomEntity::getMembers, RoomShortDto::setUsersCount);
-
-            m.map(src -> src.getOwner().getUserId(), RoomShortDto::setOwnerId);
+            m.map(RoomEntity::getMemberCount, RoomShortDto::setUsersCount);
+            m.skip(RoomShortDto::setOwner);
         });
-
+        mapper.createTypeMap(RoomEntity.class, RoomDto.class)
+                .addMappings(m -> {
+                    m.map(src -> src.getOwner().getUserId(), RoomDto::setOwner);
+                });
         return mapper;
     }
 }

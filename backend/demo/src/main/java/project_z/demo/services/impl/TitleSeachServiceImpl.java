@@ -9,21 +9,22 @@ import org.springframework.web.client.RestTemplate;
 
 import lombok.RequiredArgsConstructor;
 import project_z.demo.config.MyConfig;
-import project_z.demo.services.TitleSearchService;
+import project_z.demo.services.SearchService;
 
 @Service
 @RequiredArgsConstructor
-public class TitleSeachServiceImpl implements TitleSearchService {
-  private final MyConfig myConfig;
-  private final RestTemplate restTemplate = new RestTemplate();
+public class TitleSeachServiceImpl implements SearchService<String> {
+    private final MyConfig myConfig;
+    private final RestTemplate restTemplate = new RestTemplate();
 
-  @Override
-  public String searchTitle(String text, int page){
-    String apiBaseUrl = myConfig.getAnimeApiBaseUrl();
+    @Override
+    public String search(String text, int page) {
+        String apiBaseUrl = myConfig.getAnimeApiBaseUrl();
 
-    String encodedText = URLEncoder.encode(text, StandardCharsets.UTF_8);
-    String url = apiBaseUrl + "/anime?q=" + encodedText + "&limit=24" + "&page=" + page;
+        String encodedText = URLEncoder.encode(text, StandardCharsets.UTF_8);
+        String url = apiBaseUrl + "/anime?q=" + encodedText + "&limit=24" + "&page=" + page;
 
-    return restTemplate.getForObject(url, String.class);
-  }
+        return restTemplate.getForObject(url, String.class);
+    }
+
 }

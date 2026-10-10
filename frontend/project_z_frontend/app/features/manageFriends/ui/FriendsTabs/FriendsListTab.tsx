@@ -1,41 +1,52 @@
 
 import type { UserProfile } from "~/entities/user";
-import { FriendCard } from "../FriendCard";
+import { FriendCard } from "../FriendCards/FriendCard";
 import type { FriendActionType, FriendCardVariant } from "../../types/friends.types";
+import type { FriendRequestDto } from "~/entities/friendship";
+import { ReadOnlyFriendCard } from "../FriendCards/FriendReadOnlyCard";
 
 interface FriendsListTabProps {
-    friends: (UserProfile & { friendshipId?: string })[];
+    friends: FriendRequestDto[];
     isPendingAction: boolean;
     onAction?: (actionType: FriendActionType, id: string) => void;
-    variant?: FriendCardVariant; 
+    variant?: FriendCardVariant;
+    isOwn?: boolean;
 }
 
-export const FriendsListTab = ({ 
-    friends, 
-    isPendingAction, 
-    onAction, 
-    variant = "friends"
+export const FriendsListTab = ({
+    friends,
+    isPendingAction,
+    onAction,
+    variant = "friends",
+    isOwn = true
 }: FriendsListTabProps) => {
-    
     if (friends.length === 0) {
         return (
-            <div className="text-center py-8 text-foreground/50 font-medium">
-                No friends found.
-            </div>
+            <h1 className="text-primary">
+                you dont have friends :(
+            </h1>
         );
     }
-
     return (
         <div className="grid grid-cols-1 gap-4">
-            {friends.map((friend) => (
-                <FriendCard
-                    key={friend.userId}
-                    user={friend}
-                    variant={variant} 
-                    onAction={onAction}
-                    isPendingAction={isPendingAction}
-                />
-            ))}
+            {friends.map((item) => {
+                const userData = { ...item.user, friendshipId: item.friendshipId };
+
+                return isOwn ? (
+                    <FriendCard
+                        key={item.user.userId}
+                        user={userData}
+                        variant={variant}
+                        onAction={onAction}
+                        isPendingAction={isPendingAction}
+                    />
+                ) : (
+                    <ReadOnlyFriendCard
+                        key={item.user.userId}
+                        user={userData}
+                    />
+                );
+            })}
         </div>
     );
 };
