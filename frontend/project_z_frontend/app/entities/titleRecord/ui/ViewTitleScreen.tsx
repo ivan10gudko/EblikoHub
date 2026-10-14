@@ -22,21 +22,21 @@ interface ViewTitleScreenProps {
   onEditClick?: () => void;
   isOwn?: boolean;
 }
-
 const useViewTitleChangesHighlight = (title?: TitleRecord | null, duration = 2000) => {
-  const watchedData = useMemo(() => ({
-    titleName: title?.titleName,
-    status: title?.status,
-    rating: title?.rating?.overall,
-    type: title?.titleType,
-    description: title?.description,
-  }), [
-    title?.titleName,
-    title?.status,
-    title?.rating?.overall,
-    title?.titleType,
-    title?.description,
-  ]);
+  const titleName = title?.titleName;
+  const status = title?.status;
+  const rating = title?.rating?.overall;
+  const type = title?.titleType;
+  const description = title?.description;
+  const hasTitle = !!title;
+
+  const watchedData = useMemo(
+    () =>
+      hasTitle
+        ? { titleName, status, rating, type, description }
+        : undefined,
+    [hasTitle, titleName, status, rating, type, description]
+  );
 
   return useChangesHighlight(
     watchedData,

@@ -9,11 +9,10 @@ import { useEffect } from "react";
 
 export default function EditTitleRoute() {
   const navigate = useNavigate();
-  const { titleId, userId } = useParams();
+  const { titleId } = useParams();
   const { data: title, isLoading } = useTitleById(Number(titleId));
   const currentUserId = useAuthStore((state) => state.userId);
-  const isOwn = Boolean(currentUserId && currentUserId === userId);
-
+  const isOwn = Boolean(currentUserId && currentUserId === title?.userId);
   useEffect(() => {
     if (!isLoading && title && !isOwn) {
       notify.error("You are not an owner!");

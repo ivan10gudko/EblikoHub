@@ -9,6 +9,7 @@ export interface TitleRecord {
     rating?: Rating,
     status: Status,
     titleType: TitleType,
+    userId:string,
     description: string;
     imageUrl?: string | null,
     customOrder: number,

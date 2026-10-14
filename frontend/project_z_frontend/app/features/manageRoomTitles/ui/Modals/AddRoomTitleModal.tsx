@@ -29,10 +29,13 @@ export const AddRoomTitleScreen = ({ onClose, roomId }: AddRoomTitleScreenProps)
       apiTitleId: Number(formData.apiTitleId || 0),
       titleType: formData.titleType,
       imageUrl: formData.imageUrl,
-    });
-    notify.success("Added to room!");
-    setImportedData(undefined);
-    onClose();
+    }),
+    {
+      onSuccess: () => {
+        setImportedData(undefined);
+        onClose();
+      },
+    }
   };
 
   const handleClose = () => {

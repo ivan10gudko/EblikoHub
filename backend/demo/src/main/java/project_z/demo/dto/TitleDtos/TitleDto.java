@@ -2,6 +2,7 @@ package project_z.demo.dto.TitleDtos;
 
 import java.time.LocalDateTime;
 import java.util.Map;
+import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
@@ -32,7 +33,7 @@ public class TitleDto {
     private String imageUrl;
     private boolean isPinned;
     private LocalDateTime createdAt;
-
+    private UUID userId;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private Double avgRating;
 

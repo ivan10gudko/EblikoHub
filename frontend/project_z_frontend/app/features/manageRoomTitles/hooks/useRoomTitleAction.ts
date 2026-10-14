@@ -13,19 +13,19 @@ export const useRoomTitleActions = (roomId: number) => {
 
   const mutationConfig = {
     onSuccess: () => {
-      queryClient.invalidateQueries({ 
-        queryKey: [...roomTitleKeys.all, roomId], 
-        exact: false 
+      queryClient.invalidateQueries({
+        queryKey: [...roomTitleKeys.all, roomId],
+        exact: false
       });
 
-      queryClient.invalidateQueries({ 
-        queryKey: withLinksQueryKey, 
-        exact: false 
+      queryClient.invalidateQueries({
+        queryKey: withLinksQueryKey,
+        exact: false
       });
 
-      queryClient.invalidateQueries({ 
-        queryKey: ['room-links', roomId], 
-        exact: false 
+      queryClient.invalidateQueries({
+        queryKey: ['room-links', roomId],
+        exact: false
       });
     },
 
@@ -46,14 +46,14 @@ export const useRoomTitleActions = (roomId: number) => {
         { queryKey: withLinksQueryKey, exact: false },
         (oldData) => {
           if (!oldData) return undefined;
-          
+
           const optimisticTitle: RoomTitleWithUserLinks = {
             id: "temp-title-id-" + Date.now(),
             titleName: newTitleData.titleName || "New Title",
             imageUrl: newTitleData.imageUrl || "",
             titleType: newTitleData.titleType,
             apiTitleId: newTitleData.apiTitleId || 0,
-            addedByUserId: "", // Можна залишити пустим для тимчасового об'єкта
+            addedByUserId: "",
             links: [],
             createdAt: new Date().toISOString(),
           };
@@ -67,7 +67,9 @@ export const useRoomTitleActions = (roomId: number) => {
         }
       );
     },
-
+    onSuccess: () => {
+      notify.success("Room title added!");
+    },
     onError: (error, _data, _context) => {
       queryClient.invalidateQueries({ queryKey: withLinksQueryKey, exact: false });
       queryClient.invalidateQueries({ queryKey: [...roomTitleKeys.all, roomId], exact: false });

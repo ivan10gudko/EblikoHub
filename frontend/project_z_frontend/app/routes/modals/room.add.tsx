@@ -10,7 +10,7 @@ export default function RoomAddRoute() {
     const step = Math.min(Math.max(Number.isNaN(rawStep) ? 1 : rawStep, 1), 2);
 
     const handleClose = () => {
-        navigate(-1);
+        navigate("..");
     };
 
     const handleStepChange = (newStep: number) => {

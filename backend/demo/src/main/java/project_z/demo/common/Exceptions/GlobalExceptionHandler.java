@@ -41,13 +41,26 @@ public class GlobalExceptionHandler {
         return buildErrorResponse(message, HttpStatus.BAD_REQUEST);
     }
 
+
+    @ExceptionHandler(org.springframework.dao.DataIntegrityViolationException.class)
+    public ResponseEntity<Map<String, Object>> handleDataIntegrityViolation(org.springframework.dao.DataIntegrityViolationException ex) {
+        String message = ex.getMostSpecificCause().getMessage();
+
+        if (message != null && message.contains("uk_room_title_mal_id")) {
+            return buildErrorResponse("Title with that mal id already exists", HttpStatus.CONFLICT);
+        }
+
+        log.error("Database integrity error occurred: ", ex);
+        return buildErrorResponse("Database error occurred", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<Map<String, Object>> handleNotFound(ResourceNotFoundException ex) {
         return buildErrorResponse(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(RoomTitleLinkAlreadyExistsException.class)
-    public ResponseEntity<Map<String, Object>> handleLinkAlreadyExists (RoomTitleLinkAlreadyExistsException ex){
+    public ResponseEntity<Map<String, Object>> handleLinkAlreadyExists(RoomTitleLinkAlreadyExistsException ex) {
         return buildErrorResponse(ex.getMessage(), HttpStatus.CONFLICT);
     }
 
@@ -55,7 +68,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Map<String, Object>> handleTitleLinkSuggestionAiError(TitleLinkSuggestionAiErrorException ex) {
         return buildErrorResponse(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
-    
+
     @ExceptionHandler(WheelPresetAlreadyExists.class)
     public ResponseEntity<Map<String, Object>> handleAlreadyExists(WheelPresetAlreadyExists ex) {
         return buildErrorResponse(ex.getMessage(), HttpStatus.BAD_REQUEST);
@@ -96,10 +109,11 @@ public class GlobalExceptionHandler {
         return buildErrorResponse(ex.getMessage(), HttpStatus.CONFLICT);
     }
 
-     @ExceptionHandler(SelfRoomInviteException.class)
+    @ExceptionHandler(SelfRoomInviteException.class)
     public ResponseEntity<Map<String, Object>> handleSelfRoomInvite(SelfRoomInviteException ex) {
         return buildErrorResponse(ex.getMessage(), HttpStatus.CONFLICT);
     }
+
     @ExceptionHandler(FriendshipConflictException.class)
     public ResponseEntity<Map<String, Object>> handleFriendshipConflict(FriendshipConflictException ex) {
         return buildErrorResponse(ex.getMessage(), HttpStatus.CONFLICT);
@@ -114,9 +128,9 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Map<String, Object>> handleSelfFriendRequest(SelfFriendRequestException ex) {
         return buildErrorResponse(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
-    
+
     @ExceptionHandler(AccessDeniedException.class)
-    public  ResponseEntity<Map<String, Object>> handleAccessDenied(AccessDeniedException ex){
+    public ResponseEntity<Map<String, Object>> handleAccessDenied(AccessDeniedException ex) {
         return buildErrorResponse(ex.getMessage(), HttpStatus.FORBIDDEN);
     }
 
