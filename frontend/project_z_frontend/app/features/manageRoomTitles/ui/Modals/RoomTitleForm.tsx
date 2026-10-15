@@ -7,7 +7,7 @@ import TitleTypeSelect from "~/entities/titleRecord/ui/TitleTypeSelect";
 
 export interface RoomTitleFormData {
   titleName: string;
-  apiTitleId?: string | number | null;
+  apiTitleId?: number | null;
   imageUrl: string | null;
   titleType: TitleType;
 }
@@ -23,7 +23,7 @@ interface RoomTitleFormProps {
 
 const DEFAULT_FORM_VALUES: RoomTitleFormData = {
   titleName: "",
-  apiTitleId: "",
+  apiTitleId: null,
   imageUrl: null,
   titleType: TitleType.ANIME,
 };

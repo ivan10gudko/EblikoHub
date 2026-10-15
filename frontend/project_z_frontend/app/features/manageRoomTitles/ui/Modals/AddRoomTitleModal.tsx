@@ -17,27 +17,29 @@ export const AddRoomTitleScreen = ({ onClose, roomId }: AddRoomTitleScreenProps)
   const handleImport = (anime: AnimeCardType) => {
     setImportedData({
       titleName: anime.title,
-      apiTitleId: anime.id.toString(),
+      apiTitleId: anime.id,
       imageUrl: anime.img,
     });
     notify.success("Title imported successfully!");
   };
 
   const handleSubmit = (formData: RoomTitleFormData) => {
-    addTitle({
-      titleName: formData.titleName,
-      apiTitleId: Number(formData.apiTitleId || 0),
-      titleType: formData.titleType,
-      imageUrl: formData.imageUrl,
-    }),
-    {
-      onSuccess: () => {
-        setImportedData(undefined);
-        onClose();
+    addTitle(
+      {
+        titleName: formData.titleName,
+        apiTitleId: formData.apiTitleId,
+        titleType: formData.titleType,
+        imageUrl: formData.imageUrl,
       },
-    }
+      {
+        onSuccess: () => {
+          setImportedData(undefined);
+          onClose();
+        },
+      }
+    );
   };
-
+  
   const handleClose = () => {
     setImportedData(undefined);
     onClose();

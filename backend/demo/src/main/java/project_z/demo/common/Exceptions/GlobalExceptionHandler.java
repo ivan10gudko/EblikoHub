@@ -46,7 +46,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Map<String, Object>> handleDataIntegrityViolation(org.springframework.dao.DataIntegrityViolationException ex) {
         String message = ex.getMostSpecificCause().getMessage();
 
-        if (message != null && message.contains("uk_room_title_mal_id")) {
+        if (message != null && (message.contains("idx_room_title_unique_api_id") || message.contains("uk_room_title_mal_id"))) {
             return buildErrorResponse("Title with that mal id already exists", HttpStatus.CONFLICT);
         }
 

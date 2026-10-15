@@ -4,6 +4,8 @@ export const roomTitleKeys = {
     all: ['room-titles'] as const,
     list: (roomId: number, params: RoomTitleQueryParameters) =>
         [...roomTitleKeys.all, roomId, params] as const,
+    listNoPaged:(roomId:number) =>
+         [...roomTitleKeys.all, roomId] as const,
     withLinksBase: (roomId: number) =>
         ['room-titles-with-links', roomId] as const,
     withLinks: (roomId: number, userId: string) =>

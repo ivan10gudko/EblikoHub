@@ -11,39 +11,25 @@ export const useRoomTitleActions = (roomId: number) => {
   const queryClient = useQueryClient();
   const withLinksQueryKey = roomTitleKeys.withLinksBase(roomId);
 
-  const mutationConfig = {
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: [...roomTitleKeys.all, roomId],
-        exact: false
-      });
+  const invalidateAll = () => {
+    queryClient.invalidateQueries({ queryKey: [...roomTitleKeys.all, roomId] });
+    queryClient.invalidateQueries({ queryKey: withLinksQueryKey });
+    queryClient.invalidateQueries({ queryKey: ["room-links", roomId] });
+  };
 
-      queryClient.invalidateQueries({
-        queryKey: withLinksQueryKey,
-        exact: false
-      });
-
-      queryClient.invalidateQueries({
-        queryKey: ['room-links', roomId],
-        exact: false
-      });
-    },
-
-    onError: (error: unknown) => {
-      notify.error(getErrorMessage(error, "Something went wrong"));
-    },
+  const onError = (error: unknown) => {
+    notify.error(getErrorMessage(error, "Something went wrong"));
   };
 
   const createMutation = useMutation({
-    ...mutationConfig,
     mutationFn: (data: RoomTitleCreateRequest) => roomTitleService.createTitle(roomId, data),
 
     onMutate: async (newTitleData) => {
-      await queryClient.cancelQueries({ queryKey: withLinksQueryKey, exact: false });
-      await queryClient.cancelQueries({ queryKey: [...roomTitleKeys.all, roomId], exact: false });
+      await queryClient.cancelQueries({ queryKey: withLinksQueryKey });
+      await queryClient.cancelQueries({ queryKey: [...roomTitleKeys.all, roomId] });
 
       queryClient.setQueriesData<InfiniteData<PageResponse<RoomTitleWithUserLinks>>>(
-        { queryKey: withLinksQueryKey, exact: false },
+        { queryKey: withLinksQueryKey },
         (oldData) => {
           if (!oldData) return undefined;
 
@@ -62,7 +48,7 @@ export const useRoomTitleActions = (roomId: number) => {
             oldData,
             getContent: (page) => page.content,
             setContent: (page, newContent) => ({ ...page, content: newContent }),
-            updater: (allItems) => [optimisticTitle, ...allItems]
+            updater: (allItems) => [optimisticTitle, ...allItems],
           });
         }
       );
@@ -70,22 +56,21 @@ export const useRoomTitleActions = (roomId: number) => {
     onSuccess: () => {
       notify.success("Room title added!");
     },
-    onError: (error, _data, _context) => {
-      queryClient.invalidateQueries({ queryKey: withLinksQueryKey, exact: false });
-      queryClient.invalidateQueries({ queryKey: [...roomTitleKeys.all, roomId], exact: false });
-      notify.error(getErrorMessage(error, "Something went wrong"));
-    },
+    onError,
+    onSettled: invalidateAll,
   });
 
   const deleteMutation = useMutation({
-    ...mutationConfig,
     mutationFn: (titleId: string) => roomTitleService.deleteTitle(roomId, titleId),
+    onError,
+    onSettled: invalidateAll,
   });
 
   const updateMutation = useMutation({
-    ...mutationConfig,
     mutationFn: ({ titleId, data }: { titleId: string; data: RoomTitleCreateRequest }) =>
       roomTitleService.updateTitle(roomId, titleId, data),
+    onError,
+    onSettled: invalidateAll,
   });
 
   return {
