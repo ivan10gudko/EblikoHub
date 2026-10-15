@@ -24,6 +24,7 @@ public class TitleMapperImpl implements Mapper<TitleEntity, TitleDto> {
         if (title.getCharacter() != null) {
             dto.setCharacter(characterMapper.mapTo(title.getCharacter()));
         }
+        dto.setUserId(title.getUser().getUserId());
         return dto;
     }
 

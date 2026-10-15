@@ -34,7 +34,7 @@ export const useForgotPassword = ({
     try {
       await authService.sendPasswordResetEmail(emailValue);
 
-      navigate("reset-password/sent");
+      navigate("/auth/reset-password/sent");
       notify.updateSuccess(resetnotify, "Reset link sent! Check your email.");
     } catch (error) {
 
