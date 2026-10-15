@@ -85,6 +85,6 @@ export default [
         route("callback", "./routes/auth.callback.tsx"),
         route("reset-password", "./routes/auth.resetpassword.tsx"),
         route("forgot-password", "./routes/auth.forgotpassword.tsx"),
-        route("login/reset-password/sent", "./routes/auth.resetpasswordsent.tsx"),
+        route("reset-password/sent","./routes/auth.resetpasswordsent.tsx"),
     ]),
 ] satisfies RouteConfig;

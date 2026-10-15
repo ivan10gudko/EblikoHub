@@ -36,11 +36,11 @@ export const LayoutWithSidebar = ({
             )}
 
             <div className={`
-        fixed inset-y-0 left-0 z-50 w-[85vw] max-w-[320px] p-4 bg-card border-r border-border shadow-2xl
-        transform ${isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"}
-        transition-transform duration-300 ease-in-out overflow-y-auto
-        lg:relative lg:inset-auto lg:translate-x-0 lg:transform-none lg:transition-none lg:h-auto lg:w-80 lg:p-0 lg:bg-transparent lg:border-none lg:shadow-none lg:z-0
-      `}>
+                fixed inset-y-0 left-0 z-50 w-[85vw] max-w-[320px] p-4 bg-card border-r border-border shadow-2xl
+                transform ${isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"}
+                transition-transform duration-300 ease-in-out overflow-y-auto
+                lg:sticky lg:top-6 lg:translate-x-0 lg:transform-none lg:transition-none lg:h-fit lg:w-80 lg:p-0 lg:bg-transparent lg:border-none lg:shadow-none lg:z-0 lg:overflow-visible
+            `}>
                 {renderSidebar()}
             </div>
 

@@ -25,7 +25,7 @@ export const RoomGroupWatchlistTable = ({
 }: RoomGroupWatchlistTableProps) => {
     const titles = titlesData?.pages.flatMap((page) => page.content ?? []) ?? [];
     const mergedUsersCache = mergePagedCache(titlesData?.pages, (page) => page.usersCache);
-
+    const totalElements = titlesData?.pages?.[0]?.totalElements ?? 0;
     const { showMyVisual, toggleVisual } = useRoomWatchlistVisualStore();
 
     if (isLoading) return <RoomGroupWatchlistSkeleton />;
@@ -34,7 +34,7 @@ export const RoomGroupWatchlistTable = ({
         <div className="bg-card border border-border rounded-2xl p-3 md:p-4 w-full flex flex-col gap-4 box-border overflow-hidden">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pb-3 border-b border-border">
                 <h2 className="text-base md:text-lg font-bold text-foreground">
-                    Group Watchlist <span className="text-xs md:text-sm font-normal text-muted-foreground">({titles.length} titles)</span>
+                    Group Watchlist <span className="text-xs md:text-sm font-normal text-muted-foreground">({totalElements} titles)</span>
                 </h2>
 
                 {isMember && (

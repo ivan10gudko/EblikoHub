@@ -18,7 +18,7 @@ export const RoomTitlesManager = ({ roomId }: { roomId: number }) => {
   const isReadOnly = !currentUserRole;
 
   const { data: titles = [], isLoading } = useQuery({
-    queryKey: [...roomTitleKeys.all, roomId],
+    queryKey: [...roomTitleKeys.listNoPaged(roomId)],
     queryFn: () => roomTitleService.findAll(roomId),
   });
 

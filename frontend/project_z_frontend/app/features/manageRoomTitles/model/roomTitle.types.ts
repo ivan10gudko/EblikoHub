@@ -90,7 +90,7 @@ export interface RoomTitleCreateRequest {
     titleName: string;
     imageUrl?: string | null;
     titleType: TitleType;
-    apiTitleId?: number;
+    apiTitleId?: number | null;
 }
 
 export interface RoomTitleLinkDetailsDto {
