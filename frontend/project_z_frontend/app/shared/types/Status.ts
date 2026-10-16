@@ -12,8 +12,8 @@ export const statusOptions = [
   { value: Status.WATCHED, label: "Watched" },
   { value: Status.DROPPED, label: "Dropped" },
   { value: Status.INPROGRESS, label: "In Progress" },
-  { value: Status.DEFAULT, label: "No Status" },
   { value: Status.UPCOMING, label: "Upcoming" },
+  { value: Status.DEFAULT, label: "No Status" },
 ];
 
 export const statusColorConfig: Record<Status, { color: string; dot: string }> = {

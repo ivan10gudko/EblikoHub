@@ -17,7 +17,7 @@ interface RatingEditorContentProps {
   isSaving: boolean;
   onSave: () => void;
   onCancel: () => void;
-  onTitleChange?: (newTitleId: number) => void;
+  onTitleChange: (newTitleId: number) => void;
 }
 
 const PRESET_CATEGORIES = [

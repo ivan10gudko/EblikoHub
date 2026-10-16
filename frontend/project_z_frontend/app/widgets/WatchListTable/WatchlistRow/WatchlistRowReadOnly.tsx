@@ -5,6 +5,7 @@ import { CompactRate } from "~/shared/ui/CompactRate";
 import { useTitleFilterStore, type TitleSortType } from "~/features/titleFilter/store/titleFilter.store";
 import { useTitleChangesHighlight } from './hooks/useTitleChangesHighlight';
 import { ChangeHighlight } from '~/shared/ui/ChangeHighlight';
+import { TitleHoverPreview } from '~/shared/ui/HoverPreviewImage';
 
 interface WatchlistRowReadOnlyProps {
   title: TitleRecord;
@@ -44,12 +45,12 @@ export const WatchlistRowReadOnly = ({ title, index, showNumber, onRowClick }: W
 
         {showNumber && title.pinned && <div className="w-6 pl-1 flex-shrink-0" />}
 
-        <div className="relative h-10 w-16 flex-shrink-0 transition-transform duration-500 hover:scale-[3.0] hover:z-10 cursor-pointer">
-          <img
-            src={title.imageUrl || "/defaultTitleRecordImage.jpg"}
+        <div className="relative h-10 w-16 ml-1 flex-shrink-0 cursor-pointer">
+          <TitleHoverPreview
+            imageUrl={title.imageUrl ?? undefined}
+            titleName={title.titleName || "Title poster"}
             onClick={handleImageClick}
-            className="absolute inset-0 h-full w-full object-cover rounded-md"
-            alt={title.titleName}
+            className="h-full w-full rounded-lg shadow-inner bg-muted/20 flex-shrink-0"
           />
         </div>
 

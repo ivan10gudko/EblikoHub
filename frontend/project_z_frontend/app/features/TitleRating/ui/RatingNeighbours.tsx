@@ -8,7 +8,7 @@ interface RatingNeighborsProps {
   category: string;
   ratingValue: number;
   onClose?: () => void;
-  onTitleChange?: (newTitleId: number) => void;
+  onTitleChange: (newTitleId: number) => void;
 }
 
 export const RatingNeighborsContent = ({
@@ -84,8 +84,7 @@ export const RatingNeighborsContent = ({
                 ref={isCurrent ? currentItemRef : null}
                 onClick={() => {
                   if (!isCurrent) {
-                    onTitleChange?.(item.titleId); 
-                    navigate(`../rating/${item.titleId}`);
+                    onTitleChange?.(item.titleId);
                   }
                 }}
                 className={`flex items-center justify-between px-2.5 py-1.5 rounded-md transition-all text-xs gap-2 ${isCurrent

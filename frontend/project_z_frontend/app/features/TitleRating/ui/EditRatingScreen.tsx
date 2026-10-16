@@ -3,12 +3,12 @@ import { useTitleRecordMutation, type TitleRecord } from "~/entities/titleRecord
 import { RatingEditorContent } from "./RatingEditorContent";
 import { ReadonlyRatingContent } from "./ReadonlyRatingContent";
 import type { Rating } from "~/shared/types";
+import { useNavigate } from "react-router";
 
 interface EditRatingScreenProps {
   title: TitleRecord;
   onClose: () => void;
   isOwn: boolean;
-  onTitleChange?: (newTitleId: number) => void;
 }
 
 const getInitialRating = (rating: TitleRecord["rating"]): Rating => {
@@ -19,23 +19,37 @@ export const EditRatingScreen = ({
   title,
   onClose,
   isOwn,
-  onTitleChange,
 }: EditRatingScreenProps) => {
+  const navigate = useNavigate();
   const { rate, rateLoading } = useTitleRecordMutation(
     title.apiTitleId,
     title,
     title
   );
-
   const [localRatings, setLocalRatings] = useState<Rating>(() =>
     getInitialRating(title.rating)
   );
-
+  
   useEffect(() => {
     if (title.rating) {
       setLocalRatings(getInitialRating(title.rating));
     }
   }, [title.titleId, title.rating]);
+
+  const handleTitleChange = (newTitleId: number) => {
+    const hasChanges =
+      JSON.stringify(localRatings) !== JSON.stringify(title.rating);
+
+    if (hasChanges) {
+      rate(localRatings, {
+        onSuccess: () => {
+          navigate(`../${newTitleId}`, { relative: "path" });
+        },
+      });
+    } else {
+      navigate(`../${newTitleId}`, { relative: "path" });
+    }
+  };
 
   const handleSave = () => {
     const hasChanges =
@@ -55,7 +69,7 @@ export const EditRatingScreen = ({
       <ReadonlyRatingContent
         ratings={getInitialRating(title.rating)}
         onCancel={onClose}
-        onTitleChange={onTitleChange}
+        onTitleChange={handleTitleChange}
         titleId={title.titleId}
       />
     );
@@ -70,7 +84,7 @@ export const EditRatingScreen = ({
       isSaving={rateLoading}
       onSave={handleSave}
       onCancel={onClose}
-      onTitleChange={onTitleChange}
+      onTitleChange={handleTitleChange}
     />
   );
 };
