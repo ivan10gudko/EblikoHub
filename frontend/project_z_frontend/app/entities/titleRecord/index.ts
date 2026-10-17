@@ -11,7 +11,7 @@ export { useCreateTitleRecord } from "./hooks/useCreateTitleRecord";
 export type { ManageTitleRecordProps, TitleStats } from "./model/titleRecord";
 
 export { default as StatusSelect } from "./ui/StatusSelect";
-export { AnimeSearchDropDownResults } from "./ui/AnimeSearchDropDownResult";
+export { AnimeSearchDropDownResults } from "../title/ui/AnimeSearchDropDownResult";
 export { ReadOnlyStatusBadge } from "./ui/ReadOnlyStatusBadge";
 export {getTitleThemeClassname} from "./helpers/getTitleThemeClassname";
 export { useTitleById} from "./hooks/useTitleById";

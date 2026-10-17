@@ -34,6 +34,11 @@ public class SeasonController {
         return seasonService.findAll(titleId);
     }
 
+    @GetMapping(path = "/byId/{seasonId}")
+    public SeasonDto getSeasonById(@PathVariable("seasonId") Long seasonId){
+        return seasonService.findById(seasonId);
+    }
+
     @PreAuthorize("hasRole('ADMIN') || @securityService.isTitleOwner(#titleId)")
     @PostMapping(path = "/{titleId}")
     public SeasonDto createSeason(@PathVariable("titleId") Long titleId,
@@ -43,24 +48,6 @@ public class SeasonController {
         titleService.addSeason(seasonEntity, titleEntity);
 
         return seasonMapper.mapTo(seasonEntity);
-    }
-
-    @PreAuthorize("hasRole('ADMIN') || @securityService.isSeasonOwner(#seasonId)")
-    @PutMapping(path = "/{seasonId}")
-    public ResponseEntity<SeasonDto> fullSeasonUpdate(@PathVariable("seasonId") Long seasonId,
-            @RequestBody SeasonDto seasonDto) {
-        SeasonEntity existingSeason = seasonService.findById(seasonId).orElseThrow(
-                () -> new ResourceNotFoundException("season not found"));
-
-        existingSeason.setName(seasonDto.getName());
-        existingSeason.setRating(seasonDto.getRating());
-
-        if (seasonDto.getStatus() != null) {
-            existingSeason.setStatus(seasonDto.getStatus());
-        }
-
-        SeasonEntity saved = seasonService.save(existingSeason);
-        return new ResponseEntity<>(seasonMapper.mapTo(saved), HttpStatus.OK);
     }
 
     @PreAuthorize("hasRole('ADMIN') || @securityService.isTitleOwner(#titleId)")
