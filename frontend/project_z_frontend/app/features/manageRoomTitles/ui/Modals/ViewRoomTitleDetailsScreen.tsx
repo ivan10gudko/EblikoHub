@@ -22,7 +22,6 @@ export const ViewRoomTitleDetailsScreen = ({
 
   return (
     <div className="flex-1 flex flex-col p-4 rounded-2xl border border-border bg-card">
-      {/* На мобілці колонка (картинка зверху, текст знизу), на десктопі — рядок */}
       <div className="flex flex-col sm:flex-row gap-4">
         <div
           className={`w-full sm:w-[190px] h-[350px] sm:h-[275px] rounded-xl overflow-hidden shrink-0 border border-border shadow-lg ${themeClasses}`}
