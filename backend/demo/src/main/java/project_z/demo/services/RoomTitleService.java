@@ -14,9 +14,12 @@ import project_z.demo.dto.RoomTitleDtos.RoomTitleUpdateDto;
 import project_z.demo.dto.RoomTitleDtos.RoomTitleWithLinksDto;
 import project_z.demo.dto.RoomTitleDtos.RoomTitleWithUserLinksDto;
 import project_z.demo.dto.RoomTitleDtos.RoomTitlesResponseDto;
+import project_z.demo.dto.TitleDtos.TitleVisualDto;
 
 public interface RoomTitleService {
     RoomTitleDetailsDto create(RoomTitleCreateDto dto, Long roomId);
+
+    void batchCreate(List<RoomTitleCreateDto> roomTitles, Long roomId);
 
     RoomTitleDetailsDto findById(UUID id);
 
@@ -34,4 +37,6 @@ public interface RoomTitleService {
     RoomTitlesResponseDto getRoomTitles(Long roomId, UUID currentUserId, RoomTitlesQueryParameters params);
 
     RoomTitleWithLinksDto getRoomTitleWithLinks(UUID roomTitleId);
+
+    List<TitleVisualDto> suggestTitlesToAdd(Long roomId, UUID userId);
 }

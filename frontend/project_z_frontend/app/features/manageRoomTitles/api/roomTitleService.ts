@@ -11,16 +11,18 @@ import type {
     RoomTitleLinkDetails,
     RoomTitleWithLinksDto
 } from "../model/roomTitle.types";
+import type { TitleVisual } from "~/entities/titleRecord";
 
 export interface RoomTitlesService {
     getRoomTitles(roomId: number, params: RoomTitleQueryParameters): Promise<RoomTitlesResponse>;
     getRoomTitlesWithUserLinks(roomId: number, userId: string, params: RoomTitleWithSearchQueryParams): Promise<PageResponse<RoomTitleWithUserLinks>>;
     createTitle(roomId: number, dto: RoomTitleCreateRequest): Promise<RoomTitleDetails>;
+    batchCreateRoomTitles(roomId: number, dtos: RoomTitleCreateRequest[]): Promise<void>;
     updateTitle(roomId: number, titleId: string, dto: RoomTitleCreateRequest): Promise<RoomTitleDetails>;
     deleteTitle(roomId: number, titleId: string): Promise<void>;
     findAll(roomId: number): Promise<RoomTitleDetails[]>;
     findRoomTitleById(roomId: number, roomTitleId: string): Promise<RoomTitleDetails>;
-
+    suggestTitlesToAdd(roomId: number): Promise<TitleVisual[]>
 
     //links
     createRoomTitleLink(roomId: number, dto: RoomTitleLinkCreate): Promise<RoomTitleLinkDetails>;
@@ -44,6 +46,9 @@ export const roomTitleService: RoomTitlesService = {
         const { data } = await apiClient.post<RoomTitleDetails>(`/rooms/${roomId}/titles`, dto);
         return data;
     },
+    async batchCreateRoomTitles(roomId, dtos) {
+        await apiClient.post(`/rooms/${roomId}/titles/batch`, dtos);
+    },
 
     async updateTitle(roomId, titleId, dto) {
         const { data } = await apiClient.put<RoomTitleDetails>(`/rooms/${roomId}/titles/${titleId}`, dto);
@@ -66,7 +71,10 @@ export const roomTitleService: RoomTitlesService = {
         const { data } = await apiClient.get<RoomTitleWithLinksDto>(`/rooms/${roomId}/titles/getRoomTitlesWithLinks/${roomTitleId}`);
         return data;
     },
-
+    async suggestTitlesToAdd(roomId) {
+        const { data } = await apiClient.get(`/rooms/${roomId}/titles/suggestTitlesToAdd`);
+        return data;
+    },
     //links
 
     async createRoomTitleLink(roomId, dto) {
