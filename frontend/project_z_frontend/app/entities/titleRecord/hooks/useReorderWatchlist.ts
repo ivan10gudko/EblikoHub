@@ -6,6 +6,7 @@ import type { PageResponse } from "~/shared/types";
 import { useSearchParams } from "react-router";
 import { notify } from "~/shared/lib";
 import { updateInfiniteQuery } from "~/shared/helpers/updateInfinityQuery";
+import type { SortOrder } from "~/shared/types/api";
 
 export const useReorderWatchlist = (titles: TitleRecord[], queryKey: unknown[], userId: string | undefined) => {
   const [searchParams] = useSearchParams();
@@ -13,8 +14,8 @@ export const useReorderWatchlist = (titles: TitleRecord[], queryKey: unknown[], 
   const [optimisticTitles, setOptimisticTitles] = useState<TitleRecord[]>(titles);
   const isMutating = useRef(false);
 
-  const sortMode = searchParams.get('order') || 'asc';
-  const isDesc = sortMode === 'desc';
+  const sortMode: SortOrder = searchParams.get("order") === "desc" ? "desc" : "asc";
+  const isDesc = sortMode === "desc";
 
   useEffect(() => {
     if (isMutating.current) return;
@@ -26,11 +27,14 @@ export const useReorderWatchlist = (titles: TitleRecord[], queryKey: unknown[], 
   }, [titles]);
 
   const reorder = async (sourceIndex: number, destinationIndex: number) => {
-    const reordered = Array.from(optimisticTitles);
+    const pinnedItems = optimisticTitles.filter((t) => t.pinned);
+    const regular = optimisticTitles.filter((t) => !t.pinned);
+
+    const reordered = Array.from(regular);
     const [moved] = reordered.splice(sourceIndex, 1);
     reordered.splice(destinationIndex, 0, moved);
 
-    const movedTitleId = optimisticTitles[sourceIndex].titleId;
+    const movedTitleId = moved.titleId;
     const newOrderValue = calculateNewOrder(reordered, destinationIndex, movedTitleId, isDesc);
 
     if (newOrderValue === null) {
@@ -41,24 +45,29 @@ export const useReorderWatchlist = (titles: TitleRecord[], queryKey: unknown[], 
     }
 
     isMutating.current = true;
-    setOptimisticTitles(reordered);
+
+    reordered[destinationIndex] = { ...moved, customOrder: newOrderValue };
+    setOptimisticTitles([...pinnedItems, ...reordered]);
 
     queryClient.setQueryData<InfiniteData<PageResponse<TitleRecord>>>(
       queryKey,
-      (oldData) => updateInfiniteQuery({
-        oldData,
-        getContent: (page) => page.content,
-        setContent: (page, newContent) => ({ ...page, content: newContent }),
-        updater: (allItems) => {
-          const movedItemIndex = allItems.findIndex(item => item.titleId === movedTitleId);
-          if (movedItemIndex === -1) return allItems;
+      (oldData) =>
+        updateInfiniteQuery({
+          oldData,
+          getContent: (page) => page.content,
+          setContent: (page, newContent) => ({ ...page, content: newContent }),
+          updater: (allItems) => {
+            const movedItem = allItems.find((i) => i.titleId === movedTitleId);
+            if (!movedItem) return allItems;
 
-          const [movedItem] = allItems.splice(movedItemIndex, 1);
-          const nextReordered = [...allItems];
-          nextReordered.splice(destinationIndex, 0, { ...movedItem, customOrder: newOrderValue });
-          return nextReordered;
-        }
-      })
+            const pinned = allItems.filter((i) => i.pinned);
+            const rest = allItems.filter(
+              (i) => !i.pinned && i.titleId !== movedTitleId
+            );
+            rest.splice(destinationIndex, 0, { ...movedItem, customOrder: newOrderValue });
+            return [...pinned, ...rest];
+          },
+        })
     );
 
     try {

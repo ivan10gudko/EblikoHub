@@ -1,4 +1,5 @@
 import type { QueryParams } from "~/shared/types";
+import type { SortOrder } from "~/shared/types/api";
 import type { Rating } from "~/shared/types/Rating";
 import { Status } from "~/shared/types/Status";
 
@@ -9,7 +10,7 @@ export interface TitleRecord {
     rating?: Rating,
     status: Status,
     titleType: TitleType,
-    userId:string,
+    userId: string,
     description: string;
     imageUrl?: string | null,
     customOrder: number,
@@ -32,10 +33,11 @@ export interface TitleVisual {
     imageUrl: string;
     titleType: TitleType;
 }
+
 export interface TitlePositionUpdate {
     customOrder: number;
     newIndex: number;
-    sortMode: "asc" | "desk";
+    sortMode: SortOrder;
 }
 export const titleTypeOptions = [
     { value: TitleType.ANIME, label: "Anime" },
