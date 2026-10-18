@@ -5,5 +5,4 @@ public enum TitleType {
     HENTAI,
     MANGA,
     MOVIE,
-    SERIES
 }

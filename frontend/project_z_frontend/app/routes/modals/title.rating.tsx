@@ -16,11 +16,6 @@ export default function WatchlistEditRoute() {
     navigate("../..", { relative: "path", replace: true });
   };
 
-  const handleTitleChange = (newTitleId: number) => {
-    navigate(`../${newTitleId}`, { relative: "path" });
-  };
-
-
 
   if (isLoading) {
     return (
@@ -56,7 +51,6 @@ export default function WatchlistEditRoute() {
         title={title}
         isOwn={isOwn}
         onClose={handleClose}
-        onTitleChange={handleTitleChange}
       />
     </Modal>
   );

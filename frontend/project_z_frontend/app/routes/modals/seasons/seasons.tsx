@@ -1,4 +1,4 @@
-import { useNavigate, useParams } from "react-router";
+import { Outlet, useNavigate, useParams } from "react-router";
 import { Modal } from "~/shared/ui/Modal";
 import { useTitleById } from "~/entities/titleRecord";
 import { useAuthStore } from "~/features/auth";
@@ -22,16 +22,19 @@ export default function SeasonsRoute() {
     )
   }
   return (
-    <Modal
-      isOpen={true}
-      onClose={handleClose}
-      title={`edit seasons of ${title?.titleName}`}
-      maxWidth="max-w-2xl"
-    >
-      <EditSeasonsScreen
-        titleId={title.titleId}
-        isOwn={isOwn}
-      />
-    </Modal>
+    <>
+      <Modal
+        isOpen={true}
+        onClose={handleClose}
+        title={`edit seasons of ${title?.titleName}`}
+        maxWidth="max-w-2xl"
+      >
+        <EditSeasonsScreen
+          titleId={title.titleId}
+          isOwn={isOwn}
+        />
+      </Modal>
+      <Outlet></Outlet>
+    </>
   );
 }
