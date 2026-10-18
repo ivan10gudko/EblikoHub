@@ -1,10 +1,9 @@
 import React from 'react';
 import { useNavigate } from "react-router";
-import { type DraftSeason, type Season } from "~/entities/season";
+import { SeasonTypeThemes, type DraftSeason, type Season } from "~/entities/season";
 import { CompactRate } from "~/shared/ui/CompactRate";
 import { ReadOnlyStatusBadge } from "~/entities/titleRecord";
 import { DEFAULT_IMAGE_PATH } from "~/shared/constants";
-import { SeasonTypeThemes } from '../model/season.types';
 import { TitleHoverPreview } from '~/shared/ui/HoverPreviewImage';
 
 interface SeasonRowReadOnlyProps {

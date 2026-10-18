@@ -1,7 +1,7 @@
 import type { Season } from "~/entities/season/model/season.types";
-import { SEASON_TYPE_OPTIONS, SeasonTypeOptionsColors } from "~/entities/season/model/season.types";
 import { EntityForm } from "~/shared/ui/EntityForm/EntityForm";
 import { useEditSeasonForm } from "../hooks/useEditSeasonForm";
+import { SEASON_TYPE_OPTIONS, SeasonTypeOptionsColors } from "~/entities/season";
 
 interface EditSeasonScreenProps {
   titleId: number;

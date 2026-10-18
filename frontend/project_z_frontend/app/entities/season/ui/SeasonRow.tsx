@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { type DraftSeason, type Season } from "~/entities/season";
+import { SeasonTypeThemes, type DraftSeason, type Season } from "~/entities/season";
 import SeasonStatusSelect from "./SeasonStatusSelect";
 import { SeasonActionsMenu } from "./SeasonActionsMenu";
 import { CompactRate } from "~/shared/ui/CompactRate";
@@ -8,7 +8,6 @@ import { getStatusColor } from "~/shared/utils";
 import { TitleTypeThemes } from "~/entities/titleRecord";
 import { DEFAULT_IMAGE_PATH } from "~/shared/constants";
 import { useNavigate } from "react-router";
-import { SeasonTypeThemes } from "../model/season.types";
 import { TitleHoverPreview } from "~/shared/ui/HoverPreviewImage";
 
 interface SeasonRowProps {

@@ -46,7 +46,6 @@ export const titleTypeOptions = [
 export const TitleTypeThemes: Record<TitleType, string> = {
     [TitleType.ANIME]: "border-border hover:border-foreground/30",
     [TitleType.MANGA]: "bg-emerald-500/5 border-emerald-500/20 hover:border-emerald-500/40",
-    // [TitleType.SERIES]: "bg-purple-500/5 border-purple-500/20 hover:border-purple-500/40",
     [TitleType.MOVIE]: "bg-purple-500/5 border-purple-500/20 hover:border-purple-500/40",
     [TitleType.HENTAI]: "bg-rose-500/5 border-rose-500/20 hover:border-rose-500/40",
 };
@@ -55,7 +54,6 @@ export const TitleTypeThemes: Record<TitleType, string> = {
 export const TitlePinnedThemes: Record<TitleType, string> = {
     [TitleType.ANIME]: "border-primary/70 shadow-[0_0_15px_rgba(255,163,26,0.12)] hover:border-primary",
     [TitleType.MANGA]: "border-emerald-500/60 shadow-[0_0_15px_rgba(16,185,129,0.15)] hover:border-emerald-500",
-    // [TitleType.SERIES]: "border-purple-500/60 shadow-[0_0_15px_rgba(168,85,247,0.15)] hover:border-purple-500",
     [TitleType.MOVIE]: "border-purple-500/60 shadow-[0_0_15px_rgba(168,85,247,0.15)] hover:border-purple-500",
     [TitleType.HENTAI]: "border-rose-500/60 shadow-[0_0_15px_rgba(244,63,94,0.15)] hover:border-rose-500",
 };
@@ -89,7 +87,6 @@ export interface TitleShort {
 export const TitleTypeOptionsColors: Record<TitleType, string> = {
     [TitleType.ANIME]: "text-foreground/90",
     [TitleType.MANGA]: "text-green-500/90",
-    // [TitleType.SERIES]: "text-purple-500/90",
     [TitleType.MOVIE]: "text-purple-500/90",
     [TitleType.HENTAI]: "text-red-500/90",
 };
@@ -112,7 +109,6 @@ export interface TitleRatingComparasionDto {
 export const TitleTypeGradientColors: Record<TitleType, string> = {
     [TitleType.ANIME]: "rgba(255, 255, 255, 0.10)",
     [TitleType.MANGA]: "rgba(34, 197, 94, 0.25)",
-    // [TitleType.SERIES]: "rgba(168, 85, 247, 0.25)",
     [TitleType.MOVIE]: "rgba(168, 85, 247, 0.25)",
     [TitleType.HENTAI]: "rgba(239, 68, 68, 0.25)",
 };
@@ -121,7 +117,6 @@ export const TitleTypeGradientColors: Record<TitleType, string> = {
 export const TitleTypeBorderColors: Record<TitleType, string> = {
     [TitleType.ANIME]: "rgba(255, 255, 255, 0.35)",
     [TitleType.MANGA]: "rgba(34, 197, 94, 0.45)",
-    // [TitleType.SERIES]: "rgba(168, 85, 247, 0.45)",
     [TitleType.MOVIE]: "rgba(168, 85, 247, 0.45)",
     [TitleType.HENTAI]: "rgba(239, 68, 68, 0.45)",
 };

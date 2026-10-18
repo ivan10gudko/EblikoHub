@@ -1,7 +1,8 @@
 import { TitleSearch } from "~/entities/title";
-import { SEASON_TYPE_OPTIONS, SeasonTypeOptionsColors } from "~/entities/season/model/season.types";
+
 import { EntityForm } from "~/shared/ui/EntityForm/EntityForm";
 import { useAddSeasonForm } from "../hooks/useAddSeasonForm";
+import { SEASON_TYPE_OPTIONS, SeasonTypeOptionsColors } from "~/entities/season";
 
 interface AddSeasonScreenProps {
     titleId: number;

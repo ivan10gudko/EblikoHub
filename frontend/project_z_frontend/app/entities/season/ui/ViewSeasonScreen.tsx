@@ -1,11 +1,11 @@
 import {
-    SEASON_TYPE_OPTIONS,
+
     SeasonType,
-    SeasonTypeOptionsColors,
     type Season,
 } from "~/entities/season/model/season.types";
 import { EntityView } from "~/shared/ui/EntityView/EntityView";
 import type { EntityViewValues } from "~/shared/ui/EntityView/EntityViewContext";
+import { SEASON_TYPE_OPTIONS, SeasonTypeOptionsColors } from "../consts/season.consts";
 
 interface ViewSeasonScreenProps {
     season?: Season | null;

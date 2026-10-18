@@ -40,7 +40,6 @@ const Body = ({ children }: { children: ReactNode }) => (
     <div className="overflow-y-auto flex-1 space-y-4 pr-1 custom-scrollbar min-h-0">{children}</div>
 );
 
-/** Необов'язковий блок зверху (наприклад, швидкий імпорт) */
 const Import = ({ label, children }: { label: string; children: ReactNode }) => (
     <div className="space-y-2">
         <Label>{label}</Label>
