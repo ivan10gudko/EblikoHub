@@ -26,6 +26,7 @@ import project_z.demo.dto.RoomTitleDtos.RoomTitleUpdateDto;
 import project_z.demo.dto.RoomTitleDtos.RoomTitleWithLinksDto;
 import project_z.demo.dto.RoomTitleDtos.RoomTitleWithUserLinksDto;
 import project_z.demo.dto.RoomTitleDtos.RoomTitlesResponseDto;
+import project_z.demo.dto.TitleDtos.TitleVisualDto;
 import project_z.demo.security.SecurityService;
 import project_z.demo.services.RoomTitleService;
 
@@ -37,6 +38,17 @@ public class RoomTitleController {
     private final RoomTitleService roomTitleService;
     private final SecurityService securityService;
 
+    @PostMapping("/batch")
+    @PreAuthorize("@securityService.isRoomMember(#roomId)")
+    public ResponseEntity<Void> batchCreate(
+            @PathVariable Long roomId,
+            @RequestBody List<RoomTitleCreateDto> dtos) {
+
+        roomTitleService.batchCreate(dtos, roomId);
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
     @PostMapping
     @PreAuthorize("@securityService.isRoomMember(#roomId)")
     public ResponseEntity<RoomTitleDetailsDto> create(
@@ -45,9 +57,10 @@ public class RoomTitleController {
         return ResponseEntity.ok(roomTitleService.create(dto, roomId));
     }
 
+
     @GetMapping("/getRoomTitles")
     public ResponseEntity<RoomTitlesResponseDto> getMethodName(@PathVariable("roomId") Long roomId,
-            RoomTitlesQueryParameters roomTitlesQueryParameters) {
+                                                               RoomTitlesQueryParameters roomTitlesQueryParameters) {
         UUID userId = securityService.getCurrentUserId();
         return new ResponseEntity<>(roomTitleService.getRoomTitles(roomId, userId, roomTitlesQueryParameters),
                 HttpStatus.OK);
@@ -55,7 +68,7 @@ public class RoomTitleController {
 
     @GetMapping("/getRoomTitlesWithoutLinks")
     public ResponseEntity<Page<RoomTitleDetailsDto>> getRoomTitlesWithoutLinks(@PathVariable("roomId") long roomId,
-            QueryParameters queryParameters) {
+                                                                               QueryParameters queryParameters) {
         return new ResponseEntity<>(roomTitleService.getRoomTitlesWithoutLinks(roomId, queryParameters), HttpStatus.OK);
     }
 
@@ -75,8 +88,14 @@ public class RoomTitleController {
 
     @GetMapping("/getRoomTitlesWithLinks/{roomTitleId}")
     public ResponseEntity<RoomTitleWithLinksDto> getRoomTitlesWithLinks(@PathVariable("roomId") long roomId,
-            @PathVariable("roomTitleId") UUID roomTitleId) {
+                                                                        @PathVariable("roomTitleId") UUID roomTitleId) {
         return new ResponseEntity<>(roomTitleService.getRoomTitleWithLinks(roomTitleId), HttpStatus.OK);
+    }
+
+    @GetMapping("/suggestTitlesToAdd")
+    public ResponseEntity<List<TitleVisualDto>> getTitlesSuggestedToAdd(@PathVariable("roomId") long roomId) {
+        UUID currentUserId = securityService.getCurrentUserId();
+        return new ResponseEntity<>(roomTitleService.suggestTitlesToAdd(roomId, currentUserId), HttpStatus.OK);
     }
 
     @GetMapping("/{titleId}")
