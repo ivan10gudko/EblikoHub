@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState } from "react";
 import { useQueryClient, type InfiniteData } from "@tanstack/react-query";
 import { titleRecordService, type TitleRecord } from "~/entities/titleRecord";
 import { calculateNewOrder } from "~/shared/helpers";
@@ -8,29 +8,25 @@ import { notify } from "~/shared/lib";
 import { updateInfiniteQuery } from "~/shared/helpers/updateInfinityQuery";
 import type { SortOrder } from "~/shared/types/api";
 
-export const useReorderWatchlist = (titles: TitleRecord[], queryKey: unknown[], userId: string | undefined) => {
+export const useReorderWatchlist = (
+  titles: TitleRecord[],
+  queryKey: unknown[],
+  userId: string | undefined
+) => {
   const [searchParams] = useSearchParams();
   const queryClient = useQueryClient();
-  const [optimisticTitles, setOptimisticTitles] = useState<TitleRecord[]>(titles);
-  const isMutating = useRef(false);
+  const [override, setOverride] = useState<TitleRecord[] | null>(null);
+
+  const optimisticTitles = override ?? titles;
 
   const sortMode: SortOrder = searchParams.get("order") === "desc" ? "desc" : "asc";
   const isDesc = sortMode === "desc";
 
-  useEffect(() => {
-    if (isMutating.current) return;
-
-    const unique = titles.filter(
-      (t, i, arr) => arr.findIndex(x => x.titleId === t.titleId) === i
-    );
-    setOptimisticTitles(unique);
-  }, [titles]);
-
   const reorder = async (sourceIndex: number, destinationIndex: number) => {
-    const pinnedItems = optimisticTitles.filter((t) => t.pinned);
-    const regular = optimisticTitles.filter((t) => !t.pinned);
+    const pinned = optimisticTitles[0]?.pinned ? optimisticTitles[0] : null;
+    const regular = pinned ? optimisticTitles.slice(1) : optimisticTitles;
 
-    const reordered = Array.from(regular);
+    const reordered = regular.slice();
     const [moved] = reordered.splice(sourceIndex, 1);
     reordered.splice(destinationIndex, 0, moved);
 
@@ -44,11 +40,11 @@ export const useReorderWatchlist = (titles: TitleRecord[], queryKey: unknown[], 
       return;
     }
 
-    isMutating.current = true;
+    const updatedMoved = { ...moved, customOrder: newOrderValue };
+    reordered[destinationIndex] = updatedMoved;
+    setOverride(pinned ? [pinned, ...reordered] : reordered);
 
-    reordered[destinationIndex] = { ...moved, customOrder: newOrderValue };
-    setOptimisticTitles([...pinnedItems, ...reordered]);
-
+    const cacheOffset = pinned ? 1 : 0;
     queryClient.setQueryData<InfiniteData<PageResponse<TitleRecord>>>(
       queryKey,
       (oldData) =>
@@ -57,15 +53,9 @@ export const useReorderWatchlist = (titles: TitleRecord[], queryKey: unknown[], 
           getContent: (page) => page.content,
           setContent: (page, newContent) => ({ ...page, content: newContent }),
           updater: (allItems) => {
-            const movedItem = allItems.find((i) => i.titleId === movedTitleId);
-            if (!movedItem) return allItems;
-
-            const pinned = allItems.filter((i) => i.pinned);
-            const rest = allItems.filter(
-              (i) => !i.pinned && i.titleId !== movedTitleId
-            );
-            rest.splice(destinationIndex, 0, { ...movedItem, customOrder: newOrderValue });
-            return [...pinned, ...rest];
+            const next = allItems.filter((i) => i.titleId !== movedTitleId);
+            next.splice(destinationIndex + cacheOffset, 0, updatedMoved);
+            return next;
           },
         })
     );
@@ -77,11 +67,10 @@ export const useReorderWatchlist = (titles: TitleRecord[], queryKey: unknown[], 
         sortMode,
       });
     } catch {
-      setOptimisticTitles(titles);
       await queryClient.invalidateQueries({ queryKey });
       notify.error("Failed to save position");
     } finally {
-      isMutating.current = false;
+      setOverride(null);
     }
   };
 
