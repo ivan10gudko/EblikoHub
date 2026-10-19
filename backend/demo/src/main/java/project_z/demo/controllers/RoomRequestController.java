@@ -46,15 +46,26 @@ public class RoomRequestController {
 
     @GetMapping("/{roomId}")
     public ResponseEntity<RequestsToRoomResponseDto> getRoomRequests(
-        @RequestParam("status") RequestStatus status,
+            @RequestParam("status") RequestStatus status,
             @PathVariable("roomId") long roomId,
             @RequestParam("type") RequestType type) {
-        return new ResponseEntity<>(roomRequestService.getRequestsByRoomId(roomId, status,type), HttpStatus.OK) ;
+        return new ResponseEntity<>(roomRequestService.getRequestsByRoomId(roomId, status, type), HttpStatus.OK);
     }
 
     @GetMapping("/requestCounts/user/{userId}")
     public ResponseEntity<RoomRequestCountsDto> getRequestCountsByUserId(@PathVariable("userId") UUID userId) {
         return new ResponseEntity<>(roomRequestService.getRequestCounts(userId), HttpStatus.OK);
+    }
+
+    @GetMapping("/isInvitesExistsByUser")
+    public ResponseEntity<Boolean> isInvitesExistsByUser() {
+        UUID userId = securityService.getCurrentUserId();
+        return new ResponseEntity<>(roomRequestService.isInvitesExistsByUserId(userId), HttpStatus.OK);
+    }
+
+    @GetMapping("/isJoinRequestsExists/{roomId}")
+    public ResponseEntity<Boolean> isJoinRequestsExists(@PathVariable("roomId") long roomId) {
+        return new ResponseEntity<>(roomRequestService.isJoinRequestsExists(roomId), HttpStatus.OK);
     }
 
     @PostMapping("/join/{roomId}")

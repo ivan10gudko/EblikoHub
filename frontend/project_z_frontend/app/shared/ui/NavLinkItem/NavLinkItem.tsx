@@ -14,21 +14,21 @@ export type NavChildItem = {
 
 export type NavItem =
   | {
-      key: string;
-      label: string;
-      path: string;
-      Icon: ElementType;
-      allowed: RoomRole[];
-      children?: never;
-    }
+    key: string;
+    label: string;
+    path: string;
+    Icon: ElementType;
+    allowed: RoomRole[];
+    children?: never;
+  }
   | {
-      key: string;
-      label: string;
-      path?: never;
-      Icon: ElementType;
-      allowed: RoomRole[];
-      children: NavChildItem[];
-    };
+    key: string;
+    label: string;
+    path?: never;
+    Icon: ElementType;
+    allowed: RoomRole[];
+    children: NavChildItem[];
+  };
 
 interface NavLinkItemProps extends ComponentPropsWithoutRef<"a"> {
   item: Extract<NavItem, { path: string }>;
@@ -40,6 +40,7 @@ interface NavGroupItemProps extends ComponentPropsWithoutRef<"div"> {
   isGroupActive: boolean;
   onToggle: () => void;
   onChildClick?: () => void;
+  badge?: React.ReactNode;
 }
 
 const linkBase =
@@ -77,6 +78,7 @@ export const NavGroupItem = ({
   isGroupActive,
   onToggle,
   onChildClick,
+  badge,
   className = "",
 }: NavGroupItemProps) => (
   <div className={cn("flex flex-col gap-1 w-full", className)}>
@@ -95,12 +97,16 @@ export const NavGroupItem = ({
           />
           <span className="text-lg tracking-wide">{item.label}</span>
         </span>
-        <KeyboardArrowDownIcon
-          className={cn(
-            "transition-transform duration-300",
-            isOpen && "rotate-180"
-          )}
-        />
+
+        <span className="flex items-center gap-2">
+          {badge}
+          <KeyboardArrowDownIcon
+            className={cn(
+              "transition-transform duration-300",
+              isOpen && "rotate-180"
+            )}
+          />
+        </span>
       </span>
     </button>
 

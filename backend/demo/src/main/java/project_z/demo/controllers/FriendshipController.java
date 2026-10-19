@@ -79,17 +79,25 @@ public class FriendshipController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+
     @GetMapping("/user/{userId}")
     public ResponseEntity<List<FriendRequestDto>> getFriendsByUserId(@PathVariable("userId") UUID userId) {
         List<FriendRequestDto> res = friendshipService.findFriendsByUserId(userId);
         return new ResponseEntity<>(res, HttpStatus.OK);
     }
 
+    @GetMapping("/hasPendingFriendRequests")
+    public ResponseEntity<Boolean> hasPendingFriendRequests() {
+        UUID currentUserId = securityService.getCurrentUserId();
+
+        return new ResponseEntity<>(friendshipService.hasPendingFriendRequests(currentUserId), HttpStatus.OK);
+    }
+
     @GetMapping("/userWithCurrentFriendshipStatus/{userId}")
     public ResponseEntity<UserDtoWithFriendshipStatus> getUserWithFriendshipStatus(
             @PathVariable("userId") UUID userId) {
         UUID currentUserId = securityService.getCurrentUserId();
-        return new ResponseEntity<>(friendshipService.findUserWithFriendshipStatusToCurrentUser(userId,currentUserId), HttpStatus.OK);
+        return new ResponseEntity<>(friendshipService.findUserWithFriendshipStatusToCurrentUser(userId, currentUserId), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")

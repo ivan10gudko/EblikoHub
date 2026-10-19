@@ -65,6 +65,12 @@ public class FriendshipServiceImpl implements FriendshipService {
 
     @Override
     @Transactional(readOnly = true)
+    public boolean hasPendingFriendRequests(UUID userId) {
+        return friendshipRepository.hasPendingFriendRequests(userId);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public UserDtoWithFriendshipStatus findUserWithFriendshipStatusToCurrentUser(UUID userId, UUID currentUserId) {
         return friendshipRepository.findUserWithFriendshipStatusToCurrentUser(userId, currentUserId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
@@ -217,7 +223,7 @@ public class FriendshipServiceImpl implements FriendshipService {
     @Override
     @Transactional(readOnly = true)
     public Page<UserDtoWithFriendshipStatus> searchUsers(String name, UUID currentUserId,
-            FriendshipQueryParameters friendshipQueryParameters) {
+                                                         FriendshipQueryParameters friendshipQueryParameters) {
         Pageable pageable = PagingHelper.toPageable(friendshipQueryParameters);
         return friendshipRepository.findUsersWithStatus(name, currentUserId, pageable)
                 .map(userWithStatusMapper::mapTo);
