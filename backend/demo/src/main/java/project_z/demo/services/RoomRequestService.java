@@ -25,6 +25,9 @@ public interface RoomRequestService {
 
     RequestsToRoomResponseDto getRequestsByRoomId(Long roomId, RequestStatus status, RequestType type);
 
+    boolean isInvitesExistsByUserId(UUID userId);
+
+    boolean isJoinRequestsExists(Long roomId);
 
     void cancelRequest(UUID roomRequestId);
 

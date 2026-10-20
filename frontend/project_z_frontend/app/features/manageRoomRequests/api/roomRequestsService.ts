@@ -14,6 +14,8 @@ interface RoomRequestsService {
     rejectRequest(roomRequestId: string): Promise<void>;
     cancelRequest(roomRequestId: string): Promise<void>;
     getRequestsCountsByUserId(userId: string): Promise<RoomRequestCounts>;
+    isInvitesExistsByUser(): Promise<boolean>;
+    isJoinRequestsExists(roomId: number): Promise<boolean>;
 }
 export const roomRequestsKeys = {
     all: ["room_requests"] as const,
@@ -70,9 +72,17 @@ export const roomRequestsService: RoomRequestsService = {
     async cancelRequest(roomRequestId) {
         await apiClient.delete(`/rooms/requests/cancelRequest/${roomRequestId}`);
     },
-    
+
     async getRequestsCountsByUserId(userId) {
         const { data } = await apiClient.get(`/rooms/requests/requestCounts/user/${userId}`);
         return data;
-    }
+    },
+    async isInvitesExistsByUser() {
+        const { data } = await apiClient.get(`/rooms/requests/isInvitesExistsByUser`);
+        return data;
+    },
+    async isJoinRequestsExists(roomId) {
+        const { data } = await apiClient.get(`rooms/requests/isJoinRequestsExists/${roomId}`);
+        return data;
+    },
 };

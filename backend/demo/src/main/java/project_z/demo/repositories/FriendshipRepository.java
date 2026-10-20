@@ -32,13 +32,20 @@ public interface FriendshipRepository extends JpaRepository<FriendshipEntity, UU
 
     Optional<FriendshipEntity> findBySenderUserIdAndReceiverUserId(UUID senderId, UUID receiverId);
 
+
+    @Query("SELECT CASE WHEN COUNT(f) > 0 THEN TRUE ELSE FALSE END " +
+            "FROM FriendshipEntity f " +
+            "WHERE f.receiver.userId = :userId " +
+            "AND f.status = 'PENDING'")
+    boolean hasPendingFriendRequests(@Param("userId") UUID userId);
+
     @Query("""
                 SELECT f FROM FriendshipEntity f
                 WHERE (f.sender.userId = :userId OR f.receiver.userId = :userId)
                 AND f.status = :status
             """)
     List<FriendshipEntity> findAllByUserIdAndStatus(@Param("userId") UUID userId,
-            @Param("status") RequestStatus status);
+                                                    @Param("status") RequestStatus status);
 
     List<FriendshipEntity> findByReceiverUserIdAndStatus(UUID receiverId, RequestStatus status);
 
@@ -67,34 +74,34 @@ public interface FriendshipRepository extends JpaRepository<FriendshipEntity, UU
             AND u.userId != :currentUserId
             """, countQuery = "SELECT count(u) FROM UserEntity u WHERE LOWER(u.name) LIKE LOWER(CONCAT('%', :name, '%')) AND u.userId != :currentUserId")
     Page<Object[]> findUsersWithStatus(@Param("name") String name, @Param("currentUserId") UUID currentUserId,
-            Pageable pageable);
+                                       Pageable pageable);
 
-        @Query("""
-                            SELECT new project_z.demo.dto.UserDtos.UserDtoWithFriendshipStatus(
-                                u.userId,
-                                u.name,
-                                u.nameTag,
-                                u.img,
-                                COALESCE(f.status, project_z.demo.enums.RequestStatus.NONE),
-                                f.friendshipId
-                            )
-                            FROM UserEntity u
-                            LEFT JOIN FriendshipEntity f ON (
-                                (f.sender.userId = :currentUserId AND f.receiver.userId = u.userId)
-                                OR (f.receiver.userId = :currentUserId AND f.sender.userId = u.userId)
-                            )
-                            WHERE u.userId = :userId
-                        """)
-        Optional<UserDtoWithFriendshipStatus> findUserWithFriendshipStatusToCurrentUser(
-                        @Param("userId") UUID userId,
-                        @Param("currentUserId") UUID currentUserId);
+    @Query("""
+                SELECT new project_z.demo.dto.UserDtos.UserDtoWithFriendshipStatus(
+                    u.userId,
+                    u.name,
+                    u.nameTag,
+                    u.img,
+                    COALESCE(f.status, project_z.demo.enums.RequestStatus.NONE),
+                    f.friendshipId
+                )
+                FROM UserEntity u
+                LEFT JOIN FriendshipEntity f ON (
+                    (f.sender.userId = :currentUserId AND f.receiver.userId = u.userId)
+                    OR (f.receiver.userId = :currentUserId AND f.sender.userId = u.userId)
+                )
+                WHERE u.userId = :userId
+            """)
+    Optional<UserDtoWithFriendshipStatus> findUserWithFriendshipStatusToCurrentUser(
+            @Param("userId") UUID userId,
+            @Param("currentUserId") UUID currentUserId);
 
-        @Query("""
-                            SELECT f FROM FriendshipEntity f WHERE
-                            (f.sender.userId = :currentUserId AND f.receiver.userId = :userId)
-                            OR (f.receiver.userId = :currentUserId AND f.sender.userId = :userId)
-                        """)
-        Optional<FriendshipEntity> findFriendshipBetween(
-                        @Param("userId") UUID userId,
-                        @Param("currentUserId") UUID currentUserId);
+    @Query("""
+                SELECT f FROM FriendshipEntity f WHERE
+                (f.sender.userId = :currentUserId AND f.receiver.userId = :userId)
+                OR (f.receiver.userId = :currentUserId AND f.sender.userId = :userId)
+            """)
+    Optional<FriendshipEntity> findFriendshipBetween(
+            @Param("userId") UUID userId,
+            @Param("currentUserId") UUID currentUserId);
 }
