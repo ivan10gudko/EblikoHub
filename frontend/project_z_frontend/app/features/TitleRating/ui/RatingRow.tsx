@@ -27,7 +27,7 @@ export const CategoryRow = ({
     onRate: (val: number) => void;
     isOwn:boolean;
     onClear: () => void;
-    onTitleChange?: (newTitleId: number) => void;
+    onTitleChange: (newTitleId: number) => void;
 }) => {
     const [localName, setLocalName] = useState(categoryKey);
     const [isPopoverOpen, setIsPopoverOpen] = useState(false);
@@ -99,9 +99,10 @@ export const CategoryRow = ({
                             }}
                         >
                             <RatingNeighborsContent
+                                onTitleChange={onTitleChange}
                                 titleId={titleId}
                                 category={categoryKey}
-                                ratingValue={value} 
+                                ratingValue={value}
                                 onClose={() => setIsPopoverOpen(false)}
                             />
                         </DropdownMenu.Content>

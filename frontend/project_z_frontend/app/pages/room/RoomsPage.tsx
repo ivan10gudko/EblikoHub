@@ -7,21 +7,12 @@ import {
   useRoomsQuery,
 } from "~/entities/room";
 import { useMemo } from "react";
-
 import { Button } from "~/shared/ui/Button";
 import { AddRoomCardButton } from "~/features/manageRoomSettings";
 import { useNavigate } from "react-router";
 import { RoomCardWrapper } from "~/widgets/RoomCard";
-
-const secondaryBtnStyle =
-  "w-full h-11 flex items-center justify-center gap-2 rounded-xl " +
-  "bg-card hover:bg-background-muted " +
-  "border border-border hover:border-primary " +
-  "text-foreground hover:text-primary " +
-  "font-bold text-sm tracking-wide " +
-  "shadow-md hover:shadow-orange-glow " +
-  "transition-all duration-200 " +
-  "active:scale-[0.97] cursor-pointer";
+import { useIsInvitesExists } from "~/features/manageRoomRequests";
+import { NotificationBadge } from "~/shared/ui/NotificationBadge";
 
 export default function RoomsPage({ userId }: { userId: string | null }) {
   const { search, sortBy, order, setSearch, setSortFromUrl, setOrderFromUrl } =
@@ -38,6 +29,8 @@ export default function RoomsPage({ userId }: { userId: string | null }) {
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
     useRoomsQuery(userId ?? null);
 
+  const { data: hasInvites } = useIsInvitesExists();
+
   const allRooms = useMemo(() => {
     return data?.pages.flatMap((page) => page.content) ?? [];
   }, [data]);
@@ -51,9 +44,12 @@ export default function RoomsPage({ userId }: { userId: string | null }) {
           <Button
             onClick={() => navigate("/rooms/requests")}
             variant="secondaryCard"
+            className="relative flex items-center justify-between"
           >
-            My Requests
+            <span>My Requests</span>
+            {hasInvites && <NotificationBadge />}
           </Button>
+
           <Button
             onClick={() => navigate("add")}
             variant="secondaryCard"

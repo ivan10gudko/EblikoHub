@@ -95,6 +95,21 @@ public class RoomRequestServiceImpl implements RoomRequestService {
         return roomRequestRepository.getRoomRequestCounts(userId);
     }
 
+    @Transactional(readOnly = true)
+    @Override
+    public boolean isInvitesExistsByUserId(UUID userId) {
+        return roomRequestRepository.hasPendingInvite(userId);
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public boolean isJoinRequestsExists(Long roomId) {
+        if (!roomRepository.existsById(roomId)) {
+            throw new ResourceNotFoundException("room not found");
+        }
+        return roomRequestRepository.hasPendingJoinRequestByRoomId(roomId);
+    }
+
     @Override
     @Transactional
     public void acceptRequest(UUID roomRequestId) {

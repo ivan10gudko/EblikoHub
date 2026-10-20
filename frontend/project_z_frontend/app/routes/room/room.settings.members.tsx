@@ -10,7 +10,6 @@ export default function RoomsSettingsMembersPage() {
 
   const { room, isLoading: isRoomLoading, isError } = useRoomDetails(Number(roomId));
 
-  // Чекаємо тільки завантаження деталей кімнати
   if (isRoomLoading) {
     return <div className="p-10 text-muted-foreground font-semibold">Loading settings...</div>;
   }

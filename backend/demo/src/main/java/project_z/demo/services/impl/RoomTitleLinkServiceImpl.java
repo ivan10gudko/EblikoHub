@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,7 +37,8 @@ public class RoomTitleLinkServiceImpl implements RoomTitleLinkService {
     private final Mapper<RoomTitleLinkEntity, RoomTitleLinkDetailsDto> mapper;
     private final TitleRepository titleRepository;
     private final RoomTitleEntityRepository roomTitleRepository;
-    private final TitleMatchingEngine titleMatchingEngine;
+    @Qualifier("titleMatchingEngineImpl")
+    private final TitleMatchingEngine<SuggestedTitleLinkDto> titleMatchingEngine;
 
     @Override
     @Transactional
@@ -137,6 +139,6 @@ public class RoomTitleLinkServiceImpl implements RoomTitleLinkService {
             return List.of();
         }
 
-        return titleMatchingEngine.suggestLinks(roomTitles, watchlistTitles);
+        return titleMatchingEngine.suggest(roomTitles, watchlistTitles);
     }
 }

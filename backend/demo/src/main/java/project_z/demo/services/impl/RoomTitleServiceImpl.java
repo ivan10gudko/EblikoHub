@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -36,9 +37,11 @@ import project_z.demo.dto.RoomTitleDtos.RoomTitleWithUserLinksDto;
 import project_z.demo.dto.RoomTitleDtos.RoomTitlesResponseDto;
 import project_z.demo.dto.RoomTitleLinkDtos.RoomTitleLinkShortDto;
 
+import project_z.demo.dto.RoomTitleLinkDtos.SuggestedTitleLinkDto;
 import project_z.demo.dto.TitleDtos.TitleSameCriteriaDto;
 import project_z.demo.dto.TitleDtos.TitleShortDto;
 import project_z.demo.dto.TitleDtos.TitleUserParticipation;
+import project_z.demo.dto.TitleDtos.TitleVisualDto;
 import project_z.demo.dto.UserDtos.UserShortDto;
 import project_z.demo.entity.RoomEntity;
 import project_z.demo.entity.RoomTitleEntity;
@@ -47,15 +50,13 @@ import project_z.demo.entity.TitleEntity;
 import project_z.demo.entity.UserEntity;
 import project_z.demo.entity.views.RoomTitleStatsView;
 import project_z.demo.enums.TitleStatus;
-import project_z.demo.repositories.RoomRepository;
-import project_z.demo.repositories.RoomTitleEntityRepository;
-import project_z.demo.repositories.RoomTitleLinkRepository;
+import project_z.demo.repositories.*;
 import project_z.demo.repositories.Specifications.RoomTitleSpecifications;
 import project_z.demo.repositories.Specifications.views.RoomTitleStatsSpecifications;
-import project_z.demo.repositories.UserRepository;
 import project_z.demo.repositories.views.RoomTitleStatsRepository;
 import project_z.demo.security.SecurityService;
 import project_z.demo.services.RoomTitleService;
+import project_z.demo.services.TitleMatchingEngine;
 
 @Service
 @RequiredArgsConstructor
@@ -63,6 +64,7 @@ import project_z.demo.services.RoomTitleService;
 public class RoomTitleServiceImpl implements RoomTitleService {
     private final RoomRepository roomRepository;
     private final RoomTitleEntityRepository repository;
+    private final TitleRepository titleRepository;
     private final Mapper<RoomTitleEntity, RoomTitleDetailsDto> mapper;
     private final RoomTitleUpdateMapperImpl updateMapper;
     private final Mapper<RoomTitleEntity, RoomTitleCreateDto> createMapper;
@@ -79,6 +81,8 @@ public class RoomTitleServiceImpl implements RoomTitleService {
     private final Mapper<RoomTitleLinkEntity, RoomTitleLinkShortDto> roomTitleLinkShortMapper;
     private final Mapper<List<Object[]>, RoomTitleWithLinksDto> roomTitleWithLinksMapper;
     private final UserRepository userRepository;
+    @Qualifier("uniqueTitleSuggestionEngineImpl")
+    private final TitleMatchingEngine<TitleVisualDto> uniqueTitleSuggestionEngine;
 
     @Override
     @Transactional
@@ -96,6 +100,37 @@ public class RoomTitleServiceImpl implements RoomTitleService {
         linkRepository.linkExistingMembersToNewRoomTitle(savedEntity.getId());
 
         return mapper.mapTo(savedEntity);
+    }
+
+
+    @Override
+    @Transactional
+    public void batchCreate(List<RoomTitleCreateDto> dtos, Long roomId) {
+        if (dtos == null || dtos.isEmpty()) {
+            return;
+        }
+
+        UUID currentUserId = securityService.getCurrentUserId();
+        UserEntity user = userRepository.findById(currentUserId).orElseThrow();
+        RoomEntity roomEntity = roomRepository.findById(roomId)
+                .orElseThrow(() -> new ResourceNotFoundException("room not found"));
+
+        List<RoomTitleEntity> entities = dtos.stream().map(dto -> {
+            RoomTitleEntity entity = createMapper.mapFrom(dto);
+            entity.setRoom(roomEntity);
+            entity.setAddedByUser(user);
+            return entity;
+        }).toList();
+
+        List<RoomTitleEntity> savedEntities = repository.saveAll(entities);
+
+        List<UUID> savedIds = savedEntities.stream()
+                .map(RoomTitleEntity::getId)
+                .toList();
+
+        if (!savedIds.isEmpty()) {
+            linkRepository.linkExistingMembersToNewRoomTitles(savedIds);
+        }
     }
 
     @Override
@@ -168,7 +203,7 @@ public class RoomTitleServiceImpl implements RoomTitleService {
 
     @Override
     public Page<RoomTitleWithUserLinksDto> getRoomTitlesWithUserLinks(long roomId, UUID userId,
-            RoomTitlesWithSearchQueryParameters queryParameters) {
+                                                                      RoomTitlesWithSearchQueryParameters queryParameters) {
         Pageable pageable = PagingHelper.toPageable(queryParameters);
         Specification<RoomTitleEntity> spec = Specification
                 .where(RoomTitleSpecifications.hasRoomId(roomId))
@@ -193,10 +228,24 @@ public class RoomTitleServiceImpl implements RoomTitleService {
 
         return roomTitleWithLinksMapper.mapTo(rows);
     }
+
+
+    @Override
+    public List<TitleVisualDto> suggestTitlesToAdd(Long roomId, UUID userId) {
+        if (!roomRepository.existsById(roomId)) {
+            throw new ResourceNotFoundException("room not found");
+        }
+
+        List<TitleEntity> titles = titleRepository.findTitlesNotLinkedToRoom(userId, roomId);
+        Specification<RoomTitleEntity> spec = RoomTitleSpecifications.notLinkedByUser(roomId, userId);
+        List<RoomTitleEntity> roomTitles = repository.findAll(spec);
+
+        return uniqueTitleSuggestionEngine.suggest(roomTitles, titles);
+    }
     // ---- helpers
 
     private RoomTitleWithUserLinksDto mapToWithUserLinksDto(RoomTitleEntity entity,
-            Map<UUID, List<RoomTitleLinkEntity>> linksMap) {
+                                                            Map<UUID, List<RoomTitleLinkEntity>> linksMap) {
         RoomTitleWithUserLinksDto dto = roomTitleWithUserLinksMapper.mapTo(entity);
         dto.setLinks(mapLinksToShortDtos(linksMap.getOrDefault(entity.getId(), List.of())));
         return dto;
@@ -209,7 +258,7 @@ public class RoomTitleServiceImpl implements RoomTitleService {
     }
 
     private Specification<RoomTitleStatsView> buildSpecification(Long roomId, UUID currentUserId,
-            RoomTitlesQueryParameters params) {
+                                                                 RoomTitlesQueryParameters params) {
         String statusName = params.getStatus() != null ? params.getStatus().name() : null;
 
         Specification<RoomTitleStatsView> statusSpec = Boolean.TRUE.equals(params.getIsMyStatus())
@@ -246,8 +295,8 @@ public class RoomTitleServiceImpl implements RoomTitleService {
     }
 
     private RoomTitleSummaryDto mapToSummary(RoomTitleStatsView statsView, Map<UUID, RoomTitleEntity> entityMap,
-            Map<UUID, List<RoomTitleLinkEntity>> linksByTitleId,
-            UUID currentUserId, boolean isCurrentUserSelected, TitleStatus status) {
+                                             Map<UUID, List<RoomTitleLinkEntity>> linksByTitleId,
+                                             UUID currentUserId, boolean isCurrentUserSelected, TitleStatus status) {
         RoomTitleEntity entity = entityMap.get(statsView.getId());
         if (entity == null) {
             return null;
@@ -257,7 +306,7 @@ public class RoomTitleServiceImpl implements RoomTitleService {
     }
 
     private Map<UUID, UserShortDto> buildUsersCache(List<RoomTitleLinkEntity> links, UUID currentUserId,
-            boolean isCurrentUserSelected) {
+                                                    boolean isCurrentUserSelected) {
         List<UserEntity> users = links.stream()
                 .map(link -> link.getUserTitleRecord().getUser())
                 .filter(user -> {
