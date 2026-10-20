@@ -3,7 +3,7 @@ chcp 65001 > nul
 echo ===================================
 echo   Starting Spring Boot Backend...
 echo ===================================
-
+cd demo
 docker compose up -d --build
 
 if %ERRORLEVEL% EQU 0 (

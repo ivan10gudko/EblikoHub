@@ -3,12 +3,12 @@ version: '3.8'
 services:
   backend:
     build:
-      context: ./demo  
+      context: .
       dockerfile: Dockerfile
     container_name: spring_backend
     ports:
       - "8080:8080"
-    env_file: .env  # this path valid if only .env file is in /backend and u do docker up from /backend 
+    env_file: .env # valid if .env file is in /demo
     environment:
       DATABASE_URL: jdbc:postgresql://host.docker.internal:5432/${DATABASE_NAME}
       DATABASE_USERNAME: ${DATABASE_USERNAME}
