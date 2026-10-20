@@ -113,4 +113,17 @@ public interface TitleRepository extends JpaRepository<TitleEntity, Long>,
     @EntityGraph(attributePaths = {"character"})
     @Query("SELECT t FROM TitleEntity t WHERE t.user.userId = :userId AND t.titleId IN :titleIds")
     List<TitleEntity> findAllByIdsAndUserId(@Param("userId") UUID userId, @Param("titleIds") List<Long> titleIds);
+
+
+    @Query("""
+        SELECT t FROM TitleEntity t
+        WHERE t.user.userId = :userId
+          AND NOT EXISTS (
+              SELECT 1 FROM RoomTitleLinkEntity rtl
+              JOIN rtl.roomTitle rt
+              WHERE rtl.userTitleRecord = t
+                AND rt.room.roomId = :roomId
+          )
+    """)
+    List<TitleEntity> findTitlesNotLinkedToRoom(@Param("userId") UUID userId, @Param("roomId") Long roomId);
 }
