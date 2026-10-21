@@ -28,16 +28,16 @@ interface RootProps {
 
 const Root = ({ values, setters, children }: RootProps) => (
     <EntityFormContext.Provider value={{ values, setters }}>
-        <div className="flex flex-col gap-4 w-full p-2">
+        <div className="flex flex-col max-h-[70vh] h-full justify-between p-2">
             <ImageUrlField imageUrl={values.imageUrl} onImageChange={setters.setImageUrl}>
-                <div className="flex flex-col gap-5">{children}</div>
+                <div className="flex flex-col h-full min-h-0">{children}</div>
             </ImageUrlField>
         </div>
     </EntityFormContext.Provider>
 );
 
 const Body = ({ children }: { children: ReactNode }) => (
-    <div className="overflow-y-auto flex-1 space-y-4 pr-1 custom-scrollbar min-h-0">{children}</div>
+    <div className="overflow-y-auto flex-1 space-y-4 pr-1 pb-4 custom-scrollbar min-h-0">{children}</div>
 );
 
 const Import = ({ label, children }: { label: string; children: ReactNode }) => (
@@ -158,7 +158,7 @@ interface ActionsProps {
 }
 
 const Actions = ({ onClose, onSave, isPending, saveText = "Save Changes", onClear }: ActionsProps) => (
-    <div className="flex flex-col gap-3 pt-3 border-t border-border/60 bg-background shrink-0">
+    <div className="flex flex-col gap-3 pt-3 border-t border-border/60 bg-background shrink-0 mt-auto">
         <div className="flex gap-3">
             <Button onClick={onClose} variant="cancel" className="w-full sm:flex-1 h-11">
                 Cancel

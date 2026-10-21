@@ -16,6 +16,7 @@ export interface RoomTitleReadOnlyListProps {
   draggingTitleId: string;
   isMobile?: boolean;
   onSelectMobileRoom?: (roomTitleId: string) => void;
+  isRoomTitlesModeToggled?: boolean;
 }
 
 export const RoomTitleReadOnlyList = ({
@@ -25,6 +26,7 @@ export const RoomTitleReadOnlyList = ({
   draggingTitleId,
   isMobile = false,
   onSelectMobileRoom,
+  isRoomTitlesModeToggled = false,
 }: RoomTitleReadOnlyListProps) => {
   const {
     data,
@@ -36,6 +38,7 @@ export const RoomTitleReadOnlyList = ({
     page: 0,
     limit: PAGE_LIMIT,
     search: searchQuery || undefined,
+    NoLinkedOnly: isRoomTitlesModeToggled
   });
 
   const titles = data?.pages.flatMap((page) => page.content) ?? [];
