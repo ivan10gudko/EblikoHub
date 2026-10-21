@@ -10,7 +10,7 @@ import project_z.demo.enums.seasons.SeasonType;
 
 @Data
 public class SeasonPatchUpdateDto {
-    private JsonNullable<String> seasonName = JsonNullable.undefined();
+    private JsonNullable<String> name = JsonNullable.undefined();
     private JsonNullable<TitleStatus> status = JsonNullable.undefined();
     private JsonNullable<Map<String, Float>> rating = JsonNullable.undefined();
 

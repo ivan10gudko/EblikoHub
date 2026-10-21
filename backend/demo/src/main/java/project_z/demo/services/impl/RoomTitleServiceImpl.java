@@ -209,6 +209,10 @@ public class RoomTitleServiceImpl implements RoomTitleService {
                 .where(RoomTitleSpecifications.hasRoomId(roomId))
                 .and(RoomTitleSpecifications.hasTitleNameLike(queryParameters.getSearch()));
 
+        if (queryParameters.isNoLinkedOnly()) {
+            spec = spec.and(RoomTitleSpecifications.notLinkedByUser(roomId, userId));
+        }
+
         Page<RoomTitleEntity> titlePage = repository.findAll(spec, pageable);
         List<UUID> titleIds = CollectionUtils.extractIds(titlePage.getContent(), RoomTitleEntity::getId);
 

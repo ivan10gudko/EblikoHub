@@ -1,9 +1,7 @@
 package project_z.demo.services.impl;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -65,7 +63,7 @@ public class SeasonServiceImpl implements SeasonService {
     public SeasonEntity partialUpdate(Long seasonId, SeasonPatchUpdateDto source) {
         return seasonRepository.findById(seasonId)
                 .map(target -> {
-                    patchHelper.updateIfPresent(source.getSeasonName(), target::setName);
+                    patchHelper.updateIfPresent(source.getName(), target::setName);
                     patchHelper.updateIfPresent(source.getStatus(), target::setStatus);
                     patchHelper.updateIfPresent(source.getRating(), target::setRating);
                     patchHelper.updateIfPresent(source.getApiTitleId(), target::setApiTitleId);
@@ -85,32 +83,29 @@ public class SeasonServiceImpl implements SeasonService {
     @Override
     @Transactional
     public List<SeasonDto> batchUpdate(Long titleId, List<SeasonDto> dtos) {
-        TitleEntity title = titleRepository.findById(titleId)
-                .orElseThrow(() -> new ResourceNotFoundException("Title not found"));
+        if (!titleRepository.existsById(titleId)) {
+            throw new ResourceNotFoundException("Title not found");
+        }
+        TitleEntity title = titleRepository.getReferenceById(titleId);
 
-        List<SeasonEntity> currentSeasons = seasonRepository.findByTitle_TitleId(titleId);
+        Map<Long, SeasonEntity> currentById = seasonRepository.findByTitle_TitleId(titleId).stream()
+                .collect(Collectors.toMap(SeasonEntity::getSeasonId, Function.identity()));
 
         Set<Long> dtoIds = dtos.stream()
                 .map(SeasonDto::getSeasonId)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toSet());
 
-        List<SeasonEntity> toRemove = currentSeasons.stream()
+        List<SeasonEntity> toRemove = currentById.values().stream()
                 .filter(s -> !dtoIds.contains(s.getSeasonId()))
                 .toList();
-
         seasonRepository.deleteAll(toRemove);
+        seasonRepository.flush();
 
         List<SeasonEntity> entitiesToSave = dtos.stream().map(dto -> {
-            SeasonEntity entity;
-            if (dto.getSeasonId() != null) {
-                entity = currentSeasons.stream()
-                        .filter(s -> s.getSeasonId().equals(dto.getSeasonId()))
-                        .findFirst()
-                        .orElse(new SeasonEntity());
-            } else {
-                entity = seasonMapper.mapFrom(dto);
-            }
+            SeasonEntity entity = dto.getSeasonId() != null
+                    ? currentById.getOrDefault(dto.getSeasonId(), new SeasonEntity())
+                    : seasonMapper.mapFrom(dto);
 
             entity.setName(dto.getName());
             entity.setRating(dto.getRating());
@@ -118,6 +113,7 @@ public class SeasonServiceImpl implements SeasonService {
             entity.setTitle(title);
             return entity;
         }).toList();
+
         return StreamSupport.stream(seasonRepository.saveAll(entitiesToSave).spliterator(), false)
                 .map(seasonMapper::mapTo)
                 .toList();

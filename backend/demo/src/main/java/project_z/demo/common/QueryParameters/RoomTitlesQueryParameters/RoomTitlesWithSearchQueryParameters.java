@@ -8,4 +8,5 @@ import project_z.demo.common.QueryParameters.QueryParameters;
 @Setter
 public class RoomTitlesWithSearchQueryParameters extends QueryParameters {
     private String search;
+    private boolean NoLinkedOnly = false;
 }

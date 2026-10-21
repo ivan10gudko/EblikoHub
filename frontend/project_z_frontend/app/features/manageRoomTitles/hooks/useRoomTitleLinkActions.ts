@@ -54,7 +54,7 @@ export const useRoomTitleLinkActions = (roomId: number) => {
         },
 
         onSuccess: (_data, dto) => {
-            queryClient.invalidateQueries({ queryKey, exact: false });
+            queryClient.invalidateQueries({ queryKey : roomTitleKeys.all });
             queryClient.invalidateQueries({ queryKey: roomTitleKeys.userLinks(roomId, String(dto.roomTitleId)) });
             queryClient.invalidateQueries({ queryKey: titleRecordKeys.all });
             notify.success("Link created successfully");
