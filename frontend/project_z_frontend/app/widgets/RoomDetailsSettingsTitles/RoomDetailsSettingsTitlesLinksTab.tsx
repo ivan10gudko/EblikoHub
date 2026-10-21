@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState } from "react";
 import { DragDropContext, type DropResult } from "@hello-pangea/dnd";
 import { WatchlistShortTitles } from "./WatchlistShortTitles";
 import { RoomTitleReadOnlyList } from "./RoomTitleList";
@@ -22,7 +22,7 @@ export const RoomDetailsSettingsTitlesLinks = ({
 
   const [draggingTitleId, setDraggingTitleId] = useState<string | null>(null);
   const [isWatchlistModeToggleActive, setWatchlistModeToggleActive] = useState(false);
-  const [pendingFetch, setPendingFetch] = useState(false);
+  const [isRoomTitlesModeToggleActive, setRoomTitlesModeToggleActive] = useState(false);
 
   const breakpoint = useWindowDimensions();
   const isMobile = breakpoint === "xs" || breakpoint === "sm" || breakpoint === "md";
@@ -96,6 +96,15 @@ export const RoomDetailsSettingsTitlesLinks = ({
         <div className="flex flex-col gap-4 min-w-0">
           <div className="flex items-center justify-between gap-4 h-9">
             <h2 className="font-bold text-2xl whitespace-nowrap">Room Titles</h2>
+            <div className="flex items-center gap-3">
+              <span className="text-sm text-foreground">
+                {isRoomTitlesModeToggleActive ? "Only titles with no links" : "All titles"}
+              </span>
+              <ToggleSwitch
+                isActive={isRoomTitlesModeToggleActive}
+                onToggle={setRoomTitlesModeToggleActive}
+              />
+            </div>
           </div>
 
           <div className="flex justify-center">
@@ -112,6 +121,7 @@ export const RoomDetailsSettingsTitlesLinks = ({
             roomId={roomId}
             searchQuery={searchQuery}
             draggingTitleId={draggingTitleId ?? ""}
+            isRoomTitlesModeToggled={isRoomTitlesModeToggleActive}
           />
         </div>
       </div>

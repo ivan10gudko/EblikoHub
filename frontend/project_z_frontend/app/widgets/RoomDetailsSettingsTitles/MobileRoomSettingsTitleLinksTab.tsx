@@ -17,7 +17,10 @@ export const MobileTitleLinksManager = ({
 }: MobileTitleLinksManagerProps) => {
   const [activeTab, setActiveTab] = useState<"watchlist" | "rooms">("watchlist");
   const [selectedTitleId, setSelectedTitleId] = useState<number | null>(null);
+
   const [isWatchlistModeToggleActive, setWatchlistModeToggleActive] = useState(false);
+  const [isRoomTitlesModeToggleActive, setRoomTitlesModeToggleActive] = useState(false);
+
   const [watchlistSearchQuery, setWatchlistSearchQuery] = useState("");
   const [roomSearchQuery, setRoomSearchQuery] = useState("");
 
@@ -109,6 +112,15 @@ export const MobileTitleLinksManager = ({
         <div className="flex flex-col gap-4 w-full">
           <div className="flex items-center justify-between px-1">
             <h3 className="font-bold text-lg whitespace-nowrap">Room Titles</h3>
+            <div className="flex flex-row items-center gap-3">
+              <span className="text-xs text-foreground">
+                {isRoomTitlesModeToggleActive ? "No links" : "All"}
+              </span>
+              <ToggleSwitch
+                isActive={isRoomTitlesModeToggleActive}
+                onToggle={setRoomTitlesModeToggleActive}
+              />
+            </div>
           </div>
 
           <SearchBar
@@ -126,6 +138,7 @@ export const MobileTitleLinksManager = ({
             draggingTitleId={selectedTitleId ? String(selectedTitleId) : ""}
             isMobile={true}
             onSelectMobileRoom={handleSelectRoom}
+            isRoomTitlesModeToggled={isRoomTitlesModeToggleActive}
           />
         </div>
       )}

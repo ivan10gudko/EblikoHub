@@ -52,6 +52,7 @@ export interface RoomTitleLinkDetails {
 
 export interface RoomTitleWithSearchQueryParams extends QueryParams {
     search?: string;
+    NoLinkedOnly?:boolean;
 }
 
 export interface RoomTitleWithUserLinks {

@@ -13,8 +13,9 @@ import io.github.cdimascio.dotenv.Dotenv;
 @SpringBootApplication
 @EnableJpaRepositories("project_z.demo.repositories")
 public class DemoApplication {
-	public static void main(String[] args) {
-		Dotenv dotenv = Dotenv.configure()
+    public static void main(String[] args) {
+        Dotenv dotenv = Dotenv.configure()
+                .directory("./demo")
                 .ignoreIfMissing()
                 .load();
 
@@ -22,8 +23,8 @@ public class DemoApplication {
             System.setProperty(entry.getKey(), entry.getValue());
         });
 
-		TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
-		SpringApplication.run(DemoApplication.class, args);
-	}
+        TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
+        SpringApplication.run(DemoApplication.class, args);
+    }
 
 }

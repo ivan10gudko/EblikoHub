@@ -44,10 +44,14 @@ export default function RoomsPage({ userId }: { userId: string | null }) {
           <Button
             onClick={() => navigate("/rooms/requests")}
             variant="secondaryCard"
-            className="relative flex items-center justify-between"
+            className="relative"
           >
             <span>My Requests</span>
-            {hasInvites && <NotificationBadge />}
+            {hasInvites && (
+              <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
+                <NotificationBadge />
+              </div>
+            )}
           </Button>
 
           <Button
