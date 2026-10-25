@@ -6,6 +6,7 @@ import type { RoomTitleWithUserLinks } from "~/features/manageRoomTitles";
 import { useRoomTitleLinkActions } from "~/features/manageRoomTitles";
 import { LinkItem } from "~/features/manageRoomTitles/ui/LinkItem";
 import { DEFAULT_IMAGE_PATH } from "~/shared/constants";
+import { TitleHoverPreview } from "~/shared/ui/HoverPreviewImage";
 interface RoomTitleRowProps {
   title: RoomTitleWithUserLinks;
   isDraggingOver?: boolean;
@@ -60,11 +61,12 @@ export const RoomTitleReadOnlyRowShort = ({
         <div className="w-[20px]" />
 
         <div className="relative h-10 w-16 flex-shrink-0">
-          <img
-            src={title.imageUrl || DEFAULT_IMAGE_PATH}
-            className="h-full w-full object-cover rounded-md"
-            alt={title.titleName}
-          />
+          <TitleHoverPreview
+                imageUrl={title.imageUrl}
+                titleName={title.titleName}
+                className="h-10 w-16 flex-shrink-0 rounded-md overflow-hidden"
+                previewClassName="w-40 h-56"
+            />
         </div>
 
         <div className="flex-1 min-w-0">
