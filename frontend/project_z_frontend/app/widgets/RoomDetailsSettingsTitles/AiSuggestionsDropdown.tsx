@@ -80,7 +80,7 @@ export const AiSuggestionsDropdown = ({
                     sideOffset={8}
                     className="z-50 w-[calc(100vw-2rem)] sm:w-[420px] bg-card border border-border rounded-2xl shadow-2xl p-3 outline-none animate-in fade-in zoom-in duration-150 flex flex-col gap-2 max-h-[380px] sm:max-h-[440px] overflow-hidden"
                 >
-                    <div className="flex items-center justify-between border-b border-border/60 pb-2 px-1">
+                    <div className="flex items-center justify-between border-b border-border/60 pb-2 px-1 shrink-0">
                         <span className="text-xs font-black uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
                             <AutoAwesomeIcon className="text-primary text-sm" /> Suggested Titles
                         </span>
@@ -100,13 +100,13 @@ export const AiSuggestionsDropdown = ({
                         </div>
                     </div>
 
-                    <div className="overflow-y-auto flex-1 space-y-2 pr-1 custom-scrollbar min-h-[140px] py-1 flex flex-col items-center justify-center">
+                    <div className="overflow-y-auto flex-1 pr-1 custom-scrollbar min-h-[140px] flex flex-col gap-2.5 my-1">
                         {isLoading ? (
-                            <div className="py-8 flex items-center justify-center w-full">
+                            <div className="py-8 flex items-center justify-center w-full my-auto">
                                 <Loader />
                             </div>
                         ) : suggestedTitles.length === 0 ? (
-                            <div className="text-center py-8 text-xs text-muted-foreground italic w-full">
+                            <div className="text-center py-8 text-xs text-muted-foreground italic w-full my-auto">
                                 No suggestions found.
                             </div>
                         ) : (
@@ -123,7 +123,7 @@ export const AiSuggestionsDropdown = ({
                     </div>
 
                     {suggestedTitles.length > 0 && (
-                        <div className="pt-2 border-t border-border/60 flex justify-end">
+                        <div className="pt-2 border-t border-border/60 flex justify-end shrink-0">
                             <button
                                 type="button"
                                 disabled={isLoading}

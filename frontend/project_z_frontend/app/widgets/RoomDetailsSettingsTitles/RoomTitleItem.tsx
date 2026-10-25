@@ -2,6 +2,8 @@ import type { RoomTitleDetails } from "~/features/manageRoomTitles/model/roomTit
 import { TitleTypeThemes } from "~/entities/titleRecord";
 import { RoomTitleActionMenu } from "./RoomTitleActionMenu";
 import { formatDate } from "~/shared/helpers";
+import { TitleHoverPreview } from "~/shared/ui/HoverPreviewImage";
+
 
 interface RoomTitleItemProps {
   item: RoomTitleDetails;
@@ -11,46 +13,46 @@ interface RoomTitleItemProps {
   isOwn: boolean;
 }
 
-export const RoomTitleItem = ({ 
-  item, 
-  onDelete, 
-  defaultImagePath, 
+export const RoomTitleItem = ({
+  item,
+  onDelete,
+  defaultImagePath,
   isCurrentUserAdmin,
   isOwn
 }: RoomTitleItemProps) => {
-  
-  const canManage = isOwn || isCurrentUserAdmin;
 
-  
+  const canManage = isOwn || isCurrentUserAdmin;
   const themeClass = TitleTypeThemes[item.titleType] || "border-border hover:border-foreground/30";
+  const imageSrc = item.imageUrl || defaultImagePath;
 
   return (
-  <div
-  className={`relative grid w-full max-w-full min-w-0 grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 overflow-hidden p-3 rounded-lg border transition-all ${themeClass}`}
->
-  <img
-    src={item.imageUrl || defaultImagePath}
-    alt={item.titleName}
-   className="w-20 h-16 md:w-24 md:h-16 shrink-0 object-cover rounded-md"
-  />
+    <div
+      className={`relative grid w-full max-w-full min-w-0 grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 overflow-hidden p-3 rounded-lg border transition-all ${themeClass}`}
+    >
+      <TitleHoverPreview
+        imageUrl={imageSrc}
+        titleName={item.titleName}
+        className="w-20 h-16 md:w-24 md:h-16 shrink-0 rounded-md overflow-hidden"
+        previewClassName="w-44 h-60"
+      />
 
-  <div className="min-w-0 overflow-hidden">
-    <div className="truncate font-bold">
-      {item.titleName}
+      <div className="min-w-0 overflow-hidden">
+        <div className="truncate font-bold">
+          {item.titleName}
+        </div>
+
+        <div className="truncate text-sm font-bold">
+          Added: {formatDate(item.createdAt)}
+        </div>
+      </div>
+
+      <div className="shrink-0">
+        <RoomTitleActionMenu
+          item={item}
+          onDelete={() => onDelete(item.id)}
+          canManage={canManage}
+        />
+      </div>
     </div>
-
-    <div className="truncate text-sm font-bold">
-      Added: {formatDate(item.createdAt)}
-    </div>
-  </div>
-
-  <div className="shrink-0">
-    <RoomTitleActionMenu
-      item={item}
-      onDelete={() => onDelete(item.id)}
-      canManage={canManage}
-    />
-  </div>
-</div>
   );
 };

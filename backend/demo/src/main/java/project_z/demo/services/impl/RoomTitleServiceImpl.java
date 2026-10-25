@@ -241,9 +241,9 @@ public class RoomTitleServiceImpl implements RoomTitleService {
         }
 
         List<TitleEntity> titles = titleRepository.findTitlesNotLinkedToRoom(userId, roomId);
-        Specification<RoomTitleEntity> spec = RoomTitleSpecifications.notLinkedByUser(roomId, userId);
+        Specification<RoomTitleEntity> spec = RoomTitleSpecifications.notLinkedByUser(roomId, userId)
+                .and(RoomTitleSpecifications.hasRoomId(roomId));
         List<RoomTitleEntity> roomTitles = repository.findAll(spec);
-
         return uniqueTitleSuggestionEngine.suggest(roomTitles, titles);
     }
     // ---- helpers

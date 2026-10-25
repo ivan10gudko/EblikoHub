@@ -3,6 +3,7 @@ import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
 import { ReadOnlyStatusBadge, TitleTypeThemes, type TitleRecord } from "~/entities/titleRecord";
 import { CompactRatingLabel } from "~/shared/ui/Rating";
 import { DEFAULT_IMAGE_PATH } from "~/shared/constants";
+import { TitleHoverPreview } from "~/shared/ui/HoverPreviewImage";
 
 interface WatchlistDragRowProps {
     title: TitleRecord;
@@ -11,6 +12,7 @@ interface WatchlistDragRowProps {
 
 export const WatchlistRowShort = ({ title, dragHandleProps }: WatchlistDragRowProps) => {
     const themeClasses = title.titleType ? TitleTypeThemes[title.titleType] : "";
+    const imageSrc = title.imageUrl || DEFAULT_IMAGE_PATH;
 
     return (
         <div className={`group/row flex items-center justify-between gap-2 sm:gap-4 bg-card p-2 rounded-xl border transition-all duration-300 w-full box-border ${themeClasses}`}>
@@ -19,9 +21,12 @@ export const WatchlistRowShort = ({ title, dragHandleProps }: WatchlistDragRowPr
                     <DragIndicatorIcon sx={{ fontSize: 20 }} />
                 </div>
 
-                <div className="relative h-10 w-16 flex-shrink-0">
-                    <img src={title.imageUrl || DEFAULT_IMAGE_PATH} className="h-full w-full object-cover rounded-md" alt={title.titleName} />
-                </div>
+                <TitleHoverPreview
+                    imageUrl={imageSrc}
+                    titleName={title.titleName}
+                    className="h-10 w-16 flex-shrink-0 rounded-md overflow-hidden"
+                    previewClassName="w-40 h-56"
+                />
 
                 <span className="block truncate font-bold text-foreground uppercase text-xs sm:text-sm leading-tight flex-1">
                     {title.titleName}

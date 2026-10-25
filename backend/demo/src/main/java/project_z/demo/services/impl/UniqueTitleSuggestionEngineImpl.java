@@ -103,7 +103,6 @@ public class UniqueTitleSuggestionEngineImpl implements TitleMatchingEngine<Titl
                     "watchlistTitles", watchlistPayload);
 
             String userMessage = objectMapper.writeValueAsString(input);
-
             String responseText = googleAiClient.generateContent(
                     myConfig.getGoogleTitleLinksApiKey(),
                     UNIQUE_TITLES_PROMPT + "\n\nInput:\n" + userMessage);
