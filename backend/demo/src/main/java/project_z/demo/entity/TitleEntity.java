@@ -4,7 +4,9 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.Formula;
 import org.springframework.data.annotation.CreatedDate;
@@ -39,6 +41,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import project_z.demo.enums.TitleStatus;
 import project_z.demo.enums.TitleType;
+import project_z.demo.repositories.TitleRatingRepository;
 
 @EntityListeners(AuditingEntityListener.class)
 @Data
@@ -58,16 +61,15 @@ public class TitleEntity {
 
     private String titleName;
 
-    @ElementCollection(fetch = FetchType.LAZY)
-    @CollectionTable(name = "title_ratings", joinColumns = @JoinColumn(name = "title_id"))
-    @MapKeyColumn(name = "name")
-    @Column(name = "value")
-    @org.hibernate.annotations.BatchSize(size = 50)
-    private Map<String, Float> rating;
+    @OneToMany(mappedBy = "title", cascade = CascadeType.ALL, orphanRemoval = true)
+    @BatchSize(size = 20)
+    @Builder.Default
+
+    private List<TitleRatingEntity> ratings = new ArrayList<>();
 
     @Enumerated(EnumType.STRING)
     private TitleStatus status;
-    @Column(name = "description",columnDefinition = "TEXT")
+    @Column(name = "description", columnDefinition = "TEXT")
     private String description;
 
     @Enumerated(EnumType.STRING)
@@ -112,5 +114,6 @@ public class TitleEntity {
             this.customOrder = (double) (System.currentTimeMillis() % 1_000_000) * 1000;
         }
     }
+
 
 }

@@ -5,6 +5,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,21 +20,21 @@ import project_z.demo.entity.SeasonEntity;
 import project_z.demo.entity.TitleEntity;
 import project_z.demo.repositories.SeasonRepository;
 import project_z.demo.repositories.TitleRepository;
+import project_z.demo.services.SeasonRatingService;
 import project_z.demo.services.SeasonService;
 
 @Service
+@RequiredArgsConstructor
 public class SeasonServiceImpl implements SeasonService {
 
-    @Autowired
-    private SeasonRepository seasonRepository;
-    @Autowired
-    private BeanUtilsHelper beanUtilsHelper;
-    @Autowired
-    private PatchHelper patchHelper;
-    @Autowired
-    private TitleRepository titleRepository;
-    @Autowired
-    private Mapper<SeasonEntity, SeasonDto> seasonMapper;
+
+    private final SeasonRepository seasonRepository;
+
+    private final BeanUtilsHelper beanUtilsHelper;
+    private final PatchHelper patchHelper;
+    private final TitleRepository titleRepository;
+    private final Mapper<SeasonEntity, SeasonDto> seasonMapper;
+    private final SeasonRatingService seasonRatingService;
 
     @Override
     public SeasonEntity save(SeasonEntity seasonEntity) {
@@ -65,7 +66,9 @@ public class SeasonServiceImpl implements SeasonService {
                 .map(target -> {
                     patchHelper.updateIfPresent(source.getName(), target::setName);
                     patchHelper.updateIfPresent(source.getStatus(), target::setStatus);
-                    patchHelper.updateIfPresent(source.getRating(), target::setRating);
+                    patchHelper.updateIfPresent(source.getRating(), ratingsMap ->
+                            seasonRatingService.updateRatingsForSeason(target, ratingsMap)
+                    );
                     patchHelper.updateIfPresent(source.getApiTitleId(), target::setApiTitleId);
                     patchHelper.updateIfPresent(source.getDescription(), target::setDescription);
                     patchHelper.updateIfPresent(source.getImageUrl(), target::setImageUrl);
@@ -102,19 +105,34 @@ public class SeasonServiceImpl implements SeasonService {
         seasonRepository.deleteAll(toRemove);
         seasonRepository.flush();
 
-        List<SeasonEntity> entitiesToSave = dtos.stream().map(dto -> {
-            SeasonEntity entity = dto.getSeasonId() != null
-                    ? currentById.getOrDefault(dto.getSeasonId(), new SeasonEntity())
-                    : seasonMapper.mapFrom(dto);
+        List<SeasonEntity> savedSeasons = new ArrayList<>();
 
-            entity.setName(dto.getName());
-            entity.setRating(dto.getRating());
-            entity.setStatus(dto.getStatus());
-            entity.setTitle(title);
-            return entity;
-        }).toList();
+        for (SeasonDto dto : dtos) {
+            SeasonEntity entity;
 
-        return StreamSupport.stream(seasonRepository.saveAll(entitiesToSave).spliterator(), false)
+            if (dto.getSeasonId() != null && currentById.containsKey(dto.getSeasonId())) {
+                entity = currentById.get(dto.getSeasonId());
+
+                SeasonEntity mappedUpdates = seasonMapper.mapFrom(dto);
+                entity.setName(mappedUpdates.getName());
+                entity.setStatus(mappedUpdates.getStatus());
+                entity.setApiTitleId(mappedUpdates.getApiTitleId());
+                entity.setDescription(mappedUpdates.getDescription());
+                entity.setImageUrl(mappedUpdates.getImageUrl());
+                entity.setType(mappedUpdates.getType());
+            } else {
+                entity = seasonMapper.mapFrom(dto);
+                entity.setTitle(title);
+            }
+
+            SeasonEntity savedSeason = seasonRepository.save(entity);
+
+            seasonRatingService.updateRatingsForSeason(savedSeason, dto.getRating());
+
+            savedSeasons.add(savedSeason);
+        }
+
+        return savedSeasons.stream()
                 .map(seasonMapper::mapTo)
                 .toList();
     }

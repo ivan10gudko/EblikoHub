@@ -19,6 +19,7 @@ import project_z.demo.dto.TitleDtos.TitleUserParticipation;
 import project_z.demo.entity.RoomTitleEntity;
 import project_z.demo.entity.RoomTitleLinkEntity;
 import project_z.demo.entity.TitleEntity;
+import project_z.demo.entity.TitleRatingEntity;
 import project_z.demo.enums.TitleStatus;
 
 @Component
@@ -89,10 +90,15 @@ public class RoomTitleSummaryMapper {
 
     private TitleUserParticipation mapToParticipation(RoomTitleLinkEntity link) {
         var userRecord = link.getUserTitleRecord();
+
+        Map<String, Float> ratingMap = userRecord.getRatings() != null
+                ? userRecord.getRatings().stream().collect(Collectors.toMap(TitleRatingEntity::getName, TitleRatingEntity::getValue, (v1, v2) -> v2))
+                : Map.of();
+
         return new TitleUserParticipation(
                 userRecord.getUser().getUserId(),
                 userRecord.getStatus(),
-                userRecord.getRating().getOrDefault("overall", 0f),
+                ratingMap.getOrDefault("overall", 0f),
                 userRecord.getTitleType(),
                 userRecord.getTitleId());
     }
