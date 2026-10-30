@@ -5,6 +5,7 @@ import { RoomGroupWatchlistRow } from "./RoomGroupWatchlistRow";
 import { InfiniteScrollLoader } from "~/shared/ui/infinityScroll";
 import { useRoomWatchlistVisualStore } from "./store/useRoomTitleVisual.store";
 import { ToggleSwitch } from "~/shared/ui/Switch";
+import { ScrollToTopButton } from "~/shared/ui/ScrollToTopButton/ScrollToTopButton";
 
 interface RoomGroupWatchlistTableProps {
     titlesData: ReturnType<typeof useRoomTitlesQuery>["data"];
@@ -31,7 +32,7 @@ export const RoomGroupWatchlistTable = ({
     if (isLoading) return <RoomGroupWatchlistSkeleton />;
 
     return (
-        <div className="bg-card border border-border rounded-2xl p-3 md:p-4 w-full flex flex-col gap-4 box-border overflow-hidden">
+        <div className="bg-card border border-border rounded-2xl p-3 md:p-4 w-full flex flex-col gap-4 box-border overflow-hidden relative">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pb-3 border-b border-border">
                 <h2 className="text-base md:text-lg font-bold text-foreground">
                     Group Watchlist <span className="text-xs md:text-sm font-normal text-muted-foreground">({totalElements} titles)</span>
@@ -75,6 +76,7 @@ export const RoomGroupWatchlistTable = ({
                     />
                 </div>
             )}
+            <ScrollToTopButton />
         </div>
     );
 };

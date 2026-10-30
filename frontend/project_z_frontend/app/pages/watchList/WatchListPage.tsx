@@ -10,6 +10,7 @@ import { FilterResponsiveWrapper } from "~/shared/ui/FilterResponsiveWrapper";
 import { InfiniteScrollLoader } from "~/shared/ui/infinityScroll";
 import { WatchlistTable } from "~/widgets/WatchListTable";
 import { useWatchlistRealtime } from "~/features/WatchlistSSe";
+import { ScrollToTopButton } from "~/shared/ui/ScrollToTopButton/ScrollToTopButton";
 
 export const WatchListPage = ({ userId }: { userId: string | null }) => {
   const currentSessionUserId = useAuthStore(state => state.userId);
@@ -69,6 +70,7 @@ export const WatchListPage = ({ userId }: { userId: string | null }) => {
             fetchNextPage={fetchNextPage}
           />
         </div>
+        <ScrollToTopButton />
       </main>
     </div>
   );
