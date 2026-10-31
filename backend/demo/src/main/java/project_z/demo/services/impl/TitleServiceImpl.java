@@ -60,6 +60,7 @@ import project_z.demo.repositories.UserRepository;
 import project_z.demo.security.JwtService;
 import project_z.demo.services.RoomTitleLinkService;
 import project_z.demo.services.SeasonService;
+import project_z.demo.services.TitleRatingService;
 import project_z.demo.services.TitleService;
 import org.springframework.data.domain.Sort;
 
@@ -75,6 +76,7 @@ public class TitleServiceImpl implements TitleService {
     private final RoomTitleLinkRepository roomTitleLinkRepository;
     private final TitleShortWithLinksToRoomTitleMapper titleShortWithLinksToRoomTitleMapper;
     private final ApplicationEventPublisher eventPublisher;
+    private final TitleRatingService titleRatingService;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -92,7 +94,7 @@ public class TitleServiceImpl implements TitleService {
 
     @Override
     @Transactional
-    public void batchCreateTitle(TitleBatchCreateDto titleDtos, String token) {
+    public void batchCreateTitle(TitleBatchCreateDto titleDtos, String token) { //TODO not working
         UUID userId = jwtService.extractUsername(token);
         UserEntity user = userRepository.findById(userId).orElseThrow(
                 () -> new ResourceNotFoundException("User not found"));
@@ -108,8 +110,8 @@ public class TitleServiceImpl implements TitleService {
     @Override
     public List<TitleEntity> findAll() {
         return StreamSupport.stream(
-                titleRepository.findAll().spliterator(),
-                false)
+                        titleRepository.findAll().spliterator(),
+                        false)
                 .collect(Collectors.toList());
     }
 
@@ -159,7 +161,7 @@ public class TitleServiceImpl implements TitleService {
 
     @Override
     public Page<TitleDto> findAllWithLinksByUserIdAndRoomId(TitleQueryParameters params,
-            UUID userId, long roomId) {
+                                                            UUID userId, long roomId) {
         Pageable pageable = PagingHelper.toPageable(params);
 
         Specification<TitleEntity> spec = Specification
@@ -203,15 +205,21 @@ public class TitleServiceImpl implements TitleService {
         patchHelper.updateIfPresent(source.getTitleName(), titleEntity::setTitleName);
         patchHelper.updateIfPresent(source.getStatus(), titleEntity::setStatus);
         patchHelper.updateIfPresent(source.getTitleType(), titleEntity::setTitleType);
-        patchHelper.updateIfPresent(source.getRating(), titleEntity::setRating);
+
+        patchHelper.updateIfPresent(source.getRating(), ratingsMap ->
+                titleRatingService.updateRatingsForTitle(titleEntity, ratingsMap)
+        );
+
         patchHelper.updateIfPresent(source.getCustomOrder(), titleEntity::setCustomOrder);
         patchHelper.updateIfPresent(source.getImageUrl(), titleEntity::setImageUrl);
         patchHelper.updateIfPresent(source.getDescription(), titleEntity::setDescription);
 
         titleRepository.saveAndFlush(titleEntity);
         entityManager.refresh(titleEntity);
+
         TitleDto updatedDto = titleMapper.mapTo(titleEntity);
         eventPublisher.publishEvent(new TitleUpdatedEvent(titleEntity.getUser().getUserId(), updatedDto));
+
         return updatedDto;
     }
 

@@ -57,12 +57,12 @@ public class TitleController {
         return new ResponseEntity<>(titleMapper.mapTo(response), HttpStatus.CREATED);
     }
 
-    @PostMapping("/batch")
-    public ResponseEntity<Void> batchCreateTitle(@RequestBody TitleBatchCreateDto titles,
-            @RequestHeader("Authorization") String token) {
-        titleService.batchCreateTitle(titles, token);
-        return new ResponseEntity<>(HttpStatus.CREATED);
-    }
+//    @PostMapping("/batch")
+//    public ResponseEntity<Void> batchCreateTitle(@RequestBody TitleBatchCreateDto titles,
+//            @RequestHeader("Authorization") String token) {
+//        titleService.batchCreateTitle(titles, token);
+//        return new ResponseEntity<>(HttpStatus.CREATED);
+//    }
 
     @PostMapping("/{userId}/reindex")
     public ResponseEntity<Void> reindex(@PathVariable("userId") UUID userId,
