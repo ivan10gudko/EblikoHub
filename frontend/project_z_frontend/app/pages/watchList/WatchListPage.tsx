@@ -70,7 +70,6 @@ export const WatchListPage = ({ userId }: { userId: string | null }) => {
             fetchNextPage={fetchNextPage}
           />
         </div>
-        <ScrollToTopButton />
       </main>
     </div>
   );

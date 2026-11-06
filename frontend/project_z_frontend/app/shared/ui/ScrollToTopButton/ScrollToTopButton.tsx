@@ -25,28 +25,37 @@ export const ScrollToTopButton: React.FC<ScrollToTopProps> = ({ threshold = 300 
   return (
     <Zoom in={open}>
       <Fab
-        size="medium"
+        size="large"
         aria-label="scroll back to top"
         onClick={handleClick}
         sx={{
           position: 'fixed',
-          bottom: 64,
-          right: 48,
+          bottom: { xs: 64, sm: 64 },
+          right: { xs: 32, sm: 64 },
           zIndex: 9999,
 
-          backgroundColor: '#f97316',
-          color: '#ffffff',
-          boxShadow: '0 4px 14px rgba(0, 0, 0, 0.4)',
-          border: '1px solid rgba(255, 255, 255, 0.1)',
+          width: { xs: '44px', sm: '56px' },
+          height: { xs: '44px', sm: '56px' },
+          minHeight: { xs: '44px', sm: '56px' },
+
+          backgroundColor: 'var(--primary)',
+          color: 'var(--background)',
+
+          boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3)',
+          border: '1px solid var(--border)',
 
           '&:hover': {
-            backgroundColor: '#ea580c',
-            transform: 'scale(1.05)',
+            backgroundColor: 'var(--primary-hover)',
+            transform: 'translateY(-2px)',
+            boxShadow: '0 6px 16px rgba(0, 0, 0, 0.4)',
           },
-          transition: 'all 0.2s ease-in-out',
+          '&:active': {
+            transform: 'translateY(0)',
+          },
+          transition: 'all 0.15s ease-in-out',
         }}
       >
-        <KeyboardArrowUpIcon />
+        <KeyboardArrowUpIcon sx={{ fontSize: { xs: '1.5rem', sm: '2rem' } }} />
       </Fab>
     </Zoom>
   );

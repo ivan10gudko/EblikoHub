@@ -1,4 +1,5 @@
 import { Outlet } from "react-router";
+import { ScrollToTopButton } from "~/shared/ui/ScrollToTopButton/ScrollToTopButton";
 import { Footer } from "~/widgets/Footer";
 import { Header } from "~/widgets/Header";
 
@@ -11,6 +12,7 @@ const MainLayout = () => {
         <Outlet />
       </main>
       <Footer />
+      <ScrollToTopButton />
     </div>
   );
 };
