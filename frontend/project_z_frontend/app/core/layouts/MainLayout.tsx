@@ -12,7 +12,6 @@ const MainLayout = () => {
         <Outlet />
       </main>
       <Footer />
-      <ScrollToTopButton />
     </div>
   );
 };

@@ -15,6 +15,7 @@ import { PinnedWatchlistRowReadOnly } from "./WatchlistRow/pinnedWatchlistRowRea
 import { WatchlistRowReadOnly } from "./WatchlistRow/WatchlistRowReadOnly";
 import { AddNewButton } from "~/shared/ui/AddNewButton";
 import { AnimatedList } from "~/shared/ui/AnimatedComps";
+import { ScrollToTopButton } from "~/shared/ui/ScrollToTopButton/ScrollToTopButton";
 
 interface WatchlistTableProps {
   titles: TitleRecord[];
@@ -139,6 +140,7 @@ export const WatchlistTable = ({
     <div className="flex flex-col gap-2 w-full">
       {isOwn && <AddNewButton onClick={handleOpenAddModal} placeholder="title" />}
       {isOwn ? renderOwnList() : renderReadOnlyList()}
+      <ScrollToTopButton />
     </div>
   );
 };

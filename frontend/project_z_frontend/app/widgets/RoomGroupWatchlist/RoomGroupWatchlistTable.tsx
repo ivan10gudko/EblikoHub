@@ -74,6 +74,7 @@ export const RoomGroupWatchlistTable = ({
                         isFetchingNextPage={isFetchingNextPage}
                         fetchNextPage={fetchNextPage}
                     />
+                    <ScrollToTopButton />
                 </div>
             )}
         </div>
