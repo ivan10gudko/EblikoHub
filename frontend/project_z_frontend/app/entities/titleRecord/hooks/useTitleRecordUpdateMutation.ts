@@ -52,6 +52,7 @@ export const useUpdateTitleRecord = (titleId: number) => {
 
   return {
     updateTitle: updateMutation.mutate,
+    updateTitleAsync: updateMutation.mutateAsync,
     isUpdating: updateMutation.isPending,
     deleteTitle: deleteMutation.mutate,
     isDeleting: deleteMutation.isPending,
