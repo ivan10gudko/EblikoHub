@@ -14,6 +14,7 @@ import type {
   EntityViewChanged,
   EntityViewValues,
 } from "~/shared/ui/EntityView/EntityViewContext";
+import { TitleFavoriteCharacter } from "~/features/manageTitleCharacter";
 
 interface ViewTitleScreenProps {
   titleId: number | null;
@@ -90,6 +91,8 @@ export const ViewTitleScreen = ({ titleId, onClose, onEditClick, isOwn }: ViewTi
         </EntityView.Header>
 
         <EntityView.Description />
+
+        <TitleFavoriteCharacter character={title.character} />
 
         <div className="text-[11px] text-muted-foreground/60 font-medium px-1 flex justify-between items-center pt-2">
           {title.createdAt && (

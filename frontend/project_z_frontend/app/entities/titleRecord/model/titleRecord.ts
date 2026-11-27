@@ -2,6 +2,7 @@ import type { QueryParams } from "~/shared/types";
 import type { SortOrder } from "~/shared/types/api";
 import type { Rating } from "~/shared/types/Rating";
 import { Status } from "~/shared/types/Status";
+import type { Character } from "~/entities/character/model/character.types";
 
 export interface TitleRecord {
     titleId: number,
@@ -17,6 +18,8 @@ export interface TitleRecord {
     pinned: boolean
     createdAt: string,
     avgRating?: number;
+    /** Favorite character of the title (backend: titles.character_id). */
+    character?: Character | null;
 }
 
 export enum TitleType {

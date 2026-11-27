@@ -1,6 +1,7 @@
 import type { TitleRecord } from "~/entities/titleRecord";
 import { TitleType, titleTypeOptions, TitleTypeOptionsColors } from "~/entities/titleRecord";
 import { EntityForm } from "~/shared/ui/EntityForm/EntityForm";
+import { TitleCharacterField } from "~/features/manageTitleCharacter";
 import { useEditTitleForm } from "../hooks/useEditTitleForm";
 
 
@@ -9,7 +10,8 @@ interface EditTitleScreenProps {
 }
 
 export const EditTitleScreen = ({ title }: EditTitleScreenProps) => {
-  const { formState, setters, isPending, handleClose, handleSave } = useEditTitleForm(title);
+  const { formState, setters, character, setCharacter, isPending, handleClose, handleSave } =
+    useEditTitleForm(title);
 
   return (
     <EntityForm values={formState} setters={setters}>
@@ -29,6 +31,13 @@ export const EditTitleScreen = ({ title }: EditTitleScreenProps) => {
         </EntityForm.Header>
 
         <EntityForm.Description />
+
+        <div className="space-y-1.5 border-t border-border/40 pt-3.5">
+          <label className="text-xs font-bold tracking-widest text-muted-foreground uppercase opacity-70 block mb-1">
+            Favorite Character
+          </label>
+          <TitleCharacterField value={character} onChange={setCharacter} disabled={isPending} />
+        </div>
       </EntityForm.Body>
 
       <EntityForm.Actions

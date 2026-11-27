@@ -6,6 +6,7 @@ import { RequestStatus } from "~/shared/types";
 import { Button } from "~/shared/ui/Button";
 import { UserProfileEdit } from "./UserProfileEditCard";
 import { UserFavoriteTitlesShowcase } from "./UserFavoriteTitlesShowcase";
+import { UserFavoriteCharactersShowcase } from "./UserFavoriteCharactersShowcase";
 import { useUserProfile } from "~/widgets/UserProfileCard/hooks/useUserProfile";
 
 interface UserProfileCardProps {
@@ -125,6 +126,11 @@ export const UserProfileCard = ({ userId }: UserProfileCardProps) => {
           <div className="h-[1px] bg-background-muted w-full my-2" />
 
           <UserFavoriteTitlesShowcase
+            profile={user}
+            isOwner={false}
+          />
+
+          <UserFavoriteCharactersShowcase
             profile={user}
             isOwner={false}
           />

@@ -7,6 +7,8 @@ import { ImageCropper } from "~/shared/ui/ImageCropper/ImageCropper";
 import { UserFavoriteTitlesShowcase } from "./UserFavoriteTitlesShowcase";
 import type { UserProfileWithFavorite } from "~/features/profile";
 import { SelectFavoriteModal } from "~/features/manageFavoriteTitles";
+import { SelectFavoriteCharacterModal } from "~/features/manageFavoriteCharacters";
+import { UserFavoriteCharactersShowcase } from "./UserFavoriteCharactersShowcase";
 
 interface UserProfileEditProps {
   user: UserProfileWithFavorite;
@@ -32,6 +34,7 @@ export const UserProfileEdit = ({
   const [finalPreview, setFinalPreview] = useState(user.img);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [selectedPosition, setSelectedPosition] = useState<number | null>(null);
+  const [selectedCharacterPosition, setSelectedCharacterPosition] = useState<number | null>(null);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -115,6 +118,27 @@ export const UserProfileEdit = ({
           favoriteTitles={user.favoriteTitles}
           isOpen={selectedPosition !== null}
           onClose={() => setSelectedPosition(null)}
+        />
+      )}
+
+      <div className="flex flex-col gap-2">
+        <span className="text-sm font-semibold text-muted-foreground">
+          Favorite Characters
+        </span>
+        <UserFavoriteCharactersShowcase
+          profile={user}
+          isOwner={true}
+          onAddClick={(position) => setSelectedCharacterPosition(position)}
+        />
+      </div>
+
+      {selectedCharacterPosition !== null && (
+        <SelectFavoriteCharacterModal
+          position={selectedCharacterPosition}
+          userId={user.userId}
+          favoriteCharacters={user.favoriteCharacters ?? []}
+          isOpen={selectedCharacterPosition !== null}
+          onClose={() => setSelectedCharacterPosition(null)}
         />
       )}
 
